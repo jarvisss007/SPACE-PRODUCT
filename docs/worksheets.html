@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Worksheets · Golapada">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Worksheets</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a worksheet you can print. Pick a topic; questions use real missions, each with the lab to check it in; the teacher key opens on demand. Dark on screen, white on paper. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--ws:#a8e6a1;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}*{box-sizing:border-box}
+.wrap{max-width:900px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--ws)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,54px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(22px,3.2vw,30px);margin:0 0 4px;text-transform:uppercase}
+p{margin:0 0 10px;color:#c3ccd6}a{color:var(--lox)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13.5px}
+.btn[aria-pressed="true"]{background:var(--ws);border-color:var(--ws);color:#0b1a08}.btn.print{font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.btn:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px}
+.meta{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin:10px 0 18px;font-size:13px;color:var(--dim)}.meta span{border-bottom:1px solid var(--line);padding-bottom:4px}
+ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:16px}
+li p{margin:0 0 4px;color:var(--ink)}.given{font-size:13px;color:var(--dim)}.lab{font-size:12.5px}
+.ans{display:none;margin-top:6px;padding:8px 10px;border-left:3px solid var(--ws);background:rgba(168,230,161,.07);font-size:14px;color:#d8f0d4}
+.showkey .ans{display:block}
+.space{height:44px;border-bottom:1px dashed #2a3646;margin-top:6px}.showkey .space{display:none}
+.note{font-size:12.5px;color:var(--dim)}
+@media print{
+  :root{color-scheme:light}html,body{background:#fff!important;color:#000}.sa-nav,.controls,.noprint,header p{display:none!important}
+  .wrap{max-width:none;padding:0}.sheet{border:none;background:#fff;padding:0}.eyebrow,h1{color:#000}
+  li p,.ans{color:#000}.given,.meta,.lab{color:#333}.lab a{color:#000;text-decoration:none}.meta span{border-color:#000}
+  .space{border-color:#999;height:64px}.ans{background:#f2f7f1;border-color:#3a7a33}
+  @page{margin:16mm}}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-in"><a href="index.html" class="sa-brand">Golapada</a><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="planetary-defense-lab.html">Defense</a><a href="worksheets.html" aria-current="page">Worksheets</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">For teachers and students · print or use on screen</div>
+    <h1>Worksheets</h1>
+    <p>Short worksheets that turn real space missions into school physics problems. Each question names the lab where students can check their answer by changing the numbers themselves. Print one per student, or open the answer key for yourself.</p>
+  </header>
+
+  <div class="controls">
+    <span class="note">Topic</span><span id="topics" class="controls"></span>
+  </div>
+  <div class="controls">
+    <button type="button" class="btn" id="key" aria-pressed="false">Show answers (teacher)</button>
+    <button type="button" class="btn print" id="print">Print this worksheet</button>
+  </div>
+
+  <article class="sheet" id="sheet"></article>
+  <p class="note noprint">Values used: G·M(Earth) = 3.986 × 10¹⁴ m³/s², Earth’s radius 6,371 km (6,378 km at the equator), g = 9.81 m/s², speed of light 3.00 × 10⁸ m/s. Mission figures come from the sources cited in each lab.</p>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+// each question: [question, given data, lab file, lab name, answer]
+const W={
+ gravity:{t:'Gravitation and orbits',sub:'Orbital speed, geostationary orbit, escape speed and gravity on the Moon.',q:[
+  ['The International Space Station circles Earth about 420 km above the ground. Find its orbital speed, v = √(GM/r), and the time for one orbit.','r = 6,371 km + 420 km','satellite-watch.html','Satellite Watch','r = 6.791 × 10⁶ m, so v = √(3.986 × 10¹⁴ ÷ 6.791 × 10⁶) ≈ 7,660 m/s (about 27,600 km/h). One orbit takes T = 2πr ÷ v ≈ 5,570 s ≈ 92.8 minutes. The Satellite Watch shows 92.9 minutes for the real ISS.'],
+  ['India’s NavIC uses geostationary satellites that stay above one spot. Their orbit takes one sidereal day, T = 86,164 s. Find the orbit radius from r³ = GMT² ÷ 4π², and the height above the equator.','','navic-lab.html','NavIC Lab','r³ = 3.986 × 10¹⁴ × 86,164² ÷ 4π² ≈ 7.50 × 10²² m³, so r ≈ 42,164 km. Height = 42,164 − 6,378 ≈ 35,786 km.'],
+  ['Find the escape speed from Earth’s surface, v = √(2GM/R). Why is it exactly √2 times the speed of a low circular orbit at the same height?','','rocket-lab.html','Rocket Lab','v = √(2 × 3.986 × 10¹⁴ ÷ 6.371 × 10⁶) ≈ 11,200 m/s. Escaping needs kinetic energy equal to the whole gravitational energy GMm/R; circling needs only half of that, so the speeds differ by √2.'],
+  ['The Moon has GM = 4.903 × 10¹² m³/s² and radius 1,737 km. Find g on the Moon. Chandrayaan-3’s Vikram lander had a mass of about 1,752 kg and four engines of 800 N each. What is the ratio of thrust to its weight on the Moon?','','chandrayaan-3.html','Chandrayaan-3 Moon Lab','g = 4.903 × 10¹² ÷ (1.737 × 10⁶)² ≈ 1.62 m/s². Weight = 1,752 × 1.62 ≈ 2,840 N. Thrust ÷ weight = 3,200 ÷ 2,840 ≈ 1.1: only just enough to hover at the start of the descent.'],
+  ['Chandrayaan-3 took about 40 days to reach the Moon; Apollo 11 took about 3. Give two reasons, using the idea that a burn is most effective at the lowest point of an orbit.','','chandrayaan-3.html','Chandrayaan-3 Moon Lab','India’s LVM3 rocket could only leave the 3.9 t spacecraft in a long Earth orbit, so its own small engine had to do the rest. A small engine cannot add the speed in one short burn, so the push was split over several low points, each checked before the next. Splitting costs almost no extra speed change (the lab computes 663 m/s against 662 m/s for one burn).']]},
+ motion:{t:'Laws of motion and momentum',sub:'The rocket equation, momentum and Newton’s second law in space.',q:[
+  ['NASA’s Dawn spacecraft weighed 1,217.7 kg at launch, carried 425 kg of xenon, and its ion engine had a specific impulse of 3,100 s, so exhaust speed vₑ = 3,100 × 9.81 m/s. Use Δv = vₑ ln(m₀ ÷ m₁) to find the most speed it could gain.','','ion-engine-lab.html','Ion Engine Lab','vₑ ≈ 30,400 m/s. m₁ = 1,217.7 − 425 = 792.7 kg. Δv = 30,400 × ln(1.536) ≈ 13,000 m/s. Dawn actually used 11.5 km/s of it, a record.'],
+  ['A chemical engine has vₑ ≈ 3,140 m/s. What mass ratio m₀ ÷ m₁ would it need for Dawn’s 11.49 km/s? What does this tell you about choosing engines?','','ion-engine-lab.html','Ion Engine Lab','m₀ ÷ m₁ = e^(11,490 ÷ 3,140) ≈ e^3.66 ≈ 39: the spacecraft would have to be 97% propellant. High exhaust speed matters more than raw thrust for long journeys.'],
+  ['NASA’s DART (610 kg) hit the asteroid moon Dimorphos (about 4.3 × 10⁹ kg) at 6,260 m/s. Assuming all of DART’s momentum went into Dimorphos, how much would it slow down? It actually slowed by about 2.7 mm/s. Why might it be more?','','planetary-defense-lab.html','Planetary Defense Lab','p = 610 × 6,260 ≈ 3.82 × 10⁶ kg·m/s, so Δv = 3.82 × 10⁶ ÷ 4.3 × 10⁹ ≈ 0.89 mm/s. The measured 2.7 mm/s is about 3 times more because rock blasted out of the crater carried momentum the other way, pushing Dimorphos like the recoil of a gun.'],
+  ['Dawn’s ion engine pushed with 0.090 N on 1,217.7 kg. Using F = ma, find its acceleration, and how long it took to reach 60 mph (26.8 m/s).','','ion-engine-lab.html','Ion Engine Lab','a = 0.090 ÷ 1,217.7 ≈ 7.4 × 10⁻⁵ m/s². t = 26.8 ÷ 7.4 × 10⁻⁵ ≈ 3.6 × 10⁵ s ≈ 4.2 days. NASA quotes “four days”.']]},
+ light:{t:'Light and telescopes',sub:'Diffraction, resolving power and the glow of warm objects.',q:[
+  ['A telescope can separate two points about θ = 1.22λ ÷ D radians apart. Find θ for Hubble (D = 2.4 m) in green light (λ = 550 nm), in radians and in arcseconds (1 rad = 206,265″).','','telescope-lab.html','Telescope Lab','θ = 1.22 × 550 × 10⁻⁹ ÷ 2.4 ≈ 2.8 × 10⁻⁷ rad ≈ 0.058″.'],
+  ['The Moon is 384,400 km away. What is the smallest detail Hubble could see on it? Could it see the 4 m Apollo landers?','','telescope-lab.html','Telescope Lab','Smallest detail ≈ 2.8 × 10⁻⁷ × 3.844 × 10⁸ m ≈ 110 m. The landers are about 25 times too small, so no: they need a camera in lunar orbit.'],
+  ['Webb’s mirror is 6.5 m across but it works in infrared, around λ = 2 µm. Find its θ and compare with Hubble’s from question 1.','','telescope-lab.html','Telescope Lab','θ = 1.22 × 2 × 10⁻⁶ ÷ 6.5 ≈ 3.8 × 10⁻⁷ rad ≈ 0.077″: about the same sharpness as Hubble, because the longer wavelength cancels the bigger mirror.'],
+  ['Wien’s law gives the wavelength where an object glows most: λ = 2,898 µm·K ÷ T. Find it for the Sun (5,772 K) and a person (310 K). Why must Webb’s mirror be kept below 50 K?','','telescope-lab.html','Telescope Lab','Sun: about 0.50 µm (visible light). Person: about 9.3 µm (infrared). A warm mirror would glow brightly in the very infrared Webb observes; at 50 K its own glow peaks near 58 µm, out of the way.']]},
+ sky:{t:'The night sky and the Moon',sub:'Earth’s spin, the Moon’s phases and why satellites flash in twilight.',q:[
+  ['Earth turns 360° in about 24 hours. How many degrees does a star appear to move across the sky in 2 hours?','','tonight.html','Tonight’s Sky','360° ÷ 24 h = 15° per hour, so 30° in 2 hours.'],
+  ['A star returns to the same place 23 h 56 min later, not 24 h. Earth moves about 360° ÷ 365.25 ≈ 0.986° along its orbit each day. Show that this explains the 4-minute difference.','','aryabhata-lab.html','Aryabhata Lab','Each day Earth must turn an extra 0.986° to face the Sun again. At 360° per 24 h that takes 0.986 ÷ 360 × 24 h ≈ 0.066 h ≈ 3.9 min. So the star day is about 4 minutes shorter than the Sun day. Aryabhata described a turning Earth in 499 CE.'],
+  ['The Moon was at first quarter on 17 November 2026. The full cycle of phases takes 29.53 days. Estimate the date of the next full Moon.','','tonight.html','Tonight’s Sky','First quarter to full is a quarter cycle: 29.53 ÷ 4 ≈ 7.4 days, so about 24 November. The published time is 24 November 2026 at 14:53 UTC.'],
+  ['The space station is easiest to see an hour or two after sunset or before sunrise, and never in the middle of the night. Explain why.','','satellite-watch.html','Satellite Watch','We see the station because it reflects sunlight. Just after sunset our sky is dark but the station, 420 km up, is still in sunlight. In the middle of the night it is in Earth’s shadow too, so it is dark.']]},
+ energy:{t:'Energy, drag and heat',sub:'Kinetic energy, re-entry heating and orbital decay.',q:[
+  ['How much kinetic energy does 1 kg have at orbital speed, 7.8 km/s? Compare it with the energy in 1 kg of TNT, 4.2 MJ.','','reentry-lab.html','Re-entry Lab','KE = ½ × 1 × 7,800² ≈ 3.0 × 10⁷ J = 30 MJ, about 7 times the energy of TNT. All of it has to be lost as heat on the way down.'],
+  ['An Apollo capsule of about 5,500 kg came home from the Moon at about 11 km/s. Find its kinetic energy in joules and in tonnes of TNT (1 tonne of TNT = 4.18 × 10⁹ J).','','reentry-lab.html','Re-entry Lab','KE = ½ × 5,500 × 11,000² ≈ 3.3 × 10¹¹ J ≈ 80 tonnes of TNT.'],
+  ['A returning capsule must enter the air at the right angle. What happens if it comes in too shallow, and what if too steep?','','reentry-lab.html','Re-entry Lab','Too shallow: it does not slow enough and skips back out to space. Too steep: it slows so hard that the g-force and heating become dangerous. The safe “corridor” from the Moon is only about 1.5° wide.'],
+  ['India’s 2019 Mission Shakti test was at 283 km; a 2009 satellite collision happened at 789 km. Why did Shakti’s debris fall within weeks while the 2009 debris will last decades?','','space-debris-lab.html','Space Debris Lab','Air density falls roughly tenfold for every 50–100 km of height. At 283 km there is still enough air to drag fragments down quickly; at 789 km the air is thousands of times thinner, so the drag is tiny.']]},
+ india:{t:'India in space',sub:'Navigation, Mars, the Sun and the Moon with ISRO’s missions.',q:[
+  ['A NavIC receiver must find its east, north and height, plus the error in its own clock. How many satellites must it hear at the same time? Why did NavIC stop giving positions when only three satellites worked in 2026?','','navic-lab.html','NavIC Lab','Four unknowns need four equations, so four satellites. With three working satellites there are fewer equations than unknowns, so no position can be found anywhere.'],
+  ['ISRO’s Mars Orbiter Mission cost about US$73 million; NASA’s MAVEN Mars orbiter cost US$582.5 million. Find the ratio. Give one reason the missions might differ in cost apart from efficiency.','','mangalyaan.html','Mangalyaan Mars Lab','582.5 ÷ 73 ≈ 8. MAVEN carried more and different instruments and had a longer funded prime mission; salaries and costs also differ between countries.'],
+  ['Aditya-L1 watches the Sun from about 1.5 million km away. How long do its radio signals take to reach Earth?','','lagrange-lab.html','Lagrange Point Lab','t = 1.5 × 10⁹ m ÷ 3.0 × 10⁸ m/s = 5 s.'],
+  ['Why can Aditya-L1 not simply sit still exactly at L1, and what does it do instead?','','lagrange-lab.html','Lagrange Point Lab','L1 is balanced but unstable, like a ball on top of a saddle: any small error grows (about 2.7 times every 23 days). So Aditya-L1 flies a looping “halo” orbit around L1, taking about 178 days per lap, with small thruster burns a few times a year to stay on it.']]}};
+let topic='gravity';
+$('topics').innerHTML=Object.entries(W).map(([k,v])=>`<button type="button" class="btn" data-t="${k}" aria-pressed="${k===topic}">${v.t}</button>`).join('');
+document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{topic=b.dataset.t;document.querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+function render(){const w=W[topic];$('sheet').innerHTML=`<h2>${w.t}</h2><p class="note">${w.sub}</p><div class="meta"><span>Name</span><span>Class</span><span>Date</span></div><ol>${w.q.map(([q,g,f,lab,a])=>`<li><p>${q}</p>${g?`<div class="given">Given: ${g}</div>`:''}<div class="lab">Check it in: <a href="${f}">${lab}</a></div><div class="space"></div><div class="ans"><b>Answer.</b> ${a}</div></li>`).join('')}</ol><p class="note" style="margin-top:18px">Golapada · free space-science labs</p>`;
+  try{const t=new URLSearchParams(location.search);if(t.get('topic')!==topic)history.replaceState(null,'','?topic='+topic)}catch(e){}}
+$('key').onclick=e=>{const on=e.target.getAttribute('aria-pressed')!=='true';e.target.setAttribute('aria-pressed',on);document.body.classList.toggle('showkey',on);e.target.textContent=on?'Hide answers':'Show answers (teacher)'};
+$('print').onclick=()=>window.print();
+try{const t=new URLSearchParams(location.search).get('topic');if(t&&W[t]){topic=t;document.querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t===t))}}catch(e){}
+render();
+window.__ws={W};
+})();
+</script>
+
+</html>

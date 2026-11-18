@@ -16,6 +16,7 @@ OUT = HERE / "site"
 PAGES = [
     ("index.html", "Home", "VEHMzzQ5FUTWq6JxoK3tf3"),
     ("tonight.html", "Tonight", "3aUGRPdpk6vgQBkzKSAZWb"),
+    ("earth-from-above.html", "Earth", "DgLUJmgCAWUQ5pQsEG9Afj"),
     ("satellite-watch.html", "Live satellites", "HRrym68cV7YcEbuycixy2p"),
     ("starship-catch.html", "Catch", "D2UgmPBXpzcKUxY7qnzQdB"),
     ("rocket-lab.html", "Rockets", "4ZaBFQRVW2jUmBzCpVSHiU"),
@@ -39,6 +40,7 @@ PAGES = [
     ("reentry-lab.html", "Re-entry", "NjXosYNX9sCeCWVThB7VhT"),
     ("one-sky-lab.html", "One Sky", "8wnKFX4tTwV3Sbd2jBAzWD"),
     ("planetary-defense-lab.html", "Defense", "UtRh4Wahi2S7pytfcBcXBc"),
+    ("worksheets.html", "Worksheets", "WL3LspZGoLK2qfmncyT82E"),
     ("aryabhata-lab.html", "Aryabhata", "LaFFtHTwWZh7EiU6gL9F8Z"),
     ("nalanda.html", "Nalanda", "9GzdyyvJ8zRcBAznWXM37B"),
     ("starship-through-time.html", "Through time", "4jbD63EEZBxcEbE7WXseMN"),

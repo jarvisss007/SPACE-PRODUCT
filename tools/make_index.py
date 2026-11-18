@@ -10,6 +10,7 @@ OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().paren
 # file, title, one line, use cases, school topics, accent
 LABS = [
  ("tonight.html","Tonight's Sky","What you can see tonight with your own eyes: the planets and where to look, the Moon, and the space station passing over.","tonight","night",'#9db8ff'),
+ ("earth-from-above.html","Earth from Above","Today's photographs of the whole sunlit Earth from NASA's camera 1.5 million km away. Spin the day and find India.","tonight explore","",'#6ec3ff'),
  ("satellite-watch.html","Satellite Watch","The space stations, Hubble, NavIC and the brightest satellites live on a world map, and when each one passes over your city.","tonight india","orbits",'#7ee0c8'),
  ("chandrayaan-3.html","Chandrayaan-3 Moon Lab","India's 40-day road to the Moon flown again from ISRO's own orbit reports, then land Vikram yourself with four 800 N engines.","mission india","gravity orbits",'#ff9933'),
  ("mangalyaan.html","Mangalyaan Mars Lab","ISRO's Mars Orbiter Mission rebuilt from its burn log, with every engine burn's length predicted and a launch-window chart.","mission india","orbits",'#e0774a'),
@@ -33,6 +34,7 @@ LABS = [
  ("exoplanet-explorer.html","Exoplanet Explorer","All of the confirmed planets around other stars, a transit you can watch, and the rocky worlds with Earth-like light.","explore","light",'#5fd6c4'),
  ("black-hole-lab.html","Black Hole and Wormhole Lab","A black hole drawn from general relativity, the real ones we know, and what a wormhole would need.","explore","gravity light",'#ffb347'),
  ("spacecraft-archive.html","Spacecraft Archive","Every solar system mission since Sputnik on a clickable timeline, with the firsts and NASA's own pictures.","explore india","",'#e8c46a'),
+ ("worksheets.html","Worksheets","Printable worksheets for school physics topics, each question tied to a lab, with a teacher answer key.","learn","",'#a8e6a1'),
  ("aryabhata-lab.html","Aryabhata Lab","Aryabhata's spinning Earth, value of π and table of sines, implemented from his verses and put to work on space problems.","ancient india learn","maths night",'#e8c46a'),
  ("nalanda.html","Nalanda","A working rebuild of Nalanda's water clock from an eyewitness account, and the manuscripts that survived.","ancient india","maths",'#c4623f'),
  ("starship-through-time.html","Starship Through Time","Hand a spacecraft to Aryabhata or Brahmagupta and fly to Mars on their own planetary numbers.","ancient india","orbits",'#e8c46a'),
@@ -48,13 +50,14 @@ TOPICS = [
  ("night","The night sky and the solar system","The planets, the Moon's phases and finding your way around the sky."),
  ("maths","Mathematics from history","π, the sine and big numbers from Aryabhata's and Nalanda's India."),
 ]
+WS = {'gravity':'gravity','orbits':'gravity','motion':'motion','energy':'energy','light':'light','night':'sky'}
 e = html.escape
 cards = "\n".join(
   f'      <a class="lab" href="{f}" data-use="{u}" data-topic="{tp}" data-text="{e((t+" "+d).lower())}" style="--acc:{c}"><b>{e(t)}</b><span>{e(d)}</span><em>{" · ".join(dict(USES)[x] for x in u.split())}</em></a>'
   for f,t,d,u,tp,c in LABS)
 chips = "".join(f'<button type="button" class="chip" data-f="{k}" aria-pressed="{str(k=="all").lower()}">{e(v)}</button>' for k,v in USES)
 topics = "\n".join(
-  f'      <div class="topic"><h3>{e(n)}</h3><p>{e(d)}</p><div class="tl">' + "".join(f'<a href="{f}">{e(t)}</a>' for f,t,_,_,tp,_ in LABS if k in tp.split()) + '</div></div>'
+  f'      <div class="topic"><h3>{e(n)}</h3><p>{e(d)}</p><div class="tl">' + "".join(f'<a href="{f}">{e(t)}</a>' for f,t,_,_,tp,_ in LABS if k in tp.split()) + (f'<a class="ws" href="worksheets.html?topic={WS[k]}">Printable worksheet</a>' if k in WS else '') + '</div></div>'
   for k,n,d in TOPICS)
 page = f'''<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -92,7 +95,7 @@ h2{{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);
 #none{{color:var(--dim)}}
 .topics{{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}}
 .topic{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}}.topic h3{{margin:0 0 4px;font-family:var(--display);font-size:20px;text-transform:uppercase}}.topic p{{margin:0 0 10px;font-size:13.5px;color:#c3ccd6}}
-.tl{{display:flex;flex-wrap:wrap;gap:6px}}.tl a{{font-size:13px;color:var(--ink);text-decoration:none;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:4px 10px}}.tl a:hover{{border-color:var(--lox)}}
+.tl{{display:flex;flex-wrap:wrap;gap:6px}}.tl a{{font-size:13px;color:var(--ink);text-decoration:none;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:4px 10px}}.tl a:hover{{border-color:var(--lox)}}.tl a.ws{{background:rgba(168,230,161,.12);border-color:#3f6b3a;color:#cdeec8}}
 .trust{{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}}.trust div{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}}.trust b{{font-family:var(--display);font-size:20px;text-transform:uppercase;display:block;margin-bottom:4px}}.trust span{{font-size:13.5px;color:#c3ccd6}}
 footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
 @media (max-width:560px){{.hero{{min-height:72vh;padding-top:36px}}}}
