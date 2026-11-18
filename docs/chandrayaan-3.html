@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Chandrayaan-3 Moon Lab · Kaksha Labs">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Chandrayaan-3 Moon Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a mission replay. The 40-day route flown from ISRO's own orbit numbers, the checks against the real mission, the push budget, why the long way, then the landing you fly. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--saffron:#ff9933;--moon:#cfd3da;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--saffron)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h3{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:14px 0 6px}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"],button.primary{background:var(--saffron);border-color:var(--saffron);color:#1c1002}button:focus-visible,input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--saffron)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px;touch-action:manipulation}
+#route{aspect-ratio:1/1;max-height:640px}#descent{aspect-ratio:16/9}@media (max-width:620px){#descent{aspect-ratio:4/3}}
+.kv{display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}.kv span{color:var(--dim)}.kv b{text-align:right;font-weight:600}
+.big{font-family:var(--display);font-weight:700;font-size:28px;line-height:1}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px;min-height:44px}.verdict b.ok{color:var(--ok)}.verdict b.bad{color:var(--bad)}.verdict b.mid{color:var(--gold)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+tr.on td{color:var(--saffron)}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.ctl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;margin-top:10px}.ctl label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--dim)}.ctl output{font-family:var(--display);font-size:17px;color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line)}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat.warn{border-top-color:var(--gold)}.stat.bad{border-top-color:var(--bad)}.stat.ok{border-top-color:var(--ok)}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Kaksha Labs"><div class="sa-in"><a href="index.html" class="sa-brand">Kaksha Labs</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html" aria-current="page">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">ISRO’s own numbers · Newton’s physics · 40 days to the Moon</div>
+    <h1>Chandrayaan-3 Moon Lab</h1>
+    <p>On 23 August 2023 India became the fourth country to land softly on the Moon, and the first near its south pole. Apollo 11 got there in three days; Chandrayaan-3 took forty. Here the whole route is flown again from the orbits ISRO published after every engine burn, with the Moon pulling on the spacecraft all the way. Then you fly the last 30 km down yourself, with the same four 800-newton engines Vikram had.</p>
+  </header>
+
+  <div class="two">
+    <section class="card">
+      <h2>The long way round</h2>
+      <canvas id="route" aria-label="Chandrayaan-3's path from Earth orbit to the Moon, animated by date"></canvas>
+      <div class="seg" style="margin-top:10px"><button type="button" class="primary" id="play">Pause</button><button type="button" id="restart">From launch</button><span class="note" style="margin-left:auto" id="when"></span></div>
+      <label class="note" style="display:block;margin-top:8px">Date<input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Scrub through the mission by date"></label>
+    </section>
+    <section class="card">
+      <h2>Every burn</h2>
+      <p class="note">Each row is an orbit ISRO announced. The simulator fires the engine at the next low point of the orbit on that date, sized to reach exactly that orbit, and lets Earth and the Moon do the rest.</p>
+      <div class="scroll"><table id="burns"></table></div>
+      <div class="kv" style="margin-top:12px" id="routeKv"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Did the replay find the Moon?</h2>
+    <p>The orbits come from ISRO. The Moon’s position comes from its real orbit that month. The one thing we had to fit is which way the first orbit’s long axis pointed, because our model is flat and the real orbit was tilted. We tuned that single angle until the spacecraft passed the Moon at 164 km, the low point ISRO reported. Everything below is what the physics then produced on its own.</p>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>The push budget</h2>
+      <p>The speed each burn had to add or remove, worked out from ISRO’s before-and-after orbits. Around the Moon the numbers are braking: each burn lowers the far side of the orbit until Vikram is in a 25 by 134 km orbit, ready to land.</p>
+      <div class="scroll"><table id="budget"></table></div>
+    </section>
+    <section class="card">
+      <h2>Why forty days, not three?</h2>
+      <p id="why1"></p>
+      <p>So the long way costs no extra push. What it saves is a bigger rocket. Apollo’s Saturn V had a third stage that fired once and threw the ship straight at the Moon. LVM3 cannot throw 3.9 tonnes that hard; it can only leave it in a stretched orbit that reaches 36,500 km. From there the spacecraft’s own small engine has to do the rest, and a small engine cannot do it in one go.</p>
+      <p>A burn only works well near the low point of the orbit, where the spacecraft moves fastest, and a small engine needs a long time to add a lot of speed: ISRO’s Moon-capture burn alone lasted 1,835 seconds. So the work is split across five low points, each one checked before the next, and the last one is timed so the Moon is waiting at the far end. Try the trade-off yourself in the <a href="rocket-lab.html">Rocket Lab</a>, where LVM3 falls well short of the push the Moon needs.</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Land Vikram yourself</h2>
+    <p>The real descent began at 30 km above the Moon at about 1.69 km/s, sideways. Four 800-newton engines, which cannot throttle below 40%, had to kill all of that in about 20 minutes, on a lander weighing 1.75 tonnes. At the start the engines lift only 1.1 times the lander’s weight on the Moon. In 2019, Chandrayaan-2’s lander was still falling at 58 m/s at 330 m and crashed.</p>
+    <div class="seg" style="margin-bottom:10px"><span class="note" style="margin-right:4px">Start</span><button type="button" data-start="auto" aria-pressed="true">Watch ISRO’s plan</button><button type="button" data-start="full" aria-pressed="false">Fly all 30 km</button><button type="button" data-start="fine" aria-pressed="false">Take over at 7.2 km</button><button type="button" data-start="hover" aria-pressed="false">Take over at the 150 m hover</button></div>
+    <canvas id="descent" aria-label="The lander's descent: altitude against distance travelled, with a close-up of the lander"></canvas>
+    <div class="stats" style="margin-top:10px" id="stats"></div>
+    <div class="ctl">
+      <label>Throttle (keys ↑ ↓ or W S) <output id="oThr"></output><input type="range" id="iThr" min="0" max="100" step="5" value="100"></label>
+      <label>Thrust angle above level (keys ← → or A D) <output id="oAng"></output><input type="range" id="iAng" min="0" max="90" step="1" value="10"></label>
+    </div>
+    <div class="seg" style="margin-top:10px"><button type="button" class="primary" id="lgo">Start descent</button><span class="note">Time speed</span><button type="button" data-w="1" aria-pressed="false">1×</button><button type="button" data-w="5" aria-pressed="false">5×</button><button type="button" data-w="20" aria-pressed="true">20×</button></div>
+    <div class="verdict" id="lverdict">Press Start descent. On “Watch ISRO’s plan” the autopilot flies the phases ISRO described; on the others you hold the controls.</div>
+    <p class="note" style="margin-top:10px">Pass mark in this simulator: touch down slower than 3 m/s downward and 1 m/s sideways. A thrust angle of 0° pushes straight back against the motion, 90° pushes straight up.</p>
+  </section>
+
+  <section class="card">
+    <h2>What this model leaves out</h2>
+    <p class="note">The route is flown in one flat plane; the real orbits were tilted and the lunar orbit ran over the poles. The Sun’s pull is left out, and every burn happens in an instant. In the model the Moon slowly drags the orbit’s low point down by about 50 km over two weeks; ISRO’s published low points instead crept upward, from 170 to 288 km, as they trimmed the orbit. For the lander, ISRO publishes the total mass and the engines but not the propellant load or the engines’ efficiency. We assume 950 kg of propellant and a specific impulse of 310 s, typical for this type of engine. Chandrayaan-2’s lighter lander carried 845 kg.</p>
+  </section>
+
+  <footer>Sources: ISRO, Chandrayaan-3 mission page (masses, engines, landing site); ISRO’s orbit announcements after each manoeuvre, as tabulated in the Wikipedia article “Chandrayaan-3” (orbits, dates, the 1,835 s capture burn, the descent narrative: braking from 30 km, 7.2 km after 11.5 minutes, a hover at about 150 m, touchdown at 12:33 UTC); the Wikipedia article “Chandrayaan-2” (2019 lander masses, its 58 m/s at 330 m). Moon’s orbit fitted to its August 2023 perigee (357,311 km on 2 August) and apogee. Gravity constants: IAU/JPL. An independent model, not affiliated with ISRO.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const D=Math.PI/180,nf=new Intl.NumberFormat('en-US');
+// ---------- the route ----------
+const MU_E=398600.4418,RE=6378.137,MU_M=4902.800,RM=1737.4,DAY=86400,T0=Date.UTC(2023,6,14,9,5,17)/1000;
+const M_PERI=357311,M_APO=406290,M_A=(M_PERI+M_APO)/2,M_E=(M_APO-M_PERI)/(M_APO+M_PERI),M_TP=Date.UTC(2023,7,2,5,52)/1000,M_N=2*Math.PI/(27.5545*DAY);
+const ROT=126.9018*D; // the one fitted angle: direction of the launch orbit's long axis
+function moonRaw(tu){let M=M_N*(tu-M_TP);M=((M%(2*Math.PI))+2*Math.PI)%(2*Math.PI);let E=M;for(let i=0;i<8;i++)E-=(E-M_E*Math.sin(E)-M)/(1-M_E*Math.cos(E));return [M_A*(Math.cos(E)-M_E),M_A*Math.sqrt(1-M_E*M_E)*Math.sin(E)]}
+function moonPos(t,rot=ROT){const [x,y]=moonRaw(t),c=Math.cos(rot),s=Math.sin(rot);return [c*x-s*y,s*x+c*y]}
+const EARTH_BURNS=[['Launch on LVM3 M4',null,170,36500],['Earth burn 1','2023-07-15',173,41762],['Earth burn 2','2023-07-17',226,41603],['Earth burn 3','2023-07-18',228,51400],['Earth burn 4','2023-07-20',233,71351],['Earth burn 5','2023-07-25',236,127603],['Trans-lunar injection','2023-07-31T18:00',288,369328]];
+const MOON_BURNS=[['Lunar orbit insertion','5 Aug',164,18074],['Moon burn 2','6 Aug',170,4313],['Moon burn 3','9 Aug',174,1437],['Moon burn 4','14 Aug',150,177],['Moon burn 5','16 Aug',153,163],['Vikram deboost 1','18 Aug',113,157],['Vikram deboost 2','20 Aug',25,134]];
+const vis=(mu,r,a)=>Math.sqrt(mu*(2/r-1/a));
+function accel(t,x,y,rot){const r2=x*x+y*y,r=Math.sqrt(r2),k=-MU_E/(r2*r);let ax=k*x,ay=k*y;const [mx,my]=moonPos(t,rot),dx=mx-x,dy=my-y,d2=dx*dx+dy*dy,d=Math.sqrt(d2),rm=Math.sqrt(mx*mx+my*my);
+  ax+=MU_M*(dx/(d2*d)-mx/(rm*rm*rm));ay+=MU_M*(dy/(d2*d)-my/(rm*rm*rm));return [ax,ay,d,mx,my]}
+function flyRoute(rot,rec){
+  let t=T0,x=RE+170,y=0,vx=0,vy=vis(MU_E,RE+170,(RE+170+RE+36500)/2),bi=1,prevRd=0,phase='earth',lastRec=-1e9;const events=[];let closest={d:1e12};
+  const due=EARTH_BURNS.map(b=>b[1]?Date.parse(b[1].length>10?b[1]+'Z':b[1]+'T00:00Z')/1000:0);
+  const f=(tt,s)=>{const a=accel(tt,s[0],s[1],rot);return [s[2],s[3],a[0],a[1]]};
+  while(t<T0+26*DAY){
+    const r=Math.hypot(x,y),d=accel(t,x,y,rot)[2],dt=Math.min(600,0.004*2*Math.PI*Math.min(Math.sqrt(r*r*r/MU_E),Math.sqrt(d*d*d/MU_M)));
+    const s0=[x,y,vx,vy],k1=f(t,s0),k2=f(t+dt/2,s0.map((v,i)=>v+k1[i]*dt/2)),k3=f(t+dt/2,s0.map((v,i)=>v+k2[i]*dt/2)),k4=f(t+dt,s0.map((v,i)=>v+k3[i]*dt));
+    [x,y,vx,vy]=s0.map((v,i)=>v+dt/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i]));t+=dt;
+    const rd=(x*vx+y*vy)/Math.hypot(x,y);
+    if(phase==='earth'&&bi<EARTH_BURNS.length&&prevRd<0&&rd>=0&&t>=due[bi]){const rr=Math.hypot(x,y),v=Math.hypot(vx,vy),vn=vis(MU_E,rr,(rr+RE+EARTH_BURNS[bi][3])/2);vx*=vn/v;vy*=vn/v;events.push({t,i:bi,dv:(vn-v)*1000,alt:rr-RE,x,y});bi++;if(bi===EARTH_BURNS.length)phase='coast'}
+    prevRd=rd;
+    if(phase==='coast'){const a=accel(t,x,y,rot);if(a[2]<closest.d)closest={d:a[2],t,x,y,vx,vy,mx:a[3],my:a[4]};else if(a[2]>closest.d+5000&&closest.d<60000)phase='arrived';if(a[2]<RM){closest.hit=true;phase='arrived'}}
+    if(rec&&t-lastRec>=(phase==='earth'?900:600)){rec.push([t,x,y]);lastRec=t}
+    if(phase==='arrived'){if(rec)rec.push([t,x,y]);break}
+  }
+  return {events,closest};
+}
+const REC=[];const ROUTE=flyRoute(ROT,REC),C=ROUTE.closest;
+// capture burn at the closest approach
+const mv=(()=>{const h=60,[a,b]=moonPos(C.t-h),[p,q]=moonPos(C.t+h);return [(p-a)/(2*h),(q-b)/(2*h)]})();
+const vRel=Math.hypot(C.vx-mv[0],C.vy-mv[1]),LOI_DV=(vRel-vis(MU_M,C.d,(C.d+RM+18074)/2))*1000;
+const fmtD=t=>{const d=new Date(t*1000);return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'})+' '+d.toISOString().slice(11,16)+' UTC'};
+// tables
+const burnsT=document.getElementById('burns');
+function drawBurns(tNow){let h='<tr><th>Burn</th><th>Date</th><th class="n">Orbit after (km)</th><th class="n">Push</th></tr>';
+  h+=`<tr${tNow<(ROUTE.events[0]?.t||0)?' class="on"':''}><td>Launch on LVM3 M4</td><td>14 Jul 09:05 UTC</td><td class="n">170 × 36,500</td><td class="n">rocket</td></tr>`;
+  ROUTE.events.forEach((e,k)=>{const b=EARTH_BURNS[e.i],nx=ROUTE.events[k+1]?.t??C.t;h+=`<tr${tNow>=e.t&&tNow<nx?' class="on"':''}><td>${b[0]}</td><td>${fmtD(e.t)}</td><td class="n">${nf.format(b[2])} × ${nf.format(b[3])}</td><td class="n">${Math.abs(e.dv)<10?'about 0*':Math.round(e.dv)+' m/s'}</td></tr>`});
+  h+=`<tr${tNow>=C.t?' class="on"':''}><td>Lunar orbit insertion</td><td>${fmtD(C.t)}</td><td class="n">164 × 18,074 around the Moon</td><td class="n">${Math.round(LOI_DV)} m/s brake</td></tr>`;burnsT.innerHTML=h+'<tr><td colspan="4" class="note">* This burn mainly lifted the orbit’s low point, firing at the high point. The replay only changes the high point, so it shows almost nothing here.</td></tr>'}
+const tli=ROUTE.events.at(-1),earthDv=ROUTE.events.reduce((a,e)=>a+e.dv,0);
+document.getElementById('routeKv').innerHTML=`<span>Push added at Earth (sum of six burns)</span><b>${nf.format(Math.round(earthDv))} m/s</b><span>Trans-lunar coast</span><b>${(( C.t-tli.t)/3600).toFixed(0)} hours</b><span>Closest pass of the Moon</span><b>${Math.round(C.d-RM)} km up</b><span>Speed past the Moon</span><b>${vRel.toFixed(2)} km/s</b><span>Moon’s escape speed there</span><b>${Math.sqrt(2*MU_M/C.d).toFixed(2)} km/s</b>`;
+const oneBurn=(vis(MU_E,RE+170,(2*RE+170+369328)/2)-vis(MU_E,RE+170,(2*RE+170+36500)/2))*1000;
+document.getElementById('why1').innerHTML=`Going from the launch orbit to the Moon in a single burn would need ${nf.format(Math.round(oneBurn))} m/s. ISRO’s six burns add up to ${nf.format(Math.round(earthDv))} m/s in this replay. They are nearly the same, because every burn happens at the same low point of the orbit.`;
+// budget
+(()=>{let h='<tr><th>Step</th><th class="n">Orbit after (km)</th><th class="n">Push</th></tr>',sM=0;
+  for(let i=1;i<MOON_BURNS.length;i++){const [,,p0,a0]=MOON_BURNS[i-1],[l,d,p1,a1]=MOON_BURNS[i],rp=RM+Math.min(p0,p1),dv=Math.abs(vis(MU_M,rp,(2*RM+p1+a1)/2)-vis(MU_M,rp,(2*RM+p0+a0)/2))*1000;sM+=dv;h+=`<tr><td>${l}, ${d}</td><td class="n">${p1} × ${nf.format(a1)}</td><td class="n">${Math.round(dv)} m/s</td></tr>`}
+  const v30=vis(MU_M,RM+30,(2*RM+25+134)/2)*1000;
+  h=`<tr><th>Step</th><th class="n">Orbit after (km)</th><th class="n">Push</th></tr><tr><td>Six Earth burns</td><td class="n">288 × 369,328</td><td class="n">${nf.format(Math.round(earthDv))} m/s</td></tr><tr><td>Lunar orbit insertion, 5 Aug</td><td class="n">164 × 18,074</td><td class="n">${Math.round(LOI_DV)} m/s</td></tr>`+h.slice(h.indexOf('</tr>')+5)+`<tr><td>Powered descent from 30 km, 23 Aug</td><td class="n">surface</td><td class="n">${nf.format(Math.round(v30))} m/s + losses</td></tr><tr><td><b>Total from the launch orbit</b></td><td></td><td class="n"><b>about ${(Math.round((earthDv+LOI_DV+sM+v30)/100)/10).toFixed(1)} km/s + losses</b></td></tr>`;
+  document.getElementById('budget').innerHTML=h})();
+// ---------- route animation ----------
+const cv=document.getElementById('route'),g=cv.getContext('2d');let W=0,H=0;
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0);return [w,h]}
+const tA=T0,tB=C.t+0.25*DAY;let tNow=tA,playing=true,lastF=0;
+const scrub=document.getElementById('scrub'),when=document.getElementById('when');
+const stars=[];{let s=11;const R=()=>{s=(s*16807)%2147483647;return s/2147483647};for(let i=0;i<180;i++)stars.push([R(),R(),R()])}
+function idxAt(t){let lo=0,hi=REC.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(REC[m][0]<=t)lo=m;else hi=m-1}return lo}
+function drawRoute(){[W,H]=[cv.clientWidth,cv.clientHeight];const cx=W/2,cy=H/2,S=Math.min(W,H)/2/435000;g.fillStyle='#02030a';g.fillRect(0,0,W,H);
+  for(const [a,b,c] of stars){g.globalAlpha=.15+c*.5;g.fillStyle='#fff';g.fillRect(a*W,b*H,1.1,1.1)}g.globalAlpha=1;
+  const P=(x,y)=>[cx+x*S,cy-y*S];
+  // Moon orbit
+  g.strokeStyle='rgba(207,211,218,.18)';g.setLineDash([3,5]);g.beginPath();for(let k=0;k<=120;k++){const [x,y]=moonPos(M_TP+k/120*27.5545*DAY);const [px,py]=P(x,y);k?g.lineTo(px,py):g.moveTo(px,py)}g.stroke();g.setLineDash([]);
+  // trail
+  const n=idxAt(tNow);g.lineWidth=1.3;g.strokeStyle='rgba(255,153,51,.85)';g.beginPath();for(let k=0;k<=n;k++){const [px,py]=P(REC[k][1],REC[k][2]);k?g.lineTo(px,py):g.moveTo(px,py)}g.stroke();g.lineWidth=1;
+  // burns
+  for(const e of ROUTE.events){if(e.t>tNow)continue;const [px,py]=P(e.x,e.y);g.fillStyle='#ffd27a';g.beginPath();g.arc(px,py,2.5,0,7);g.fill()}
+  // Earth
+  const [ex,ey]=P(0,0);const eg=g.createRadialGradient(ex-2,ey-2,1,ex,ey,8);eg.addColorStop(0,'#9fd0ff');eg.addColorStop(1,'#1f5fa8');g.fillStyle=eg;g.beginPath();g.arc(ex,ey,Math.max(6,RE*S),0,7);g.fill();
+  // Moon now
+  const [mx,my]=moonPos(tNow),[qx,qy]=P(mx,my);g.fillStyle='#cfd3da';g.beginPath();g.arc(qx,qy,Math.max(5,RM*S),0,7);g.fill();
+  // craft
+  const k=Math.min(n,REC.length-1),[sx,sy]=P(REC[k][1],REC[k][2]);g.fillStyle='#fff';g.beginPath();g.arc(sx,sy,3.2,0,7);g.fill();g.strokeStyle='#ff9933';g.beginPath();g.arc(sx,sy,6.5,0,7);g.stroke();
+  g.font='600 12px "Saira Condensed",sans-serif';g.fillStyle='#8a97a8';g.fillText('EARTH',ex+10,ey+4);g.fillText('MOON',qx+9,qy+4);
+  // inset: near the Moon
+  const dM=Math.hypot(REC[k][1]-mx,REC[k][2]-my);
+  if(dM<90000||tNow>=C.t){const iw=Math.min(W*.42,230),ix=W-iw-10,iy=10,ic=[ix+iw/2,iy+iw/2],IS=iw/2/24000;g.fillStyle='rgba(4,6,11,.92)';g.fillRect(ix,iy,iw,iw);g.strokeStyle='#1f2a38';g.strokeRect(ix,iy,iw,iw);
+    g.save();g.beginPath();g.rect(ix,iy,iw,iw);g.clip();
+    g.strokeStyle='rgba(255,153,51,.85)';g.beginPath();let first=true;for(let j=0;j<=n;j++){const [tt,x,y]=REC[j];if(tt<C.t-2.5*DAY)continue;const [a,b]=moonPos(tt);const px=ic[0]+(x-a)*IS,py=ic[1]-(y-b)*IS;first?g.moveTo(px,py):g.lineTo(px,py);first=false}g.stroke();
+    if(tNow>=C.t){// capture ellipse, low point at the closest approach direction
+      const ang=Math.atan2(C.y-C.my,C.x-C.mx),rp=RM+164,ra=RM+18074,a=(rp+ra)/2,c=a-rp,b=Math.sqrt(a*a-c*c);g.strokeStyle='#74c7ff';g.beginPath();g.ellipse(ic[0]-c*Math.cos(ang)*IS,ic[1]+c*Math.sin(ang)*IS,a*IS,b*IS,-ang,0,7);g.stroke()}
+    g.fillStyle='#cfd3da';g.beginPath();g.arc(ic[0],ic[1],Math.max(3,RM*IS),0,7);g.fill();g.restore();
+    g.fillStyle='#8a97a8';g.fillText(tNow>=C.t?'CAPTURED · 164 × 18,074 KM':'APPROACHING THE MOON',ix+8,iy+iw-8)}
+  when.textContent=fmtD(tNow)+' · day '+Math.floor((tNow-T0)/DAY+1);
+}
+let lastRow=-1;
+function routeLoop(ts){const dtr=lastF?Math.min(.1,(ts-lastF)/1000):0;lastF=ts;if(playing){tNow+=dtr*1.6*DAY;if(tNow>=tB){tNow=tB;playing=false;document.getElementById('play').textContent='Play'}scrub.value=Math.round((tNow-tA)/(tB-tA)*1000)}
+  drawRoute();const row=ROUTE.events.filter(e=>e.t<=tNow).length+(tNow>=C.t?1:0);if(row!==lastRow){drawBurns(tNow);lastRow=row}requestAnimationFrame(routeLoop)}
+document.getElementById('play').onclick=e=>{if(tNow>=tB)tNow=tA;playing=!playing;e.target.textContent=playing?'Pause':'Play'};
+document.getElementById('restart').onclick=()=>{tNow=tA;playing=true;document.getElementById('play').textContent='Pause'};
+scrub.oninput=()=>{tNow=tA+scrub.value/1000*(tB-tA);playing=false;document.getElementById('play').textContent='Play'};
+size(cv);new ResizeObserver(()=>size(cv)).observe(cv);requestAnimationFrame(routeLoop);
+
+// ---------- the descent ----------
+const MU=4902.8e9,R=1737.4e3,G0=9.80665,L={m0:1752,prop:950,isp:310,Tmax:3200,minThr:.4};
+function start(){const rp=R+25e3,ra=R+134e3,a=(rp+ra)/2,e=(ra-rp)/(ra+rp),r=R+30e3,v=Math.sqrt(MU*(2/r-1/a)),hh=Math.sqrt(MU*a*(1-e*e)),vt=hh/r;return {t:0,x:0,h:30e3,vx:vt,vy:-Math.sqrt(Math.max(0,v*v-vt*vt)),m:L.m0,p:L.prop,thr:0,ang:0,trail:[]}}
+function step(s,thr,ang,dt){const r=R+s.h,g=MU/r/r,cen=s.vx*s.vx/r,T=s.p>0?thr*L.Tmax:0,a=T/s.m,A=ang*D;
+  s.vx+=(-a*Math.cos(A)-s.vx*s.vy/r)*dt;s.vy+=(a*Math.sin(A)-g+cen)*dt;s.x+=s.vx*dt*R/r;s.h+=s.vy*dt;const md=T/(G0*L.isp);s.m-=md*dt;s.p=Math.max(0,s.p-md*dt);s.t+=dt;s.thr=s.p>0?thr:0;s.ang=ang}
+function auto(s,st,dt){const r=R+s.h,g=MU/r/r-s.vx*s.vx/r,amax=L.Tmax/s.m;let ax=0,ay=0,ph;
+  if(st.ph===0){ph='Rough braking';const tgo=Math.max(20,690-s.t);ay=g+(-(s.h-7200)/tgo-s.vy)/8;ax=-Math.sqrt(Math.max(0,amax*amax-ay*ay));if(s.h<=7250||s.vx<=0){st.ph=1;st.t1=s.t}}
+  if(st.ph===1){ph='Attitude hold';ay=g+(0-s.vy)/4;ax=-Math.min(amax*.8,Math.max(0,s.vx)/5);if(s.t-st.t1>=10){st.ph=2;st.tgo=Math.max(60,1.6*Math.hypot(s.vx,s.vy)/(amax-g))}}
+  if(st.ph===2){ph='Fine braking';st.tgo=Math.max(4,st.tgo-dt);const tg=st.tgo;ax=-s.vx/tg*1.5;ay=g+(6*(150-s.h)-4*s.vy*tg)/(tg*tg);if(s.h<=160&&Math.abs(s.vy)<3&&Math.abs(s.vx)<2){st.ph=3;st.t3=s.t}}
+  if(st.ph===3){ph='Hover at 150 m';ay=g+(0-s.vy)/3+(150-s.h)/30;ax=-s.vx/3;if(s.t-st.t3>=30)st.ph=4}
+  if(st.ph===4){ph='Terminal descent';const vyT=s.h>20?-Math.max(1.5,Math.min(8,s.h/15)):-1;ay=g+(vyT-s.vy)/2;ax=-s.vx/3}
+  ay=Math.max(0,ay);let need=Math.hypot(ax,ay),thr=need/amax;if(thr>1){thr=1;if(ay>=amax){ay=amax;ax=0}else ax=Math.sign(ax)*Math.sqrt(amax*amax-ay*ay)}
+  if(thr<L.minThr)thr=need<1e-3?0:L.minThr;return {thr,ang:Math.atan2(ay,-ax)/D,ph}}
+// run the autopilot once, to know where each take-over point is and for the check table
+function autoRun(stopAt){const s=start(),st={ph:0};const marks={};let lastPh='';while(s.h>0&&s.t<4000){const c=auto(s,st,.1);if(c.ph!==lastPh){marks[c.ph]={...s,trail:[]};lastPh=c.ph}if(stopAt&&c.ph===stopAt)return {s,st};step(s,c.thr,c.ang,.1)}return {s,marks}}
+const REF=autoRun();const PLAN=[];{const s=start(),st={ph:0};let n=0;while(s.h>0&&s.t<4000){const c=auto(s,st,.1);step(s,c.thr,c.ang,.1);if(n++%20===0)PLAN.push([s.x,Math.max(0,s.h)])}PLAN.push([s.x,0])}const RB=REF.marks['Attitude hold'];
+// check table
+(()=>{const rows=[
+  ['Arrives at the Moon on','5 August 2023 (ISRO, capture burn)',fmtD(C.t).replace(/ \d\d:\d\d UTC/,' 2023'),'same day'],
+  ['Push needed to be captured','not published; the burn lasted 1,835 s',`${Math.round(LOI_DV)} m/s`,`about ${Math.round(LOI_DV*3150/1835/10)*10} N from a roughly 3.1-tonne craft, the size of ISRO’s 440 N apogee engine`],
+  ['Rough braking from 30 km, all four engines','7.2 km up after 11.5 minutes',`${(RB.h/1000).toFixed(1)} km after ${(RB.t/60).toFixed(1)} minutes, ${Math.round(RB.vx)} m/s still to lose`,'the four 800 N engines can just do it'],
+  ['Whole powered descent','touchdown 12:33 UTC',`${(REF.s.t/60).toFixed(0)} minutes, ${Math.round(REF.s.p)} kg of propellant spare`,'tight, as it was for ISRO']];
+  document.getElementById('check').innerHTML='<tr><th>Test</th><th>Real mission</th><th>This replay</th><th>Reading</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')})();
+// game state
+const dc=document.getElementById('descent'),dg=dc.getContext('2d');let mode='auto',S=null,ST=null,running=false,warp=20,lastT=0,manual=false,done=null;
+const iThr=document.getElementById('iThr'),iAng=document.getElementById('iAng'),oThr=document.getElementById('oThr'),oAng=document.getElementById('oAng'),stats=document.getElementById('stats'),lv=document.getElementById('lverdict');
+function thrVal(){const v=+iThr.value;return v<40?0:v/100}
+function showCtl(){const v=+iThr.value;oThr.textContent=v<40?'Off (engines can’t run below 40%)':v+'%  ·  '+nf.format(Math.round(v/100*L.Tmax))+' N';oAng.textContent=iAng.value+'°'}
+iThr.oninput=iAng.oninput=showCtl;
+function reset(){done=null;running=false;document.getElementById('lgo').textContent='Start descent';
+  if(mode==='auto'||mode==='full'){S=start();ST={ph:0}}else{const r=autoRun(mode==='fine'?'Fine braking':'Terminal descent');S=r.s;ST=r.st;S.trail=[]}
+  manual=mode!=='auto';if(manual&&mode==='full'){iThr.value=100;iAng.value=8}else if(mode==='fine'){iThr.value=100;iAng.value=30}else if(mode==='hover'){iThr.value=55;iAng.value=90}showCtl();drawDescent();drawStats()}
+document.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>{mode=b.dataset.start;document.querySelectorAll('[data-start]').forEach(x=>x.setAttribute('aria-pressed',x===b));reset();lv.innerHTML=mode==='auto'?'The autopilot flies ISRO’s phases: rough braking, a 10-second hold, fine braking, a hover at 150 m, then the final descent.':mode==='full'?'You have the whole descent. Start nearly level to brake, and tip up as the speed falls or gravity wins.':mode==='fine'?'The autopilot has braked to 7.2 km. About '+Math.round(S.vx)+' m/s of sideways speed is left to lose.':'Hovering at 150 m with the speed nulled. Bring it down gently: about 1.1 times the weight holds a hover.'});
+document.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{warp=+b.dataset.w;document.querySelectorAll('[data-w]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+document.getElementById('lgo').onclick=e=>{if(done)reset();running=!running;e.target.textContent=running?'Pause':'Resume';if(running)dc.focus?.()};
+addEventListener('keydown',e=>{if(!manual||!S||!running)return;const k=e.key;let used=true;if(k==='ArrowUp'||k==='w'||k==='W')iThr.value=Math.min(100,+iThr.value+5);else if(k==='ArrowDown'||k==='s'||k==='S')iThr.value=Math.max(0,+iThr.value-5);else if(k==='ArrowLeft'||k==='a'||k==='A')iAng.value=Math.max(0,+iAng.value-2);else if(k==='ArrowRight'||k==='d'||k==='D')iAng.value=Math.min(90,+iAng.value+2);else used=false;if(used){e.preventDefault();showCtl()}});
+function finish(){const vy=-S.vy,vx=Math.abs(S.vx);running=false;document.getElementById('lgo').textContent='Try again';
+  const ok=vy<=3&&vx<=1,soft=vy<=6&&vx<=3;done=ok?'ok':soft?'hard':'crash';
+  lv.innerHTML=ok?`<b class="ok">Touchdown.</b> ${vy.toFixed(1)} m/s down and ${vx.toFixed(1)} m/s sideways after ${(S.t/60).toFixed(1)} minutes, with ${Math.round(S.p)} kg of propellant left. Vikram touched down at 12:33 UTC on 23 August 2023.`
+    :soft?`<b class="mid">Hard landing.</b> ${vy.toFixed(1)} m/s down and ${vx.toFixed(1)} m/s sideways. Strong legs might survive it; the pass mark is 3 m/s down and 1 m/s sideways.`
+    :`<b class="bad">Crashed</b> at ${vy.toFixed(0)} m/s down and ${vx.toFixed(0)} m/s sideways${S.p<=0?', out of propellant':''}. Chandrayaan-2’s lander was still falling at 58 m/s at 330 m in 2019.`}
+function tick(ts){const dtr=lastT?Math.min(.05,(ts-lastT)/1000):0;lastT=ts;
+  if(running&&S&&!done){let left=dtr*warp;while(left>0&&S.h>0){const dt=Math.min(.1,left);left-=dt;let thr,ang;if(manual){thr=thrVal();ang=+iAng.value}else{const c=auto(S,ST,dt);thr=c.thr;ang=c.ang;S.ph=c.ph}step(S,thr,ang,dt);if(S.trail.length===0||S.t-S.trail.at(-1)[0]>2)S.trail.push([S.t,S.x,S.h])}
+    if(S.h<=0){S.h=0;finish()}drawStats()}
+  drawDescent();requestAnimationFrame(tick)}
+function drawStats(){if(!S)return;const g=MU/(R+S.h)**2,tw=S.p>0?L.Tmax/(S.m*g):0;const vyC=-S.vy>3?(S.h<1000&&-S.vy>8?'bad':'warn'):'ok';
+  const cells=[['Time',`T+${Math.floor(S.t/60)}:${String(Math.floor(S.t%60)).padStart(2,'0')}`,''],['Altitude',S.h>=1000?(S.h/1000).toFixed(2)+' km':Math.round(S.h)+' m',''],['Sideways',Math.round(S.vx*10)/10+' m/s',Math.abs(S.vx)>1&&S.h<500?'warn':''],['Falling',(Math.round(-S.vy*10)/10)+' m/s',S.h<2000?vyC:''],
+   ['Propellant',Math.round(S.p)+' kg',S.p<60?'bad':S.p<150?'warn':''],['Full thrust ÷ weight',tw.toFixed(2),tw<1?'warn':''],['Throttle',Math.round(S.thr*100)+'%',''],['Phase',manual?'You':(S.ph||'Ready'),'']];
+  stats.innerHTML=cells.map(c=>`<div class="stat ${c[2]}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('')}
+function drawDescent(){const [w,h]=[dc.clientWidth,dc.clientHeight];dg.fillStyle='#02030a';dg.fillRect(0,0,w,h);if(!S)return;
+  const pad=34,X0=pad,Y0=h-24,pw=w-pad-14,ph=h-24-14,xr=Math.max(820e3,REF.s.x*1.05),P=(x,y)=>[X0+x/xr*pw,Y0-y/31e3*ph];
+  dg.strokeStyle='#1f2a38';dg.font='600 11px "Saira Condensed",sans-serif';dg.fillStyle='#8a97a8';
+  for(let km=0;km<=30;km+=10){const [,y]=P(0,km*1e3);dg.beginPath();dg.moveTo(X0,y);dg.lineTo(X0+pw,y);dg.stroke();dg.fillText(km+' km',2,y+4)}
+  for(let km=0;km<=xr/1e3;km+=200){const [x]=P(km*1e3,0);dg.fillText(km+' km',x-8,h-8)}
+  // ISRO plan, faint
+  dg.strokeStyle='rgba(116,199,255,.35)';dg.setLineDash([4,4]);dg.beginPath();PLAN.forEach((q,k)=>{const [x,y]=P(q[0],q[1]);k?dg.lineTo(x,y):dg.moveTo(x,y)});dg.stroke();dg.setLineDash([]);
+  // ground
+  dg.fillStyle='#2a2d33';dg.fillRect(X0,Y0,pw,3);
+  // trail
+  dg.strokeStyle='#ff9933';dg.lineWidth=2;dg.beginPath();S.trail.forEach((p,k)=>{const [x,y]=P(p[1],p[2]);k?dg.lineTo(x,y):dg.moveTo(x,y)});const [cx,cy]=P(S.x,S.h);dg.lineTo(cx,cy);dg.stroke();dg.lineWidth=1;
+  dg.fillStyle='#fff';dg.beginPath();dg.arc(cx,cy,3.5,0,7);dg.fill();
+  dg.fillStyle='#8a97a8';dg.fillText('DASHED: ISRO’S PLAN AS THE AUTOPILOT FLIES IT',X0+6,16);
+  // close-up of the lander
+  const bw=Math.min(170,w*.3),bh=bw*1.05,bx=w-bw-12,by=22;dg.fillStyle='rgba(11,16,23,.95)';dg.fillRect(bx,by,bw,bh);dg.strokeStyle='#1f2a38';dg.strokeRect(bx,by,bw,bh);
+  const gy=by+bh-18;if(S.h<300){const gyy=gy;dg.fillStyle='#3a3d44';dg.fillRect(bx,gyy,bw,by+bh-gyy)}
+  const ly=S.h<300?gy-14-(S.h/300)*(bh-60):by+bh/2,lx=bx+bw/2,tilt=(90-(S.ang||0))*D;
+  dg.save();dg.translate(lx,ly);dg.rotate(-tilt*(S.vx>=0?1:-1));
+  if(S.thr>0){const fl=10+S.thr*26*(.85+Math.random()*.3);const fg=dg.createLinearGradient(0,8,0,8+fl);fg.addColorStop(0,'rgba(255,240,200,.95)');fg.addColorStop(1,'rgba(255,140,40,0)');dg.fillStyle=fg;dg.beginPath();dg.moveTo(-7,8);dg.lineTo(7,8);dg.lineTo(0,8+fl);dg.fill()}
+  dg.fillStyle='#d9b45a';dg.fillRect(-12,-10,24,18);dg.fillStyle='#e7edf3';dg.fillRect(-8,-16,16,6);dg.strokeStyle='#bfc6cf';dg.lineWidth=2;dg.beginPath();dg.moveTo(-10,8);dg.lineTo(-17,16);dg.moveTo(10,8);dg.lineTo(17,16);dg.stroke();dg.lineWidth=1;dg.restore();
+  dg.fillStyle='#8a97a8';dg.fillText(S.h<300?Math.round(S.h)+' M TO THE GROUND':'VIKRAM, CLOSE UP',bx+8,by+14)}
+dc.tabIndex=0;size(dc);new ResizeObserver(()=>{size(dc);drawDescent()}).observe(dc);reset();requestAnimationFrame(tick);
+window.__c3={ROUTE,C,LOI_DV,REF,autoRun,start,step,auto,flyRoute,setMode:m=>document.querySelector(`[data-start="${m}"]`).click(),state:()=>S,go:()=>document.getElementById('lgo').click(),setWarp:w=>{warp=w}};
+})();
+</script>
+
+</html>

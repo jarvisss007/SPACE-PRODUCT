@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Ion Engine Lab · Kaksha Labs">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ion Engine Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: the tortoise and the hare. Dawn's numbers re-derived, the propellant race between chemical and ion engines, then a low-thrust spiral you can fly out of Earth orbit. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--ion:#7fb2ff;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--ion)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"],button.primary{background:var(--ion);border-color:var(--ion);color:#06101f}button:focus-visible,input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--ion)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:10px}label.f output{font-family:var(--display);font-size:17px;color:var(--ink)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}
+#race{aspect-ratio:16/9}#spiral{aspect-ratio:1/1;max-height:560px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}.kv span{color:var(--dim)}.kv b{text-align:right;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Kaksha Labs"><div class="sa-in"><a href="index.html" class="sa-brand">Kaksha Labs</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html" aria-current="page">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">NASA’s Dawn · xenon · the gentlest engine that goes the furthest</div>
+    <h1>Ion Engine Lab</h1>
+    <p>A chemical rocket burns fuel and throws the hot gas out at about 3 km/s. An ion engine uses solar electricity to fling single xenon atoms out at over 30 km/s, ten times faster, so each kilogram of propellant gives ten times the push. The catch is that it throws very little at a time. Dawn’s engine pushed with 90 millinewtons, about the weight of a sheet of paper resting on your hand. Yet over eleven years it gave Dawn more change in speed than any spacecraft before it, enough to orbit two different worlds, Vesta and then Ceres.</p>
+  </header>
+
+  <div class="two">
+    <section class="card">
+      <h2>The propellant race</h2>
+      <canvas id="race" aria-label="Propellant needed against the change in speed, for a chemical engine and Dawn's ion engine"></canvas>
+      <label class="f" style="margin-top:10px">Change in speed wanted <output id="oV"></output><input type="range" id="iV" min="0.5" max="15" step="0.01" value="11.49"></label>
+    </section>
+    <section class="card">
+      <h2>Dawn, re-derived</h2>
+      <div class="kv" id="dKv"></div>
+      <div class="verdict" id="dTxt"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Spiral out of Earth orbit</h2>
+    <p>A chemical rocket leaves Earth orbit in one short, hard burn at the lowest point. An ion engine cannot do that: it pushes for months, so the spacecraft spirals slowly outwards. Pick the engine’s push and watch. The surprise is how much more speed change the slow spiral needs.</p>
+    <div class="two">
+      <canvas id="spiral" aria-label="A spacecraft spiralling outwards from low Earth orbit under gentle thrust"></canvas>
+      <div>
+        <label class="f">Push, as acceleration <output id="oA"></output><input type="range" id="iA" min="-4" max="-1" step="0.05" value="-3"></label>
+        <div class="seg"><button type="button" class="primary" id="go">Fly the spiral</button></div>
+        <div class="kv" style="margin-top:12px" id="sKv"></div>
+        <div class="verdict" id="sTxt"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Checks</h2>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">The rocket equation here assumes all the propellant goes through one engine at one efficiency. Dawn also carried hydrazine for steering, and its solar power, and with it the ion engine’s push, fell as it moved away from the Sun. The spiral starts from a circular 400 km orbit, pushes always along the direction of motion, and ignores Earth’s shadow, the Moon and air drag. The chemical comparison uses a typical specific impulse of 320 s.</p>
+  </section>
+
+  <footer>Sources: Wikipedia article “Dawn (spacecraft)”, citing NASA/JPL: launch mass 2,684.6 lb (1,217.7 kg), dry mass 1,647.1 lb (747.1 kg), 425 kg xenon capacity, three NSTAR-derived thrusters used one at a time at 3,100 s specific impulse and 90 mN, 10 kW of solar power at 1 AU, about 11 km/s total change in speed (a record 25,700 mph, 11.49 km/s), and four days at full throttle from zero to 60 mph. Earth GM from JPL. An independent model.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),nf=new Intl.NumberFormat('en-US'),G0=9.80665;
+const M0=1217.7,MDRY=747.1,XE=425,ISP=3100,THR=0.090,DV_PUB=11.49,ISP_CHEM=320;
+const VE=ISP*G0/1000,VEC=ISP_CHEM*G0/1000;
+// ---- Dawn ----
+const usedFor=dv=>MDRY*0+M0*(1-Math.exp(-dv/VE)),dvMax=VE*Math.log(M0/(M0-XE)),chemProp=MDRY*(Math.exp(DV_PUB/VEC)-1),ionPropFromDry=MDRY*(Math.exp(DV_PUB/VE)-1),acc=THR/M0,t60=(60*0.44704)/acc/86400;
+$('dKv').innerHTML=`<span>Exhaust speed (3,100 s × g)</span><b>${VE.toFixed(1)} km/s</b><span>Most it could ever give with 425 kg of xenon</span><b>${dvMax.toFixed(2)} km/s</b><span>Xenon needed for its record 11.49 km/s</span><b>${Math.round(usedFor(DV_PUB))} kg</b><span>Push 90 mN ÷ 1,218 kg</span><b>${(acc*1e6).toFixed(0)} µm/s² (${(acc/G0*1e6).toFixed(1)} millionths of a g)</b><span>Zero to 60 mph at that push</span><b>${t60.toFixed(1)} days</b><span>Power to the engine at 1 AU, 10 kW solar array</span><b>½ × thrust × exhaust speed = ${(0.5*THR*VE*1000/1000).toFixed(1)} kW of jet</b>`;
+$('dTxt').innerHTML=`To give the same 11.49 km/s, a spacecraft as heavy as Dawn with an ordinary chemical engine would need <b>${nf.format(Math.round(chemProp/100)*100)} kg</b> of propellant, ${Math.round(chemProp/XE)} times what Dawn carried, and a far bigger rocket to launch it. That is why Dawn could stop at two worlds where a chemical spacecraft could only fly past.`;
+// ---- race chart ----
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+function drawRace(){const c=$('race'),g=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,X0=52,Y0=h-26,pw=w-X0-12,ph=h-26-14,dv=+$('iV').value,ym=40,P=(v,m)=>[X0+v/15*pw,Y0-Math.log10(Math.max(1,m))/Math.log10(ym*1000)*ph];
+  $('oV').textContent=dv.toFixed(2)+' km/s'+(Math.abs(dv-DV_PUB)<0.01?' (Dawn’s record)':'');g.fillStyle='#02030a';g.fillRect(0,0,w,h);g.font='600 11px "Saira Condensed",sans-serif';g.strokeStyle='#1f2a38';
+  for(const m of [1,10,100,1000,10000]){const [,y]=P(0,m);g.beginPath();g.moveTo(X0,y);g.lineTo(X0+pw,y);g.stroke();g.fillStyle='#8a97a8';g.fillText(m>=1000?(m/1000)+' t':m+' kg',4,y+4)}for(let v=0;v<=15;v+=3){const [x]=P(v,1);g.fillText(v+' km/s',x-12,h-7)}
+  const line=(ve,col)=>{g.strokeStyle=col;g.lineWidth=2;g.beginPath();for(let v=0.05;v<=15;v+=0.05){const [x,y]=P(v,MDRY*(Math.exp(v/ve)-1));v<0.06?g.moveTo(x,y):g.lineTo(x,y)}g.stroke();g.lineWidth=1};line(VEC,'#ffa24a');line(VE,'#7fb2ff');
+  const [xX]=P(0,XE),yX=P(0,XE)[1];g.strokeStyle='rgba(95,214,160,.6)';g.setLineDash([4,4]);g.beginPath();g.moveTo(X0,yX);g.lineTo(X0+pw,yX);g.stroke();g.setLineDash([]);g.fillStyle='#5fd6a0';g.fillText('DAWN’S TANK: 425 KG',X0+6,yX-5);
+  const [sx]=P(dv,1);g.strokeStyle='#fff';g.setLineDash([3,3]);g.beginPath();g.moveTo(sx,14);g.lineTo(sx,Y0);g.stroke();g.setLineDash([]);
+  const ion=MDRY*(Math.exp(dv/VE)-1),chem=MDRY*(Math.exp(dv/VEC)-1);g.fillStyle='#7fb2ff';g.fillText(`ION: ${nf.format(Math.round(ion))} kg`,Math.min(sx+6,w-140),P(dv,ion)[1]-6);g.fillStyle='#ffa24a';g.fillText(`CHEMICAL: ${chem>1e5?'>100 t':nf.format(Math.round(chem))+' kg'}`,Math.min(sx+6,w-160),Math.max(26,P(dv,chem)[1]-6));
+  g.fillStyle='#8a97a8';g.fillText('PROPELLANT FOR A 747 KG SPACECRAFT (LOG SCALE)',X0+6,12)}
+$('iV').addEventListener('input',drawRace);
+// ---- spiral ----
+const MU=3.986004418e14,RE=6371e3,R0=RE+400e3;let SP=null,anim=0,lf=0;
+function spiral(a){let x=R0,y=0,vx=0,vy=Math.sqrt(MU/R0),t=0,revs=0,lastAng=0,pts=[];const v0=vy;
+  while(t<2e9){const r=Math.hypot(x,y),en=(vx*vx+vy*vy)/2-MU/r;if(en>=0)break;const dt=Math.min(600,0.01*2*Math.PI*Math.sqrt(r**3/MU)),v=Math.hypot(vx,vy);
+    // leapfrog with tangential thrust
+    const ax=-MU*x/r**3+a*vx/v,ay=-MU*y/r**3+a*vy/v;vx+=ax*dt/2;vy+=ay*dt/2;x+=vx*dt;y+=vy*dt;const r2=Math.hypot(x,y),v2=Math.hypot(vx,vy);vx+=(-MU*x/r2**3+a*vx/v2)*dt/2;vy+=(-MU*y/r2**3+a*vy/v2)*dt/2;t+=dt;
+    const ang=Math.atan2(y,x);if(lastAng<0&&ang>=0)revs++;lastAng=ang;if(pts.length===0||Math.hypot(x-pts.at(-1)[0],y-pts.at(-1)[1])>RE*0.05)pts.push([x,y])}
+  return {t,dv:a*t,revs,pts,v0,rEnd:Math.hypot(x,y)}}
+function runSpiral(){const a=Math.pow(10,+$('iA').value);SP=spiral(a);anim=0;const imp=(Math.SQRT2-1)*SP.v0;
+  $('sKv').innerHTML=`<span>Time to escape Earth</span><b>${SP.t/86400>365?(SP.t/86400/365.25).toFixed(1)+' years':Math.round(SP.t/86400)+' days'}</b><span>Laps around Earth on the way</span><b>${nf.format(SP.revs)}</b><span>Speed change used</span><b>${(SP.dv/1000).toFixed(2)} km/s</b><span>Starting orbital speed</span><b>${(SP.v0/1000).toFixed(2)} km/s</b><span>One quick chemical burn instead</span><b>${(imp/1000).toFixed(2)} km/s</b>`;
+  $('sTxt').innerHTML=`The slow spiral needs <b>${(SP.dv/imp).toFixed(1)} times</b> the speed change of one quick burn. The gentler the push, the closer it gets to the whole starting orbital speed, the limit T. N. Edelbaum worked out in 1961. The ion engine still wins on propellant, because each kilogram of xenon gives ten times the push.`;drawSpiral()}
+function drawSpiral(){const c=$('spiral'),g=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight;g.fillStyle='#02030a';g.fillRect(0,0,w,h);if(!SP)return;const rmax=Math.max(...SP.pts.map(p=>Math.hypot(p[0],p[1]))),S=Math.min(w,h)/2/rmax*0.92,cx=w/2,cy=h/2;
+  const n=Math.min(SP.pts.length,Math.floor(anim));g.strokeStyle='rgba(127,178,255,.8)';g.lineWidth=1;g.beginPath();for(let i=0;i<n;i++){const [x,y]=SP.pts[i];i?g.lineTo(cx+x*S,cy-y*S):g.moveTo(cx+x*S,cy-y*S)}g.stroke();
+  const eg=g.createRadialGradient(cx-3,cy-3,1,cx,cy,Math.max(4,RE*S));eg.addColorStop(0,'#9fd0ff');eg.addColorStop(1,'#1f5fa8');g.fillStyle=eg;g.beginPath();g.arc(cx,cy,Math.max(4,RE*S),0,7);g.fill();
+  g.strokeStyle='rgba(231,237,243,.25)';g.setLineDash([3,4]);g.beginPath();g.arc(cx,cy,384400e3*S,0,7);g.stroke();g.setLineDash([]);g.font='600 11px "Saira Condensed",sans-serif';g.fillStyle='#8a97a8';if(384400e3*S<w/2)g.fillText('MOON’S ORBIT',cx+384400e3*S*0.7,cy-384400e3*S*0.72);
+  if(n>0){const [x,y]=SP.pts[n-1];g.fillStyle='#fff';g.beginPath();g.arc(cx+x*S,cy-y*S,3,0,7);g.fill()}}
+$('iA').oninput=()=>{const a=Math.pow(10,+$('iA').value);$('oA').textContent=(a*1e6>=1000?(a*1000).toFixed(1)+' mm/s²':Math.round(a*1e6)+' µm/s²')+(Math.abs(a-acc)/acc<0.3?' (about Dawn’s)':'')};
+$('go').onclick=runSpiral;
+function loop(ts){const dt=lf?Math.min(.1,(ts-lf)/1000):0;lf=ts;if(SP&&anim<SP.pts.length){anim+=Math.max(1,SP.pts.length*dt/6);drawSpiral()}requestAnimationFrame(loop)}
+// ---- checks ----
+(()=>{const s=spiral(1e-3),sd=spiral(acc);const rows=[['Zero to 60 mph at full throttle','four days',t60.toFixed(1)+' days','ok'],['Speed change possible with the xenon carried','about 11 km/s achieved, a record of 11.49 km/s',`up to ${dvMax.toFixed(2)} km/s; 11.49 km/s uses ${Math.round(usedFor(DV_PUB))} of the 425 kg`,'ok'],
+  ['Low-thrust spiral from a circular orbit to escape','Edelbaum: tends to the starting orbital speed as the push gets gentler',`${(s.dv/1000).toFixed(2)} km/s at 1 mm/s², ${(sd.dv/1000).toFixed(2)} km/s at Dawn’s push; starting speed ${(s.v0/1000).toFixed(2)} km/s`,'ok']];
+  $('check').innerHTML='<tr><th>Test</th><th>Published or textbook</th><th>This model</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]}">${r[2]}</td></tr>`).join('')})();
+for(const id of ['race','spiral']){const c=$(id);size(c);new ResizeObserver(()=>{size(c);id==='race'?drawRace():drawSpiral()}).observe(c)}
+$('iA').oninput();drawRace();runSpiral();requestAnimationFrame(loop);
+window.__ion={spiral,dvMax,usedFor,t60,chemProp};
+})();
+</script>
+
+</html>

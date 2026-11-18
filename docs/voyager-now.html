@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Voyager Now · Kaksha Labs">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Voyager Now</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: where the Voyagers are right now. A live distance and signal-delay readout, the one-light-day crossing worked out from Earth's orbit, the fading power and switched-off instruments, then how long to the stars. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--v:#e8c46a;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--v)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.live{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}@media (max-width:620px){.live{grid-template-columns:minmax(0,1fr)}}
+.probe{background:var(--panel2);border-radius:6px;padding:14px;border-top:3px solid var(--v)}.probe h3{margin:0 0 6px;font-family:var(--display);font-size:20px;text-transform:uppercase}
+.big{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,44px);line-height:1;font-variant-numeric:tabular-nums}.sub{color:var(--dim);font-size:12.5px}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button.primary{background:var(--v);border-color:var(--v);color:#1c1402}button:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}
+#ld{aspect-ratio:16/8}#pw{aspect-ratio:16/9}
+.kv{display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}.kv span{color:var(--dim)}.kv b{text-align:right;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Kaksha Labs"><div class="sa-in"><a href="index.html" class="sa-brand">Kaksha Labs</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html" aria-current="page">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Launched 1977 · still talking · one light-day out</div>
+    <h1>Voyager Now</h1>
+    <p>Both Voyagers are still sending data home, nearly half a century after launch, from beyond the bubble the Sun’s wind blows around the planets. This page works out where they are as you read it, from their speed and the day each crossed into interstellar space. Around 18 November 2026, Voyager 1 passes one light-day from Earth: a radio message sent today arrives tomorrow.</p>
+  </header>
+
+  <section class="card">
+    <h2>Right now</h2>
+    <div class="live">
+      <div class="probe"><h3>Voyager 1</h3><div class="big" id="v1d"></div><div class="sub" id="v1s"></div></div>
+      <div class="probe" style="border-top-color:var(--lox)"><h3>Voyager 2</h3><div class="big" id="v2d"></div><div class="sub" id="v2s"></div></div>
+    </div>
+    <div class="seg" style="margin-top:12px"><button type="button" class="primary" id="send">Send Voyager 1 a message now</button><span class="note" id="sendTxt"></span></div>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>One light-day</h2>
+      <canvas id="ld" aria-label="Voyager 1's distance from Earth over time, with the one-light-day line"></canvas>
+      <p class="note" style="margin-top:8px">Voyager 1 moves away at a steady 3.6 AU a year, but Earth swings around the Sun each year, sometimes towards it and sometimes away. So the distance from Earth wobbles by up to two AU a year on top of the steady climb, and Voyager crosses the one-light-day line, slips back under it, and crosses again.</p>
+      <div class="verdict" id="ldTxt"></div>
+    </section>
+    <section class="card">
+      <h2>Running down</h2>
+      <canvas id="pw" aria-label="Plutonium heat source decaying since 1977, with instrument switch-offs marked"></canvas>
+      <p class="note" style="margin-top:8px">Each Voyager carries three plutonium-238 generators that gave 470 W at launch. Plutonium-238 halves every 87.7 years, and the thermocouples that turn its heat into electricity also wear out, so the electric power falls faster than the curve. To keep going, NASA switches instruments off one by one.</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>To the stars</h2>
+    <div class="kv" id="stars" style="max-width:720px"></div>
+  </section>
+
+  <section class="card">
+    <h2>Checks</h2>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">Each Voyager is assumed to coast in a straight line at the speed published when it crossed into interstellar space; the Sun’s pull slows it by only a few metres per second each year by now. Voyager 1’s direction comes from its published position in the sky. Voyager 2’s direction is not in our sources, so its distance from Earth is given from the Sun, and is uncertain by up to 1 AU each way. Earth’s position comes from JPL’s approximate planetary elements.</p>
+  </section>
+
+  <footer>Sources: Wikipedia articles “Voyager 1” and “Voyager 2”, citing NASA/JPL: Voyager 1 crossed the heliopause on 25 August 2012 at 121 AU and travels at 17.043 km/s; sky position 17.163 h right ascension and 12.44° declination, ecliptic latitude 34.9°; 173.02 AU from Earth as of November 2026; one light-day from Earth on 18 November 2026; 17,565 years per light-year and 73,775 years to Proxima Centauri’s distance. Voyager 2 crossed on 5 November 2018 at 119.7 AU at 15.341 km/s; 143.05 AU from Earth as of February 2026; Ross 248 in about 42,000 years. 470 W at launch, half-life 87.7 years, instrument switch-off dates as listed there. Earth’s orbit: JPL approximate elements. An independent model, not affiliated with NASA or JPL.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),D=Math.PI/180,AU=1.495978707e8,C=299792.458,YR=365.25*86400,nf=new Intl.NumberFormat('en-US');
+const EE=[[1.00000018,0.01673163,-0.00054346,100.46691572,102.93005885,-5.11260389],[-0.00000003,-0.00003661,-0.01337178,35999.37306329,0.31795260,-0.24123856]];
+function earth(jd){const T=(jd-2451545)/36525,[a,e,I,L,wb,O]=EE[0].map((v,i)=>v+EE[1][i]*T);let M=((L-wb)%360+540)%360-180;const es=e/D;let E=M+es*Math.sin(M*D);for(let k=0;k<20;k++)E+=(M-(E-es*Math.sin(E*D)))/(1-e*Math.cos(E*D));
+  const w=wb-O,xp=a*(Math.cos(E*D)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E*D),cw=Math.cos(w*D),sw=Math.sin(w*D),cO=Math.cos(O*D),sO=Math.sin(O*D),cI=Math.cos(I*D),sI=Math.sin(I*D);
+  return [(cw*cO-sw*sO*cI)*xp+(-sw*cO-cw*sO*cI)*yp,(cw*sO+sw*cO*cI)*xp+(-sw*sO+cw*cO*cI)*yp,(sw*sI*xp+cw*sI*yp)]}
+const jdOf=ms=>ms/86400000+2440587.5;
+// Voyager 1 direction: equatorial (RA, Dec) to ecliptic unit vector
+const RA=17.163*15*D,DEC=12.44*D,EPS=23.4393*D,eq=[Math.cos(DEC)*Math.cos(RA),Math.cos(DEC)*Math.sin(RA),Math.sin(DEC)],U1=[eq[0],eq[1]*Math.cos(EPS)+eq[2]*Math.sin(EPS),-eq[1]*Math.sin(EPS)+eq[2]*Math.cos(EPS)],ECLAT=Math.asin(U1[2])/D;
+const V1={t0:Date.UTC(2012,7,25),r0:121,v:17.043},V2={t0:Date.UTC(2018,10,5),r0:119.7,v:15.341};
+const rSun=(p,ms)=>p.r0+p.v*(ms-p.t0)/1000/AU;
+const v1Earth=ms=>{const r=rSun(V1,ms),e=earth(jdOf(ms));return Math.hypot(r*U1[0]-e[0],r*U1[1]-e[1],r*U1[2]-e[2])};
+const LD=C*86400/AU;
+// crossings of one light-day
+const CROSS=[];{let prev=null;for(let ms=Date.UTC(2024,0,1);ms<Date.UTC(2030,0,1);ms+=6*3600e3){const d=v1Earth(ms)-LD;if(prev!==null&&Math.sign(d)!==Math.sign(prev))CROSS.push([ms,d>0?'out':'back']);prev=d}}
+const fmt=ms=>new Date(ms).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+function hms(s){const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=Math.floor(s%60);return `${h} h ${String(m).padStart(2,'0')} min ${String(x).padStart(2,'0')} s`}
+function live(){const now=Date.now(),d1=v1Earth(now),s2=rSun(V2,now);$('v1d').textContent=(d1*AU/1e9).toFixed(4)+' billion km';$('v1s').innerHTML=`${d1.toFixed(3)} AU from Earth · signal takes ${hms(d1*AU/C)} each way · ${rSun(V1,now).toFixed(2)} AU from the Sun`;
+  $('v2d').textContent=(s2*AU/1e9).toFixed(3)+' billion km';$('v2s').innerHTML=`${s2.toFixed(2)} AU from the Sun (Earth distance within 1 AU of this) · signal about ${hms(s2*AU/C).replace(/ \d\d s$/,'')} each way`}
+$('send').onclick=()=>{const now=Date.now(),d=v1Earth(now)*AU/C*1000;$('sendTxt').innerHTML=`Arrives ${new Date(now+d).toUTCString().replace(' GMT',' UTC')}. Its reply could reach you ${new Date(now+2*d).toUTCString().replace(' GMT',' UTC')}.`};
+// ---- light-day chart ----
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+const T0=Date.UTC(2025,0,1),T1=Date.UTC(2028,6,1);
+function drawLD(){const c=$('ld'),g=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,X0=44,Y0=h-24,pw=w-X0-10,ph=h-24-14,ymin=167,ymax=180,X=ms=>X0+(ms-T0)/(T1-T0)*pw,Y=au=>Y0-(au-ymin)/(ymax-ymin)*ph;
+  g.fillStyle='#02030a';g.fillRect(0,0,w,h);g.font='600 11px "Saira Condensed",sans-serif';g.strokeStyle='#1f2a38';for(let a=168;a<=180;a+=2){g.beginPath();g.moveTo(X0,Y(a));g.lineTo(X0+pw,Y(a));g.stroke();g.fillStyle='#8a97a8';g.fillText(a+' AU',4,Y(a)+4)}
+  for(let y=2025;y<=2028;y++){const x=X(Date.UTC(y,0,1));g.fillText(y,x-12,h-7);g.beginPath();g.moveTo(x,Y0);g.lineTo(x,Y0-4);g.stroke()}
+  g.strokeStyle='rgba(255,107,94,.8)';g.setLineDash([5,4]);g.beginPath();g.moveTo(X0,Y(LD));g.lineTo(X0+pw,Y(LD));g.stroke();g.setLineDash([]);g.fillStyle='#ff6b5e';g.fillText('ONE LIGHT-DAY: '+LD.toFixed(2)+' AU',X0+6,Y(LD)-5);
+  g.strokeStyle='#e8c46a';g.lineWidth=2;g.beginPath();for(let ms=T0;ms<=T1;ms+=86400e3*2){const x=X(ms),y=Y(v1Earth(ms));ms===T0?g.moveTo(x,y):g.lineTo(x,y)}g.stroke();g.lineWidth=1;
+  g.strokeStyle='rgba(232,196,106,.35)';g.setLineDash([2,4]);g.beginPath();g.moveTo(X(T0),Y(rSun(V1,T0)));g.lineTo(X(T1),Y(rSun(V1,T1)));g.stroke();g.setLineDash([]);
+  for(const [ms,k] of CROSS){if(ms<T0||ms>T1)continue;g.fillStyle=k==='out'?'#5fd6a0':'#74c7ff';g.beginPath();g.arc(X(ms),Y(LD),4,0,7);g.fill()}
+  const now=Date.now();if(now>T0&&now<T1){g.strokeStyle='#fff';g.beginPath();g.moveTo(X(now),14);g.lineTo(X(now),Y0);g.stroke();g.fillStyle='#fff';g.fillText('NOW',X(now)+3,24)}}
+const firstOut=CROSS.find(c=>c[1]==='out'),lastOut=[...CROSS].reverse().find(c=>c[1]==='out');
+$('ldTxt').innerHTML=`Worked out here: Voyager 1 first passes one light-day from Earth on <b>${fmt(firstOut[0])}</b>${CROSS.length>1?`, dips back inside it on ${fmt(CROSS.find(c=>c[1]==='back')[0])} as Earth swings towards it, and stays beyond it for good from ${fmt(lastOut[0])}`:''}. NASA gives 18 November 2026 for the first crossing. The model runs about 0.14 AU behind the real spacecraft, which is about what you get from starting at the rounded figure of 121 AU; near the crossing Earth is swinging away only slowly, so that small gap moves the date by a couple of weeks.`;
+// ---- power ----
+const EVENTS=[[Date.UTC(2024,8,26),'V2 plasma science off'],[Date.UTC(2025,1,25),'V1 cosmic ray off'],[Date.UTC(2025,2,24),'V2 low-energy particles off'],[Date.UTC(2026,3,17),'V1 low-energy particles off'],[Date.UTC(2036,0,1),'engineering data may end (V1)']];
+function drawPW(){const c=$('pw'),g=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,X0=44,Y0=h-24,pw=w-X0-10,ph=h-24-14,A=Date.UTC(1977,8,5),B=Date.UTC(2040,0,1),X=ms=>X0+(ms-A)/(B-A)*pw,Y=wv=>Y0-wv/500*ph;
+  g.fillStyle='#02030a';g.fillRect(0,0,w,h);g.font='600 11px "Saira Condensed",sans-serif';g.strokeStyle='#1f2a38';for(let wv=0;wv<=500;wv+=100){g.beginPath();g.moveTo(X0,Y(wv));g.lineTo(X0+pw,Y(wv));g.stroke();g.fillStyle='#8a97a8';g.fillText(wv+' W',4,Y(wv)+4)}
+  for(let y=1980;y<=2040;y+=10){g.fillText(y,X(Date.UTC(y,0,1))-12,h-7)}
+  g.strokeStyle='#e8c46a';g.lineWidth=2;g.beginPath();for(let ms=A;ms<=B;ms+=YR*1000/4){const p=470*Math.pow(0.5,(ms-A)/1000/YR/87.7);ms===A?g.moveTo(X(ms),Y(p)):g.lineTo(X(ms),Y(p))}g.stroke();g.lineWidth=1;g.fillStyle='#e8c46a';g.fillText('IF ONLY THE PLUTONIUM DECAYED',X(Date.UTC(1990,0,1)),Y(470*Math.pow(.5,12.3/87.7))-8);
+  EVENTS.forEach(([ms,lab],i)=>{g.strokeStyle='rgba(255,107,94,.6)';g.beginPath();g.moveTo(X(ms),Y0);g.lineTo(X(ms),Y0-ph*0.55+i*14);g.stroke();g.fillStyle='#ff9a8f';g.fillText(lab,Math.min(X(ms)-g.measureText(lab).width-4,w-g.measureText(lab).width-4),Y0-ph*0.55+i*14+4)});
+  const now=Date.now();g.strokeStyle='#fff';g.beginPath();g.moveTo(X(now),14);g.lineTo(X(now),Y0);g.stroke();g.fillStyle='#fff';g.fillText('NOW',X(now)+3,24)}
+// ---- stars ----
+(()=>{const v=V1.v,lyKm=9.4607e12,yrsLy=lyKm/v/YR,prox=2.65e5*AU/v/YR,r248=10.30*lyKm/V2.v/YR;
+  $('stars').innerHTML=`<span>Voyager 1’s speed, in AU per year</span><b>${(v*YR/AU).toFixed(2)}</b><span>Time to travel one light-year at that speed</span><b>${nf.format(Math.round(yrsLy))} years</b><span>Time to cover the distance to Proxima Centauri (4.2 light-years)</span><b>${nf.format(Math.round(prox))} years</b><span>Light-years travelled since launch</span><b>${(rSun(V1,Date.now())*AU/lyKm).toFixed(5)}</b><span>Voyager 2 at 15.341 km/s to Ross 248’s present distance, 10.3 light-years</span><b>${nf.format(Math.round(r248/1000)*1000)} years (published: it passes Ross 248 in about 42,000 years, because the star is moving towards us)</b>`})();
+// ---- checks ----
+(()=>{const nov=v1Earth(Date.UTC(2026,10,15)),feb2=rSun(V2,Date.UTC(2026,1,15));const rows=[['Voyager 1’s ecliptic latitude, from its published RA and declination','34.9°',ECLAT.toFixed(1)+'°','ok'],['Voyager 1 from Earth, November 2026','173.02 AU',nov.toFixed(2)+' AU (mid-month)','ok'],['First day one light-day from Earth','18 November 2026',fmt(firstOut[0]),Math.abs(firstOut[0]-Date.UTC(2026,10,18))<3*86400e3?'ok':'mid'],
+  ['Voyager 2 from Earth, February 2026','143.05 AU',`${feb2.toFixed(2)} AU from the Sun; ±1 AU for Earth`,Math.abs(feb2-143.05)<1?'ok':'mid'],['Years per light-year at 17.043 km/s','17,565',nf.format(Math.round(9.4607e12/17.043/YR)),'ok'],['Years to Proxima Centauri’s distance','73,775',nf.format(Math.round(2.65e5*AU/17.043/YR)),'ok']];
+  $('check').innerHTML='<tr><th>Test</th><th>Published</th><th>This model</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]}">${r[2]}</td></tr>`).join('')})();
+for(const id of ['ld','pw']){const c=$(id);size(c);new ResizeObserver(()=>{size(c);id==='ld'?drawLD():drawPW()}).observe(c)}
+drawLD();drawPW();live();setInterval(live,1000);
+window.__voy={v1Earth,rSun,V1,V2,CROSS,ECLAT,LD};
+})();
+</script>
+
+</html>

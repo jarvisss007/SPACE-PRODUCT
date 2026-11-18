@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Milky Way Atlas · Kaksha Labs">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Milky Way Atlas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one zoomable map that runs from the Sun's planets to Andromeda, a scale strip under it, the object panel beside it, then the travel-time calculator. Single dark look. */
+:root{color-scheme:dark;--void:#03040a;--panel:#0a0e17;--panel2:#111827;--line:#1d2636;--ink:#e7edf3;--dim:#8a97a8;--gold:#e8c46a;--lox:#74c7ff;--violet:#b6a4ff;--ok:#5fd6a0;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--violet)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,56px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:72ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.map{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px}@media (max-width:900px){.map{grid-template-columns:minmax(0,1fr)}}
+#sky{display:block;width:100%;aspect-ratio:1/1;max-height:680px;background:#010208;border-radius:4px;touch-action:none;cursor:grab}
+.zoomrow{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+#zoom{flex:1 1 220px;accent-color:var(--violet)}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"]{background:var(--violet);border-color:var(--violet);color:#120c2e}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.big{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,36px);line-height:1}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}.kv span{color:var(--dim)}.kv b{text-align:right;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:7px 8px 7px 0;border-bottom:1px solid var(--line);text-align:left}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}select{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--dim);margin-top:8px}.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Kaksha Labs"><div class="sa-in"><a href="index.html" class="sa-brand">Kaksha Labs</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html" aria-current="page">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">From the Sun’s planets to Andromeda · one continuous zoom</div>
+    <h1>Milky Way Atlas</h1>
+    <p>Scroll, pinch or drag the slider to zoom out from the planets through the Oort cloud, the 106 nearest stars at their measured positions, our galaxy, and the Local Group. Distances are true at every scale; the map is drawn top-down in galactic coordinates, with the galactic centre toward the top.</p>
+  </header>
+
+  <section class="card map">
+    <div>
+      <canvas id="sky" aria-label="Zoomable map from the solar system to the Local Group"></canvas>
+      <div class="zoomrow">
+        <button type="button" data-z="0">Planets</button><button type="button" data-z="0.27">Oort cloud</button><button type="button" data-z="0.47">Nearest stars</button><button type="button" data-z="0.83">Milky Way</button><button type="button" data-z="1">Local Group</button>
+        <input id="zoom" type="range" min="0" max="1" step="0.001" value="0.47" aria-label="Zoom">
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div>
+      <div class="big" id="scaleText"></div>
+      <p id="scaleNote" style="margin-top:6px"></p>
+      <h2 style="margin-top:14px" id="selH">Click anything on the map</h2>
+      <div class="kv" id="selKv"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>How long to get there</h2>
+    <p>Pick a destination. The last row is a ship that accelerates at 1 g to the halfway point and brakes at 1 g after it: relativity makes the crew age far less than the people at home.</p>
+    <select id="dest" aria-label="Destination"></select>
+    <div class="scroll" style="margin-top:10px"><table id="travel"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>The 25 nearest stars</h2>
+    <div class="scroll"><table id="near"></table></div>
+  </section>
+
+  <footer>Star positions, distances and spectral classes: Wikipedia, <a href="https://en.wikipedia.org/wiki/List_of_nearest_stars">List of nearest stars</a> (drawing on RECONS and Gaia parallaxes), 106 objects within 20 light-years, converted to galactic coordinates with the standard J2000 rotation. Sun to Sagittarius A*: 8.178 kpc (GRAVITY Collaboration 2019), about 26,700 light-years. Voyager 1 crossed the heliopause at 121.6 AU in 2012; the Oort cloud is an estimate (about 2,000 to 100,000 AU) that no spacecraft has reached. Milky Way arms are a schematic four-arm logarithmic spiral with a central bar and the local (Orion) spur, not a survey map. Local Group positions use approximate published galactic coordinates and distances: Large Magellanic Cloud about 163,000 ly, Small about 200,000 ly, Andromeda about 2.5 million ly, Triangulum about 2.7 million ly. Travel times: Voyager 1 at 17 km/s; Starship’s solar escape speed after a deep-space refuelling estimated at 20 km/s; Breakthrough Starshot’s proposed 20% of light speed.</footer>
+</div>
+<script>
+const STARS=[{"n":"Proxima Centauri (C, V645 Centauri)","d":4.2465,"ra":217.429,"dec":-62.679,"c":"M5.5Ve"},{"n":"Rigil Kentaurus (A)","d":4.3441,"ra":219.902,"dec":-60.834,"c":"G2V"},{"n":"Toliman (B)","d":4.3441,"ra":219.896,"dec":-60.837,"c":"K1V"},{"n":"Barnard's Star (BD+04d3561a)","d":5.9629,"ra":269.452,"dec":4.693,"c":"M4.0Ve"},{"n":"Luhman 16(WISE 1049-5319) A","d":6.5102,"ra":162.329,"dec":-53.319,"c":"L8"},{"n":"WISE 0855-0714","d":7.43,"ra":133.795,"dec":-7.245,"c":"Y4"},{"n":"Wolf 359 (CN Leonis)","d":7.856,"ra":164.122,"dec":7.015,"c":"M6.0V"},{"n":"Lalande 21185 (BD+36d2147, Gliese 411, HD 9573","d":8.3044,"ra":165.834,"dec":35.97,"c":"M2.0V"},{"n":"Sirius (Alpha Canis Majoris) A","d":8.7094,"ra":101.287,"dec":-16.716,"c":"A1V"},{"n":"Gliese 65 (Luyten 726-8) A (BL Ceti)","d":8.77,"ra":24.755,"dec":-17.95,"c":"M5.5Ve"},{"n":"Ross 154 (V1216 Sagittarii)","d":9.7063,"ra":282.456,"dec":-23.836,"c":"M3.5Ve"},{"n":"Ross 248 (HH Andromedae)","d":10.3057,"ra":355.478,"dec":44.175,"c":"M5.5Ve"},{"n":"Epsilon Eridani (Ran)","d":10.4749,"ra":53.232,"dec":-9.458,"c":"K2V"},{"n":"Gliese 887 (Lacaille 9352)","d":10.7241,"ra":346.467,"dec":-35.853,"c":"M0.5V"},{"n":"Ross 128 (FI Virginis)","d":11.0074,"ra":176.935,"dec":0.804,"c":"M4.0V"},{"n":"EZ Aquarii(Gliese 866, Luyten 789-6)","d":11.109,"ra":339.639,"dec":-15.299,"c":"M5.0Ve"},{"n":"61 Cygni A (BD+38d4343)","d":11.4039,"ra":316.725,"dec":38.749,"c":"K5.0V"},{"n":"61 Cygni B (BD+38d4344)","d":11.4039,"ra":316.73,"dec":38.742,"c":"K7.0V"},{"n":"Procyon (Alpha Canis Minoris) A","d":11.463,"ra":114.825,"dec":5.225,"c":"F5IV"},{"n":"Struve 2398(Gliese 725, BD+59d1915) A (HD 1737","d":11.4908,"ra":280.695,"dec":59.63,"c":"M3.0V"},{"n":"Struve 2398(Gliese 725, BD+59d1915) B (HD 1737","d":11.4908,"ra":280.695,"dec":59.627,"c":"M3.5V"},{"n":"Groombridge 34(Gliese 15) A (GX Andromedae)","d":11.6191,"ra":4.595,"dec":44.023,"c":"M1.5V"},{"n":"DX Cancri (G 51-15)","d":11.6797,"ra":127.456,"dec":26.777,"c":"M6.5Ve"},{"n":"Epsilon Indi(CPD-57d10015) A","d":11.867,"ra":330.84,"dec":-56.786,"c":"K5Ve"},{"n":"Epsilon Indi(CPD-57d10015) Ba","d":11.867,"ra":331.044,"dec":-56.783,"c":"T1.0V"},{"n":"Tau Ceti (BD-16d295)","d":11.9118,"ra":26.017,"dec":-15.938,"c":"G8.5V"},{"n":"GJ 1061 (LHS 1565)","d":11.9839,"ra":53.999,"dec":-44.513,"c":"M5.5V"},{"n":"YZ Ceti (LHS 138)","d":12.1222,"ra":18.127,"dec":-16.999,"c":"M4.5V"},{"n":"Luyten's Star (BD+05d1668)","d":12.3485,"ra":111.852,"dec":5.226,"c":"M3.5V"},{"n":"Teegarden's Star (SO025300.5+165258)","d":12.497,"ra":43.254,"dec":16.881,"c":"M6.5V"},{"n":"Kapteyn's Star (CD-45d1841)","d":12.8308,"ra":77.919,"dec":-45.018,"c":"M1.5V"},{"n":"Lacaille 8760 (AX Microscopii)","d":12.9472,"ra":319.314,"dec":-38.867,"c":"M0.0V"},{"n":"SCR 1845-6357","d":13.0638,"ra":281.272,"dec":-63.963,"c":"M8.5V"},{"n":"SCR 1845-6357 B","d":13.0638,"ra":281.261,"dec":-63.964,"c":"T6"},{"n":"Kruger 60(BD+56d2783)","d":13.0724,"ra":336.998,"dec":57.696,"c":"M3.0V"},{"n":"DENIS J1048-3956","d":13.1932,"ra":162.061,"dec":-39.935,"c":"M8.5V"},{"n":"Ross 614(V577 Monocerotis, Gliese 234) A (LHS ","d":13.363,"ra":97.347,"dec":-2.814,"c":"M4.5V"},{"n":"Wolf 1061 (Gliese 628, BD-12d4523)","d":14.05,"ra":247.575,"dec":-12.662,"c":"M3.0V"},{"n":"Van Maanen's Star (Gliese 35, LHS 7)\u2021","d":14.0718,"ra":12.291,"dec":5.389,"c":"DZ7"},{"n":"Gliese 1 (CD-37d15492)","d":14.1747,"ra":1.352,"dec":-37.358,"c":"M1.5 V"},{"n":"TZ Arietis (Gliese 83.1, L 1159-16)","d":14.578,"ra":30.055,"dec":13.052,"c":"M4.5V"},{"n":"Wolf 424(FL Virginis, LHS 333, Gliese 473)","d":14.595,"ra":188.322,"dec":9.021,"c":"M5.5Ve"},{"n":"Gliese 687 (LHS 450, BD+68d946)","d":14.8395,"ra":264.108,"dec":68.339,"c":"M3.0V"},{"n":"Gliese 674 (LHS 449)","d":14.8492,"ra":262.166,"dec":-46.895,"c":"M3.0V"},{"n":"LHS 292 (LP 731-58)","d":14.8706,"ra":162.053,"dec":-11.337,"c":"M6.5V"},{"n":"Gliese 440 (WD 1142-645, LP 145-141)\u2021","d":15.1226,"ra":176.429,"dec":-64.841,"c":"DQ6"},{"n":"GJ 1245 A (G 208-44 A)","d":15.2001,"ra":298.476,"dec":44.415,"c":"M5.5V"},{"n":"GJ 1245 B (G 208-45)","d":15.2001,"ra":298.48,"dec":44.416,"c":"M6.0V"},{"n":"GJ 1245 C (G 208-44 B)","d":15.2001,"ra":298.476,"dec":44.415,"c":"M5.5"},{"n":"WISE 1741+2553","d":15.22,"ra":265.351,"dec":25.889,"c":"T9"},{"n":"Gliese 876 (Ross 780)","d":15.2382,"ra":343.32,"dec":-14.264,"c":"M3.5V"},{"n":"WISE 1639-6847","d":15.336,"ra":249.92,"dec":-68.796,"c":"Y0.5"},{"n":"LHS 288 (Luyten 143-23)","d":15.7586,"ra":161.088,"dec":-61.21,"c":"M5.5V"},{"n":"GJ 1002","d":15.806,"ra":1.682,"dec":-7.539,"c":"M5.5V"},{"n":"DENIS 0255-4700","d":15.877,"ra":43.765,"dec":-47.014,"c":"L7.5V"},{"n":"Groombridge 1618 (Gliese 380)","d":15.8857,"ra":152.842,"dec":49.454,"c":"K7.0V"},{"n":"Gliese 412","d":15.9969,"ra":166.369,"dec":43.527,"c":"M1.0V"},{"n":"Gliese 412 B (WX Ursae Majoris)","d":15.9969,"ra":166.377,"dec":43.522,"c":"M5.5V"},{"n":"Gliese 412 AD Leonis","d":16.1939,"ra":154.902,"dec":19.869,"c":"M3.0V"},{"n":"Gliese 832","d":16.2005,"ra":323.392,"dec":-49.009,"c":"M1.5 V"},{"n":"Keid (A)","d":16.333,"ra":63.818,"dec":-7.653,"c":"K0.5 V"},{"n":"Omicron2 Eridani(40 Eridani, Gliese 166) B\u2021","d":16.333,"ra":63.841,"dec":-7.658,"c":"DA4"},{"n":"EV Lacertae","d":16.4761,"ra":341.707,"dec":44.334,"c":"M3.5 V"},{"n":"70 Ophiuchi (Gliese 702) A","d":16.7074,"ra":271.364,"dec":2.5,"c":"K0 V"},{"n":"70 Ophiuchi (Gliese 702) B","d":16.7074,"ra":271.365,"dec":2.499,"c":"K5 V"},{"n":"Altair (Alpha Aquilae)","d":16.73,"ra":297.696,"dec":8.868,"c":"A7 IV"},{"n":"EI Cancri (GJ 1116, G 9-38)","d":16.8,"ra":134.563,"dec":19.763,"c":"M5.5 V"},{"n":"WISE J150649.97+702736.1","d":16.856,"ra":226.718,"dec":70.457,"c":"T6"},{"n":"GJ 3379 (G 99-49)","d":16.9861,"ra":90.015,"dec":2.707,"c":"M3.5 V"},{"n":"DENIS J081730.0-615520","d":17.002,"ra":124.375,"dec":-61.921,"c":"T6"},{"n":"Gliese 445 (LHS 2459, G 254-29)","d":17.1368,"ra":176.922,"dec":78.691,"c":"M3.5 V"},{"n":"2MASS J15404342-5101357","d":17.3738,"ra":235.181,"dec":-51.027,"c":"M7 V"},{"n":"2MASS 0939-2448 A","d":17.41,"ra":144.898,"dec":-24.808,"c":"T8 V"},{"n":"GJ 3323 (LHS 1723, LP 656-38)","d":17.5309,"ra":75.489,"dec":-6.946,"c":"M4 V"},{"n":"Gliese 526 (Wolf 498, HD 119850)","d":17.7263,"ra":206.433,"dec":14.891,"c":"M1 V"},{"n":"WISE 0350-5658","d":17.84,"ra":57.501,"dec":-56.975,"c":"Y1"},{"n":"Stein 2051 (Gliese 169.1, G 175-34)","d":17.9925,"ra":67.798,"dec":58.977,"c":"M4 V"},{"n":"Stein 2051 (Gliese 169.1, G 175-34) B\u2021","d":17.9925,"ra":67.802,"dec":58.978,"c":"DC5"},{"n":"2MASS J11145133-2618235","d":18.2,"ra":168.714,"dec":-26.307,"c":"T7.5"},{"n":"Gliese 251 (Wolf 294, HD 265866)","d":18.2146,"ra":103.704,"dec":33.268,"c":"M3 V"},{"n":"LP 816-60","d":18.3305,"ra":313.137,"dec":-16.975,"c":"M3.5 V"},{"n":"LSR J1835+3259","d":18.5534,"ra":278.908,"dec":32.999,"c":"M8.5 V"},{"n":"Gliese 205 (Wolf 1453, HD 36395)","d":18.6042,"ra":82.864,"dec":-3.677,"c":"M1 V"},{"n":"2MASS J04151954-0935066","d":18.62,"ra":63.831,"dec":-9.585,"c":"T8"},{"n":"Gliese 229 (HD 42581)","d":18.7906,"ra":92.644,"dec":-21.865,"c":"M1.5 V"},{"n":"Alsafi (Sigma Draconis)","d":18.7993,"ra":293.09,"dec":69.661,"c":"K0 V"},{"n":"Ross 47 (Gliese 213)","d":18.8883,"ra":85.539,"dec":12.489,"c":"M4 V"},{"n":"WISE 1541-2250","d":18.93,"ra":235.465,"dec":-22.84,"c":"Y0.5"},{"n":"Gliese 570(Lalande 27173, 33 G. Librae) A","d":19.1987,"ra":224.367,"dec":-21.416,"c":"K4 V"},{"n":"Gliese 693 (Luyten 205-128)","d":19.2078,"ra":266.635,"dec":-57.319,"c":"M3 V"},{"n":"Gliese 754 (Luyten 347-14)","d":19.2724,"ra":290.2,"dec":-45.558,"c":"M4 V"},{"n":"Gliese 908 (Lalande 46650, BR Piscium)","d":19.2745,"ra":357.302,"dec":2.401,"c":"M1 V"},{"n":"Gliese 752 (Wolf 1055, HD 180617)","d":19.2922,"ra":289.23,"dec":5.169,"c":"M2.5 V"},{"n":"Gliese 752 (Wolf 1055, HD 180617) B (VB 10)","d":19.2922,"ra":289.24,"dec":5.151,"c":"M8 V"},{"n":"Gliese 588 (CD-40 9712)","d":19.2996,"ra":233.054,"dec":-41.276,"c":"M2.5 V"},{"n":"Achird (A)","d":19.3314,"ra":12.276,"dec":57.815,"c":"G0 V"},{"n":"Guniibuu (A)","d":19.4185,"ra":258.837,"dec":-26.603,"c":"K1.5 V"},{"n":"36 Ophiuchi (Gliese 663) B","d":19.4185,"ra":258.837,"dec":-26.603,"c":"K1 V"},{"n":"36 Ophiuchi (Gliese 663) C","d":19.4185,"ra":259.056,"dec":-26.546,"c":"K5 V"},{"n":"YZ Canis Minoris (Ross 882, Gliese 285)","d":19.533,"ra":116.168,"dec":3.552,"c":"M4 V"},{"n":"GJ 1005 (Luyten 722-22, G 158-50)","d":19.577,"ra":3.867,"dec":-16.134,"c":"M3.5 V"},{"n":"82 G. Eridani (e Eridani, Gliese 139, HD 20794","d":19.7045,"ra":49.982,"dec":-43.07,"c":"G8 V"},{"n":"Gliese 268 (Ross 986, QY Aurigae)","d":19.7414,"ra":107.507,"dec":38.529,"c":"M4.5 V"},{"n":"Delta Pavonis","d":19.893,"ra":302.182,"dec":-66.182,"c":"G8 IV"},{"n":"SIMP J013656.5+093347","d":19.955,"ra":24.235,"dec":9.563,"c":"T2.5"},{"n":"2MASS 0937+2931","d":19.5,"ra":144.395,"dec":29.528,"c":"T7"}];
+(()=>{
+const $=id=>document.getElementById(id),D=Math.PI/180,TAU=Math.PI*2,nf=new Intl.NumberFormat('en-US'),AUperLY=63241.077;
+const G=[[-0.0548755604,-0.8734370902,-0.4838350155],[0.4941094279,-0.4448296300,0.7469822445],[-0.8676661490,-0.1980763734,0.4559837762]];
+function galXY(ra,dec,d){const a=ra*D,b=dec*D,v=[Math.cos(b)*Math.cos(a),Math.cos(b)*Math.sin(a),Math.sin(b)],g=G.map(r=>r[0]*v[0]+r[1]*v[1]+r[2]*v[2]);return [g[0]*d,g[1]*d,g[2]*d]} // x toward the galactic centre, y toward l=90
+const COLS={O:'#9bb0ff',B:'#aabfff',A:'#cad7ff',F:'#f8f7ff',G:'#fff4ea',K:'#ffd2a1',M:'#ffad6b',L:'#c97a5a',T:'#a5617b',Y:'#7a4b6e',D:'#e7edf3'};
+const colOf=c=>COLS[(c||'M').replace(/^sd/,'')[0]]||'#ffad6b';
+STARS.forEach(s=>{[s.x,s.y,s.z]=galXY(s.ra,s.dec,s.d);s.short=s.n.replace(/\s*\(.*$/,'').replace(/\s+$/,'')||s.n});
+/* fixed features, lengths in light-years; x toward the galactic centre */
+const SUN_GC=26700;
+const LG=[['Large Magellanic Cloud',280.5,-32.9,163000,'#c3b8ff',7000],['Small Magellanic Cloud',302.8,-44.3,200000,'#c3b8ff',3500],['Andromeda (M31)',121.2,-21.6,2.5e6,'#e8c46a',110000],['Triangulum (M33)',133.6,-31.3,2.73e6,'#d7c08a',30000]]
+  .map(([n,l,b,d,c,size])=>({n,x:d*Math.cos(b*D)*Math.cos(l*D),y:d*Math.cos(b*D)*Math.sin(l*D),d,c,size}));
+const PLAN=[['Mercury',.387],['Venus',.723],['Earth',1],['Mars',1.524],['Jupiter',5.203],['Saturn',9.537],['Uranus',19.19],['Neptune',30.07]];
+let z=+$('zoom').value,sel=null,panX=0,panY=0;
+const minLY=1.2e-4,maxLY=4.2e6; // half-width of the view, from ~8 AU to ~4 million ly
+const halfW=()=>minLY*Math.pow(maxLY/minLY,z);
+const cv=$('sky');let W=0,H=0,g;
+function resize(){const r=Math.min(2,devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*r);cv.height=Math.round(H*r);g=cv.getContext('2d');g.setTransform(r,0,0,r,0,0);draw()}
+function fmtLen(ly){const au=ly*AUperLY;return au<2000?`${nf.format(Math.round(au))} AU`:ly<1?`${nf.format(Math.round(au))} AU (${ly.toFixed(2)} ly)`:ly<1e6?`${nf.format(Math.round(ly))} light-years`:`${(ly/1e6).toFixed(2)} million light-years`}
+function draw(){
+  if(!g)return;const hw=halfW(),S=Math.min(W,H)/2/hw,cx=W/2,cy=H/2;
+  // map: galactic x (toward centre) points up the screen
+  const P=(x,y)=>[cx+(-y-panX)*S,cy-(x-panY)*S];
+  g.fillStyle='#010208';g.fillRect(0,0,W,H);
+  // galaxy disc and arms (visible from ~2,000 ly half-width)
+  const ga=Math.min(1,Math.max(0,Math.log10(hw/2000)/1.2));
+  if(ga>0){const [gx,gy]=P(SUN_GC,0);g.save();g.globalAlpha=ga;
+    let gr=g.createRadialGradient(gx,gy,0,gx,gy,50000*S);gr.addColorStop(0,'rgba(255,230,190,.55)');gr.addColorStop(.12,'rgba(255,210,160,.22)');gr.addColorStop(.5,'rgba(150,170,255,.08)');gr.addColorStop(1,'rgba(120,140,255,0)');g.fillStyle=gr;g.beginPath();g.arc(gx,gy,50000*S,0,TAU);g.fill();
+    g.translate(gx,gy);g.rotate(.47);g.fillStyle='rgba(255,220,170,.35)';g.beginPath();g.ellipse(0,0,16000*S,5000*S,0,0,TAU);g.fill();g.rotate(-.47);
+    const k=Math.tan(12*D);for(let arm=0;arm<4;arm++){g.strokeStyle='rgba(190,200,255,.35)';g.lineWidth=Math.max(1.5,2600*S);g.lineCap='round';g.beginPath();
+      for(let th=0;th<=3.6*Math.PI;th+=.05){const r=10000*Math.exp(k*th);if(r>52000)break;const a=th+arm*Math.PI/2+.6;const x=r*Math.cos(a),y=r*Math.sin(a);th?g.lineTo(x*S,y*S):g.moveTo(x*S,y*S)}g.stroke()}
+    // local spur at the Sun
+    g.strokeStyle='rgba(190,200,255,.28)';g.lineWidth=Math.max(1,1500*S);g.beginPath();g.moveTo(SUN_GC*S*-1+3000*S,-4000*S);g.restore();
+    const [sx,sy]=P(0,0);g.save();g.globalAlpha=ga;g.strokeStyle='rgba(190,200,255,.25)';g.lineWidth=Math.max(1,1400*S);g.beginPath();g.moveTo(sx-6000*S,sy+2500*S);g.lineTo(sx+5000*S,sy-2000*S);g.stroke();g.restore();
+    g.fillStyle='#fff';g.beginPath();g.arc(gx,gy,3,0,TAU);g.fill();lab('SAGITTARIUS A*',gx+6,gy-6,'#ffe2b8',ga);}
+  // Local Group
+  const la=Math.min(1,Math.max(0,Math.log10(hw/40000)/1));
+  if(la>0)for(const o of LG){const [x,y]=P(o.x,o.y);g.globalAlpha=la;const r=Math.max(2.5,o.size/2*S);const gr=g.createRadialGradient(x,y,0,x,y,r*2);gr.addColorStop(0,o.c);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.arc(x,y,r*2,0,TAU);g.fill();lab(o.n.toUpperCase(),x+8,y-6,'#e7edf3',la);g.globalAlpha=1}
+  // nearest stars (fade in from 0.05 ly, out beyond 3,000 ly)
+  const sa=Math.min(1,Math.max(0,Math.log10(hw/0.05)))*(1-Math.min(1,Math.max(0,Math.log10(hw/3000))));
+  if(sa>0){for(const s of STARS){const [x,y]=P(s.x,s.y);if(x<-20||x>W+20||y<-20||y>H+20)continue;g.globalAlpha=sa;g.fillStyle=colOf(s.c);const r=s.c&&'OBAFG'.includes(s.c[0])?3.6:s.c&&s.c[0]==='K'?3:2.2;g.beginPath();g.arc(x,y,r,0,TAU);g.fill();
+      if(s===sel||(hw<14&&s.d<9.5)||(hw<30&&s.d<6.5))lab(s.short.toUpperCase(),x+6,y-5,'#c3ccd6',sa)}g.globalAlpha=1;
+    if(hw<40){g.strokeStyle=`rgba(182,164,255,${.25*sa})`;g.setLineDash([3,6]);for(const r of [5,10,15,20]){const [x0]=P(0,0),[,y0]=P(0,0);g.beginPath();g.arc(x0,y0,r*S,0,TAU);g.stroke();lab(`${r} LY`,x0+r*S*.71+4,y0-r*S*.71,'#8a97a8',sa*.9)}g.setLineDash([])}}
+  // solar system: orbits, Kuiper belt, heliopause, Oort cloud
+  const au=1/AUperLY,ss=1-Math.min(1,Math.max(0,Math.log10(hw/(3e5*au))/1.2));
+  if(ss>0){const [x0,y0]=P(0,0);g.globalAlpha=ss;
+    for(const [n,a] of PLAN){const r=a*au*S;if(r<1.5)continue;g.strokeStyle='rgba(116,199,255,.35)';g.beginPath();g.arc(x0,y0,r,0,TAU);g.stroke();if(r>14&&r<W)lab(n.toUpperCase(),x0+r*.71+3,y0-r*.71,'#9fd2ff',ss)}
+    g.strokeStyle='rgba(200,190,170,.18)';g.lineWidth=Math.max(1,20*au*S);g.beginPath();g.arc(x0,y0,40*au*S,0,TAU);g.stroke();g.lineWidth=1;if(40*au*S>20)lab('KUIPER BELT',x0-40*au*S*.7,y0+40*au*S*.72,'#c9bea8',ss);
+    g.strokeStyle='rgba(116,199,255,.6)';g.setLineDash([5,5]);g.beginPath();g.arc(x0,y0,121.6*au*S,0,TAU);g.stroke();g.setLineDash([]);if(121.6*au*S>20)lab('HELIOPAUSE · VOYAGER 1 CROSSED IT IN 2012',x0+5,y0-121.6*au*S-6,'#9fd2ff',ss);
+    const oi=2000*au*S,oo=1e5*au*S;if(oo>8){const gr=g.createRadialGradient(x0,y0,oi,x0,y0,oo);gr.addColorStop(0,'rgba(182,164,255,0)');gr.addColorStop(.2,'rgba(182,164,255,.12)');gr.addColorStop(1,'rgba(182,164,255,0)');g.fillStyle=gr;g.beginPath();g.arc(x0,y0,oo,0,TAU);g.fill();if(oi>30)lab('OORT CLOUD (ESTIMATED)',x0+oi*.75,y0+oi*.75,'#b6a4ff',ss)}
+    g.globalAlpha=1}
+  const [sx,sy]=P(0,0);const gr=g.createRadialGradient(sx,sy,0,sx,sy,8);gr.addColorStop(0,'#fff6d8');gr.addColorStop(.5,'#ffc860');gr.addColorStop(1,'rgba(255,170,60,0)');g.fillStyle=gr;g.beginPath();g.arc(sx,sy,8,0,TAU);g.fill();lab('SUN',sx+8,sy+12,'#ffc860',1);
+  // scale bar
+  const target=hw*.4,pow=Math.pow(10,Math.floor(Math.log10(target))),nice=[1,2,5].map(m=>m*pow).filter(v=>v<=target).pop()||pow;g.strokeStyle='#e7edf3';g.lineWidth=2;g.beginPath();g.moveTo(14,H-18);g.lineTo(14+nice*S,H-18);g.stroke();lab(fmtLen(nice),14,H-36,'#e7edf3',1);
+  g.fillStyle='rgba(232,196,106,.85)';g.font='600 12px "Saira Condensed",sans-serif';g.textAlign='center';g.fillText('↑ TOWARD THE GALACTIC CENTRE',W/2,16);g.textAlign='left';
+  $('scaleText').textContent=`Across this view: ${fmtLen(hw*2)}`;
+  $('scaleNote').textContent=hw<.002?'The planets and the Kuiper belt. Light crosses this in hours.':hw<1?'The Sun’s outer realm: the heliopause, where the solar wind gives way to interstellar space, and the estimated Oort cloud of comets.':hw<60?'The 106 nearest stars and brown dwarfs, at their measured positions. Most are faint red dwarfs no one can see without a telescope.':hw<80000?'The Milky Way: about 100,000 light-years across, a barred spiral. Everything you can see at night with the naked eye lies inside the small circle around the Sun.':'The Local Group: the Milky Way, its satellite clouds, and the two other big spirals, Andromeda and Triangulum.';
+}
+function lab(t,x,y,c,a){g.save();g.globalAlpha=a;g.font='600 12px "Saira Condensed",sans-serif';g.fillStyle=c;g.fillText(t,x,y);g.restore()}
+$('zoom').addEventListener('input',()=>{z=+$('zoom').value;panX=panY=0;draw()});
+document.querySelectorAll('[data-z]').forEach(b=>b.addEventListener('click',()=>{z=+b.dataset.z;$('zoom').value=z;panX=panY=0;draw()}));
+cv.addEventListener('wheel',e=>{e.preventDefault();z=Math.min(1,Math.max(0,z+(e.deltaY>0?.012:-.012)));$('zoom').value=z;draw()},{passive:false});
+let drag=null;cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,px:panX,py:panY,moved:false};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(!drag)return;const S=Math.min(W,H)/2/halfW(),dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)drag.moved=true;panX=drag.px-dx/S;panY=drag.py+dy/S;draw()});
+cv.addEventListener('pointerup',e=>{if(drag&&!drag.moved)pick(e);drag=null});
+function pick(e){const rct=cv.getBoundingClientRect(),mx=e.clientX-rct.left,my=e.clientY-rct.top,hw=halfW(),S=Math.min(W,H)/2/hw,P=(x,y)=>[W/2+(-y-panX)*S,H/2-(x-panY)*S];
+  let best=null,bd=14;for(const s of STARS){const [x,y]=P(s.x,s.y),d=Math.hypot(x-mx,y-my);if(d<bd){bd=d;best={type:'star',o:s}}}
+  for(const o of LG){const [x,y]=P(o.x,o.y),d=Math.hypot(x-mx,y-my);if(d<bd+6){bd=d;best={type:'lg',o}}}
+  {const [x,y]=P(SUN_GC,0),d=Math.hypot(x-mx,y-my);if(d<bd+6)best={type:'gc'}}
+  if(!best)return;sel=best.type==='star'?best.o:null;show(best);draw()}
+function show(b){const k=(a,v)=>`<span>${a}</span><b>${v}</b>`;
+  if(b.type==='star'){const s=b.o;$('selH').textContent=s.short;$('selKv').innerHTML=k('Full name',s.n)+k('Distance',`${s.d} light-years`)+k('Spectral class',s.c||'—')+k('Light from it left in',`${(2026-s.d).toFixed(0)} CE`)+k('Height above the galactic plane',`${s.z.toFixed(2)} ly`)}
+  else if(b.type==='lg'){const o=b.o;$('selH').textContent=o.n;$('selKv').innerHTML=k('Distance',`about ${fmtLen(o.d)}`)+k('Its light set out',o.d>1e5?`${nf.format(Math.round(o.d))} years ago`:'—')}
+  else{$('selH').textContent='Sagittarius A*';$('selKv').innerHTML=k('Distance',`about ${nf.format(SUN_GC)} light-years`)+k('What it is','a black hole of about 4 million Suns, imaged by the Event Horizon Telescope in 2022')}}
+/* travel times */
+const DEST=[['Proxima Centauri',4.2465],['Barnard’s Star',5.9629],['Sirius',8.7094],['Epsilon Eridani',10.4749],['Galactic centre',SUN_GC],['Large Magellanic Cloud',163000],['Andromeda',2.5e6]];
+DEST.forEach(([n],i)=>{const o=document.createElement('option');o.value=i;o.textContent=n;$('dest').append(o)});
+function travel(){const [n,d]=DEST[+$('dest').value],kmLY=9.4607e12,yr=v=>d*kmLY/v/3.15576e7;
+  const fy=y=>y<1e3?`${y.toFixed(1)} years`:y<1e6?`${nf.format(Math.round(y))} years`:y<1e9?`${(y/1e6).toFixed(1)} million years`:`${(y/1e9).toFixed(2)} billion years`;
+  const a=1.0323,tau=2/a*Math.acosh(1+a*d/2),t=2/a*Math.sqrt((1+a*d/2)**2-1);
+  const rows=[['Light',fy(d),'—'],['Voyager 1, 17 km/s',fy(yr(17)),'—'],['Starship after deep-space refuelling, ~20 km/s',fy(yr(20)),'—'],['Breakthrough Starshot sail, 20% of light speed',fy(d/.2),'—'],['1 g there, 1 g braking (relativistic)',fy(t),fy(tau)]];
+  $('travel').innerHTML='<tr><th>Ship</th><th class="n">Time at home</th><th class="n">Time aboard</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${r[2]}</td></tr>`).join('');}
+$('dest').addEventListener('change',travel);
+$('near').innerHTML='<tr><th>#</th><th>Name</th><th class="n">Light-years</th><th>Class</th></tr>'+STARS.slice(0,25).map((s,i)=>`<tr><td>${i+1}</td><td>${s.n}</td><td class="n">${s.d}</td><td><span style="color:${colOf(s.c)}">●</span> ${s.c}</td></tr>`).join('');
+$('legend').innerHTML=[['O/B/A','#aabfff'],['F/G (like the Sun)','#fff4ea'],['K','#ffd2a1'],['M red dwarf','#ffad6b'],['L/T/Y brown dwarf','#a5617b'],['White dwarf','#e7edf3']].map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
+travel();new ResizeObserver(resize).observe(cv);resize();
+window.__atlas={STARS,setZoom:v=>{z=v;draw()},draw};
+})();
+</script>
+
+</html>

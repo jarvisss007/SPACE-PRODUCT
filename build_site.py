@@ -84,7 +84,40 @@ def build() -> None:
             # extra pages are served without the artifact skeleton, so they need their own doctype
             src = "<!doctype html>\n" + src
         (OUT / fname).write_text(src, encoding="utf-8")
+        WEB.mkdir(exist_ok=True)
+        (WEB / fname).write_text(web_page(src, fname), encoding="utf-8")
         print(f"built {fname}")
+    # GitHub Pages: serve files as they are, without Jekyll processing
+    (WEB / ".nojekyll").write_text("", encoding="utf-8")
+    (WEB / "404.html").write_text(web_page(
+        '<title>Not found · Kaksha Labs</title><style>html,body{background:#04060b;color:#e7edf3;font-family:system-ui,sans-serif}'
+        '.wrap{max-width:640px;margin:15vh auto;padding:0 16px}a{color:#74c7ff}</style>'
+        '<div class="wrap"><h1>Lost in orbit</h1><p>That page is not here. <a href="./">Go to the Kaksha Labs home page</a>.</p></div>',
+        "404.html"), encoding="utf-8")
+
+
+# ---- the public website (docs/), for GitHub Pages or any static host ----
+WEB = HERE / "docs"
+ICON = ("data:image/svg+xml," "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E"
+        "%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E"
+        "%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E"
+        "%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E")
+
+
+def web_page(src: str, fname: str) -> str:
+    """A full standalone HTML document: doctype, language, icon and a description for search and link previews."""
+    body = re.sub(r"^\s*<!doctype html>\s*", "", src, flags=re.I)
+    body = body.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', "")
+    body = body.replace('<meta charset="utf-8">\n', "", 1)
+    title = re.search(r"<title>(.*?)</title>", body, re.S)
+    t = title.group(1).strip() if title else "Kaksha Labs"
+    desc = ("Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, "
+            "the Sun and the stars, each checked against what really happened.")
+    head = (f'<link rel="icon" href="{ICON}">\n<meta name="description" content="{desc}">\n'
+            f'<meta property="og:title" content="{t if fname == "index.html" else t + " · Kaksha Labs"}">\n'
+            f'<meta property="og:description" content="{desc}">\n<meta name="theme-color" content="#04060b">\n')
+    # charset first: browsers only look for it in the first 1,024 bytes
+    return '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n' + head + body + "\n</html>\n"
 
 
 if __name__ == "__main__":

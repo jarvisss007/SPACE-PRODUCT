@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Mangalyaan Mars Lab · Kaksha Labs">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mangalyaan Mars Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a mission replay. The 298-day transfer on a map, ISRO's burn log rebuilt from its own orbit reports, the checks, then the launch-window chart where you can pick another date. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--mars:#e0774a;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--mars)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button.primary{background:var(--mars);border-color:var(--mars);color:#1c0a02}button:focus-visible,input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--mars)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}
+#map{aspect-ratio:1/1;max-height:600px}#pork{aspect-ratio:4/3;max-height:560px;cursor:crosshair;touch-action:manipulation}
+.kv{display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}.kv span{color:var(--dim)}.kv b{text-align:right;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Kaksha Labs"><div class="sa-in"><a href="index.html" class="sa-brand">Kaksha Labs</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html" aria-current="page">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">ISRO’s burn log · JPL planet positions · Newton’s physics</div>
+    <h1>Mangalyaan Mars Lab</h1>
+    <p>On 24 September 2014 India’s Mars Orbiter Mission fired its engine for 23 minutes and was captured by Mars, making India the first Asian nation to reach Mars orbit. It cost about ₹450 crore (US$73 million), the cheapest Mars mission to date. ISRO published every burn: when, how long, and the orbit that resulted. This page rebuilds the whole voyage from those numbers and checks it against what really happened.</p>
+  </header>
+
+  <div class="two">
+    <section class="card">
+      <h2>298 days across the Sun</h2>
+      <canvas id="map" aria-label="Earth, Mars and the spacecraft's path around the Sun, animated by date"></canvas>
+      <div class="seg" style="margin-top:10px"><button type="button" class="primary" id="play">Pause</button><span class="note" id="when" style="margin-left:auto"></span></div>
+      <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Date along the transfer" style="margin-top:8px">
+    </section>
+    <section class="card">
+      <h2>The trip in numbers</h2>
+      <div class="kv" id="kv"></div>
+      <p class="note" style="margin-top:12px">The path between Earth and Mars is solved exactly from the two real dates, leaving Earth on 30 November 2013 at 19:19 UTC and arriving at Mars on 24 September 2014 at 02:10 UTC, using JPL’s planet positions. Nothing is fitted.</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Leaving Earth one step at a time</h2>
+    <p>Like Chandrayaan-3, Mangalyaan could not be thrown straight at Mars. India’s PSLV rocket could only put it in a stretched Earth orbit, and the spacecraft’s own 440-newton engine raised that orbit in stages, always firing at the low point. Then came the burn that sent it to Mars, and 298 days later the one that braked it into Mars orbit. For each burn the model works out the push from ISRO’s before-and-after orbits, and from that push it predicts how long the engine had to fire.</p>
+    <div class="scroll"><table id="burns"></table></div>
+    <p class="note" style="margin-top:8px">One number is fitted: the engine’s efficiency (specific impulse). It is chosen so the propellant used across all the burns leaves the 40 kg ISRO reported in the tank after arriving at Mars. It comes out at <b id="ispOut"></b>, a little below the usual figure for this class of engine, because the model leaves out the small course corrections and the losses from firing for many minutes rather than in an instant. Every burn time is then a prediction.</p>
+  </section>
+
+  <section class="card">
+    <h2>Checks against the real mission</h2>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Could they have left on another day?</h2>
+    <p>Earth and Mars line up for a cheap trip only once every 26 months. Each square below is a different pair of departure and arrival dates. Its colour is the total push needed, from Mangalyaan’s parking orbit to its orbit around Mars, with the path for each pair solved the same way. Tap a square to see that trip. The ring marks the dates ISRO chose.</p>
+    <canvas id="pork" aria-label="Launch-window chart: departure date across, arrival date up, colour for the push needed"></canvas>
+    <div class="verdict" id="porkTxt"></div>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">Every burn is treated as instantaneous. Long burns lose some push to gravity, which is why the real departure burn ran longer than predicted. The Earth orbit is assumed to keep a 252 km low point after the first burn, the figure ISRO gave then. The three small course corrections on the way (40.5 s, 16 s and 4 s on the small thrusters) are left out. The interplanetary path ignores the planets’ pull while the spacecraft is between them. The Mars arrival is worked out in a plane, while the real orbit was tilted about 150°, so the braking burn is an estimate.</p>
+  </section>
+
+  <footer>Sources: ISRO’s mission reports as tabulated in the Wikipedia article “Mars Orbiter Mission” (masses 1,337.2 kg at launch and 482.5 kg dry; every burn date, duration and resulting orbit; the 35 m/s fourth burn; the Mars orbit of 421.7 × 76,993.6 km and 72 h 51 min 51 s; 40 kg of propellant left; the 780 million km distance; the cost). Planet positions: E. M. Standish and J. G. Williams, JPL approximate positions, Table 2a. GM values for Earth and Mars from JPL. An independent model, not affiliated with ISRO.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const D=Math.PI/180,AU=1.495978707e8,MUS=1.32712440018e11;
+const EL={
+ mars:[[1.52371243,0.09336511,1.85181869,-4.56813164,-23.91744784,49.71320984],[0.00000097,0.00009149,-0.00724757,19140.29934243,0.45223625,-0.26852431]],
+ earth:[[1.00000018,0.01673163,-0.00054346,100.46691572,102.93005885,-5.11260389],[-0.00000003,-0.00003661,-0.01337178,35999.37306329,0.31795260,-0.24123856]],
+ jupiter:[[5.20248019,0.04853590,1.29861416,34.33479152,14.27495244,100.29282654],[-0.00002864,0.00018026,-0.00322699,3034.90371757,0.18199196,0.13024619],[-0.00012452,0.06064060,-0.35635438,38.35125000]],
+ saturn:[[9.54149883,0.05550825,2.49424102,50.07571329,92.86136063,113.63998702],[-0.00003065,-0.00032044,0.00451969,1222.11494724,0.54179478,-0.25015002],[0.00025899,-0.13434469,0.87320147,38.35125000]],
+ uranus:[[19.18797948,0.04685740,0.77298127,314.20276625,172.43404441,73.96250215],[-0.00020455,-0.00001550,-0.00180155,428.49512595,0.09266985,0.05739699],[0.00058331,-0.97731848,0.17689245,7.67025000]],
+ neptune:[[30.06952752,0.00895439,1.77005520,304.22289287,46.68158724,131.78635853],[0.00006447,0.00000818,0.00022400,218.46515314,0.01009938,-0.00606302],[-0.00041348,0.68346318,-0.10162547,7.67025000]]};
+EL.pluto=[[39.48211675,0.24882730,17.14001206,238.92903833,224.06891629,110.30393684],[-0.00031596,0.00005170,0.00004818,145.20780515,-0.04062942,-0.01183482]];
+const PL={mars:{mu:42828.37,R:3396.2},pluto:{mu:869.6,R:1188},earth:{mu:398600.44,R:6378},jupiter:{mu:126686534,R:71492},saturn:{mu:37931187,R:60268},uranus:{mu:5793939,R:25559},neptune:{mu:6836529,R:24764}};
+function pos(name,jd){const [b,r,x]=EL[name],T=(jd-2451545)/36525,el=b.map((v,i)=>v+r[i]*T);let [a,e,I,L,wb,O]=el;let M=L-wb;if(x)M+=x[0]*T*T+x[1]*Math.cos(x[3]*T*D)+x[2]*Math.sin(x[3]*T*D);M=((M+180)%360+360)%360-180;
+  const w=wb-O,es=e/D;let E=M+es*Math.sin(M*D);for(let k=0;k<30;k++){const dE=(M-(E-es*Math.sin(E*D)))/(1-e*Math.cos(E*D));E+=dE;if(Math.abs(dE)<1e-9)break}
+  const xp=a*(Math.cos(E*D)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E*D),cw=Math.cos(w*D),sw=Math.sin(w*D),cO=Math.cos(O*D),sO=Math.sin(O*D),cI=Math.cos(I*D),sI=Math.sin(I*D);
+  return [((cw*cO-sw*sO*cI)*xp+(-sw*cO-cw*sO*cI)*yp)*AU,((cw*sO+sw*cO*cI)*xp+(-sw*sO+cw*cO*cI)*yp)*AU,(sw*sI*xp+cw*sI*yp)*AU]}
+function vel(name,jd){const h=0.05,a=pos(name,jd-h),b=pos(name,jd+h);return a.map((v,i)=>(b[i]-v)/(2*h*86400))}
+const sub=(a,b)=>a.map((v,i)=>v-b[i]),add=(a,b)=>a.map((v,i)=>v+b[i]),mul=(a,k)=>a.map(v=>v*k),dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],norm=a=>Math.sqrt(dot(a,a)),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+// Stumpff
+function C(z){return z>1e-8?(1-Math.cos(Math.sqrt(z)))/z:z<-1e-8?(Math.cosh(Math.sqrt(-z))-1)/(-z):1/2}
+function S(z){if(z>1e-8){const s=Math.sqrt(z);return (s-Math.sin(s))/(s*s*s)}if(z<-1e-8){const s=Math.sqrt(-z);return (Math.sinh(s)-s)/(s*s*s)}return 1/6}
+// Lambert, universal variables (Curtis Alg. 5.2), prograde, single revolution
+function lambert(r1,r2,dt,mu=MUS){const R1=norm(r1),R2=norm(r2),c=cross(r1,r2);let th=Math.acos(Math.max(-1,Math.min(1,dot(r1,r2)/(R1*R2))));if(c[2]<0)th=2*Math.PI-th;
+  const A=Math.sin(th)*Math.sqrt(R1*R2/(1-Math.cos(th)));const y=z=>R1+R2+A*(z*S(z)-1)/Math.sqrt(C(z));const F=z=>Math.pow(y(z)/C(z),1.5)*S(z)+A*Math.sqrt(y(z))-Math.sqrt(mu)*dt;
+  let lo=-3000,hi=4*Math.PI*Math.PI-1e-6;if(y(lo)<0){let a=lo,b=hi;for(let i=0;i<100;i++){const m=(a+b)/2;if(y(m)<0)a=m;else b=m}lo=b}  // lowest z where y stays positive
+  for(let i=0;i<70;i++){const m=(lo+hi)/2;if(F(m)>0)hi=m;else lo=m}const z=(lo+hi)/2,yz=y(z);
+  const f=1-yz/R1,g=A*Math.sqrt(yz/mu),gd=1-yz/R2;return {v1:mul(sub(r2,mul(r1,f)),1/g),v2:mul(sub(mul(r2,gd),r1),1/g)}}
+const jdOf=s=>Date.parse(s+'Z')/86400000+2440587.5;
+// a tour: list of [body, date]; returns legs and flybys
+function tour(stops){const legs=[];for(let i=0;i<stops.length-1;i++){const [b1,d1]=stops[i],[b2,d2]=stops[i+1],j1=jdOf(d1),j2=jdOf(d2);const L=lambert(pos(b1,j1),pos(b2,j2),(j2-j1)*86400);legs.push({...L,j1,j2,b1,b2})}
+  const out={legs,fly:[]};const e0=sub(legs[0].v1,vel(stops[0][0],legs[0].j1));out.launchVinf=norm(e0);out.launchHelio=norm(legs[0].v1);
+  for(let i=1;i<stops.length-1;i++){const b=stops[i][0],j=legs[i].j1,vp=vel(b,j),vin=sub(legs[i-1].v2,vp),vout=sub(legs[i].v1,vp);const a=norm(vin),c=norm(vout),v=(a+c)/2;
+    const turn=Math.acos(Math.max(-1,Math.min(1,dot(vin,vout)/(a*c)))),rp=PL[b].mu/(v*v)*(1/Math.sin(turn/2)-1);
+    out.fly.push({b,vin:a,vout:c,turn:turn/D,rp,helioIn:norm(legs[i-1].v2),helioOut:norm(legs[i].v1),mismatch:c-a})}
+  const last=legs.at(-1);out.arrive={b:last.b2,vinf:norm(sub(last.v2,vel(last.b2,last.j2))),helio:norm(last.v2)};return out}
+
+
+
+const nf=new Intl.NumberFormat('en-US'),MUE=398600.44,RE=6378.137,MUM=42828.37,RM=3396.2,G0=9.80665,THRUST=440,M0=1337.2,MDRY=482.5,LEFT=40;
+const vis=(mu,r,a)=>Math.sqrt(mu*(2/r-1/a));
+const ORB=[['Launch on PSLV-C25','5 Nov 2013',264.1,23903.6,null],['Burn 1','6 Nov 2013',252,28825,416],['Burn 2','7 Nov 2013',252,40186,570.6],['Burn 3','8 Nov 2013',252,71636,707],['Burn 4, fell short','10 Nov 2013',252,78276,null],['Burn 4b, unplanned extra','11 Nov 2013',252,118642,303.8],['Burn 5','15 Nov 2013',252,192874,243.5]];
+const TMI='2013-11-30T19:19',MOI='2014-09-24T02:10',PARK=[252,192874],MARS_ORB=[421.7,76993.6];
+function trip(jd1,jd2){const L=lambert(pos('earth',jd1),pos('mars',jd2),(jd2-jd1)*86400),vd=norm(sub(L.v1,vel('earth',jd1))),va=norm(sub(L.v2,vel('mars',jd2)));
+  const rp=RE+PARK[0],dvD=Math.sqrt(vd*vd+2*MUE/rp)-vis(MUE,rp,(rp+RE+PARK[1])/2),rpm=RM+MARS_ORB[0],dvA=Math.sqrt(va*va+2*MUM/rpm)-vis(MUM,rpm,(rpm+RM+MARS_ORB[1])/2);return {L,vd,va,dvD:dvD*1000,dvA:dvA*1000,tot:(dvD+dvA)*1000}}
+const J1=jdOf(TMI),J2=jdOf(MOI),T=trip(J1,J2);
+// sample the transfer
+const PATH=[];let pathLen=0;{let r=pos('earth',J1),v=[...T.L.v1];const n=6000,dt=(J2-J1)*86400/n,acc=r=>{const d=norm(r);return r.map(x=>-MUS*x/d**3)};let a=acc(r);
+  for(let i=0;i<=n;i++){if(i%20===0)PATH.push([J1+i*dt/86400,r[0],r[1],norm(v)]);if(i===n)break;v=v.map((x,k)=>x+a[k]*dt/2);const r2=r.map((x,k)=>x+v[k]*dt);pathLen+=norm(sub(r2,r));r=r2;a=acc(r);v=v.map((x,k)=>x+a[k]*dt/2)}}
+// burns
+const BURNS=[];for(let i=1;i<ORB.length;i++){const p0=ORB[i-1],p1=ORB[i],rr=RE+Math.min(p0[2],p1[2]);BURNS.push({n:p1[0],d:p1[1],orb:`${p1[2]} × ${nf.format(p1[3])}`,dv:(vis(MUE,rr,(2*RE+p1[2]+p1[3])/2)-vis(MUE,rr,(2*RE+p0[2]+p0[3])/2))*1000,real:p1[4]})}
+BURNS.push({n:'Trans-Mars injection',d:'30 Nov 2013',orb:'leaves Earth for the Sun',dv:T.dvD,real:1328.89},{n:'Mars orbit insertion',d:'24 Sep 2014',orb:'421.7 × 76,993.6 around Mars',dv:T.dvA,real:1388.67});
+const B4=BURNS.find(b=>b.n.startsWith('Burn 4,')),b4model=B4.dv;B4.dv=35; // ISRO's own figure for the short burn, used for the fuel budget
+const totDv=BURNS.reduce((a,b)=>a+b.dv,0),VE=totDv/Math.log(M0/(MDRY+LEFT));let m=M0;for(const b of BURNS){const mp=m*(1-Math.exp(-b.dv/VE));b.mp=mp;b.pred=mp*VE/THRUST;m-=mp}
+document.getElementById('ispOut').textContent=Math.round(VE/G0)+' s';
+(()=>{let h='<tr><th>Burn</th><th>Date</th><th class="n">Orbit after (km)</th><th class="n">Push</th><th class="n">Engine time: real</th><th class="n">predicted</th><th class="n">diff.</th></tr>';
+ h+=`<tr><td>${ORB[0][0]}</td><td>${ORB[0][1]}</td><td class="n">264 × 23,904</td><td class="n">rocket</td><td></td><td></td><td></td></tr>`;
+ for(const b of BURNS){const d=b.real?(b.pred-b.real)/b.real*100:null;h+=`<tr><td>${b.n}</td><td>${b.d}</td><td class="n">${b.orb}</td><td class="n">${Math.round(b.dv)} m/s</td><td class="n">${b.real?nf.format(b.real)+' s':'not given'}</td><td class="n">${nf.format(Math.round(b.pred))} s</td><td class="n ${d===null?'':Math.abs(d)<5?'ok':Math.abs(d)<12?'mid':'bad'}">${d===null?'':(d>0?'+':'')+d.toFixed(0)+'%'}</td></tr>`}
+ h+=`<tr><td><b>Total</b></td><td></td><td></td><td class="n"><b>${nf.format(Math.round(totDv))} m/s</b></td><td class="n">${nf.format(Math.round(BURNS.reduce((a,b)=>a+(b.real||0),0)))} s</td><td class="n">${nf.format(Math.round(BURNS.reduce((a,b)=>a+(b.real?b.pred:0),0)))} s</td><td></td></tr>`;
+ document.getElementById('burns').innerHTML=h})();
+(()=>{const am=(2*RM+MARS_ORB[0]+MARS_ORB[1])/2,Tm=2*Math.PI*Math.sqrt(am**3/MUM)/3600,real=72+51/60+51/3600;
+ const rows=[['The fourth burn that fell short: push','35 m/s (ISRO)',b4model.toFixed(1)+' m/s, from the orbits before and after',Math.abs(b4model-35)/35<.1?'ok':'mid'],
+  ['Orbit period around Mars','72 h 51 min 51 s',`${Math.floor(Tm)} h ${Math.floor(Tm%1*60)} min ${Math.round((Tm*3600)%60)} s`,'ok'],
+  ['Distance travelled to Mars','780 million km (ISRO)',`${nf.format(Math.round(pathLen/1e6))} million km along the path around the Sun`,'mid'],
+  ['Engine time, the five orbit-raising burns with published times','2,241 s',nf.format(Math.round(BURNS.slice(0,6).reduce((a,b)=>a+(b.real?b.pred:0),0)))+' s','ok'],
+  ['Engine time, braking into Mars orbit','1,388.67 s',nf.format(Math.round(BURNS.at(-1).pred))+' s','mid']];
+ document.getElementById('check').innerHTML='<tr><th>Test</th><th>Real mission</th><th>This model</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]}">${r[2]}</td></tr>`).join('')+`<tr><td colspan="3" class="note">ISRO’s 780 million km probably includes the month spent climbing out of Earth orbit; the path around the Sun alone comes out shorter. The braking burn is the least certain number, because the real arrival was tilted out of this model’s flat plane.</td></tr>`})();
+document.getElementById('kv').innerHTML=`<span>Launch mass / dry mass</span><b>${nf.format(M0)} / ${MDRY} kg</b><span>Push to leave Earth from the parking orbit</span><b>${Math.round(T.dvD)} m/s</b><span>Speed left over after escaping Earth</span><b>${T.vd.toFixed(2)} km/s</b><span>Speed relative to Mars on arrival, far out</span><b>${T.va.toFixed(2)} km/s</b><span>Braking push into Mars orbit</span><b>${Math.round(T.dvA)} m/s</b><span>Push from launch orbit to Mars orbit, in all</span><b>${(totDv/1000).toFixed(2)} km/s</b><span>Days between Earth and Mars</span><b>${Math.round(J2-J1)}</b>`;
+// ---- map ----
+const cv=document.getElementById('map'),g=cv.getContext('2d');let tN=0,play=true,lf=0;
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+const jd2s=j=>new Date((j-2440587.5)*864e5).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+const stars=[];{let s=9;const R=()=>{s=(s*16807)%2147483647;return s/2147483647};for(let i=0;i<180;i++)stars.push([R(),R(),R()])}
+function drawMap(){const w=cv.clientWidth,h=cv.clientHeight,cx=w/2,cy=h/2,S=(Math.min(w,h)/2-16)/(1.72*AU),P=(x,y)=>[cx+x*S,cy-y*S];g.fillStyle='#02030a';g.fillRect(0,0,w,h);
+  for(const [a,b,c] of stars){g.globalAlpha=.12+c*.45;g.fillStyle='#fff';g.fillRect(a*w,b*h,1,1)}g.globalAlpha=1;
+  const jd=J1+(J2-J1)*tN;for(const [b,per] of [['earth',365.25],['mars',687]]){g.strokeStyle='rgba(138,151,168,.25)';g.beginPath();for(let k=0;k<=160;k++){const p=pos(b,jd+k/160*per),[x,y]=P(p[0],p[1]);k?g.lineTo(x,y):g.moveTo(x,y)}g.stroke()}
+  g.fillStyle='#ffd27a';g.beginPath();g.arc(cx,cy,7,0,7);g.fill();
+  g.strokeStyle='rgba(224,119,74,.22)';g.setLineDash([3,4]);g.beginPath();PATH.forEach((q,i)=>{const [x,y]=P(q[1],q[2]);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();g.setLineDash([]);
+  g.strokeStyle='#e0774a';g.lineWidth=2;g.beginPath();let cur=PATH[0];PATH.forEach((q,i)=>{if(q[0]>jd)return;cur=q;const [x,y]=P(q[1],q[2]);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();g.lineWidth=1;
+  g.font='600 12px "Saira Condensed",sans-serif';for(const [b,col,rad] of [['earth','#4aa3ff',5],['mars','#e0774a',4.5]]){const p=pos(b,jd),[x,y]=P(p[0],p[1]);g.fillStyle=col;g.beginPath();g.arc(x,y,rad,0,7);g.fill();g.fillStyle='#8a97a8';g.fillText(b==='earth'?'EARTH':'MARS',x+8,y+4)}
+  const [sx,sy]=P(cur[1],cur[2]);g.fillStyle='#fff';g.beginPath();g.arc(sx,sy,3,0,7);g.fill();g.strokeStyle='#ff9933';g.beginPath();g.arc(sx,sy,7,0,7);g.stroke();
+  document.getElementById('when').textContent=jd2s(jd)+' · day '+Math.round(jd-J1)+' · '+cur[3].toFixed(1)+' km/s around the Sun'}
+document.getElementById('play').onclick=e=>{if(tN>=1)tN=0;play=!play;e.target.textContent=play?'Pause':'Play'};
+const sc=document.getElementById('scrub');sc.oninput=()=>{tN=sc.value/1000;play=false;document.getElementById('play').textContent='Play'};
+function loop(ts){const dt=lf?Math.min(.1,(ts-lf)/1000):0;lf=ts;if(play){tN+=dt/16;if(tN>=1){tN=1;play=false;document.getElementById('play').textContent='Replay'}sc.value=Math.round(tN*1000)}drawMap();requestAnimationFrame(loop)}
+// ---- porkchop ----
+const pk=document.getElementById('pork'),pg=pk.getContext('2d');const D0=jdOf('2013-09-01T00:00'),D1=jdOf('2014-03-01T00:00'),A0=jdOf('2014-05-01T00:00'),A1=jdOf('2015-01-15T00:00'),NX=72,NY=60;
+const GRID=[];let best={tot:1e9};for(let i=0;i<NX;i++){GRID.push([]);for(let j=0;j<NY;j++){const d=D0+(D1-D0)*(i+.5)/NX,a=A0+(A1-A0)*(j+.5)/NY;let tot=NaN;if(a-d>120){try{const t=trip(d,a);tot=t.tot;if(tot<best.tot)best={tot,d,a}}catch(e){}}GRID[i].push(tot)}}
+let sel={d:J1,a:J2};
+function col(v){if(!isFinite(v))return '#06080d';const t=Math.max(0,Math.min(1,(v-1500)/2500));const c=[[95,214,160],[232,196,106],[224,119,74],[120,40,40]],k=t*3,i=Math.min(2,Math.floor(k)),f=k-i;return `rgb(${c[i].map((x,n)=>Math.round(x+(c[i+1][n]-x)*f)).join(',')})`}
+function drawPork(){const w=pk.clientWidth,h=pk.clientHeight,X0=46,Y0=h-30,pw=w-X0-10,ph=h-30-12,X=d=>X0+(d-D0)/(D1-D0)*pw,Y=a=>Y0-(a-A0)/(A1-A0)*ph;pg.fillStyle='#02030a';pg.fillRect(0,0,w,h);
+  for(let i=0;i<NX;i++)for(let j=0;j<NY;j++){pg.fillStyle=col(GRID[i][j]);pg.fillRect(X0+i*pw/NX,Y0-(j+1)*ph/NY,pw/NX+.6,ph/NY+.6)}
+  pg.font='600 11px "Saira Condensed",sans-serif';pg.fillStyle='#8a97a8';
+  for(const s of ['2013-09-01','2013-11-01','2014-01-01','2014-03-01']){const x=X(jdOf(s+'T00:00'));pg.fillText(new Date(s).toLocaleDateString('en-GB',{month:'short',year:'2-digit'}),x-14,h-12)}
+  for(const s of ['2014-05-01','2014-08-01','2014-11-01']){const y=Y(jdOf(s+'T00:00'));pg.fillText(new Date(s).toLocaleDateString('en-GB',{month:'short',year:'2-digit'}),4,y+4)}
+  pg.fillText('LEAVE EARTH →',X0+pw-80,h-1);pg.save();pg.translate(11,Y0-ph+60);pg.rotate(-Math.PI/2);pg.fillText('REACH MARS →',0,0);pg.restore();
+  pg.strokeStyle='#fff';pg.lineWidth=2;pg.beginPath();pg.arc(X(J1),Y(J2),7,0,7);pg.stroke();pg.lineWidth=1;pg.fillStyle='#fff';pg.fillText('ISRO',X(J1)+9,Y(J2)-6);
+  pg.strokeStyle='#74c7ff';pg.beginPath();pg.arc(X(sel.d),Y(sel.a),5,0,7);pg.stroke();
+  // legend
+  for(let k=0;k<=40;k++){pg.fillStyle=col(1500+k/40*2500);pg.fillRect(X0+pw-130+k*3,16,3,8)}pg.fillStyle='#8a97a8';pg.fillText('1.5',X0+pw-140,24);pg.fillText('4+ KM/S',X0+pw-6-36,36)}
+function porkText(){let t;try{t=trip(sel.d,sel.a)}catch(e){}const real=trip(J1,J2);if(!t||!isFinite(t.tot)){document.getElementById('porkTxt').textContent='No sensible path for those dates.';return}
+  const extra=t.tot-real.tot;document.getElementById('porkTxt').innerHTML=`Leave ${jd2s(sel.d)}, arrive ${jd2s(sel.a)} (${Math.round(sel.a-sel.d)} days): <b>${(t.tot/1000).toFixed(2)} km/s</b> in all, ${Math.round(t.dvD)} m/s to leave and ${Math.round(t.dvA)} m/s to brake. ${Math.abs(extra)<15?'That is ISRO’s trip.':extra>0?`${nf.format(Math.round(extra))} m/s more than ISRO’s dates, which would mean about ${nf.format(Math.round(1337.2*(1-Math.exp(-extra/VE))))} kg more propellant on a spacecraft that carried 855 kg.`:`${nf.format(Math.round(-extra))} m/s less than ISRO’s dates in this flat model.`} The cheapest pair on the chart: leave ${jd2s(best.d)}, arrive ${jd2s(best.a)}, ${(best.tot/1000).toFixed(2)} km/s.`}
+pk.addEventListener('click',e=>{const b=pk.getBoundingClientRect(),X0=46,pw=b.width-X0-10,ph=b.height-42,x=e.clientX-b.left,y=e.clientY-b.top;sel={d:D0+(x-X0)/pw*(D1-D0),a:A0+((b.height-30)-y)/ph*(A1-A0)};sel.d=Math.max(D0,Math.min(D1,sel.d));sel.a=Math.max(A0,Math.min(A1,sel.a));drawPork();porkText()});
+for(const c of [cv,pk]){size(c);new ResizeObserver(()=>{size(c);drawPork()}).observe(c)}drawPork();porkText();requestAnimationFrame(loop);
+window.__mom={T,BURNS,VE,pathLen,best,trip,b4model};
+})();
+</script>
+
+</html>

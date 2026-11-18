@@ -22,7 +22,20 @@ Each `*.html` file at the top level is one self-contained lab: one file with no 
 py build_site.py
 ```
 
-This writes `site/`. Any static host can serve that folder as is, for example Cloudflare Pages, Netlify or GitHub Pages.
+This writes two folders:
+
+- `docs/` is **the public website**: complete pages with an icon and a link-preview description. GitHub Pages serves it.
+- `site/` is the same pages in the form claude.ai artifacts expect.
+
+## Hosting (GitHub Pages)
+
+1. On GitHub, open the repository's **Settings → Pages**.
+2. Under "Build and deployment", set **Source** to *Deploy from a branch*, **Branch** to `main` and the folder to `/docs`, then **Save**.
+3. After a minute the site is live at `https://jarvisss007.github.io/SPACE-PRODUCT/`.
+
+After any change, run `py build_site.py`, then commit and push. Pages updates by itself.
+
+**Own domain (kakshalabs.com):** in the same Pages settings, enter the domain under "Custom domain", which adds a `CNAME` file. Then, at the domain registrar, add the DNS records GitHub shows: four `A` records for the bare domain, and a `CNAME` for `www` pointing to `jarvisss007.github.io`. Tick "Enforce HTTPS" once it appears.
 
 ## Updating the satellite data
 

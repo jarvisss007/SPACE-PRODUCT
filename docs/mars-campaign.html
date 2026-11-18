@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Starship Mars Campaign · Kaksha Labs">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Starship Mars Campaign</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: cinematic stage, mission telemetry strip, transport bar, then the planner (inputs + mission computer) beside the trade-off chart and campaign timeline. Single dark look by choice: deep space. */
+:root{
+  color-scheme:dark;
+  --void:#04060b; --panel:#0b1017; --panel2:#121a25; --line:#1f2a38;
+  --ink:#e7edf3; --dim:#8a97a8;
+  --flame:#ffa24a; --lox:#74c7ff; --ch4:#ff7d6b; --mars:#e0774a; --ok:#5fd6a0; --bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+html,body{background:var(--void)}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+*{box-sizing:border-box}
+.wrap{max-width:1180px;margin:0 auto;padding-block:22px 44px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:6px 24px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--mars)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,46px);line-height:1;margin:2px 0 0;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance}
+header p{margin:0;color:var(--dim);max-width:50ch;font-size:14px}
+header a{color:var(--lox)}
+
+.stage{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#000}
+#view{display:block;width:100%;aspect-ratio:16/9;max-width:100%}
+@media (max-width:640px){#view{aspect-ratio:4/5}}
+.hud{position:absolute;left:12px;top:10px;display:flex;flex-direction:column;gap:2px;pointer-events:none;max-width:70%}
+.camtag{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+.camtag::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff4d4d;margin-right:7px;vertical-align:1px}
+.banner{font-family:var(--display);font-weight:700;font-size:clamp(22px,4.4vw,44px);line-height:1;text-transform:uppercase;letter-spacing:.02em;text-shadow:0 2px 14px rgba(0,0,0,.7);transition:opacity .35s}
+
+.telemetry{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.cell{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0}
+.cell .k{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.cell b{font-family:var(--display);font-weight:600;font-size:clamp(20px,2.8vw,28px);line-height:1.1;font-variant-numeric:tabular-nums;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell .u{font-size:11px;color:var(--dim)}
+.cell.phase b{color:var(--mars)}
+.gauge{height:5px;background:#18212d;border-radius:3px;overflow:hidden;margin-top:6px}
+.gauge i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lox),var(--ch4))}
+@media (max-width:760px){.telemetry{grid-template-columns:1fr 1fr}.cell.phase{grid-column:1/-1}}
+
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 12px;cursor:pointer;
+  font-family:var(--display);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:13px}
+button:hover{border-color:#3a4a5f}
+button:focus-visible,input:focus-visible{outline:2px solid var(--flame);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--flame);border-color:var(--flame);color:#1a0f02}
+#play,#apply{min-width:84px;background:var(--ink);color:#0a0d12;border-color:var(--ink)}
+.seg{display:flex;gap:4px;align-items:center}
+.seg .lbl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-right:4px}
+#scrub{flex:1 1 100%;min-width:0;margin:0;accent-color:var(--mars)}
+
+.below{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.below{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;min-width:0}
+h2{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.14em;font-size:14px;margin:0 0 12px;color:var(--dim)}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 22px}
+.sliders label{display:flex;flex-direction:column;gap:4px;font-size:12px;letter-spacing:.06em;color:var(--dim);min-width:0}
+.sliders .row{display:flex;justify-content:space-between;gap:8px}
+.sliders output{font-family:var(--display);font-weight:600;font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
+.sliders input{width:100%;margin:0;accent-color:var(--mars)}
+.sliders input:disabled{opacity:.35}
+.sliders label.off{opacity:.45}
+.verdict{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+#verdict{margin:0;flex:1 1 300px;min-width:0;color:#c3ccd6}
+#verdict b{color:var(--ok);font-weight:600}#verdict b.bad{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13.5px}
+td,th{padding:5px 0;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+td.n,th.n{text-align:right}
+tr.tot td{font-weight:600;border-bottom:0}
+.warn{color:var(--flame)}
+#trade{display:block;width:100%;height:230px}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--dim);margin-top:6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+footer{color:var(--dim);font-size:12.5px;max-width:90ch}
+.clockrow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:14px}
+.clockrow .lbl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.ancient{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px 26px;align-items:start}
+@media (max-width:820px){.ancient{grid-template-columns:minmax(0,1fr)}}
+#wheel{display:block;width:100%;max-width:340px;aspect-ratio:1;margin:0 auto}
+.ancient p{margin:0 0 10px;color:#c3ccd6;max-width:66ch}
+.ancient h3{font-family:var(--display);font-weight:700;font-size:22px;text-transform:uppercase;margin:0 0 6px;line-height:1.1;text-wrap:balance}
+.ancient .gold{color:#e8c46a}
+.wheelnote{font-size:12px;color:var(--dim);text-align:center;margin-top:6px}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Kaksha Labs"><div class="sa-in"><a href="index.html" class="sa-brand">Kaksha Labs</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html" aria-current="page">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Orbital refilling · Moon or Mars · propellant made on Mars</div>
+      <h1>Starship Mars Campaign</h1>
+    </div>
+    <p>The step after <a href="starship-catch.html">catching rockets</a>: refill a ship in Earth orbit with a fleet of tankers, then send it to the Moon or to Mars, and on Mars make the propellant to fly home. Set the mission below; the mission computer works out the propellant, the tanker flights, the launch windows and the trip home.</p>
+  </header>
+
+  <div class="stage">
+    <canvas id="view" aria-label="Animated Starship Mars campaign"></canvas>
+    <div class="hud"><div class="camtag" id="camtag">Low Earth orbit</div><div class="banner" id="banner"></div></div>
+  </div>
+
+  <div class="telemetry">
+    <div class="cell phase"><span class="k">Phase</span><b id="tPhase">Refilling</b></div>
+    <div class="cell"><span class="k">Date</span><b id="tDate">—</b></div>
+    <div class="cell"><span class="k">Mission day</span><b id="tDay">0</b></div>
+    <div class="cell"><span class="k">Propellant aboard</span><b id="tProp">0 <span class="u">t</span></b><div class="gauge"><i id="tGauge"></i></div></div>
+    <div class="cell"><span class="k" id="tSpdK">Speed</span><b id="tSpd">7.7 <span class="u">km/s</span></b></div>
+  </div>
+
+  <div class="controls">
+    <button id="play" type="button">Pause</button>
+    <button id="restart" type="button">Restart</button>
+    <div class="seg" id="speeds"><span class="lbl">Speed</span>
+      <button type="button" data-speed="0.5" aria-pressed="false">½×</button>
+      <button type="button" data-speed="1" aria-pressed="true">1×</button>
+      <button type="button" data-speed="2" aria-pressed="false">2×</button>
+    </div>
+    <input id="scrub" type="range" min="0" max="72" step="0.05" value="0" aria-label="Campaign timeline">
+  </div>
+
+  <div class="below">
+    <div class="card">
+      <h2>Mission planner</h2>
+      <div class="clockrow seg" id="dests" style="margin:0 0 14px"><span class="lbl">Destination</span>
+        <button type="button" data-dest="mars" aria-pressed="true">Mars</button>
+        <button type="button" data-dest="moon" aria-pressed="false">Moon</button>
+      </div>
+      <div class="sliders">
+        <label><span class="row">Payload to the surface <output id="oPay"></output></span><input id="iPay" type="range" min="0" max="150" step="5" value="100"></label>
+        <label><span class="row">Trip time <output id="oTrip"></output></span><input id="iTrip" type="range" min="0" max="100" step="1" value="0"></label>
+        <label><span class="row">Propellant per tanker <output id="oTank"></output></span><input id="iTank" type="range" min="50" max="150" step="5" value="100"></label>
+        <label><span class="row">Days between tanker launches <output id="oCad"></output></span><input id="iCad" type="range" min="1" max="30" step="1" value="7"></label>
+        <label><span class="row">Boil-off per day <output id="oBoil"></output></span><input id="iBoil" type="range" min="0" max="50" step="1" value="10"></label>
+        <label class="marsOnly"><span class="row">Power for the Mars propellant plant <output id="oPow"></output></span><input id="iPow" type="range" min="0.2" max="5" step="0.1" value="1"></label>
+        <label class="marsOnly"><span class="row">Cargo flown back to Earth <output id="oBack"></output></span><input id="iBack" type="range" min="0" max="50" step="5" value="10"></label>
+      </div>
+      <div class="clockrow seg" id="clocks"><span class="lbl">Planet clock</span>
+        <button type="button" data-clock="modern" aria-pressed="true">Modern</button>
+        <button type="button" data-clock="surya" aria-pressed="false">Surya Siddhanta</button>
+        <button type="button" data-clock="arya" aria-pressed="false">Aryabhatiya</button>
+        <button type="button" data-clock="vara" aria-pressed="false">Varahamihira</button>
+        <button type="button" data-clock="brahma" aria-pressed="false">Brahmagupta</button>
+      </div>
+      <div class="verdict"><p id="verdict"></p><button id="apply" type="button">Fly this plan</button></div>
+      <table id="budget" aria-label="Velocity and propellant budget"></table>
+    </div>
+    <div class="side">
+      <div class="card">
+        <h2 id="tradeH">Trip time against tanker flights</h2>
+        <canvas id="trade"></canvas>
+        <div class="legend"><span><i style="background:var(--mars)"></i>Tanker flights needed</span><span id="tradeHot"><i style="background:var(--flame);height:8px;opacity:.35"></i>Too fast for the heat shield: a braking burn is added</span></div>
+      </div>
+      <div class="card">
+        <h2 id="winH">Next departures</h2>
+        <table id="windows" aria-label="Upcoming departure windows"></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Ancient planet clocks</h2>
+    <div class="ancient">
+      <div><canvas id="wheel" aria-label="Year wheel with the 27 nakshatras and the mean Sun and Mars by the Surya Siddhanta"></canvas>
+        <div class="wheelnote" id="wheelnote"></div></div>
+      <div>
+        <h3>Ancient Indian astronomy still finds <span class="gold">this month's Mars window</span></h3>
+        <p>The Vedas count time with a wheel: Rig Veda 1.164.48 describes one wheel with twelve fellies, three naves and 360 spokes, the ritual year of twelve months, and verse 1.164.11 the twelve-spoked wheel of order carrying 720 children in pairs, the days and nights. The precise planetary numbers come later, from the siddhanta texts. The Surya Siddhanta gives whole revolutions in an age of 4,320,000 years and has every mean planet start together at the beginning of the Kali Yuga, midnight at Ujjain, 18 February 3102 BC. Aryabhata's Aryabhatiya (499 CE) does the same with slightly different counts, and Varahamihira's Pancha Siddhantika (c. 550 CE) gives the older Surya Siddhanta as day-count rules from its own epoch, midnight at Ujjain on 20/21 March 505. Brahmagupta's Brahmasphutasiddhanta (628 CE) works on a far longer cycle: a kalpa of 4,320,000,000 years in which every planet starts and ends at zero.</p>
+        <p>Run those counts forward 5,128 years and they still place the Earth-Mars launch window that opens this month within days of the modern calculation. Switch the planner's planet clock to try them. <a href="aryabhata-lab.html">More of Aryabhata's ideas, tested on spaceflight.</a></p>
+        <div style="overflow-x:auto"><table id="ancientTable" aria-label="Periods from the Surya Siddhanta and Aryabhatiya against modern values"></table></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Transfers are computed on circular, coplanar orbits for Earth and Mars with J2000 mean longitudes; that model places windows within weeks of real launches (Mars Odyssey April 2001, Curiosity November 2011, Perseverance July 2020). Ship figures are design-stage public numbers: 125 t dry, 1,550 t propellant, Raptor vacuum Isp 380 s, sea-level Isp 330 s, a Mars landing budget of 750 m/s, a 7.5 km/s entry limit and 50 t left in the tanks on reaching orbit. Moon missions use public Artemis lander estimates: 120 t dry, trans-lunar injection 3.15 km/s, insertion into a near-rectilinear halo orbit 0.45 km/s, 2.65 km/s down to the surface and 2.65 km/s back up, Isp 370 s, 42 days away. The Mars propellant plant assumes 15 MWh per tonne of methane and oxygen, 0.45 t of water ice per tonne, 30 W of average power per square metre of solar array, and a 6.1 km/s climb from the surface onto a Hohmann path home at Isp 360 s. Ancient figures: Surya Siddhanta I.29–37 and I.57 in Burgess's 1860 translation; Aryabhatiya, Gitikapada 1–2 in Clark's 1930 translation; Pancha Siddhantika IX.1 and XVI.1–6 in Neugebauer and Pingree's 1970 translation. Brahmagupta's kalpa numbers as tabulated by Dennis Duke, Mean Motions and Longitudes in Indian Astronomy (2008), whose check longitudes this page reproduces. Ancient clocks use mean motions only, measured from the Kali Yuga epoch. An independent model, not affiliated with SpaceX.</footer>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const lerp=(a,b,k)=>a+(b-a)*k, clamp=(x,a,b)=>x<a?a:x>b?b:x;
+const smooth=(a,b,x)=>{x=clamp((x-a)/(b-a),0,1);return x*x*(3-2*x)};
+const D=Math.PI/180,TAU=Math.PI*2,G0=9.80665;
+const nf=new Intl.NumberFormat('en-US');
+let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+
+/* ---------- astrodynamics: circular coplanar planets, conic transfer ---------- */
+const MU=1.32712440018e11,AU=1.495978707e8,R1=AU,R2=1.523679*AU,MUE=398600.4418,MUM=42828.37,RE=6371,RM=3389.5;
+const SHIP={dry:125,cap:1550,ispV:380,ispS:330,land:0.75,entryMax:7.5,resid:50};
+function transfer(ra){
+  const rA=ra*AU,a=(R1+rA)/2,e=(rA-R1)/(rA+R1),p=a*(1-e*e);
+  const nu=Math.acos(clamp((p/R2-1)/e,-1,1));
+  const E=2*Math.atan(Math.sqrt((1-e)/(1+e))*Math.tan(nu/2)),M=E-e*Math.sin(E),n=Math.sqrt(MU/a**3);
+  const vp=Math.sqrt(MU*(2/R1-1/a)),vinfD=vp-Math.sqrt(MU/R1);
+  const v2=Math.sqrt(MU*(2/R2-1/a)),gam=Math.atan(e*Math.sin(nu)/(1+e*Math.cos(nu)));
+  const vinfA=Math.hypot(v2*Math.cos(gam)-Math.sqrt(MU/R2),v2*Math.sin(gam));
+  const r0=RE+300,tmi=Math.sqrt(vinfD**2+2*MUE/r0)-Math.sqrt(MUE/r0);
+  return {ra,a,e,nu,n,tof:M/n/86400,vinfD,vinfA,tmi,entry:Math.sqrt(vinfA**2+2*MUM/(RM+125))};
+}
+/* trip-time slider: 0 = Hohmann, 100 = fastest offered; mapped on aphelion so trip time falls smoothly */
+const RA_MIN=1.523679,RA_MAX=2.6,raOf=s=>RA_MIN*Math.pow(RA_MAX/RA_MIN,Math.pow(s/100,1.6));
+const J2000=Date.UTC(2000,0,1,12),DAY=864e5,JD2000=2451545.0,wrap=x=>((x%360)+540)%360-180,fr=x=>x-Math.floor(x);
+/* Planet clocks. Modern: J2000 mean longitudes. Ancient: whole revolutions per 4,320,000-year age, every mean planet at 0 at the Kali Yuga epoch.
+   Surya Siddhanta I.29-37 (Burgess 1860): civil days 1,577,917,828; Sun 4,320,000; Mars 2,296,832; Jupiter 364,220; Saturn 146,568. Epoch midnight at Ujjain (75.77 E), 18 Feb 3102 BC.
+   Aryabhatiya Gitikapada 1 (Clark 1930): Earth rotations 1,582,237,500 (civil days = rotations - 4,320,000); Mars 2,296,824; Jupiter 364,224; Saturn 146,564. Epoch sunrise at Lanka on the Ujjain meridian. */
+const CLOCKS={
+  modern:{name:'Modern (J2000)',E:d=>100.46457+0.98560910*d,M:d=>355.45332+0.52403840*d,yr:360/0.98560910,mars:686.980,jup:4332.59,sat:10759.22},
+  surya:{name:'Surya Siddhanta',ep:588465.5-75.77/360,days:1577917828,sun:4320000,mars_r:2296832,jup_r:364220,sat_r:146568},
+  arya:{name:'Aryabhatiya',ep:588465.5+.25-75.77/360,days:1582237500-4320000,sun:4320000,mars_r:2296824,jup_r:364224,sat_r:146564}};
+for(const k of ['surya','arya']){const c=CLOCKS[k],kd=d=>JD2000+d-c.ep;
+  c.sunSid=d=>360*fr(kd(d)*c.sun/c.days);c.marsSid=d=>360*fr(kd(d)*c.mars_r/c.days);
+  c.E=d=>180+c.sunSid(d);c.M=d=>c.marsSid(d);
+  c.yr=c.days/c.sun;c.mars=c.days/c.mars_r;c.jup=c.days/c.jup_r;c.sat=c.days/c.sat_r}
+{/* Varahamihira, Pancha Siddhantika XVI.1-6 (Arkasiddhanta, midnight system): epoch midnight at Avanti, 20/21 March 505 (Julian);
+   the sidereal year ends 0;3,9 days after it (p. 8-9 of Neugebauer & Pingree). Sun: 800 revolutions in 292,207 days (IX.1).
+   Mars: ahargana / 687, plus 0;0,0,14 deg per revolution, kshepa 75;35 deg. Jupiter: x100 / 433,232, -0;0,0,10 deg/rev, kshepa 246;20.
+   Saturn: x1000 / 10,766,066, -0;0,0,5 deg/rev, kshepa 122;28,49. */
+  const EPV=1905588.5-75.77/360,ah=d=>JD2000+d-EPV;
+  const marsV=d=>{const n=ah(d)/687;return (360*fr(n)+75+35/60+Math.floor(n)*14/216000)%360};
+  CLOCKS.vara={name:'Varahamihira',sunSid:d=>360*fr((ah(d)-0.0525)*800/292207),marsSid:marsV,yr:292207/800,mars:687,jup:4332.32,sat:10766.066};
+  CLOCKS.vara.E=d=>180+CLOCKS.vara.sunSid(d);CLOCKS.vara.M=marsV;}
+{/* Brahmagupta, Brahmasphutasiddhanta (628 CE), as tabulated by D. Duke, "Mean Motions and Longitudes in Indian Astronomy" (2008):
+   kalpa of 4,320,000,000 years = 1,577,916,450,000 days; all planets at 0 at the kalpa's start; the Kali Yuga begins 1,972,944,000 years
+   (0.4567 of a kalpa) later, at sunrise on -3101 Feb 18. Revolutions per kalpa: Sun 4,320,000,000; Mars 2,296,828,522; Jupiter 364,226,455; Saturn 146,567,298.
+   Reproduces Duke's check longitudes for 3,600 years later (Saturn 48;58, Jupiter 187;24, Mars 7;37). */
+  const C=1577916450000,JDK=588465.5+.25-75.77/360,lonB=(r,d)=>360*fr(r*4567/10000+r*(JD2000+d-JDK)/C);
+  CLOCKS.brahma={name:'Brahmagupta',sunSid:d=>lonB(4320000000,d),marsSid:d=>lonB(2296828522,d),yr:C/4320000000,mars:C/2296828522,jup:C/364226455,sat:C/146567298};
+  CLOCKS.brahma.E=d=>180+CLOCKS.brahma.sunSid(d);CLOCKS.brahma.M=CLOCKS.brahma.marsSid;}
+let CLOCK='modern';const lonE=d=>CLOCKS[CLOCK].E(d),lonM=d=>CLOCKS[CLOCK].M(d);
+const TODAY=(()=>{const n=new Date();return (Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())-J2000)/DAY})();
+const dateOf=d=>new Date(J2000+d*DAY),fmtDate=d=>dateOf(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+function departures(tr,from,count,back=false){const out=[];let prev=null;
+  for(let d=Math.floor(from)-1;d<from+800*count+800&&out.length<count;d++){
+    const f=back?wrap(lonE(d+tr.tof)-lonM(d)-tr.nu/D):wrap(lonM(d+tr.tof)-lonE(d)-tr.nu/D);
+    if(prev!==null&&Math.sign(prev)!==Math.sign(f)&&Math.abs(prev-f)<10&&(back?f>=0:f<=0)){const dd=d-1+prev/(prev-f);if(dd>=from)out.push(dd)}prev=f}
+  return out}
+
+/* ---------- campaign: budget, tanker flights, boil-off ---------- */
+let DEST='mars';
+const MOON={dry:120,tli:3.15,nrho:0.45,down:2.65,up:2.65,isp:370,days:42,coast:4.5};
+const ISRU={mwhPerT:15,waterPerT:.45,wPerM2:30,retLoss:.45,ispR:360,pitch:7140};
+function fillCampaign(need,cfg,rate){let stored=SHIP.resid,flights=0,days=0;const fill=[[0,stored]];
+  while(stored<need&&flights<80){days+=cfg.cad;stored*=Math.pow(1-rate,cfg.cad);fill.push([days,stored]);stored=Math.min(SHIP.cap,stored+cfg.tank);flights++;fill.push([days,stored])}
+  return {flights,days,fill,stored,filled:stored>=need}}
+function plan(cfg){
+  const rate=cfg.boil/100/100;
+  if(DEST==='moon'){
+    const mf=MOON.dry,ve=G0*MOON.isp/1000,mAsc=mf*Math.exp(MOON.up/ve),mLand=(mAsc+cfg.pay)*Math.exp(MOON.down/ve);
+    const loss=(mLand-mf)*(Math.exp(rate*MOON.days)-1),mN=(mLand+loss)*Math.exp(MOON.nrho/ve),m1=mN*Math.exp(MOON.tli/ve);
+    const need=m1-mf,fits=need<=SHIP.cap,f=fits?fillCampaign(need,cfg,rate):{flights:0,days:0,fill:[[0,SHIP.resid]],stored:SHIP.resid,filled:false};
+    const dep=TODAY+f.days+2;
+    return {dest:'moon',cfg,mf,mAsc,mLand,loss,mN,m1,need,fits,...f,stalled:fits&&!f.filled,dep,arr:dep+MOON.coast,start:dep-f.days,
+      deps:[dep,dep+27.32,dep+54.64],lossPerCycle:need*(1-Math.pow(1-rate,cfg.cad)),dvTotal:MOON.tli+MOON.nrho+MOON.down+MOON.up};
+  }
+  const tr=transfer(raOf(cfg.trip));
+  const brake=Math.max(0,tr.entry-SHIP.entryMax),landDv=SHIP.land+brake;
+  const mf=SHIP.dry+cfg.pay,m2=mf*Math.exp(landDv*1000/(G0*SHIP.ispS));
+  const cruiseLoss=(m2-mf)*(Math.exp(rate*tr.tof)-1),m2b=m2+cruiseLoss;
+  const m1=m2b*Math.exp(tr.tmi*1000/(G0*SHIP.ispV)),need=m1-mf,fits=need<=SHIP.cap;
+  const f=fits?fillCampaign(need,cfg,rate):{flights:0,days:0,fill:[[0,SHIP.resid]],stored:SHIP.resid,filled:false};
+  const deps=departures(tr,TODAY+f.days+2,3),dep=deps[0],arr=dep+tr.tof;
+  // the trip home: climb from the surface straight onto a Hohmann path, propellant made on Mars
+  const trH=transfer(RA_MIN),dvR=Math.sqrt(trH.vinfA**2+2*MUM/RM)+ISRU.retLoss;
+  const mfR=SHIP.dry+cfg.back,propR=mfR*Math.exp(dvR*1000/(G0*ISRU.ispR))-mfR,fitsR=propR<=SHIP.cap;
+  const tpd=cfg.pow*24/ISRU.mwhPerT,makeDays=propR/tpd,ready=arr+makeDays;
+  const retDep=departures(trH,ready,1,true)[0],retArr=retDep+trH.tof;
+  return {dest:'mars',cfg,tr,brake,landDv,mf,m2,m2b,cruiseLoss,m1,need,fits,...f,deps,dep,arr,start:dep-f.days,
+    lossPerCycle:need*(1-Math.pow(1-rate,cfg.cad)),stalled:fits&&!f.filled,
+    dvR,mfR,propR,fitsR,tpd,makeDays,ready,retDep,retArr,trH,water:propR*ISRU.waterPerT,area:cfg.pow*1e6/ISRU.wPerM2};
+}
+
+/* ---------- planner UI ---------- */
+const readCfg=()=>({pay:+$('iPay').value,trip:+$('iTrip').value,tank:+$('iTank').value,cad:+$('iCad').value,boil:+$('iBoil').value,pow:+$('iPow').value,back:+$('iBack').value});
+let P=plan(readCfg());
+function row(label,val,cls=''){return `<tr class="${cls}"><td>${label}</td><td class="n">${val}</td></tr>`}
+const days=n=>nf.format(Math.round(n))+' day'+(Math.round(n)===1?'':'s');
+function preview(){
+  const c=readCfg(),p=plan(c),moon=DEST==='moon';
+  $('oPay').textContent=c.pay+' t';$('oTrip').textContent=moon?'about 4½ days':Math.round(p.tr.tof)+' days';$('oTank').textContent=c.tank+' t';
+  $('oCad').textContent=c.cad===1?'every day':c.cad+' days';$('oBoil').textContent=(c.boil/100).toFixed(2)+'%';
+  $('oPow').textContent=c.pow.toFixed(1)+' MW';$('oBack').textContent=c.back+' t';
+  $('iTrip').disabled=moon;$('iTrip').closest('label').classList.toggle('off',moon);
+  document.querySelectorAll('.marsOnly').forEach(l=>l.hidden=moon);
+  const v=$('verdict');v.textContent='';const b=document.createElement('b');
+  if(!p.fits){b.className='bad';b.textContent='Does not fit';v.append(b,`: this plan needs ${nf.format(Math.round(p.need))} t of propellant and the ship holds ${nf.format(SHIP.cap)} t. ${moon?'Lighten the cargo.':'Lighten the payload or take a slower trip.'}`)}
+  else if(p.stalled){b.className='bad';b.textContent='Boil-off wins';v.append(b,`: tanks lose about ${Math.round(p.lossPerCycle)} t between flights, so ${c.tank} t deliveries never reach the ${nf.format(Math.round(p.need))} t needed. Launch tankers more often or carry more per tanker.`)}
+  else if(moon){b.textContent=`${p.flights} tanker flight${p.flights===1?'':'s'}`;v.append(b,` over ${p.days} days. Refilling starts ${fmtDate(p.start)}; the lander leaves Earth orbit ${fmtDate(p.dep)}, sets ${c.pay} t down near the lunar south pole and climbs back to its halo orbit to meet the crew ship.`)}
+  else{b.textContent=`${p.flights} tanker flight${p.flights===1?'':'s'}`;v.append(b,` over ${p.days} days. Refilling starts ${fmtDate(p.start)}, the ship leaves for Mars ${fmtDate(p.dep)} and lands ${fmtDate(p.arr)}. `);
+    const b2=document.createElement('b');
+    if(!p.fitsR){b2.className='bad';b2.textContent='No way home';v.append(b2,`: flying ${c.back} t back needs ${nf.format(Math.round(p.propR))} t of propellant, more than the tanks hold.`)}
+    else{b2.textContent='back on Earth';v.append(`Its plant makes the ${nf.format(Math.round(p.propR))} t for the trip home in ${days(p.makeDays)}; it leaves Mars ${fmtDate(p.retDep)} and is `,b2,` ${fmtDate(p.retArr)}, ${nf.format(Math.round(p.retArr-p.dep))} days after leaving Earth orbit.`)}}
+  if(moon){
+    $('budget').innerHTML='<tr><th>Velocity budget</th><th class="n">km/s</th></tr>'
+      +row('Trans-lunar injection from low Earth orbit',MOON.tli.toFixed(2))+row('Into the near-rectilinear halo orbit',MOON.nrho.toFixed(2))
+      +row('Down to the surface',MOON.down.toFixed(2))+row('Back up to the halo orbit',MOON.up.toFixed(2))+row('Total, with no air to brake on',p.dvTotal.toFixed(2),'tot')
+      +'<tr><th>Propellant</th><th class="n">t</th></tr>'
+      +row('Burned leaving Earth orbit',nf.format(Math.round(p.m1-p.mN)))+row('Burned entering the halo orbit',nf.format(Math.round(p.mN-p.mLand-p.loss)))
+      +row(`Boiled off in ${MOON.days} days away`,nf.format(Math.round(p.loss)))+row('Burned landing',nf.format(Math.round(p.mLand-p.mAsc-c.pay)))
+      +row('Burned climbing back up',nf.format(Math.round(p.mAsc-p.mf)))+row('Needed in the tanks before departure',nf.format(Math.round(p.need)),'tot');
+  }else{const t=p.tr;
+    $('budget').innerHTML='<tr><th>Velocity budget</th><th class="n">km/s</th></tr>'
+      +row('Trans-Mars injection from 300 km orbit',t.tmi.toFixed(2))
+      +row(`Mars entry speed ${t.entry>SHIP.entryMax?'(above the '+SHIP.entryMax+' km/s limit)':''}`,`<span class="${t.entry>SHIP.entryMax?'warn':''}">${t.entry.toFixed(2)}</span>`)
+      +(p.brake>0?row('Braking burn before entry',p.brake.toFixed(2)):'')
+      +row('Landing burn on Mars',SHIP.land.toFixed(2))+row('Total from Earth orbit',(t.tmi+p.landDv).toFixed(2),'tot')
+      +'<tr><th>Propellant</th><th class="n">t</th></tr>'
+      +row('Burned leaving Earth orbit',nf.format(Math.round(p.m1-p.m2-p.cruiseLoss)))+row('Boiled off in the cruise',nf.format(Math.round(p.cruiseLoss)))
+      +row('Burned landing on Mars',nf.format(Math.round(p.m2-p.mf)))+row('Needed in the tanks before departure',nf.format(Math.round(p.need)),'tot')
+      +'<tr><th>Made on Mars for the trip home</th><th class="n"></th></tr>'
+      +row('Climb from the surface onto the path home',p.dvR.toFixed(2)+' km/s')
+      +row('Methane and oxygen to make',nf.format(Math.round(p.propR))+' t')+row('Water ice to mine',nf.format(Math.round(p.water))+' t')
+      +row('Plant output',p.tpd.toFixed(1)+' t a day')+row('Solar array',nf.format(Math.round(p.area/1000))+',000 m² ≈ '+(p.area/ISRU.pitch).toFixed(1)+' football pitches')
+      +row('Time to fill the tanks',days(p.makeDays),'tot');
+  }
+  drawTrade(c);
+  $('tradeH').textContent=moon?'Cargo to the Moon against tanker flights':'Trip time against tanker flights';$('tradeHot').hidden=moon;
+  $('winH').textContent=moon?'Next departures to the Moon':'Next departures';
+  const w=$('windows');
+  if(moon)w.innerHTML='<tr><th colspan="3">The Moon is reachable every day; these repeat the same lighting at the south pole</th></tr><tr><th>Leave Earth orbit</th><th>Reach the Moon</th><th class="n">Days</th></tr>'
+    +p.deps.map(d=>`<tr><td>${fmtDate(d)}</td><td>${fmtDate(d+MOON.coast)}</td><td class="n">4½</td></tr>`).join('');
+  else{const t=p.tr;w.innerHTML=`<tr><th colspan="3">${CLOCKS[CLOCK].name} planet clock</th></tr><tr><th>Leave Earth</th><th>Arrive Mars</th><th class="n">Days</th></tr>`
+    +(p.deps.length?p.deps.map(d=>`<tr><td>${fmtDate(d)}</td><td>${fmtDate(d+t.tof)}</td><td class="n">${Math.round(t.tof)}</td></tr>`).join(''):'<tr><td colspan="3">None found</td></tr>')
+    +(p.fitsR&&p.retDep?`<tr class="tot"><td>Home: leave Mars ${fmtDate(p.retDep)}</td><td>Land on Earth ${fmtDate(p.retArr)}</td><td class="n">${Math.round(p.trH.tof)}</td></tr>`:'')}
+  return p;
+}
+['iPay','iTrip','iTank','iCad','iBoil','iPow','iBack'].forEach(id=>$(id).addEventListener('input',preview));
+[...$('dests').querySelectorAll('button')].forEach(b=>b.addEventListener('click',()=>{$('dests').querySelectorAll('button').forEach(o=>o.setAttribute('aria-pressed',o===b));DEST=b.dataset.dest;$('iPay').value=DEST==='moon'?20:100;setTimeline();P=preview();t=0;playing=true;syncBtn()}));
+[...$('clocks').querySelectorAll('button')].forEach(b=>b.addEventListener('click',()=>{$('clocks').querySelectorAll('button').forEach(o=>o.setAttribute('aria-pressed',o===b));CLOCK=b.dataset.clock;P=preview();t=0;playing=true;syncBtn()}));
+
+/* ---------- ancient clocks: comparison table and the nakshatra year-wheel ---------- */
+function hohmannNext(k){const keep=CLOCK;CLOCK=k;const d=departures(transfer(RA_MIN),TODAY-60,1)[0];CLOCK=keep;return d}
+function ancientTable(){
+  const m=CLOCKS.modern,rows=[['Sidereal year','yr',5],['Mars year','mars',2],['Jupiter year','jup',1],['Saturn year','sat',1]];
+  const dm=hohmannNext('modern');
+  let h='<tr><th>Days</th><th class="n">Surya Siddhanta</th><th class="n">Aryabhatiya</th><th class="n">Varahamihira</th><th class="n">Brahmagupta</th><th class="n">Modern</th></tr>';
+  for(const [lab,key,dp] of rows)h+=`<tr><td>${lab}</td><td class="n">${CLOCKS.surya[key].toFixed(dp)}</td><td class="n">${CLOCKS.arya[key].toFixed(dp)}</td><td class="n">${CLOCKS.vara[key].toFixed(dp)}</td><td class="n">${CLOCKS.brahma[key].toFixed(dp)}</td><td class="n">${m[key].toFixed(dp)}</td></tr>`;
+  const syn=c=>1/(1/c.yr-1/c.mars);h+=`<tr><td>Earth-Mars synodic period</td><td class="n">${syn(CLOCKS.surya).toFixed(2)}</td><td class="n">${syn(CLOCKS.arya).toFixed(2)}</td><td class="n">${syn(CLOCKS.vara).toFixed(2)}</td><td class="n">${syn(CLOCKS.brahma).toFixed(2)}</td><td class="n">${syn(m).toFixed(2)}</td></tr>`;
+  const ds=hohmannNext('surya'),da=hohmannNext('arya'),dv=hohmannNext('vara'),db=hohmannNext('brahma'),off=d=>{const x=Math.round(d-dm);return x===0?'same day':`${Math.abs(x)} day${Math.abs(x)===1?'':'s'} ${x<0?'earlier':'later'}`};
+  h+=`<tr class="tot"><td>Nearest Hohmann departure to Mars</td><td class="n">${fmtDate(ds)}<br><span class="u" style="color:var(--dim)">${off(ds)}</span></td><td class="n">${fmtDate(da)}<br><span class="u" style="color:var(--dim)">${off(da)}</span></td><td class="n">${fmtDate(dv)}<br><span class="u" style="color:var(--dim)">${off(dv)}</span></td><td class="n">${fmtDate(db)}<br><span class="u" style="color:var(--dim)">${off(db)}</span></td><td class="n">${fmtDate(dm)}</td></tr>`;
+  $('ancientTable').innerHTML=h;
+}
+const NAK=['Ashvini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+const wc=$('wheel'),wx=wc.getContext('2d');let WS=0;
+function drawWheel(){
+  const dpr=Math.min(2,devicePixelRatio||1),S=wc.clientWidth;if(!S)return;if(S!==WS){WS=S;wc.width=wc.height=Math.round(S*dpr)}
+  const g=wx;g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,S,S);const c=S/2,R=S*.47,ss=CLOCKS.surya,day=TODAY+(performance.now()/1000%60)/60*0;
+  const ang=lon=>(-90+lon)*D; // 0 deg (start of Ashvini / Mesha) at the top, increasing clockwise
+  // outer ring: 27 nakshatras of 13 deg 20 min
+  for(let i=0;i<27;i++){const a0=ang(i*360/27),a1=ang((i+1)*360/27);g.beginPath();g.arc(c,c,R,a0,a1);g.arc(c,c,R*.8,a1,a0,true);g.closePath();
+    g.fillStyle=i%2?'#151c27':'#1b2431';g.fill();g.strokeStyle='#2c3a4c';g.lineWidth=1;g.stroke()}
+  g.save();g.font=`600 ${Math.max(7,S*.024)}px "Saira Condensed",sans-serif`;g.fillStyle='#8a97a8';g.textAlign='center';g.textBaseline='middle';
+  for(let i=0;i<27;i++){const am=ang((i+.5)*360/27),rr=R*.9;g.save();g.translate(c+Math.cos(am)*rr,c+Math.sin(am)*rr);g.rotate(am+Math.PI/2);g.fillText(NAK[i].split(' ').map(w=>w.slice(0,5)).join(' '),0,0);g.restore()}g.restore();
+  // twelve fellies (months) and 360 spokes
+  for(let i=0;i<360;i++){const a=ang(i);g.strokeStyle=i%30===0?'#e8c46a':'rgba(232,196,106,.18)';g.lineWidth=i%30===0?1.6:.6;g.beginPath();g.moveTo(c+Math.cos(a)*R*.24,c+Math.sin(a)*R*.24);g.lineTo(c+Math.cos(a)*R*.78,c+Math.sin(a)*R*.78);g.stroke()}
+  g.strokeStyle='#e8c46a';g.lineWidth=2;g.beginPath();g.arc(c,c,R*.78,0,TAU);g.stroke();
+  // three naves
+  for(const k of [.24,.17,.1]){g.beginPath();g.arc(c,c,R*k,0,TAU);g.strokeStyle='#e8c46a';g.lineWidth=1.4;g.stroke()}
+  // mean Sun and mean Mars today by the Surya Siddhanta (sidereal)
+  const sun=ss.sunSid(TODAY),mars=ss.marsSid(TODAY);
+  for(const [lon,col,rr,lab] of [[sun,'#ffc860',.62,'SUN'],[mars,'#e0774a',.48,'MARS']]){const a=ang(lon);g.strokeStyle=col;g.lineWidth=2;g.beginPath();g.moveTo(c,c);g.lineTo(c+Math.cos(a)*R*.78,c+Math.sin(a)*R*.78);g.stroke();
+    g.fillStyle=col;g.beginPath();g.arc(c+Math.cos(a)*R*rr,c+Math.sin(a)*R*rr,S*.022,0,TAU);g.fill();
+    g.font=`700 ${Math.max(9,S*.032)}px "Saira Condensed",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillStyle='#04060b';g.fillText(lab[0],c+Math.cos(a)*R*rr,c+Math.sin(a)*R*rr+.5)}
+  const nk=l=>NAK[Math.floor(l/(360/27))];
+  $('wheelnote').textContent=`Today by the Surya Siddhanta's mean motions: Sun in ${nk(sun)}, Mars in ${nk(mars)}. Gold: 12 months, 360 spokes, 3 naves.`;
+}
+
+/* trade-off chart: tanker flights against trip time for the current payload and tanker settings */
+const tc=$('trade'),tctx=tc.getContext('2d');let TW=0,TH=0;
+function drawTrade(c){
+  const w=TW,h=TH;if(!w)return;const x0=40,x1=w-12,y0=10,y1=h-28;tctx.clearRect(0,0,w,h);
+  const moon=DEST==='moon',pts=[];if(moon){for(let pay=0;pay<=60;pay+=2){const p=plan({...c,pay});pts.push({tof:pay,n:p.fits&&p.filled?p.flights:null,hot:false})}}else for(let s=0;s<=100;s+=2){const p=plan({...c,trip:s});pts.push({tof:p.tr.tof,n:p.fits&&p.filled?p.flights:null,hot:p.tr.entry>SHIP.entryMax})}
+  const tMin=Math.min(...pts.map(q=>q.tof)),tMax=Math.max(...pts.map(q=>q.tof));
+  const nMax=Math.max(4,...pts.map(q=>q.n||0))+1;
+  const X=t=>moon?x0+(t-tMin)/(tMax-tMin)*(x1-x0):x1-(t-tMin)/(tMax-tMin)*(x1-x0),Y=n=>y1-n/nMax*(y1-y0);
+  tctx.font='11px "IBM Plex Sans",sans-serif';tctx.fillStyle='#8a97a8';tctx.strokeStyle='#1f2a38';tctx.lineWidth=1;
+  const hot=pts.filter(q=>q.hot);if(hot.length){const xa=X(Math.max(...hot.map(q=>q.tof)));tctx.fillStyle='rgba(255,162,74,.12)';tctx.fillRect(x0,y0,xa-x0,y1-y0);tctx.fillStyle='#8a97a8'}
+  const step=nMax>12?4:2;tctx.textAlign='right';tctx.textBaseline='middle';
+  for(let n=0;n<=nMax;n+=step){tctx.beginPath();tctx.moveTo(x0,Y(n));tctx.lineTo(x1,Y(n));tctx.stroke();tctx.fillText(n,x0-6,Y(n))}
+  tctx.textAlign='center';tctx.textBaseline='top';
+  if(moon)for(let d=0;d<=60;d+=20)tctx.fillText(d+' t',X(d),y1+7);else for(let d=Math.ceil(tMin/40)*40;d<=tMax;d+=40){tctx.fillText(d+' d',X(d),y1+7)}
+  tctx.strokeStyle='#e0774a';tctx.lineWidth=2.2;tctx.beginPath();let on=false;
+  for(const q of pts){if(q.n===null){on=false;continue}on?tctx.lineTo(X(q.tof),Y(q.n)):tctx.moveTo(X(q.tof),Y(q.n));on=true}tctx.stroke();
+  const cur=plan(c);if(cur.fits&&cur.filled){tctx.fillStyle='#e7edf3';tctx.beginPath();tctx.arc(X(moon?c.pay:cur.tr.tof),Y(cur.flights),5,0,TAU);tctx.fill();tctx.strokeStyle='#04060b';tctx.lineWidth=1.5;tctx.stroke()}
+  if(pts.some(q=>q.n===null)){tctx.fillStyle='#ff6b5e';tctx.textAlign='left';tctx.textBaseline='top';tctx.fillText('gaps: plan does not fit or never fills',x0+6,y0+4)}
+}
+
+/* ---------- animation timeline (scene seconds) ---------- */
+const TA=24,TB=29;
+const TL={
+  mars:{end:86,ph:[[0,'Refilling in orbit','Low Earth orbit'],[TA,'Trans-Mars injection','Leaving Earth'],[TB,'Cruise to Mars','Inner solar system'],[53,'Mars entry and landing','Mars atmosphere'],[68,'Making propellant','Mars surface'],[80,'Launch for home','Mars surface']]},
+  moon:{end:64,ph:[[0,'Refilling in orbit','Low Earth orbit'],[TA,'Trans-lunar injection','Leaving Earth'],[TB,'Coast to the Moon','Earth-Moon space'],[40,'Lunar landing','Lunar south pole'],[54,'On the surface','Lunar south pole'],[58,'Ascent to orbit','Lunar south pole']]}};
+let END=TL.mars.end,PH=TL.mars.ph;
+function setTimeline(){END=TL[DEST].end;PH=TL[DEST].ph;$('scrub').max=END}
+let t=0,playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,speed=1,last=0;
+const cv=$('view'),cx=cv.getContext('2d');let W=0,H=0;
+const STARS=[];for(let i=0;i<220;i++)STARS.push({u:rnd(),v:rnd(),b:.25+rnd()*.75,z:rnd()<.1?2:1});
+const ROCKS=[];for(let i=0;i<40;i++)ROCKS.push({u:rnd(),s:.3+rnd()*1.4,h:rnd()});
+function resize(){const dpr=Math.min(2,devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cx.setTransform(dpr,0,0,dpr,0,0);
+  TW=tc.clientWidth;TH=tc.clientHeight;tc.width=Math.round(TW*dpr);tc.height=Math.round(TH*dpr);tctx.setTransform(dpr,0,0,dpr,0,0);drawTrade(readCfg())}
+
+function stars(a=1){cx.fillStyle='#fff';for(const p of STARS){cx.globalAlpha=p.b*a;cx.fillRect(p.u*W,p.v*H,p.z,p.z)}cx.globalAlpha=1}
+/* ship drawn along +x (nose right), length L px */
+function ship(x,y,ang,L,o={}){
+  cx.save();cx.translate(x,y);cx.rotate(ang);const k=L/50;cx.scale(k,k);
+  if(o.flame){const f=o.flame,len=(o.vac?55:30)*f*(1+.05*Math.sin(performance.now()/30));const g=cx.createLinearGradient(-2,0,-2-len,0);
+    g.addColorStop(0,'rgba(255,240,220,.95)');g.addColorStop(.3,o.vac?'rgba(150,170,255,.5)':'rgba(255,150,70,.7)');g.addColorStop(1,'rgba(120,90,220,0)');
+    cx.save();cx.globalCompositeOperation='lighter';cx.fillStyle=g;cx.beginPath();cx.moveTo(-1,-3.6);cx.quadraticCurveTo(-len*.4,-(o.vac?9:5),-len,0);cx.quadraticCurveTo(-len*.4,o.vac?9:5,-1,3.6);cx.fill();cx.restore()}
+  cx.fillStyle='#1b1f25';cx.fillRect(-2.4,-3.6,2.6,7.2);
+  const g=cx.createLinearGradient(0,-4.5,0,4.5);g.addColorStop(0,'#5a626c');g.addColorStop(.3,'#eef2f5');g.addColorStop(.55,'#b9c1c9');g.addColorStop(1,'#3d444c');
+  cx.fillStyle=g;cx.beginPath();cx.moveTo(0,-4.5);cx.lineTo(32,-4.5);cx.bezierCurveTo(41,-4.5,47,-2.2,50,0);cx.bezierCurveTo(47,2.2,41,4.5,32,4.5);cx.lineTo(0,4.5);cx.closePath();cx.fill();
+  if(o.tiles!==false){cx.save();cx.beginPath();cx.moveTo(0,0);cx.lineTo(32,0);cx.bezierCurveTo(41,.2,47,2.2,50,0);cx.bezierCurveTo(47,2.2,41,4.5,32,4.5);cx.lineTo(0,4.5);cx.closePath();cx.clip();cx.fillStyle='#14171b';cx.fillRect(0,0,51,5);cx.restore()}
+  if(o.glow){cx.save();cx.globalCompositeOperation='lighter';const gg=cx.createLinearGradient(0,4,0,14);gg.addColorStop(0,`rgba(255,200,150,${.9*o.glow})`);gg.addColorStop(.4,`rgba(255,110,80,${.5*o.glow})`);gg.addColorStop(1,'rgba(255,60,120,0)');
+    cx.fillStyle=gg;cx.beginPath();cx.moveTo(-3,4.5);cx.quadraticCurveTo(25,18*o.glow+6,53,0);cx.lineTo(50,0);cx.bezierCurveTo(47,2.2,41,4.5,32,4.5);cx.lineTo(0,4.5);cx.closePath();cx.fill();cx.restore()}
+  const fl=o.flap??.4;cx.fillStyle='#2c3138';if(o.flaps!==false){
+  cx.save();cx.translate(3,0);cx.scale(1,1-.4*fl);cx.beginPath();cx.moveTo(-3,4.5);cx.lineTo(9,4.5);cx.lineTo(13,8.5);cx.lineTo(-1,8.5);cx.closePath();cx.fill();cx.restore();
+  cx.save();cx.translate(36,0);cx.scale(1,1-.4*fl);cx.beginPath();cx.moveTo(-1,4.5);cx.lineTo(7,4.5);cx.lineTo(8,7.5);cx.lineTo(1,7.5);cx.closePath();cx.fill();cx.restore();}
+  if(o.legs){cx.strokeStyle='#6a737d';cx.lineWidth=.8;cx.beginPath();cx.moveTo(1,-4);cx.lineTo(-3,-8);cx.moveTo(1,4);cx.lineTo(-3,8);cx.stroke()}
+  cx.restore();
+}
+
+/* A: refilling. Tankers arrive one by one; the gauge reports propellant from the boil-off model */
+function sceneRefill(u){
+  cx.fillStyle='#000';cx.fillRect(0,0,W,H);stars(.9);
+  const R=W*2.2,cy=H*.8+R;let g=cx.createRadialGradient(W*.5,cy,R*.985,W*.5,cy,R*1.03);g.addColorStop(0,'#123c7a');g.addColorStop(.48,'#2f7bd0');g.addColorStop(.5,'#9fd2ff');g.addColorStop(.6,'rgba(120,180,255,.3)');g.addColorStop(1,'rgba(120,180,255,0)');
+  cx.fillStyle=g;cx.beginPath();cx.arc(W*.5,cy,R*1.03,0,TAU);cx.fill();
+  cx.save();cx.beginPath();cx.arc(W*.5,cy,R,0,TAU);cx.clip();cx.fillStyle='rgba(255,255,255,.18)';
+  for(let i=0;i<14;i++){const xx=((i*W/6+u*W*.9)%(W*1.4))-W*.2;cx.beginPath();cx.ellipse(xx,H*.86+(i%3)*12,W*.09,7,0,0,TAU);cx.fill()}cx.restore();
+  const L=Math.min(W*.34,H*.62),dx=W*.5-L*.08,dy=H*.4;
+  const n=Math.max(1,P.flights),per=TA/n,i=Math.min(n-1,Math.floor(t/per)),f=(t-i*per)/per;
+  // depot ship points left, tail at (dx,dy)
+  ship(dx,dy,Math.PI,L,{flap:.2});
+  if(P.flights>0&&P.filled){
+    const far=W*1.2,dock=dx+3,tx=f<.35?lerp(far,dock,smooth(0,.35,f)):f<.75?dock:lerp(dock,far,smooth(.75,1,f));
+    ship(tx,dy,0,L,{flap:.2,tiles:false});
+    if(f>=.35&&f<.75){cx.save();cx.globalCompositeOperation='lighter';const k=(t*60)%14;
+      for(const [col,off] of [['116,199,255',-L*.035],['255,125,107',L*.035]]){cx.strokeStyle=`rgba(${col},.85)`;cx.lineWidth=Math.max(1.5,L*.012);cx.setLineDash([6,8]);cx.lineDashOffset=k;
+        cx.beginPath();cx.moveTo(tx+L*.25,dy+off);cx.lineTo(dx-L*.25,dy+off);cx.stroke()}cx.restore();cx.setLineDash([])}
+    label(`TANKER ${i+1} OF ${n}`,W-14,18,'right');
+  }else label(P.fits?'TANKS NEVER FILL':'PLAN DOES NOT FIT',W-14,18,'right','#ff6b5e');
+}
+function label(s,x,y,al='left',col='#e7edf3'){cx.font=`600 ${Math.max(12,Math.min(16,W*.018))}px "Saira Condensed",sans-serif`;cx.fillStyle=col;cx.textAlign=al;cx.textBaseline='top';cx.fillText(s,x,y);cx.textAlign='left'}
+
+/* B: trans-Mars injection burn */
+function sceneTMI(u){
+  cx.fillStyle='#000';cx.fillRect(0,0,W,H);stars();
+  const R=W*(1.4-u*.6),cyy=H*(1.05+u*.25)+R;const g=cx.createRadialGradient(W*.35,cyy,R*.98,W*.35,cyy,R*1.03);g.addColorStop(0,'#123c7a');g.addColorStop(.5,'#2f7bd0');g.addColorStop(.52,'#9fd2ff');g.addColorStop(1,'rgba(120,180,255,0)');
+  cx.fillStyle=g;cx.beginPath();cx.arc(W*.35,cyy,R*1.03,0,TAU);cx.fill();
+  const L=Math.min(W*.3,H*.5);ship(W*.55+u*W*.1,H*.42-u*H*.08,-.15,L,{flame:u<.92?1:0,vac:true,flap:.2});
+}
+
+/* C: heliocentric cruise, true scale distances, real dates */
+function sceneCruise(u){
+  cx.fillStyle='#02030a';cx.fillRect(0,0,W,H);stars(.6);
+  const tr=P.tr,cxp=W*.5,cyp=H*.53,S=Math.min(W,H)*.42/(Math.max(tr.ra,1.6)*AU)*1.0,sc=v=>v*S;
+  const day=P.dep+u*tr.tof,lE0=lonE(P.dep)*D;
+  const pos=(lon,r)=>[cxp+Math.cos(-lon)*sc(r),cyp+Math.sin(-lon)*sc(r)];
+  cx.strokeStyle='rgba(116,199,255,.35)';cx.lineWidth=1;cx.beginPath();cx.arc(cxp,cyp,sc(R1),0,TAU);cx.stroke();
+  cx.strokeStyle='rgba(224,119,74,.4)';cx.beginPath();cx.arc(cxp,cyp,sc(R2),0,TAU);cx.stroke();
+  // transfer conic: perihelion at departure longitude
+  const rOf=nu=>tr.a*(1-tr.e*tr.e)/(1+tr.e*Math.cos(nu));
+  cx.setLineDash([3,6]);cx.strokeStyle='rgba(231,237,243,.35)';cx.beginPath();for(let k=0;k<=60;k++){const nu=tr.nu*k/60,[x,y]=pos(lE0/D*D+nu,rOf(nu));k?cx.lineTo(x,y):cx.moveTo(x,y)}cx.stroke();cx.setLineDash([]);
+  // ship position from Kepler's equation
+  const M=u*tr.tof*86400*tr.n;let E=M;for(let k=0;k<12;k++)E=E-(E-tr.e*Math.sin(E)-M)/(1-tr.e*Math.cos(E));
+  const nuS=2*Math.atan(Math.sqrt((1+tr.e)/(1-tr.e))*Math.tan(E/2)),[sx,sy]=pos(lE0+nuS,rOf(nuS));
+  cx.strokeStyle='#e7edf3';cx.lineWidth=2;cx.beginPath();for(let k=0;k<=40;k++){const Mk=M*k/40;let Ek=Mk;for(let j=0;j<10;j++)Ek=Ek-(Ek-tr.e*Math.sin(Ek)-Mk)/(1-tr.e*Math.cos(Ek));
+    const nk=2*Math.atan(Math.sqrt((1+tr.e)/(1-tr.e))*Math.tan(Ek/2)),[x,y]=pos(lE0+nk,rOf(nk));k?cx.lineTo(x,y):cx.moveTo(x,y)}cx.stroke();
+  let g=cx.createRadialGradient(cxp,cyp,0,cxp,cyp,22);g.addColorStop(0,'#fff6d8');g.addColorStop(.35,'#ffc860');g.addColorStop(1,'rgba(255,170,60,0)');cx.fillStyle=g;cx.beginPath();cx.arc(cxp,cyp,22,0,TAU);cx.fill();
+  const [ex,ey]=pos(lonE(day)*D,R1),[mx,my]=pos(lonM(day)*D,R2);
+  cx.fillStyle='#4aa3ff';cx.beginPath();cx.arc(ex,ey,6,0,TAU);cx.fill();cx.fillStyle='#e0774a';cx.beginPath();cx.arc(mx,my,5,0,TAU);cx.fill();
+  cx.fillStyle='#fff';cx.beginPath();cx.arc(sx,sy,3.2,0,TAU);cx.fill();
+  const fs=Math.max(11,Math.min(14,W*.016));cx.font=`600 ${fs}px "Saira Condensed",sans-serif`;cx.textBaseline='middle';
+  cx.fillStyle='#9fd2ff';cx.fillText('EARTH',ex+10,ey);cx.fillStyle='#f0a07a';cx.fillText('MARS',mx+9,my);cx.fillStyle='#e7edf3';cx.fillText('STARSHIP',sx+8,sy-10);
+  cx.fillStyle='#8a97a8';cx.textBaseline='bottom';cx.textAlign='center';cx.fillText('TOP-DOWN VIEW OF THE INNER SOLAR SYSTEM · ORBITS TO SCALE · '+Math.round(tr.tof)+'-DAY TRANSFER',W/2,H-10);cx.textAlign='left';
+}
+
+/* D: Mars entry, belly-flop, flip, landing */
+function sceneMars(u){
+  const alt=u<.55?lerp(1,.18,smooth(0,.55,u)):u<.85?lerp(.18,.04,smooth(.55,.85,u)):lerp(.04,0,smooth(.85,1,u));
+  let g=cx.createLinearGradient(0,0,0,H);const dusk=smooth(.25,.7,u);
+  g.addColorStop(0,`rgb(${lerp(5,120,dusk)|0},${lerp(4,70,dusk)|0},${lerp(10,50,dusk)|0})`);g.addColorStop(1,`rgb(${lerp(60,214,dusk)|0},${lerp(30,150,dusk)|0},${lerp(20,105,dusk)|0})`);
+  cx.fillStyle=g;cx.fillRect(0,0,W,H);stars(1-dusk);
+  const gy=H*(.62+alt*1.2);
+  if(gy<H+20){cx.fillStyle='#8a4a2c';cx.fillRect(0,gy,W,H-gy);cx.fillStyle='#a35a35';cx.fillRect(0,gy,W,3);
+    cx.fillStyle='#6e3a22';for(const r of ROCKS){const x=r.u*W,s=r.s*W*.02*(1-alt);cx.beginPath();cx.ellipse(x,gy+8+r.h*(H-gy-10),s*1.6,s*.7,0,0,TAU);cx.fill()}
+    cx.fillStyle='#b8693f';cx.beginPath();cx.moveTo(0,gy);cx.lineTo(W*.18,gy-H*.06*(1-alt));cx.lineTo(W*.32,gy);cx.closePath();cx.fill()}
+  const L=Math.min(W*.24,H*.42),landed=u>=.985,flip=smooth(.62,.74,u);
+  const ang=lerp(-.08,-Math.PI/2,flip),shake=u<.55?Math.sin(performance.now()/40)*1.5:0;
+  const y=landed?gy-L:lerp(H*.38,gy-L,smooth(.74,.985,u)),x=W*.5+shake;
+  const glow=smooth(.02,.12,u)*(1-smooth(.35,.55,u));
+  ship(x,y,ang,L,{glow,flame:u>.66&&!landed?1:0,flap:u<.62?.3+.25*Math.sin(u*40)*smooth(.3,.5,u):.9,legs:u>.8});
+  if(u>.8&&!landed||u>.985&&u<1){cx.save();cx.globalCompositeOperation='source-over';const a=smooth(.8,.98,u)*(1-smooth(.995,1,u)*.3);
+    for(let k=0;k<26;k++){const sp=(k%13)/13,dir=k<13?-1:1;cx.fillStyle=`rgba(200,140,100,${.25*a})`;cx.beginPath();cx.arc(x+dir*sp*W*.25*a,gy-6-sp*20,10+sp*24,0,TAU);cx.fill()}cx.restore()}
+}
+
+/* Mars: the propellant plant fills the tanks; solar field grows as days pass */
+function marsGround(dusk){let g=cx.createLinearGradient(0,0,0,H);g.addColorStop(0,`rgb(${lerp(196,60,dusk)|0},${lerp(150,40,dusk)|0},${lerp(110,48,dusk)|0})`);g.addColorStop(1,`rgb(${lerp(226,90,dusk)|0},${lerp(178,60,dusk)|0},${lerp(130,60,dusk)|0})`);
+  cx.fillStyle=g;cx.fillRect(0,0,W,H);const gy=H*.74;cx.fillStyle='#9b5634';cx.fillRect(0,gy,W,H-gy);cx.fillStyle='#b8693f';cx.fillRect(0,gy,W,3);
+  cx.fillStyle='#b06a42';cx.beginPath();cx.moveTo(W*.55,gy);cx.lineTo(W*.78,gy-H*.09);cx.lineTo(W*1.05,gy);cx.closePath();cx.fill();
+  cx.fillStyle='#7d4127';for(const r of ROCKS){const x=r.u*W,sz=r.s*W*.012;cx.beginPath();cx.ellipse(x,gy+8+r.h*(H-gy-10),sz*1.6,sz*.7,0,0,TAU);cx.fill()}return gy}
+function sceneISRU(u){
+  const gy=marsGround(.05);const L=Math.min(W*.22,H*.5),sx=W*.7;
+  const rows=Math.max(1,Math.ceil(Math.min(1,u*1.6)*7));
+  for(let r=0;r<rows;r++){const yy=gy+10+r*Math.max(6,(H-gy-16)/8),x0=W*.04+r*W*.012,len=W*.48;
+    cx.fillStyle='#1d2a44';cx.fillRect(x0,yy,len,Math.max(3,H*.012));cx.fillStyle='rgba(140,180,255,.35)';cx.fillRect(x0,yy,len,1)}
+  cx.fillStyle='#d9dde2';cx.fillRect(W*.52,gy-H*.06,W*.06,H*.06);cx.fillStyle='#8a9099';cx.fillRect(W*.53,gy-H*.09,W*.012,H*.03);
+  cx.strokeStyle='#cfd5db';cx.lineWidth=2;cx.beginPath();cx.moveTo(W*.58,gy-H*.02);cx.lineTo(sx-L*.06,gy-H*.02);cx.stroke();
+  ship(sx,gy,-Math.PI/2,L,{flap:.9,legs:true});
+  const fill=Math.min(1,u*1.15);cx.fillStyle='rgba(4,6,11,.75)';cx.fillRect(sx+L*.16,gy-L*.9,10,L*.7);cx.fillStyle='#74c7ff';cx.fillRect(sx+L*.16,gy-L*.9+L*.7*(1-fill),10,L*.7*fill);
+  const d=Math.round(u*Math.min(P.makeDays,P.retDep-P.arr||P.makeDays));label(`PROPELLANT PLANT · SOL-DAY ${nf.format(d)}`,14,H-28);
+}
+function sceneLaunch(u){
+  const gy=marsGround(.1),L=Math.min(W*.22,H*.5),lift=smooth(.15,1,u);const y=gy-lift*lift*(gy+L*1.2);
+  ship(W*.5,y,-Math.PI/2,L,{flame:u>.05?1:0,flap:.9,legs:lift<.05});
+  if(u<.6){cx.fillStyle=`rgba(200,140,100,${.3*(1-u/.6)})`;for(let k=0;k<20;k++){const sp=(k%10)/10,dir=k<10?-1:1;cx.beginPath();cx.arc(W*.5+dir*sp*W*.3*Math.min(1,u*4),gy-4-sp*16,12+sp*26,0,TAU);cx.fill()}}
+}
+/* Moon: Earth-Moon coast, landing at the south pole, ascent */
+function sceneMoonCoast(u){
+  cx.fillStyle='#02030a';cx.fillRect(0,0,W,H);stars(.8);
+  const ex=W*.16,ey=H*.55,Rm=W*.66,mAng=-.18+u*.12,mx=ex+Math.cos(mAng)*Rm,my=ey+Math.sin(mAng)*Rm*.55;
+  cx.setLineDash([3,6]);cx.strokeStyle='rgba(200,200,210,.25)';cx.beginPath();cx.ellipse(ex,ey,Rm,Rm*.55,0,0,TAU);cx.stroke();cx.setLineDash([]);
+  let g=cx.createRadialGradient(ex-8,ey-8,2,ex,ey,26);g.addColorStop(0,'#7cc0ff');g.addColorStop(1,'#123c7a');cx.fillStyle=g;cx.beginPath();cx.arc(ex,ey,24,0,TAU);cx.fill();
+  g=cx.createRadialGradient(mx-3,my-3,1,mx,my,9);g.addColorStop(0,'#e4e4e4');g.addColorStop(1,'#6d6d70');cx.fillStyle=g;cx.beginPath();cx.arc(mx,my,8,0,TAU);cx.fill();
+  cx.strokeStyle='rgba(116,199,255,.5)';cx.beginPath();cx.ellipse(mx,my+4,10,36,0,0,TAU);cx.stroke();
+  const bx=(k)=>[lerp(ex+28,mx,k)+Math.sin(k*Math.PI)*0,lerp(ey,my-30,k)-Math.sin(k*Math.PI)*H*.22];
+  cx.strokeStyle='rgba(231,237,243,.35)';cx.setLineDash([3,6]);cx.beginPath();for(let k=0;k<=40;k++){const [x,y]=bx(k/40);k?cx.lineTo(x,y):cx.moveTo(x,y)}cx.stroke();cx.setLineDash([]);
+  cx.strokeStyle='#e7edf3';cx.lineWidth=2;cx.beginPath();for(let k=0;k<=40;k++){const [x,y]=bx(u*k/40);k?cx.lineTo(x,y):cx.moveTo(x,y)}cx.stroke();
+  const [sx,sy]=bx(u);cx.fillStyle='#fff';cx.beginPath();cx.arc(sx,sy,3.2,0,TAU);cx.fill();
+  const fs=Math.max(11,Math.min(14,W*.016));cx.font=`600 ${fs}px "Saira Condensed",sans-serif`;cx.textBaseline='middle';
+  cx.fillStyle='#9fd2ff';cx.fillText('EARTH',ex-20,ey+40);cx.fillStyle='#d8d8d8';cx.fillText('MOON',mx+14,my);cx.fillStyle='#74c7ff';cx.fillText('HALO ORBIT',mx+14,my+22);cx.fillStyle='#e7edf3';cx.fillText('STARSHIP LANDER',sx+8,sy-12);
+  cx.fillStyle='#8a97a8';cx.textBaseline='bottom';cx.textAlign='center';cx.fillText('EARTH-MOON SPACE · 384,400 KM · ABOUT 4½ DAYS',W/2,H-10);cx.textAlign='left';
+}
+const CRATERS=[];for(let i=0;i<26;i++)CRATERS.push({u:rnd(),v:rnd(),r:.3+rnd()*1.4});
+function sceneMoonSurface(u){
+  cx.fillStyle='#000';cx.fillRect(0,0,W,H);stars(1);
+  let g=cx.createRadialGradient(W*.82,H*.3,2,W*.82,H*.3,W*.05);g.addColorStop(0,'#9fd2ff');g.addColorStop(1,'#1d4f99');cx.fillStyle=g;cx.beginPath();cx.arc(W*.82,H*.3,W*.035,0,TAU);cx.fill();
+  cx.fillStyle='#000';cx.beginPath();cx.arc(W*.82+W*.012,H*.3,W*.035,0,TAU);cx.fill();
+  const gy=H*.76;g=cx.createLinearGradient(0,gy,0,H);g.addColorStop(0,'#8d8d90');g.addColorStop(1,'#4a4a4e');cx.fillStyle=g;cx.fillRect(0,gy,W,H-gy);
+  cx.fillStyle='#a3a3a6';cx.beginPath();cx.moveTo(0,gy);cx.lineTo(W*.22,gy-H*.07);cx.lineTo(W*.4,gy);cx.closePath();cx.fill();
+  for(const c of CRATERS){const x=c.u*W,y=gy+6+c.v*(H-gy-8),r=c.r*W*.012;cx.fillStyle='#5c5c60';cx.beginPath();cx.ellipse(x,y,r*1.8,r*.6,0,0,TAU);cx.fill();cx.fillStyle='#9a9a9e';cx.beginPath();cx.ellipse(x+r*.4,y-r*.15,r*1.2,r*.3,0,0,TAU);cx.fill()}
+  const L=Math.min(W*.22,H*.52),land=smooth(0,.5,u),asc=smooth(.75,1,u);
+  const y=asc>0?gy-asc*asc*(gy+L*1.3):lerp(-L*.2,gy,land);
+  const burning=(u<.5)||(u>.75);ship(W*.55,y,-Math.PI/2,L,{flame:burning?(u<.5?lerp(1,.5,land):1):0,flaps:false,tiles:false,legs:true});
+  if(u>.5&&u<.75){cx.fillStyle='#c9a227';cx.fillRect(W*.62,gy-12,16,12);cx.fillStyle='#e7edf3';cx.fillRect(W*.65,gy-8,10,8);label(`${P.cfg.pay} T OF CARGO DOWN`,14,H-28)}
+  if(u>.38&&u<.52||u>.75&&u<.82){const a=u<.6?smooth(.38,.5,u):1-smooth(.75,.82,u);cx.fillStyle=`rgba(170,170,175,${.35*a})`;for(let k=0;k<16;k++){const sp=(k%8)/8,dir=k<8?-1:1;cx.beginPath();cx.ellipse(W*.55+dir*sp*W*.35,gy-2,20+sp*30,5+sp*4,0,0,TAU);cx.fill()}}
+}
+
+function render(now){
+  if(!W)return;
+  const ph=PH.filter(p=>t>=p[0]).slice(-1)[0],moon=DEST==='moon';
+  if(t<TA)sceneRefill(t/TA);else if(t<TB)sceneTMI((t-TA)/(TB-TA));
+  else if(moon){if(t<40)sceneMoonCoast((t-TB)/(40-TB));else sceneMoonSurface(Math.min(1,(t-40)/24))}
+  else if(t<53)sceneCruise((t-TB)/(53-TB));else if(t<68)sceneMars(Math.min(1,(t-53)/15));else if(t<80)sceneISRU((t-68)/12);else sceneLaunch(Math.min(1,(t-80)/6));
+  $('camtag').textContent=ph[2];$('tPhase').textContent=ph[1];
+  const bn=$('banner');bn.textContent=ph[1];bn.style.opacity=t-ph[0]<2.6?1:0;
+  let day,prop,spd,spdK='Speed',unit='km/s',dp=null;
+  if(t<TA){const k=t/TA;day=P.start+k*P.days;const d=k*P.days;let s=SHIP.resid;for(const [dd,v] of P.fill){if(dd<=d)s=v}prop=Math.min(s,P.need);spd=7.73}
+  else if(moon){
+    const after=P.mN-P.mf;
+    if(t<TB){const k=(t-TA)/(TB-TA);day=P.dep;prop=lerp(P.need,after,smooth(0,.92,k));spd=lerp(7.73,7.73+MOON.tli,smooth(0,.92,k))}
+    else if(t<40){const k=(t-TB)/(40-TB);day=P.dep+k*MOON.coast;prop=after;spd=null;spdK='Distance from Earth';dp=k*384400}
+    else{const k=Math.min(1,(t-40)/24),landed=P.mAsc-P.mf;day=P.arr+2+k*7;
+      prop=k<.5?lerp(P.mLand-P.mf-P.cfg.pay,landed,smooth(0,.5,k)):k<.75?landed:lerp(landed,0,smooth(.75,1,k));
+      spd=k<.5?lerp(1.7,0,smooth(0,.5,k)):k<.75?0:lerp(0,1.7,smooth(.75,1,k));spdK=k<.75?'Speed relative to the Moon':'Speed relative to the Moon'}}
+  else if(t<TB){const k=(t-TA)/(TB-TA);day=P.dep;prop=lerp(P.need,P.m2b-P.mf,smooth(0,.92,k));spd=lerp(7.73,7.73+P.tr.tmi,smooth(0,.92,k))}
+  else if(t<53){const k=(t-TB)/(53-TB);day=P.dep+k*P.tr.tof;prop=lerp(P.m2+P.cruiseLoss,P.m2,k)-P.mf;spd=null;spdK='Distance from the Sun'}
+  else if(t<68){const k=Math.min(1,(t-53)/15);day=P.arr;prop=lerp(P.m2-P.mf,0,smooth(.66,.985,k));spd=k<.55?lerp(P.tr.entry,.8,smooth(0,.55,k)):k<.66?.8*(1-smooth(.55,.66,k)*.6):lerp(.3,0,smooth(.66,.985,k));spdK='Speed relative to Mars'}
+  else if(t<80){const k=(t-68)/12,wait=(P.retDep||P.ready)-P.arr;day=P.arr+k*wait;prop=P.fitsR?Math.min(P.propR,P.tpd*k*wait):0;spd=P.tpd;spdK='Plant output';unit='t a day'}
+  else{const k=Math.min(1,(t-80)/6);day=P.retDep||P.ready;prop=lerp(P.fitsR?P.propR:0,0,smooth(.05,1,k));spd=lerp(0,P.dvR||0,smooth(.05,1,k));spdK='Speed gained'}
+  if(!P.fits||!P.filled){day=TODAY}
+  $('tDate').textContent=fmtDate(day);$('tDay').textContent=nf.format(Math.max(0,Math.round(day-P.start)));
+  $('tProp').innerHTML=`${nf.format(Math.max(0,Math.round(prop)))} <span class="u">t</span>`;$('tGauge').style.width=clamp(prop/SHIP.cap*100,0,100)+'%';
+  $('tSpdK').textContent=spdK;
+  if(spd===null&&dp!==null)$('tSpd').innerHTML=`${nf.format(Math.round(dp))} <span class="u">km</span>`;
+  else if(spd===null){const r=lerp(R1,R2,(t-TB)/(53-TB));$('tSpd').innerHTML=`${(r/AU).toFixed(2)} <span class="u">AU</span>`}
+  else $('tSpd').innerHTML=`${spd.toFixed(spd<1&&unit==='km/s'?2:1)} <span class="u">${unit}</span>`;
+  if(!drag)$('scrub').value=t;
+}
+let drag=false;
+function frame(ms){const now=ms/1000,dt=Math.min(.05,now-last||0);last=now;
+  const stop=!P.fits||!P.filled?TA*.999:END;
+  if(playing){t+=dt*speed;if(t>=stop){t=stop;playing=false;syncBtn()}}
+  render(now);requestAnimationFrame(frame)}
+const syncBtn=()=>{$('play').textContent=playing?'Pause':t>=END-.01?'Replay':'Play'};
+$('play').addEventListener('click',()=>{if(!playing&&t>=END-.01)t=0;playing=!playing;syncBtn()});
+$('restart').addEventListener('click',()=>{t=0;playing=true;syncBtn()});
+$('scrub').addEventListener('input',()=>{t=+$('scrub').value});
+$('scrub').addEventListener('pointerdown',()=>drag=true);addEventListener('pointerup',()=>drag=false);
+[...$('speeds').querySelectorAll('button')].forEach(b=>b.addEventListener('click',()=>{$('speeds').querySelectorAll('button').forEach(o=>o.setAttribute('aria-pressed',o===b));speed=+b.dataset.speed}));
+$('apply').addEventListener('click',()=>{P=preview();t=0;playing=true;syncBtn();cv.scrollIntoView({block:'nearest',behavior:'smooth'})});
+P=preview();ancientTable();
+new ResizeObserver(resize).observe(cv);new ResizeObserver(drawWheel).observe(wc);resize();drawWheel();syncBtn();
+window.__mars={plan,transfer,departures,raOf,get t(){return t},set t(v){t=v},get P(){return P},draw:()=>render(performance.now()/1000)};
+requestAnimationFrame(frame);
+})();
+</script>
+
+</html>
