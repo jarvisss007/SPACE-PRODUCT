@@ -35,6 +35,44 @@ def fetch(query: str) -> list[list[str]]:
     return out
 
 
+def gnss_system(name: str):
+    """Which navigation system a CelesTrak 'gnss' entry belongs to (None for augmentation satellites)."""
+    n = name.upper()
+    if n.startswith("GPS"):
+        return "GPS"
+    if n.startswith("COSMOS"):
+        return "GLONASS"
+    if "GALILEO" in n:
+        return "Galileo"
+    if n.startswith("BEIDOU"):
+        return "BeiDou"
+    if n.startswith("QZS"):
+        return "QZSS"
+    if n.startswith(("IRNSS", "NVS")):
+        return "NavIC"
+    return None
+
+
+def write_gnss(gnss: list, nvs: list) -> None:
+    """Rewrite the `const GNSS=` line in every page that has one (the One Sky Lab)."""
+    rows, seen = [], set()
+    for name, l1, l2 in gnss + nvs:
+        sys_ = gnss_system(name)
+        if sys_ and l1[2:7] not in seen:
+            seen.add(l1[2:7])
+            rows.append([name, l1, l2, sys_])
+    if len(rows) < 80 or not {"GPS", "GLONASS", "Galileo", "BeiDou"} <= {r[3] for r in rows}:
+        print(f"only {len(rows)} navigation satellites: navigation data left unchanged")
+        return
+    line = "const GNSS=" + json.dumps(rows) + ";"
+    for page in sorted(ROOT.glob("*.html")):
+        src = page.read_text(encoding="utf-8")
+        out, n = re.subn(r"^const GNSS=\[.*?\];$", lambda m: line, src, count=1, flags=re.M)
+        if n == 1 and out != src:
+            page.write_text(out, encoding="utf-8")
+            print(f"{len(rows)} navigation satellites written to {page.name}")
+
+
 def main() -> int:
     try:
         stations = fetch("GROUP=stations")
@@ -45,6 +83,7 @@ def main() -> int:
     except Exception as e:  # network trouble: keep yesterday's data
         print(f"download failed, page left unchanged: {e}")
         return 0
+    write_gnss(gnss, nvs)
     sats, seen = [], set()
 
     def add(rows, group, keep=lambda n: True):
