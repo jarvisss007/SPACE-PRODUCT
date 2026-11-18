@@ -30,7 +30,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--di
 input[type=range]{width:100%;accent-color:var(--one)}
 .kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}.kv span{color:var(--dim)}.kv b{text-align:right}
 footer{color:var(--dim);font-size:12.5px;max-width:100ch}
-#ds{aspect-ratio:16/10}#gs{aspect-ratio:1/1;max-width:440px;margin:0 auto}#mw{aspect-ratio:16/8;margin-top:8px}
+#ds{aspect-ratio:16/10}#gs{aspect-ratio:1/1;max-width:440px;margin:0 auto}#mw{aspect-ratio:16/8;margin-top:8px}#mbT{aspect-ratio:16/6;min-height:230px;margin-top:6px}#mbC{aspect-ratio:16/7}
 label.c{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:#c3ccd6;margin-bottom:12px}label.c input{accent-color:var(--one);width:18px;height:18px;margin-top:2px;flex:none}
 .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--dim);margin-top:8px}.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
 select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 8px;width:100%}
@@ -41,7 +41,7 @@ select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--l
   <header>
     <div class="eyebrow">A what-if, worked out with real numbers</div>
     <h1>One Sky Lab</h1>
-    <p>Every space agency has something the others want. NASA flew people to the Moon. China brought rock back from its far side. Japan returned dust from asteroids. Europe landed on Titan. India put an orbiter around Mars for US$73 million. What if they stopped duplicating each other and worked as one? This page adds up what is real today and lets you assemble missions from everyone’s strengths. Part two works out, with physics, what shared research would unlock: dishes that never lose a spacecraft, a sky full of navigation satellites, and a crewed trip to Mars nearly five times lighter.</p>
+    <p>Every space agency has something the others want. NASA flew people to the Moon. China brought rock back from its far side. Japan returned dust from asteroids. Europe landed on Titan. India put an orbiter around Mars for US$73 million. What if they stopped duplicating each other and worked as one? This page adds up what is real today and lets you assemble missions from everyone’s strengths. Part two works out, with physics, what shared research would unlock: dishes that never lose a spacecraft, a sky full of navigation satellites, a crewed trip to Mars nearly five times lighter, and one shared Moon base instead of two.</p>
   </header>
 
   <div class="two">
@@ -150,6 +150,40 @@ select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--l
     </section>
   </div>
 
+  <section class="card" id="moonbase">
+    <div class="eyebrow" style="margin-bottom:4px">Part three · a Moon base, built together</div>
+    <h2>Two plans for one Moon</h2>
+    <p>Right now two groups are racing to build bases at the same place, the Moon’s south pole, where sunlit ridges sit next to craters holding ice. The US-led Artemis programme is backed by the Artemis Accords, signed by 78 countries as of October 2026, India among them since 2023. China and Russia lead the International Lunar Research Station, with 11 member countries. Most of what they are building, they are building twice.</p>
+    <canvas id="mbT" aria-label="Timeline of planned Moon missions from 2026 to 2036 for Artemis, the Chinese-Russian station and India"></canvas>
+    <div class="legend"><span><i style="background:#74c7ff"></i>Artemis and its partners</span><span><i style="background:#ff6b5e"></i>International Lunar Research Station</span><span><i style="background:#ff9933"></i>India</span><span>filled: done · hollow: planned</span></div>
+  </section>
+
+  <section class="card">
+    <h2>Who would bring what</h2>
+    <p>The same jobs, with each side’s real hardware. A row marked <b class="bad">built twice</b> is money and years spent on a second copy.</p>
+    <div class="scroll"><table id="mbW"></table></div>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>Supply the base</h2>
+      <p>Everything the crew uses has to be landed on the Moon, and every kilogram landed needs several more in Earth orbit to get there. Set the base up and compare two separate bases with one shared one.</p>
+      <div class="seg" id="mbMode" style="margin-bottom:10px"><button type="button" data-m="two">Two separate bases</button><button type="button" data-m="one" aria-pressed="true">One shared base</button></div>
+      <label class="f">People living there, all together <output id="oCrew"></output><input type="range" id="iCrew" min="4" max="24" step="2" value="8"></label>
+      <label class="c"><input type="checkbox" id="mbIce"> <span><b>Use the ice.</b> Make drinking water and oxygen from polar ice. JAXA and ISRO’s LUPEX rover and China’s Chang’e 7 are going to find out how much is there.</span></label>
+      <label class="c"><input type="checkbox" id="mbRec" checked> <span><b>Recycle air and water</b> as space stations do.</span></label>
+      <label class="f">Cargo lander<select id="mbLand"><option value="3">Blue Moon Mark 1 · 3 t</option><option value="30" selected>Blue Moon Mark 2, one way · 30 t</option><option value="100">Starship HLS · 100 t</option></select></label>
+      <label class="f">Launch price per kilogram to orbit<select id="mbKg"><option value="2720">Falcon 9 · US$2,720</option><option value="1500" selected>Falcon Heavy · US$1,500</option><option value="200">Fully reusable rockets (a goal) · US$200</option></select></label>
+    </section>
+    <section class="card">
+      <h2>What it takes</h2>
+      <canvas id="mbC" aria-label="Mass landed on the Moon to set up and to run the base, two bases against one"></canvas>
+      <div class="kv" id="mbK" style="margin-top:10px"></div>
+      <div class="verdict" id="mbV"></div>
+    </section>
+  </div>
+  <p class="note card">How the base model works. Getting to the Moon’s surface from low Earth orbit takes 5.93 km/s (Wikipedia “Delta-v budget”). Blue Moon burns hydrogen (450 s, tanks 13% of the fuel) and Starship burns methane (380 s, tanks 10%), both assumed. A person uses about 5 kg of food, water and oxygen a day (Wikipedia “Life-support system”). With recycling this page assumes 2 kg; with ice, only about 1 kg of food is shipped. Each reactor gives 40 kW and weighs 6 t, NASA’s target. Assumed sizing: power of 20 kW plus 5 kW per person, a 20 t habitat per four people, 15 t of landing pad, radio and lab plus a 10 t rover per base, 1 t of spares and science per person per year, and an 8 t ice plant. The bill counts launches only, not building the hardware.</p>
+
   <section class="card">
     <h2>How far to trust Part two</h2>
     <div class="scroll"><table id="chk2"></table></div>
@@ -161,7 +195,7 @@ select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--l
     <p>Space hardware is also military hardware: the same rocket that carries a satellite can carry a warhead, so countries guard it. US law has barred NASA from working with China without approval from the FBI and Congress since 2011. Partnerships also have to survive wars, sanctions and elections. And working together does not change physics: Mars is still months away and rockets still need the same push. What it changes is who pays, how much gets duplicated, and how fast the best ideas spread.</p>
   </section>
 
-  <footer>Part two sources: Wikipedia “NASA Deep Space Network” (Goldstone, Madrid, Canberra coordinates; 70 m and 34 m dishes), “ESTRACK” (New Norcia, Cebreros, Malargüe coordinates), “Chinese Deep Space Network” (Kashgar array equal to a 66 m dish, Jiamusi 64 m, a station in Neuquén, Argentina; coordinates approximate), “Usuda Deep Space Center” (64 m dish and coordinates), “Indian Deep Space Network” (32 m dish at Byalalu; coordinates approximate). Engines: Wikipedia articles “Vikas (rocket engine)” (293 s), “RD-191” (337 s), “YF-77” (428 s), “CE-20” (442 s), “LE-7” (446 s), “RS-25” (452.3 s), “NERVA” (841 s, 18,144 kg). Mars masses: “Mars Design Reference Mission” (version 4.0 totals: nuclear thermal 436 t, chemical with aerobraking 657 t). MOXIE, 5.37 g of oxygen per hour: “In situ resource utilization”. Launch prices per kilogram (Electron $19,039, Falcon 9 $2,720, Falcon Heavy $1,500): “Space launch market competition”. Navigation satellites: CelesTrak “gnss” group, refreshed daily. Part one sources: Wikipedia “List of government space agencies” (annual budgets in millions of US dollars: NASA 25,400 (2025), CNSA 18,150 (2023), ESA 9,080 (2025), JAXA 2,388 (2022), Roscosmos 1,950 (2025), ISRO 1,831 (2022); the launch, exploration and human-spaceflight capability tables, with their first missions), “International Space Station” (partners, continuous occupation since 2 November 2000, 290 visitors from 26 countries as of August 2025, cost to 2010 and its split, and the US restriction on cooperation with China), “Mars Orbiter Mission” (₹450 crore, US$73 million), “MAVEN” ($582.5 million to build, launch and operate for two years), “Hayabusa2” (16.4 billion yen estimated in 2010), “James Webb Space Telescope” ($10 billion) and “Chandrayaan-3” (₹615 crore). Budgets come from different years and exchange rates, so the totals are approximate. An independent page, not affiliated with any agency.</footer>
+  <footer>Moon base sources: Wikipedia “Artemis program” (Artemis II flew in April 2026; Artemis III late 2027, IV early 2028, V late 2028), “Lunar Gateway” (paused in 2026 as NASA turned to a surface base), “Artemis Accords” (78 signatories as of 28 October 2026; India signed in 2023), “International Lunar Research Station” (11 member countries; construction 2026–2035, use from 2036; Chang’e 8 tests local resources in 2028), “Chang’e 7” (planned 2027), “Lanyue” (about 26,000 kg with its push stage; landing before 2030), “Long March 10” (70 t to low orbit, 27 t towards the Moon), “Lunar Polar Exploration Mission” (2028–29; JAXA rover and launcher, ISRO lander), “Chandrayaan-4” (2028), “Lunar Cruiser” (no earlier than 2032), “Blue Moon” (Mark 1 3,000 kg; Mark 2 cargo 30,000 kg one way), “Starship HLS” (100,000 kg to the surface), “Nuclear power in space” (Fission Surface Power 40 kW, under 6,000 kg, 10 years; China–Russia reactor by 2035), “Peak of eternal light” (polar ridges lit more than 80% of the time). Part two sources: Wikipedia “NASA Deep Space Network” (Goldstone, Madrid, Canberra coordinates; 70 m and 34 m dishes), “ESTRACK” (New Norcia, Cebreros, Malargüe coordinates), “Chinese Deep Space Network” (Kashgar array equal to a 66 m dish, Jiamusi 64 m, a station in Neuquén, Argentina; coordinates approximate), “Usuda Deep Space Center” (64 m dish and coordinates), “Indian Deep Space Network” (32 m dish at Byalalu; coordinates approximate). Engines: Wikipedia articles “Vikas (rocket engine)” (293 s), “RD-191” (337 s), “YF-77” (428 s), “CE-20” (442 s), “LE-7” (446 s), “RS-25” (452.3 s), “NERVA” (841 s, 18,144 kg). Mars masses: “Mars Design Reference Mission” (version 4.0 totals: nuclear thermal 436 t, chemical with aerobraking 657 t). MOXIE, 5.37 g of oxygen per hour: “In situ resource utilization”. Launch prices per kilogram (Electron $19,039, Falcon 9 $2,720, Falcon Heavy $1,500): “Space launch market competition”. Navigation satellites: CelesTrak “gnss” group, refreshed daily. Part one sources: Wikipedia “List of government space agencies” (annual budgets in millions of US dollars: NASA 25,400 (2025), CNSA 18,150 (2023), ESA 9,080 (2025), JAXA 2,388 (2022), Roscosmos 1,950 (2025), ISRO 1,831 (2022); the launch, exploration and human-spaceflight capability tables, with their first missions), “International Space Station” (partners, continuous occupation since 2 November 2000, 290 visitors from 26 countries as of August 2025, cost to 2010 and its split, and the US restriction on cooperation with China), “Mars Orbiter Mission” (₹450 crore, US$73 million), “MAVEN” ($582.5 million to build, launch and operate for two years), “Hayabusa2” (16.4 billion yen estimated in 2010), “James Webb Space Telescope” ($10 billion) and “Chandrayaan-3” (₹615 crore). Budgets come from different years and exchange rates, so the totals are approximate. An independent page, not affiliated with any agency.</footer>
 </div>
 
 <script>
@@ -307,4 +341,49 @@ ds();mars();checks();if(document.readyState==='complete')gnss();else addEventLis
 window.__one2={ST,vis,marsMass,ENG,pdop,get up(){return null}};
 })();
 </script>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),nf=new Intl.NumberFormat('en-US'),G0=9.80665;
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);const g=c.getContext('2d');g.setTransform(r,0,0,r,0,0);return g}
+// ---- timeline ----
+const LANES=[['Artemis','#74c7ff'],['ILRS','#ff6b5e'],['India','#ff9933']];
+const EV=[[0,2026.27,'Artemis II: crew flies round the Moon',1],[0,2026.3,'Gateway station paused',1],[0,2027.85,'Artemis III: lander test',0],[0,2028.15,'Artemis IV: first landing',0],[0,2028.85,'Artemis V',0],[0,2032,'JAXA–Toyota rover',0],
+ [1,2027,'Chang’e 7: hunt for ice',0],[1,2028,'Chang’e 8: use Moon materials',0],[1,2029.9,'First Chinese landing',0],[1,2035,'Base built, reactor',0],[1,2036,'Station in use',0],
+ [2,2028,'Chandrayaan-4: rock home',0],[2,2028.6,'LUPEX with JAXA: ice rover',0]];
+function tl(){const c=$('mbT'),g=size(c),w=c.clientWidth,h=c.clientHeight,L=w<520?52:76,R=14,y0=26,lh=(h-y0-8)/3,X=y=>L+(y-2026)/(2036.5-2026)*(w-L-R);g.clearRect(0,0,w,h);g.font='11px "IBM Plex Sans",sans-serif';
+  g.fillStyle='#8a97a8';g.textAlign='center';for(let y=2026;y<=2036;y+=2){g.fillText(y,X(y),12);g.strokeStyle='#1f2a38';g.beginPath();g.moveTo(X(y),18);g.lineTo(X(y),h-4);g.stroke()}
+  const now=2026+(Date.now()-Date.UTC(2026,0,1))/31557600000;g.strokeStyle='#e8c46a';g.setLineDash([3,3]);g.beginPath();g.moveTo(X(now),18);g.lineTo(X(now),h-4);g.stroke();g.setLineDash([]);g.fillStyle='#e8c46a';g.fillText('today',X(now),h-6>y0?24:24);
+  LANES.forEach(([n,col],i)=>{const yc=y0+lh*i+lh/2;g.fillStyle='#c3ccd6';g.textAlign='left';g.font='600 12px "IBM Plex Sans",sans-serif';g.fillText(n,4,yc+4);g.font='11px "IBM Plex Sans",sans-serif';g.strokeStyle=col;g.globalAlpha=.35;g.beginPath();g.moveTo(L,yc);g.lineTo(w-R,yc);g.stroke();g.globalAlpha=1;
+    EV.filter(e=>e[0]===i).forEach((e,k)=>{const x=X(e[1]);g.beginPath();g.arc(x,yc,5,0,7);g.lineWidth=2;g.strokeStyle=col;g.fillStyle=e[3]?col:'#02030a';g.fill();g.stroke();g.lineWidth=1;
+      g.fillStyle='#e7edf3';const right=x>w*0.7;g.textAlign=right?'right':'left';const txt=w<520?e[2].split(':')[0]:e[2];g.fillText(txt,right?x-8:x+8,yc+[-9,17,-25,33][k%4])})})}
+// ---- who brings what ----
+const WHO=[['Heavy rocket','NASA’s SLS, plus commercial Starship and New Glenn','Long March 10: 27 t on the way to the Moon',1],['Crew ship','Orion, pushed by ESA’s service module','Mengzhou',1],['Crew lander','Starship HLS and Blue Moon','Lanyue, 26 t with its push stage',1],
+ ['Nuclear power on the surface','NASA Fission Surface Power: 40 kW, under 6 t, 10 years','A reactor with Russia by 2035',1],['Finding the ice','LUPEX: JAXA’s rover on ISRO’s lander, 2028–29','Chang’e 7 (2027), then Chang’e 8 tests (2028)',1],
+ ['Living on the surface','Italy’s Multi-Purpose Habitation module and JAXA–Toyota’s pressurized rover','Crew stays planned from the 2030s',0],['Station around the Moon','Gateway (NASA, ESA, JAXA, Canada), paused in 2026','none planned',0],['Moon rock brought home','India’s Chandrayaan-4 planned for 2028','Chang’e 5 and Chang’e 6, from the far side in 2024',0]];
+$('mbW').innerHTML='<tr><th>Job</th><th>Artemis side</th><th>Chinese–Russian side</th><th></th></tr>'+WHO.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]?'<b class="bad">built twice</b>':''}</td></tr>`).join('')+`<tr><td colspan="4" class="note">${WHO.filter(r=>r[3]).length} of the ${WHO.length} jobs are being paid for twice. India sits in both worlds: it signed the Artemis Accords, flies LUPEX with Japan, and runs Chandrayaan-4 on its own.</td></tr>`;
+// ---- supply model ----
+// Assumed sizing (labelled on the page): power 20 kW + 5 kW per person; habitat 20 t per 4 people; per base 15 t of landing pad, radio and lab plus a 10 t rover; 1 t of spares and science per person per year; ice plant 8 t.
+const LANDER={3:{n:'Blue Moon Mark 1',isp:450,f:0.13},30:{n:'Blue Moon Mark 2',isp:450,f:0.13},100:{n:'Starship HLS',isp:380,f:0.10}};
+function leoPer(l){const R=Math.exp(5930/(l.isp*G0));const q=1-l.f*(R-1);return 1+(R-1)/q*(1+l.f)}
+function base(crew,ice,rec){const kw=20+5*crew,reactors=Math.ceil(kw/40);const setup=15+10+20*Math.ceil(crew/4)+6*reactors+(ice?8:0);const perDay=ice?1.0:rec?2.0:5.0;const year=crew*perDay*365.25/1000+crew*1.0;return {setup,year,reactors,kw}}
+let mode='one';
+document.querySelectorAll('#mbMode [data-m]').forEach(b=>b.onclick=()=>{mode=b.dataset.m;document.querySelectorAll('#mbMode [data-m]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));supply()});
+['iCrew','mbIce','mbRec','mbLand','mbKg'].forEach(id=>{$(id).addEventListener('input',supply);$(id).addEventListener('change',supply)});
+function plan(m,crew,ice,rec){if(m==='one')return base(crew,ice,rec);const a=base(crew/2,ice,rec);return {setup:2*a.setup,year:2*a.year,reactors:2*a.reactors,kw:2*a.kw}}
+function supply(){const crew=+$('iCrew').value,ice=$('mbIce').checked,rec=$('mbRec').checked,cap=+$('mbLand').value,L=LANDER[cap],kg=+$('mbKg').value;$('oCrew').textContent=crew+' people';$('mbRec').disabled=ice;
+  const one=plan('one',crew,ice,rec),two=plan('two',crew,ice,rec),P=mode==='one'?one:two,k=leoPer(L);
+  const tenYr=P.setup+10*P.year,flightsSet=mode==='one'?Math.ceil(P.setup/cap):2*Math.ceil(P.setup/2/cap),flightsYr=mode==='one'?Math.ceil(P.year/cap):2*Math.ceil(P.year/2/cap),bill=tenYr*1000*k*kg;
+  $('mbK').innerHTML=`<span>Landed to set it up</span><b>${nf.format(Math.round(P.setup))} t</b><span>Landed every year to keep it going</span><b>${nf.format(Math.round(P.year))} t</b><span>Reactors (40 kW each)</span><b>${P.reactors}</b><span>${L.n} landings: set-up, then each year</span><b>${flightsSet}, then ${flightsYr}</b><span>Kilograms in Earth orbit for each kilogram landed</span><b>${k.toFixed(1)}</b><span>Launch bill for the first ten years</span><b>US$${(bill/1e9).toFixed(1)} billion</b>`;
+  const save=1-(one.setup+10*one.year)/(two.setup+10*two.year);
+  $('mbV').innerHTML=mode==='one'?`<b class="ok">One base for everyone</b> lands ${Math.round(save*100)}% less over ten years than two half-size bases with the same ${crew} people: one landing field, one radio station, ${one.reactors<two.reactors?'fewer reactors, ':''}and every lander free to carry anyone’s cargo.${ice?` Making water and oxygen from the ice cuts the yearly supply from ${nf.format(Math.round(plan('one',crew,false,rec).year))} t to ${nf.format(Math.round(one.year))} t.`:''} The bigger saving is further up the chain: the two programmes are also building two heavy rockets, two crew ships and two crew landers.`
+    :`<b class="mid">Two bases</b> means two landing fields, two radio stations and two sets of reactors for the same ${crew} people: ${nf.format(Math.round(two.setup+10*two.year-(one.setup+10*one.year)))} t more landed over ten years, about ${nf.format(Math.round((two.setup+10*two.year-(one.setup+10*one.year))*k))} t more lifted into Earth orbit.`;
+  const c=$('mbC'),g=size(c),w=c.clientWidth,h=c.clientHeight,LBL=w<520?96:150,rows=[['Two bases: set up',two.setup,mode==='two'],['One base: set up',one.setup,mode==='one'],['Two bases: each year',two.year,mode==='two'],['One base: each year',one.year,mode==='one']],mx=Math.max(...rows.map(r=>r[1])),rh=h/rows.length;g.clearRect(0,0,w,h);g.font='12px "IBM Plex Sans",sans-serif';
+  rows.forEach(([n,v,on],i)=>{const y=i*rh,bw=(w-LBL-60)*v/mx;g.fillStyle=on?'#e7edf3':'#8a97a8';g.textAlign='left';g.fillText(n,4,y+rh*.6);g.fillStyle=n.startsWith('Two')?'#ff6b5e':'#5fd6a0';g.globalAlpha=on?1:.45;g.fillRect(LBL,y+rh*.22,Math.max(2,bw),rh*.56);g.globalAlpha=1;g.fillStyle='#e7edf3';g.fillText(nf.format(Math.round(v))+' t',LBL+bw+6,y+rh*.6)})}
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{tl();supply()},150)});
+tl();supply();
+window.__moon={base,plan,leoPer,LANDER};
+})();
+</script>
+
 

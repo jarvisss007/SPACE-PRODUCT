@@ -26,7 +26,7 @@ LABS = [
  ("gravity-assist-lab.html","Gravity Assist Lab","How Voyager borrowed speed from Jupiter and Saturn, re-derived from planet positions, and when the next grand tour is possible.","learn explore","motion orbits",'#e8c46a'),
  ("ion-engine-lab.html","Ion Engine Lab","How NASA's Dawn went further than any spacecraft before it on a push the weight of a sheet of paper.","learn","motion",'#7fb2ff'),
  ("touch-the-sun.html","Touch the Sun","Why the Sun is the hardest place to reach, and Parker Solar Probe's seven Venus flybys down to 191 km/s.","learn mission","gravity orbits",'#ffb347'),
- ("one-sky-lab.html","One Sky Lab","What if every space agency worked as one? Shared deep-space dishes, all six navigation systems live over your city, and a crewed Mars trip made nearly five times lighter by pooled research.","explore india learn","orbits energy",'#7fe0ff'),
+ ("one-sky-lab.html","One Sky Lab","What if every space agency worked as one? Shared deep-space dishes, all six navigation systems live over your city, a Mars trip nearly five times lighter, and one Moon base instead of two.","explore india learn","orbits energy",'#7fe0ff'),
  ("planetary-defense-lab.html","Planetary Defense Lab","NASA's DART asteroid hit re-measured from its orbit, then plan the deflection of an asteroid headed for Earth.","learn explore","motion",'#c9a27e'),
  ("telescope-lab.html","Telescope Lab","How sharp Hubble, Webb, AstroSat and your eye can see, what each can make out on the Moon and Mars, and why Webb is kept so cold.","learn explore","light",'#d8b4ff'),
  ("voyager-now.html","Voyager Now","Where both Voyagers are as you read this, how long a message takes to reach them, and their fading power.","explore","orbits",'#e8c46a'),
