@@ -31,7 +31,7 @@ jobs:
         run: |
           git config user.name "golapada-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add satellite-watch.html site docs
+          git add *.html site docs
           if git diff --cached --quiet; then
             echo "Nothing new today."
           else

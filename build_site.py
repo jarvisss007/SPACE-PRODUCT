@@ -15,6 +15,7 @@ OUT = HERE / "site"
 # page file -> (nav label, published artifact id that other pages link to)
 PAGES = [
     ("index.html", "Home", "VEHMzzQ5FUTWq6JxoK3tf3"),
+    ("tonight.html", "Tonight", "3aUGRPdpk6vgQBkzKSAZWb"),
     ("satellite-watch.html", "Live satellites", "HRrym68cV7YcEbuycixy2p"),
     ("starship-catch.html", "Catch", "D2UgmPBXpzcKUxY7qnzQdB"),
     ("rocket-lab.html", "Rockets", "4ZaBFQRVW2jUmBzCpVSHiU"),

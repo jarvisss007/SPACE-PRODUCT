@@ -64,17 +64,20 @@ def main() -> int:
     if len(sats) < 50 or not must <= {s[0] for s in sats}:
         print(f"only {len(sats)} satellites, or the ISS or Hubble missing: page left unchanged")
         return 0
-    src = PAGE.read_text(encoding="utf-8")
     new_line = "const TLE=" + json.dumps(sats) + ";"
-    out, n = re.subn(r"^const TLE=\[.*?\];$", lambda m: new_line, src, count=1, flags=re.M)
-    if n != 1:
-        print("could not find the orbit data line: page left unchanged")
+    pages = [p for p in sorted(ROOT.glob("*.html"))
+             if re.search(r"^const TLE=\[", p.read_text(encoding="utf-8"), re.M)]
+    if PAGE not in pages:
+        print("could not find the orbit data line in satellite-watch.html: pages left unchanged")
         return 1
-    if out == src:
-        print("orbit data unchanged")
-        return 0
-    PAGE.write_text(out, encoding="utf-8")
-    print(f"refreshed {len(sats)} satellites")
+    changed = 0
+    for page in pages:  # every page that carries the snapshot (Satellite Watch, Tonight's Sky, ...)
+        src = page.read_text(encoding="utf-8")
+        out, n = re.subn(r"^const TLE=\[.*?\];$", lambda m: new_line, src, count=1, flags=re.M)
+        if n == 1 and out != src:
+            page.write_text(out, encoding="utf-8")
+            changed += 1
+    print(f"{len(sats)} satellites; updated {changed} of {len(pages)} pages" if changed else "orbit data unchanged")
     return 0
 
 
