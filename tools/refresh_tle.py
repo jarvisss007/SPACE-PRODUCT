@@ -19,7 +19,7 @@ import urllib.request
 ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "satellite-watch.html"
 BASE = "https://celestrak.org/NORAD/elements/gp.php?FORMAT=tle&"
-UA = {"User-Agent": "kaksha-labs-satellite-watch/1.0 (daily public snapshot)"}
+UA = {"User-Agent": "golapada-satellite-watch/1.0 (daily public snapshot)"}
 
 
 def fetch(query: str) -> list[list[str]]:

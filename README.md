@@ -1,8 +1,8 @@
-# Kaksha Labs
+# Golapada
 
 Interactive space-science labs that run in any browser, built on real mission data and checked against what really happened. Every page shows its sources and a "checks" table comparing the model with published figures.
 
-**Kaksha** (कक्षा) is the *Surya Siddhanta*'s word for a planet's orbit, and today's Hindi word for a classroom. Domains to secure: kakshalabs.com and kakshalabs.in (both unregistered when checked on 18 November 2026). Run a trademark search on ipindia.gov.in before launch.
+**Golapada** (गोलपाद) means “the chapter on the sphere”: the fourth part of Aryabhata’s *Aryabhatiya* (499 CE), where he explained the turning Earth, the sky and eclipses. Domains to secure: golapada.com and golapada.in (both unregistered when checked on 18 November 2026). The earlier working name Kaksha Labs was dropped because several Indian edtech companies already use “Kaksha”. Run a trademark search on ipindia.gov.in before launch.
 
 ## What is here
 
@@ -35,11 +35,11 @@ This writes two folders:
 
 After any change, run `py build_site.py`, then commit and push. Pages updates by itself.
 
-**Own domain (kakshalabs.com):** in the same Pages settings, enter the domain under "Custom domain", which adds a `CNAME` file. Then, at the domain registrar, add the DNS records GitHub shows: four `A` records for the bare domain, and a `CNAME` for `www` pointing to `jarvisss007.github.io`. Tick "Enforce HTTPS" once it appears.
+**Own domain (golapada.com):** in the same Pages settings, enter the domain under "Custom domain", which adds a `CNAME` file. Then, at the domain registrar, add the DNS records GitHub shows: four `A` records for the bare domain, and a `CNAME` for `www` pointing to `jarvisss007.github.io`. Tick "Enforce HTTPS" once it appears.
 
 ## Updating the satellite data
 
-`satellite-watch.html` carries a snapshot of public orbit data from CelesTrak (celestrak.org), dated on the page. Low orbits drift, so refresh the snapshot every week or two for accurate pass times.
+`satellite-watch.html` carries a snapshot of public orbit data from CelesTrak (celestrak.org), dated on the page. It refreshes itself every day. The GitHub Action in `.github/workflows/refresh-satellites.yml` runs `tools/refresh_tle.py` at 02:17 UTC, rebuilds the site and publishes any change. To refresh now, open **Actions → Refresh satellite data → Run workflow**.
 
 ## Third-party pieces and licences
 

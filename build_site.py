@@ -1,4 +1,4 @@
-"""Build the Kaksha Labs website from the app pages in this folder.
+"""Build the Golapada website from the app pages in this folder.
 
 Reads every app page, adds a shared navigation bar, turns links between the
 apps into relative links, and writes the result to ./site/. The app files
@@ -63,9 +63,9 @@ def nav_html(current: str) -> str:
     for i, (fname, label, _) in enumerate(PAGES):
         cur = ' aria-current="page"' if fname == current else ""
         cls = ' class="sa-brand"' if i == 0 else ""
-        text = "Kaksha Labs" if i == 0 else label
+        text = "Golapada" if i == 0 else label
         links.append(f'<a href="{fname}"{cls}{cur}>{text}</a>')
-    return f'<nav class="sa-nav" aria-label="Kaksha Labs"><div class="sa-in">{"".join(links)}</div></nav>\n'
+    return f'<nav class="sa-nav" aria-label="Golapada"><div class="sa-in">{"".join(links)}</div></nav>\n'
 
 
 def build() -> None:
@@ -90,9 +90,9 @@ def build() -> None:
     # GitHub Pages: serve files as they are, without Jekyll processing
     (WEB / ".nojekyll").write_text("", encoding="utf-8")
     (WEB / "404.html").write_text(web_page(
-        '<title>Not found · Kaksha Labs</title><style>html,body{background:#04060b;color:#e7edf3;font-family:system-ui,sans-serif}'
+        '<title>Not found · Golapada</title><style>html,body{background:#04060b;color:#e7edf3;font-family:system-ui,sans-serif}'
         '.wrap{max-width:640px;margin:15vh auto;padding:0 16px}a{color:#74c7ff}</style>'
-        '<div class="wrap"><h1>Lost in orbit</h1><p>That page is not here. <a href="./">Go to the Kaksha Labs home page</a>.</p></div>',
+        '<div class="wrap"><h1>Lost in orbit</h1><p>That page is not here. <a href="./">Go to the Golapada home page</a>.</p></div>',
         "404.html"), encoding="utf-8")
 
 
@@ -110,11 +110,11 @@ def web_page(src: str, fname: str) -> str:
     body = body.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', "")
     body = body.replace('<meta charset="utf-8">\n', "", 1)
     title = re.search(r"<title>(.*?)</title>", body, re.S)
-    t = title.group(1).strip() if title else "Kaksha Labs"
+    t = title.group(1).strip() if title else "Golapada"
     desc = ("Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, "
             "the Sun and the stars, each checked against what really happened.")
     head = (f'<link rel="icon" href="{ICON}">\n<meta name="description" content="{desc}">\n'
-            f'<meta property="og:title" content="{t if fname == "index.html" else t + " · Kaksha Labs"}">\n'
+            f'<meta property="og:title" content="{t if fname == "index.html" else t + " · Golapada"}">\n'
             f'<meta property="og:description" content="{desc}">\n<meta name="theme-color" content="#04060b">\n')
     # charset first: browsers only look for it in the first 1,024 bytes
     return '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n' + head + body + "\n</html>\n"
