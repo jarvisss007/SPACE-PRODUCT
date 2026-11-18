@@ -108,22 +108,12 @@ def write_offline_zip() -> None:
     Fixed timestamps keep the zip byte-identical unless a page changes."""
     import zipfile
     pages = sorted(p for p in WEB.glob("*.html") if p.name != "404.html")
-    readme = ("Golapada offline
-
-
-
-Unzip this folder and open index.html in any web browser.
-
-"
-              "Everything is calculated on your own computer. Fonts, the live Earth photographs
-
-"
-              "and the satellite-tracking library need the internet; satellite positions are from
-
-"
-              "the day this copy was made, so download a fresh one every week or two.
-
-")
+    readme = "\r\n".join([
+        "Golapada offline", "",
+        "Unzip this folder and open index.html in any web browser.",
+        "Everything is calculated on your own computer. Fonts, the live Earth photographs",
+        "and the satellite-tracking library need the internet; satellite positions are from",
+        "the day this copy was made, so download a fresh one every week or two.", ""])
     with zipfile.ZipFile(WEB / "golapada-offline.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         info = zipfile.ZipInfo("golapada/README.txt", (2026, 1, 1, 0, 0, 0))
         info.compress_type = zipfile.ZIP_DEFLATED

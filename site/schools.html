@@ -1,0 +1,183 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Golapada for Schools</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a teacher's desk. Headline promise, then the chapter map (filter by class), how a 40-minute period runs, eight ready lesson plans, and the offline download. Dark on screen, white on paper. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--mint:#5fd6a0;--lox:#74c7ff;--gold:#e8c46a;--saffron:#ff9a3c;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}*{box-sizing:border-box}
+.wrap{max-width:1100px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--mint)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h3{font-family:var(--display);font-weight:600;font-size:18px;margin:14px 0 6px;letter-spacing:.04em;text-transform:uppercase;color:var(--mint)}
+p{margin:0 0 10px;max-width:76ch;color:#c3ccd6}a{color:var(--lox)}ul,ol{margin:0 0 10px;padding-left:20px;color:#c3ccd6}li{margin-bottom:4px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.promise{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}@media (max-width:760px){.promise{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.promise div{border-left:3px solid var(--mint);padding:4px 10px}.promise b{display:block;font-family:var(--display);font-size:24px;line-height:1.15}.promise span{font-size:12.5px;color:var(--dim)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+button,.btn{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 12px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px;text-decoration:none;display:inline-block}
+button[aria-pressed="true"],.btn.primary{background:var(--mint);border-color:var(--mint);color:#04140c}button:focus-visible,.btn:focus-visible,summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:8px 10px 8px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+td.cls{font-family:var(--display);font-size:18px;white-space:nowrap;color:var(--mint)}td .bk{display:block;font-size:12px;color:var(--dim)}.unc{font-size:11px;color:var(--gold);letter-spacing:.06em}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.period{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}@media (max-width:760px){.period{grid-template-columns:minmax(0,1fr)}}
+.period div{background:var(--panel2);border-radius:4px;padding:10px;border-top:3px solid var(--mint)}.period b{font-family:var(--display);font-size:22px;display:block}.period i{font-style:normal;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}.period p{font-size:13.5px;margin:4px 0 0}
+@media screen and (max-width:640px){#mapT tr:first-child{display:none}#mapT tr{display:block;padding:10px 0;border-bottom:1px solid var(--line)}#mapT td{display:block;border:0;padding:2px 0}#mapT td:nth-child(5)::before{content:"Worksheet: ";color:var(--dim)}}
+details.plan{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:0 16px}details.plan[open]{padding-bottom:12px}
+details.plan>summary{cursor:pointer;list-style:none;padding:14px 0;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}details.plan>summary::-webkit-details-marker{display:none}
+details.plan>summary b{font-family:var(--display);font-size:21px;text-transform:uppercase}details.plan>summary span{font-size:13px;color:var(--dim)}details.plan>summary::before{content:"+";font-family:var(--display);color:var(--mint);font-size:20px;width:12px}details.plan[open]>summary::before{content:"–"}
+.ans{background:var(--panel2);border-radius:4px;padding:10px 12px;margin-top:8px}.ans summary{cursor:pointer;font-family:var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.plans{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+@media print{
+  :root{color-scheme:light}html,body{background:#fff!important;color:#000}body{font-size:11pt}
+  .card,details.plan,.period div,.ans{background:#fff!important;border-color:#bbb!important;color:#000}
+  p,li,ul,ol,td,.note,footer,.promise span,details.plan>summary span{color:#222!important}a{color:#000;text-decoration:underline}
+  h1,h2,h3,.eyebrow,td.cls,.promise b{color:#000!important}.chips,.noprint,nav,.gnav{display:none!important}
+  details.plan{break-inside:avoid-page}tr{break-inside:avoid}
+}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-in"><a href="index.html" class="sa-brand">Golapada</a><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html" aria-current="page">For schools</a><a href="worksheets.html">Worksheets</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">For teachers · Class 6 to 12 · free, no sign-up</div>
+    <h1>Golapada for Schools</h1>
+    <p>Golapada is a set of free space-science labs that run in any web browser. Every number in them is worked out from real physics and checked against real missions, many of them Indian. This page tells you which lab fits which NCERT chapter, how to run one in a single 40-minute period, and gives you eight lesson plans you can use tomorrow.</p>
+    <div class="row noprint"><a class="btn primary" href="#map">Find my chapter</a><a class="btn" href="#plans">Lesson plans</a><a class="btn" href="worksheets.html">Printable worksheets</a><a class="btn" href="#offline">Download for offline use</a><button type="button" id="printAll">Print this page</button></div>
+  </header>
+
+  <section class="card" aria-label="What you get">
+    <div class="promise">
+      <div><b>No accounts</b><span>Nothing to sign up for. The labs collect no data about students.</span></div>
+      <div><b>Any device</b><span>Phone, tablet, laptop or the classroom projector.</span></div>
+      <div><b>Real missions</b><span>Chandrayaan-3, Gaganyaan, Mangalyaan, Hubble, Voyager and more.</span></div>
+      <div><b>Checked</b><span>Each lab shows how close its numbers come to published figures.</span></div>
+    </div>
+  </section>
+
+  <section class="card" id="map">
+    <h2>Which lab for which chapter</h2>
+    <p class="note">Chapters are from the NCERT textbooks used in CBSE schools for 2026–27. Pick your class. Class 9 now uses the new book <i>Exploration</i>, which has no chapter on gravitation, so the orbit and gravity labs are listed under Class 11.</p>
+    <div class="chips" id="chips" role="group" aria-label="Filter by class"></div>
+    <div class="scroll"><table id="mapT"></table></div>
+    <p class="note" id="mapNote" style="margin-top:8px"></p>
+  </section>
+
+  <section class="card">
+    <h2>One lab, one 40-minute period</h2>
+    <div class="period">
+      <div><i>Minutes 0–5</i><b>Warm-up</b><p>Ask the question in the plan. Let students guess before anyone opens a screen.</p></div>
+      <div><i>Minutes 5–20</i><b>Explore</b><p>Pairs work through the lab with the exact settings in the plan. Or drive it yourself on the projector.</p></div>
+      <div><i>Minutes 20–30</i><b>Discuss</b><p>Use the discussion questions. Ask pairs to explain what they saw, not just the answer.</p></div>
+      <div><i>Minutes 30–37</i><b>Exit ticket</b><p>Two or three short questions on paper. The answers are in each plan.</p></div>
+      <div><i>Minutes 37–40</i><b>Take home</b><p>Set the matching worksheet, or an observation for tonight.</p></div>
+    </div>
+    <p class="note" style="margin-top:10px">Only one screen? Every lab works on a projector: you move the sliders and the class calls out what to try. Every lab also has a “How far to trust it” table. Older students can use it to talk about how models are checked against real data.</p>
+  </section>
+
+  <section id="plans">
+    <h2>Ready lesson plans</h2>
+    <p class="note">Tap a plan to open it. Printing this page prints every plan with its answers.</p>
+    <div class="plans" id="planList"></div>
+  </section>
+
+  <section class="card" id="offline">
+    <h2>No reliable internet? Take it offline</h2>
+    <p>Download every lab as one zip file and copy it to the school computers or a pen drive. Unzip it and open <b>index.html</b> in any browser. No installing needed.</p>
+    <p><a class="btn primary" href="https://jarvisss007.github.io/SPACE-PRODUCT/golapada-offline.zip">Download golapada-offline.zip</a></p>
+    <p class="note">Offline, the labs still calculate everything. Three things need the internet: the website’s fonts (a plain font is used instead), the live Earth photographs in Earth from Above, and the tracking library Satellite Watch and Tonight’s Sky use. The satellite positions inside the zip are from the day you download it and drift out of date within a week or two, so download a fresh copy now and then.</p>
+  </section>
+
+  <footer>Golapada is an independent educational project. It is not made by, affiliated with or endorsed by ISRO, NCERT, CBSE or NASA. Mission figures come from public sources named on each lab’s page. Chapter titles follow the NCERT textbooks; check the edition your school uses.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const L={rocket:['Rocket Lab','rocket-lab.html'],gagan:['Gaganyaan Lab','gaganyaan-lab.html'],moon:['Chandrayaan-3 Moon Lab','chandrayaan-3.html'],tonight:['Tonight’s Sky','tonight.html'],earth:['Earth from Above','earth-from-above.html'],sat:['Satellite Watch','satellite-watch.html'],scope:['Telescope Lab','telescope-lab.html'],reentry:['Re-entry Lab','reentry-lab.html'],
+  planets:['Solar System Lab','solar-system-lab.html'],sun:['Touch the Sun','touch-the-sun.html'],debris:['Space Debris Lab','space-debris-lab.html'],navic:['NavIC Lab','navic-lab.html'],mars:['Mangalyaan Mars Lab','mangalyaan.html'],flyby:['Gravity Assist Lab','gravity-assist-lab.html'],lagrange:['Lagrange Point Lab','lagrange-lab.html'],ion:['Ion Engine Lab','ion-engine-lab.html'],
+  landing:['Mars Landing Lab','mars-landing-lab.html'],aryabhata:['Aryabhata Lab','aryabhata-lab.html'],exo:['Exoplanet Explorer','exoplanet-explorer.html'],galaxy:['Milky Way Atlas','milky-way-atlas.html'],defense:['Planetary Defense Lab','planetary-defense-lab.html'],voyager:['Voyager Now','voyager-now.html'],blackhole:['Black Hole Lab','black-hole-lab.html']};
+const WS={gravity:'Gravitation and orbits',motion:'Laws of motion and momentum',light:'Light and telescopes',sky:'The night sky and the Moon',energy:'Energy, drag and heat',india:'India in space'};
+const WSURL='worksheets.html';const lab=k=>`<a href="${L[k][1]}">${L[k][0]}</a>`;
+const ws=k=>k?`<a href="${WSURL}?topic=${k}">${WS[k]}</a>`:'—';
+// [class, book, chapter (number + title), labs, what students do, worksheet, unconfirmed?]
+const MAP=[["6", "Science · Curiosity", "12 · Beyond Earth", ["tonight", "planets"], "Find which planets are in tonight’s sky from their town, then watch the planets go round the Sun at true speeds.", "sky", 0], ["6", "Social Science · Exploring Society: India and Beyond", "1 · Locating Places on the Earth", ["earth", "navic"], "See the real globe photographed from space and find India on it; see how satellites pin down a place by latitude and longitude.", "sky", 0], ["6", "Science · Curiosity", "5 · Measurement of Length and Motion", ["voyager"], "Measure the greatest distance anything made by people has travelled, in kilometres and in light-hours.", "", 0], ["7", "Science · Curiosity", "12 · Earth, Moon and the Sun", ["tonight", "earth", "moon"], "Read the Moon’s phase for tonight, watch Earth turn from space, and follow Chandrayaan-3 from Earth to the Moon.", "sky", 0], ["7", "Science · Curiosity", "8 · Measurement of Time and Motion", ["sat", "gagan"], "Time the space station’s orbit and work out its speed; read off speeds and times in a real capsule test flight.", "motion", 0], ["7", "Science · Curiosity", "11 · Light, Shadows and Reflections", ["tonight", "earth"], "See that the Moon shines by reflected sunlight, and find Earth’s own shadow: the night side.", "sky", 0], ["8", "Science · Curiosity", "11 · Keeping Time with the Skies", ["tonight", "sat", "aryabhata"], "Use the Moon’s phases as a calendar, track satellites, and see how Aryabhata measured time and the sky.", "sky", 0], ["8", "Science · Curiosity", "5 · Exploring Forces", ["rocket", "gagan"], "Feel Newton’s third law in a rocket launch, and see balanced forces bring a capsule down at a steady speed.", "motion", 0], ["8", "Science · Curiosity", "10 · Light: Mirrors and Lenses", ["scope"], "Compare the eye, Hubble and Webb: bigger mirrors gather more light and see finer detail.", "light", 0], ["8", "Science · Curiosity", "13 · Our Home: Earth, a Unique Life-Sustaining Planet", ["earth", "exo"], "See Earth whole from 1.5 million km, then search the thousands of known exoplanets for another like it.", "", 0], ["9", "Science · Exploration (new for 2026–27)", "4 · Describing Motion Around Us", ["sat", "voyager"], "Work out speed from distance and time for the space station and for Voyager.", "motion", 0], ["9", "Science · Exploration (new for 2026–27)", "6 · How Forces Affect Motion", ["rocket", "gagan"], "Launch real rockets and escape a failing one; see what force, mass and acceleration do.", "motion", 0], ["9", "Science · Exploration (new for 2026–27)", "7 · Work, Energy, and Simple Machines", ["reentry"], "Follow a capsule’s kinetic energy as the air turns it into heat.", "energy", 0], ["9", "Science · Exploration (new for 2026–27)", "13 · Earth as a System: Energy, Matter, and Life", ["earth"], "Watch clouds, oceans and land change through one day in real photographs from space.", "", 0], ["10", "Science", "9 · Light – Reflection and Refraction", ["scope"], "See how mirror size limits what a telescope can show.", "light", 0], ["10", "Science", "10 · The Human Eye and the Colourful World", ["scope"], "Find the finest detail your own eye can resolve, and compare it with Hubble and Webb.", "light", 0], ["11", "Physics", "3 · Motion in a Plane", ["gagan", "rocket"], "Plot two-dimensional paths: an abort trajectory and a rocket turning over towards orbit.", "motion", 0], ["11", "Physics", "4 · Laws of Motion", ["rocket", "gagan"], "Use thrust, mass and the rocket equation; read off g-loads in an escape test.", "motion", 0], ["11", "Physics", "5 · Work, Energy and Power", ["reentry", "ion"], "Compute kinetic energy shed during re-entry; compare a tiny ion engine’s power with a chemical rocket’s.", "energy", 0], ["11", "Physics", "7 · Gravitation", ["sat", "moon", "lagrange", "flyby"], "Orbital speed and period from real satellites; Chandrayaan-3’s orbit raising; balance points and gravity assists.", "gravity", 0], ["11", "Geography · Fundamentals of Physical Geography", "2 · The Origin and Evolution of the Earth", ["planets", "earth"], "Place Earth among the planets and see it whole from space.", "", 0], ["12", "Physics", "8 · Electromagnetic Waves", ["scope", "sun"], "See why Webb observes in infrared and why hot and cold objects glow at different wavelengths.", "light", 1], ["12", "Physics", "9 · Ray Optics and Optical Instruments", ["scope"], "Compare telescopes by mirror size and light-gathering power.", "light", 0], ["12", "Physics", "10 · Wave Optics", ["scope"], "Resolving power: use θ = 1.22 λ/D and watch two stars blur together.", "light", 0]];
+const classes=[...new Set(MAP.map(r=>r[0]))];let pick='all';
+function drawMap(){$('chips').innerHTML=['all',...classes].map(c=>`<button type="button" data-c="${c}" aria-pressed="${c===pick}">${c==='all'?'All classes':'Class '+c}</button>`).join('');
+  const rows=MAP.filter(r=>pick==='all'||r[0]===pick);
+  $('mapT').innerHTML='<tr><th>Class</th><th>Chapter</th><th>Lab</th><th>What students do</th><th>Worksheet</th></tr>'+rows.map(r=>`<tr><td class="cls">${r[0]}</td><td>${r[2]}${r[6]?' <span class="unc">· check your edition</span>':''}<span class="bk">${r[1]}</span></td><td>${r[3].map(lab).join('<br>')}</td><td>${r[4]}</td><td>${ws(r[5])}</td></tr>`).join('');
+  $('mapNote').textContent=MAP.some(r=>r[6])?'“Check your edition” marks a chapter whose number or title we could not confirm against the current NCERT listing.':''}
+const $=id=>document.getElementById(id);
+$('chips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;pick=b.dataset.c;drawMap()});
+// ---- lesson plans ----
+const PLANS=[
+ {lab:'rocket',t:'Why rockets have stages',fit:'Class 8 · Exploring Forces; Class 9 · How Forces Affect Motion; Class 11 · Laws of Motion',aim:'Students see Newton’s third law push a real rocket, and find out why rockets throw parts of themselves away.',
+  warm:'Blow up a balloon and let it go. Ask: what pushed the balloon? Nothing outside touched it.',
+  explore:['Open the Rocket Lab and choose <b>Saturn V (Apollo)</b>. Press <b>Launch</b>, then <b>Find the most it can lift to orbit</b>. Note the number.','Press <b>Remove the top stage</b> and find the most it can lift again. What happened?','Now choose <b>ISRO LVM3</b> and find its best payload. Compare the two rockets’ sizes and payloads.','Try <b>A blank design</b>: build a one-stage rocket. Can it reach orbit at all?'],
+  discuss:['The exhaust is pushed backwards. What pushes the rocket forwards?','Why does an empty stage slow the rocket down if it stays attached?','Saturn V lifted far more than LVM3. What did it need in exchange?'],
+  exit:[['Name the law of motion that makes a rocket fly, and state it.','Newton’s third law: every action has an equal and opposite reaction. The rocket pushes exhaust backwards; the exhaust pushes the rocket forwards.'],['Why do rockets drop empty stages?','An empty tank and its engines are dead weight. Dropping them means the remaining fuel only has to speed up a lighter rocket, so it reaches a higher speed.'],['(Class 11) Exhaust leaves at 3 km/s. The rocket’s mass at launch is 2.72 times its mass at burnout. Use Δv = v<sub>e</sub> ln(m<sub>0</sub>/m<sub>1</sub>) to find the speed gained.','ln 2.72 ≈ 1, so Δv ≈ 3 km/s (ignoring gravity and air).']],home:'motion'},
+ {lab:'gagan',t:'Escape and splashdown with Gaganyaan',fit:'Class 8 · Exploring Forces; Class 9 · How Forces Affect Motion',aim:'Students follow India’s crew capsule through a rocket failure and a parachute landing, using ISRO’s real test flights.',
+  warm:'Ask: if the rocket under an astronaut catches fire, how do you get them out in less than a second?',
+  explore:['Open the Gaganyaan Lab. Press <b>Pad abort, 2018</b>. Read the hardest push, the highest point and the splashdown speed.','Press <b>TV-D1, 2023</b>. Watch the colours change in the chart: motors, coasting, drogue chutes, main chutes.','Tick <b>One main parachute fails to open</b>. What is the new splashdown speed? Is it still under 11 m/s?','In <b>Coming home</b>, move the braking burn from 120 m/s up to 400 m/s and watch the g-load.'],
+  discuss:['Why are there two kinds of parachute, small drogues first and big mains later?','Why does a harder braking burn give the crew a rougher ride?','Look at the “How far to trust it” table. Which numbers did the model get right without being told?'],
+  exit:[['The capsule falls at a steady speed under its main parachutes. What can you say about the forces on it?','They are balanced: air resistance upwards equals its weight downwards, so there is no acceleration (Newton’s first law).'],['Why does ISRO fit two main parachutes if one is enough?','For safety. If one fails, the other still brings the capsule down slowly enough. In the lab, one parachute gives about 10.6 m/s, still under the 11 m/s limit.']],home:'india'},
+ {lab:'moon',t:'Forty days to the Moon',fit:'Class 7 · Earth, Moon and the Sun; Class 11 · Gravitation',aim:'Students discover why Chandrayaan-3 took 40 days when Apollo took three, and land Vikram themselves.',
+  warm:'Ask: the Moon is about 3,84,000 km away. Apollo took 3 days. Chandrayaan-3 took 40. Was ISRO slow?',
+  explore:['Open the Chandrayaan-3 Moon Lab. Press <b>From launch</b> and play the replay. Count the loops around Earth.','Read the section <b>Why forty days, not three?</b>','Scroll to <b>Land Vikram yourself</b>. First press <b>Watch ISRO’s plan</b>, then <b>Take over at the 150 m hover</b> and try to land.','Harder: <b>Take over at 7.2 km</b>.'],
+  discuss:['Why do the burns happen at the lowest point of each orbit?','What would a bigger rocket let ISRO do instead?','Why is landing on the Moon harder than landing with a parachute on Earth?'],
+  exit:[['Why did Chandrayaan-3 circle Earth several times before going to the Moon?','LVM3 could not throw it straight to the Moon. The spacecraft’s own small engine raised the orbit a step at a time, burning at the lowest point of each loop, where it does the most good.'],['Why can’t Vikram use a parachute to land?','The Moon has no air, so a parachute has nothing to push against. Vikram had to slow down with its rocket engines.']],home:'gravity'},
+ {lab:'tonight',t:'Tonight’s sky from your town',fit:'Class 6 · Beyond Earth; Class 7 · Earth, Moon and the Sun; Class 8 · Keeping Time with the Skies',aim:'Students predict what they will see in the sky tonight, then go out and check.',
+  warm:'Ask: is the Moon up tonight? Which planets can you see without a telescope? Take a show of hands.',
+  explore:['Open Tonight’s Sky. Choose your nearest city, or type your latitude and longitude.','Read off the Moon’s phase and when it rises and sets.','Find which planets are up after sunset, and in which direction.','Look for the next time the space station crosses your sky.'],
+  discuss:['Why does the Moon rise about 50 minutes later each day?','Why do planets not twinkle as much as stars?','Why does the space station only show up at dawn or dusk?'],
+  exit:[['What phase is the Moon tonight, and roughly when does it rise?','Take this from the page for your town and date.'],['Why can we see the space station only near sunrise or sunset?','It shines by reflecting sunlight. It must be in sunlight while the sky where you stand is dark, which happens shortly after sunset or before sunrise.']],home:'sky',homeNote:'Observe tonight: sketch the Moon and note the time.'},
+ {lab:'earth',t:'Watch the Earth turn',fit:'Class 6 Social Science · Locating Places on the Earth; Class 7 · Earth, Moon and the Sun',aim:'Students watch real photographs of the whole Earth taken in one day and measure how fast it spins.',
+  warm:'Ask: how could you prove the Earth spins without looking at the Sun?',
+  explore:['Open Earth from Above (it needs the internet). Press <b>Spin the day</b> and watch the planet turn.','Press <b>Show me India</b>. At what time of day, in India, was it photographed?','Pick two photographs a few hours apart. Find a landmark, such as a coastline, and see how far it moved.'],
+  discuss:['Why is the edge of the planet darker than the middle?','Why can we never see the night side in these photographs?','Where is the camera, and why does it always see the day side?'],
+  exit:[['The Earth turns once (360°) in 24 hours. How many degrees does it turn in one hour?','360 ÷ 24 = 15° per hour.'],['India’s time is set at 82.5° E. London’s is at 0°. How far ahead is India?','82.5 ÷ 15 = 5.5 hours, which is why IST is GMT + 5:30.']],home:'sky'},
+ {lab:'scope',t:'Why telescopes have huge mirrors',fit:'Class 8 · Light: Mirrors and Lenses; Class 10 · The Human Eye and the Colourful World; Class 12 · Wave Optics',aim:'Students find that light’s wave nature limits how sharply any eye or telescope can see, and why Webb is so big and so cold.',
+  warm:'Ask: why don’t we just put a stronger magnifying lens on a small telescope to see more detail?',
+  explore:['Open the Telescope Lab. In <b>Two stars, one telescope</b>, start with <b>Your eye</b>. Move the stars closer together until they blur into one.','Switch to <b>Hubble</b>, then <b>Webb</b>. How close can the stars get now?','Move the colour slider from blue to infrared and watch the blur grow.','Choose <b>Big ground telescope</b>. Why doesn’t it beat Hubble?'],
+  discuss:['Why does longer-wavelength light give a blurrier image?','Why did Webb need a mirror bigger than Hubble’s to see infrared light?','What blurs a telescope on the ground?'],
+  exit:[['(Class 12) Use θ = 1.22 λ/D for Hubble: D = 2.4 m, λ = 500 nm. Give θ in radians and in arcseconds (1 rad ≈ 206,265″).','θ = 1.22 × 5×10⁻⁷ / 2.4 ≈ 2.5×10⁻⁷ rad ≈ 0.05″.'],['Name two ways to see finer detail with a telescope.','Use a bigger mirror, or observe at a shorter wavelength. Getting above the air helps too.']],home:'light'},
+ {lab:'reentry',t:'Coming home through the fire',fit:'Class 9 · Work, Energy, and Simple Machines; Class 11 · Work, Energy and Power',aim:'Students see where a capsule’s huge kinetic energy goes, and why there is only a narrow corridor home.',
+  warm:'Ask: a capsule hits the air at 28,000 km/h. Where does all that energy go when it slows down?',
+  explore:['Open the Re-entry Lab. Choose <b>Gaganyaan crew module</b>, press <b>Low orbit</b> and read the peak g-load and heating.','Press <b>The Moon</b>. How much worse is a return from the Moon?','Move the entry angle down to 1°, then up to 15°. Find where the capsule skips out and where the crew would be in danger.','Set Steering to <b>No lift (ballistic)</b> and compare.'],
+  discuss:['What does “the corridor” mean, and why is it narrow?','Why does a steeper entry give a higher g-load?','Why does a return from the Moon heat the shield much more than one from low orbit?'],
+  exit:[['Find the kinetic energy of 1 kg moving at 7.8 km/s.','½ × 1 × (7,800)² ≈ 3.0×10⁷ J, or 30 MJ for every kilogram.'],['Where does most of that energy go?','Into heating the air around the capsule. Some of it heats the heat shield, which burns away slowly and carries the heat off.']],home:'energy'},
+ {lab:'sat',t:'Find a satellite over your school',fit:'Class 9 · Describing Motion Around Us; Class 11 · Gravitation',aim:'Students track real satellites from today’s data and work out how fast the space station goes.',
+  warm:'Ask: how many satellites do you think are above India right now?',
+  explore:['Open Satellite Watch. Choose <b>Space stations</b> and find the ISS on the map.','Under <b>Your place</b>, enter your town. Open <b>When can I see it?</b> and note the next good pass.','Switch to <b>NavIC</b>. Why do these satellites barely move on the map?'],
+  discuss:['Why does the ISS go round in about 90 minutes while NavIC satellites seem to stay put?','What keeps a satellite up, if it is always falling?','Why does the station drift out of its predicted path within a few weeks?'],
+  exit:[['Use v = √(GM/r) for the ISS: GM = 3.99×10¹⁴ m³/s², r = 6,371 km + 420 km. Find v.','r = 6.79×10⁶ m, so v = √(3.99×10¹⁴ / 6.79×10⁶) ≈ 7,660 m/s, about 7.7 km/s.'],['Why do NavIC satellites stay over the same part of the sky?','They are about 36,000 km up, where one orbit takes as long as Earth takes to spin once, so they keep pace with the ground below.']],home:'gravity'}];
+$('planList').innerHTML=PLANS.map((p,i)=>`<details class="plan" id="plan-${p.lab}"><summary><b>${i+1}. ${p.t}</b><span>${L[p.lab][0]} · ${p.fit}</span></summary>
+ <p><b>Aim.</b> ${p.aim}</p><h3>Warm-up · 5 min</h3><p>${p.warm}</p>
+ <h3>Explore · 15 min</h3><ol>${p.explore.map(s=>`<li>${s}</li>`).join('')}</ol><p class="note">Open ${lab(p.lab)}</p>
+ <h3>Discuss · 10 min</h3><ul>${p.discuss.map(s=>`<li>${s}</li>`).join('')}</ul>
+ <h3>Exit ticket · 7 min</h3><ol>${p.exit.map(e=>`<li>${e[0]}</li>`).join('')}</ol>
+ <details class="ans"><summary>Answers for the teacher</summary><ol>${p.exit.map(e=>`<li>${e[1]}</li>`).join('')}</ol></details>
+ <h3>Take home</h3><p>${p.homeNote?p.homeNote+' ':''}Worksheet: ${ws(p.home)}.</p></details>`).join('');
+$('printAll').addEventListener('click',()=>{document.querySelectorAll('details').forEach(d=>d.open=true);pick='all';drawMap();print()});
+addEventListener('beforeprint',()=>document.querySelectorAll('details').forEach(d=>d.open=true));
+drawMap();
+})();
+</script>
