@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Space Weather Now · Golapada">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Space Weather Now</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a live space-weather desk. Status strip (now), the Sun's face, three live charts (X-rays, solar wind, Kp), a storm launcher you can play with, the scales, Aditya-L1, checks. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--sun:#ffb347;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--warn:#ffcf5a;--violet:#b6a4ff;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--sun)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:76ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.now{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}@media (max-width:900px){.now{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{background:var(--panel2);border-radius:6px;padding:12px;border-top:3px solid var(--line);min-width:0}.tile span{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}.tile b{display:block;font-family:var(--display);font-size:clamp(26px,3.6vw,36px);line-height:1.05;font-variant-numeric:tabular-nums}.tile small{display:block;font-size:12.5px;color:#c3ccd6;margin-top:2px}
+.tile.ok{border-top-color:var(--ok)}.tile.warn{border-top-color:var(--warn)}.tile.bad{border-top-color:var(--bad)}
+.age{font-size:12.5px;color:var(--dim);margin-top:8px}.age b{color:var(--ink);font-weight:500}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:#1c0e02}button:focus-visible,input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--sun)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:12px}label.f output{font-family:var(--display);font-size:17px;color:var(--ink)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}.ch{aspect-ratio:16/6}#cme{aspect-ratio:16/6}
+.sunimg{position:relative;aspect-ratio:1/1;max-width:440px;margin:0 auto;background:#000;border-radius:50%;overflow:hidden}.sunimg img{width:100%;height:100%;object-fit:cover;display:block}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.scales{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}@media (max-width:820px){.scales{grid-template-columns:minmax(0,1fr)}}
+.lvl{display:inline-block;min-width:28px;text-align:center;font-family:var(--display);font-weight:700;border-radius:3px;padding:0 4px;color:#04060b}
+.offline{display:none;padding:10px 12px;border-radius:4px;background:#2a1d0c;border:1px solid #6b4a1a;color:#ffd9a3;font-size:14px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-in"><a href="index.html" class="sa-brand">Golapada</a><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html" aria-current="page">Space weather</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="worksheets.html">Worksheets</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Live from NOAA and NASA · refreshed every five minutes</div>
+    <h1>Space Weather Now</h1>
+    <p>The Sun is never quiet. It flings out X-ray flashes that reach Earth in eight minutes, a steady wind of charged particles, and now and then a billion-tonne cloud of magnetised gas. When that cloud hits Earth it can light up auroras, knock out radio and GPS, and strain power grids. This page shows what the Sun is doing right now, from the same spacecraft forecasters use.</p>
+  </header>
+
+  <div class="offline" id="offline"></div>
+
+  <section class="card" aria-label="Right now">
+    <div class="now" id="now">
+      <div class="tile"><span>Sun’s X-rays</span><b id="nX">…</b><small id="nXs">loading</small></div>
+      <div class="tile"><span>Solar wind</span><b id="nW">…</b><small id="nWs">loading</small></div>
+      <div class="tile"><span>Magnetic field Bz</span><b id="nB">…</b><small id="nBs">loading</small></div>
+      <div class="tile"><span>Storm level (Kp)</span><b id="nK">…</b><small id="nKs">loading</small></div>
+      <div class="tile"><span>NOAA scales now</span><b id="nS">…</b><small id="nSs">loading</small></div>
+    </div>
+    <p class="age" id="age">Loading live data…</p>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>The Sun right now</h2>
+      <div class="seg" id="sunBtns"></div>
+      <div class="sunimg"><img id="sunImg" alt="The latest image of the Sun from NASA’s Solar Dynamics Observatory" width="512" height="512"></div>
+      <p class="note" id="sunTxt" style="margin-top:10px"></p>
+    </section>
+    <section class="card">
+      <h2>X-ray flashes, last 24 hours</h2>
+      <canvas class="ch" id="cX" aria-label="Solar X-ray brightness over the last day, on a logarithmic scale with flare classes marked"></canvas>
+      <p class="note" style="margin-top:8px">Each step up the scale (A, B, C, M, X) is ten times brighter. M and X flares can black out short-wave radio on the sunlit side of Earth within minutes.</p>
+      <h2 style="margin-top:14px">Biggest flares this week</h2>
+      <div class="scroll"><table id="flares"></table></div>
+    </section>
+  </div>
+
+  <div class="two">
+    <section class="card">
+      <h2>The solar wind</h2>
+      <p>The Sun blows a wind of charged particles past Earth all the time. Spacecraft parked 1.5 million km sunward, at the L1 balance point, taste it first. The faster it blows, the less warning we get. When its magnetic field points south (Bz below zero) it links with Earth’s and pours energy in. That is when storms grow.</p>
+      <div class="stats" id="wStats"></div>
+    </section>
+    <section class="card">
+      <h2>Wind speed and Bz, last 24 hours</h2>
+      <canvas class="ch" id="cW" aria-label="Solar wind speed and the north-south magnetic field over the last day"></canvas>
+      <p class="note" style="margin-top:8px"><span style="color:var(--sun)">━</span> speed (km/s, left) · <span style="color:var(--lox)">━</span> Bz (nT, right; below zero shaded)</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Geomagnetic storms: the last week and the next three days</h2>
+    <canvas class="ch" id="cK" aria-label="Kp index every three hours for the past week and NOAA’s forecast"></canvas>
+    <p class="note" style="margin-top:8px">Kp measures how hard Earth’s magnetic field is being shaken, from 0 (calm) to 9 (extreme), every three hours. Solid bars are measured; faded bars are NOAA’s forecast. Kp 5 and above is a storm (G1 to G5). In the G5 storm of May 2024, the strongest in two decades, aurora was seen from northern India.</p>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>Launch a solar storm</h2>
+      <p>Pick how fast a cloud of solar gas (a coronal mass ejection) leaves the Sun. On the way, the solar wind drags on it: fast clouds slow down, slow ones get pushed along. The model starts from today’s real wind speed.</p>
+      <label class="f">Launch speed <output id="oV"></output><input type="range" id="iV" min="200" max="3200" step="10" value="1000"></label>
+      <label class="f">Solar wind it ploughs through <output id="oW"></output><input type="range" id="iW" min="280" max="900" step="5" value="420"></label>
+      <div class="seg" id="gBtns"><button type="button" data-g="0.1" aria-pressed="true">Big heavy cloud</button><button type="button" data-g="0.2">Light cloud</button></div>
+      <div class="seg"><button type="button" data-v="489">Average cloud</button><button type="button" data-v="3200">Fastest measured</button><button type="button" id="useLive">Use today’s wind</button></div>
+      <div class="verdict" id="cmeV"></div>
+    </section>
+    <section class="card">
+      <h2>Sun to Earth</h2>
+      <canvas id="cme" aria-label="The storm cloud travelling from the Sun to Earth, past the L1 point"></canvas>
+      <div class="stats" id="cmeS"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>How NOAA grades the danger</h2>
+    <div class="scales" id="scales"></div>
+  </section>
+
+  <section class="card">
+    <h2>India’s eye on the Sun: Aditya-L1</h2>
+    <p>Aditya-L1, launched on 2 September 2023, reached its orbit around the L1 balance point on 6 January 2024. It circles that empty point once every 177.86 days, about 1.5 million km from Earth, with an unbroken view of the Sun. Two of its seven instruments, ASPEX and PAPA, sample the solar wind itself, the same wind charted above, before it reaches Earth. VELC and SUIT photograph the Sun’s outer atmosphere, where these storm clouds are born. The live readings on this page come from NOAA’s spacecraft at L1. Aditya-L1’s data is released through ISRO’s own archive, not as a live feed. See its orbit in the <a href="lagrange-lab.html">Lagrange Point Lab</a>.</p>
+  </section>
+
+  <section class="card">
+    <h2>How far to trust it</h2>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>What this page leaves out</h2>
+    <p class="note">All the readings are NOAA’s and NASA’s, shown as they arrive. This page does not forecast anything itself; the Kp forecast is NOAA’s. The storm launcher is the drag-based model of Vršnak and others (2013), with typical drag values of 0.1 and 0.2 × 10⁻⁷ per km. It is aimed straight at Earth and starts at 20 solar radii, where coronagraphs first measure a cloud’s speed. Real clouds expand, twist, hit slower clouds and arrive off-centre, so forecasts made this way are typically off by about half a day. The warning time at L1 assumes the cloud keeps its arrival speed over the last 1.5 million km.</p>
+  </section>
+
+  <footer>Live data: NOAA Space Weather Prediction Center (GOES X-ray flux and flare list; real-time solar wind from the spacecraft NOAA marks as active at L1; planetary Kp and its forecast; NOAA space weather scales). Sun images: NASA Solar Dynamics Observatory, latest 512-pixel images. History: Wikipedia articles “Carrington Event” (cloud took 17.6 hours, probably helped by an earlier one that cleared the way), “May 2024 solar storms” (G5, Kp 9, solar wind 750–950 km/s, aurora seen from northern India), “Coronal mass ejection” (measured speeds 20–3,200 km/s, average 489 km/s; a magnetic cloud about 0.3 AU across at 450 km/s takes about a day to pass L1), “Solar flare” (A to X classes by peak 0.1–0.8 nm flux), “Aditya-L1”. Model: B. Vršnak et al., “Propagation of interplanetary coronal mass ejections: the drag-based model”, Solar Physics 285 (2013). An independent page, not made by NOAA, NASA or ISRO.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),nf=new Intl.NumberFormat('en-US');
+const SW='https://services.swpc.noaa.gov/',L1KM=1.5e6,AU=1.495978707e8,RS=695700;
+const fmtAgo=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':m<1440?Math.floor(m/60)+' h '+(m%60)+' min ago':Math.floor(m/1440)+' days ago'};
+const utc=s=>new Date(/Z$/.test(s)?s:s+'Z');
+// flare class from 0.1–0.8 nm flux (W/m²)
+function fclass(f){if(!(f>0))return '—';const L=['A','B','C','M','X'],e=Math.floor(Math.log10(f)+1e-9);const i=Math.max(0,Math.min(4,e+8));const base=Math.pow(10,i-8);return L[i]+(Math.floor(f/base*10+1e-6)/10).toFixed(1)}// NOAA cuts off, not rounds
+// Kp comes in thirds: 4.67 is "5−", which NOAA already counts as G1
+const kpTxt=k=>{const t=Math.round(k*3),n=Math.round(t/3),r=t-3*n;return n+(r>0?'+':r<0?'−':'')};
+const gOf=k=>k>=8.67?5:k>=7.67?4:k>=6.67?3:k>=5.67?2:k>=4.67?1:0;
+async function get(path,ms=20000){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);try{const r=await fetch(SW+path,{signal:c.signal,cache:'no-store'});if(!r.ok)throw new Error(r.status);return await r.json()}finally{clearTimeout(t)}}
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);const g=c.getContext('2d');g.setTransform(r,0,0,r,0,0);return [g,w,h]}
+const D={};let failed=0;
+// ---- the Sun ----
+const SUN=[['0193','Corona 193 Å','Iron gas at about 1.2 million °C. Dark patches are coronal holes, where fast solar wind escapes.'],['0171','Quiet corona 171 Å','Gas near 600,000 °C, tracing the magnetic loops above sunspots.'],['0304','Chromosphere 304 Å','Helium near 50,000 °C: the layer where flares and eruptions start.'],['0131','Flare 131 Å','Picks out the hottest gas, about 10 million °C, inside flares.'],['HMIIC','Visible light','The Sun as your eye would see it through a safe filter: the sunspots.'],['HMIB','Magnetic map','White and black are north and south magnetic poles on the surface. Tangled patches breed flares.']];
+let sunK='0193';
+function showSun(){const s=SUN.find(x=>x[0]===sunK);$('sunImg').src=`https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_${s[0]}.jpg?t=${Math.floor(Date.now()/300000)}`;$('sunTxt').textContent=s[2]+' Image: NASA SDO, usually less than an hour old.';
+  $('sunBtns').innerHTML=SUN.map(x=>`<button type="button" data-k="${x[0]}" aria-pressed="${x[0]===sunK}">${x[1]}</button>`).join('')}
+$('sunBtns').addEventListener('click',e=>{const b=e.target.closest('button');if(b){sunK=b.dataset.k;showSun()}});
+$('sunImg').addEventListener('error',()=>{$('sunTxt').textContent='The Sun image could not be loaded here. Open this page on the Golapada website to see it.'});
+// ---- charts ----
+function frame(g,w,h,X0,Y0,pw,ph){g.clearRect(0,0,w,h);g.font='11px "IBM Plex Sans",sans-serif';g.lineWidth=1}
+function timeAxis(g,X0,Y0,pw,ph,t0,t1,step){g.fillStyle='#8a97a8';g.textAlign='center';g.strokeStyle='#1f2a38';const s0=Math.ceil(t0/step)*step;for(let t=s0;t<=t1;t+=step){const X=X0+(t-t0)/(t1-t0)*pw;g.beginPath();g.moveTo(X,Y0);g.lineTo(X,Y0-ph);g.stroke();const d=new Date(t);g.fillText(step>=86400000?d.toLocaleDateString('en-IN',{day:'numeric',month:'short',timeZone:'Asia/Kolkata'}):d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Kolkata'}),X,Y0+14)}}
+function drawX(){const [g,w,h]=size($('cX'));const X0=34,Y0=h-20,pw=w-X0-26,ph=h-30;frame(g,w,h);if(!D.x){return}
+  const pts=D.x,t1=Date.now(),t0=t1-86400000,P=(t,f)=>[X0+(t-t0)/(t1-t0)*pw,Y0-(Math.log10(Math.max(f,1e-9))+9)/6*ph];
+  const C=['#5a6576','#5a6576','#74c7ff','#ffcf5a','#ff6b5e'];['A','B','C','M','X'].forEach((L,i)=>{const yA=P(0,Math.pow(10,i-8))[1],yB=P(0,Math.pow(10,i-7))[1];g.fillStyle=i>=3?(i===4?'rgba(255,107,94,.08)':'rgba(255,207,90,.06)'):'rgba(0,0,0,0)';g.fillRect(X0,yB,pw,yA-yB);g.strokeStyle='#1f2a38';g.beginPath();g.moveTo(X0,yA);g.lineTo(X0+pw,yA);g.stroke();g.fillStyle=C[i];g.textAlign='left';g.font='600 13px "Saira Condensed",sans-serif';g.fillText(L,X0+pw+8,(yA+yB)/2+4)});
+  g.font='11px "IBM Plex Sans",sans-serif';timeAxis(g,X0,Y0,pw,ph,t0,t1,4*3600000);g.fillStyle='#8a97a8';g.textAlign='right';g.fillText('IST',X0-4,Y0+14);
+  g.strokeStyle='#ffb347';g.lineWidth=1.6;g.beginPath();pts.forEach((p,i)=>{const [X,Y]=P(p[0],p[1]);i?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke()}
+function drawW(){const [g,w,h]=size($('cW'));const X0=40,Y0=h-20,pw=w-X0-36,ph=h-30;frame(g,w,h);if(!D.w)return;const t1=Date.now(),t0=t1-86400000;
+  const vs=D.w.map(p=>p[1]),vmax=Math.max(600,Math.ceil(Math.max(...vs)/100)*100),vmin=Math.min(250,Math.floor(Math.min(...vs)/100)*100),bm=Math.max(10,Math.ceil(Math.max(...(D.b||[[0,0]]).map(p=>Math.abs(p[1])))/5)*5);
+  const PV=(t,v)=>[X0+(t-t0)/(t1-t0)*pw,Y0-(v-vmin)/(vmax-vmin)*ph],PB=(t,b)=>[X0+(t-t0)/(t1-t0)*pw,Y0-ph/2-b/bm*ph/2];
+  g.fillStyle='rgba(116,199,255,.08)';g.fillRect(X0,Y0-ph/2,pw,ph/2);timeAxis(g,X0,Y0,pw,ph,t0,t1,4*3600000);
+  g.textAlign='right';g.fillStyle='#ffb347';for(let v=vmin;v<=vmax;v+=100){const Y=PV(t0,v)[1];g.fillText(v,X0-4,Y+4)}g.textAlign='left';g.fillStyle='#74c7ff';for(const b of [-bm,0,bm]){g.fillText((b>0?'+':'')+b,X0+pw+4,PB(t0,b)[1]+4)}
+  if(D.b){g.strokeStyle='#74c7ff';g.lineWidth=1.2;g.beginPath();D.b.forEach((p,i)=>{const [X,Y]=PB(p[0],p[1]);i?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke()}
+  g.strokeStyle='#ffb347';g.lineWidth=2;g.beginPath();D.w.forEach((p,i)=>{const [X,Y]=PV(p[0],p[1]);i?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke()}
+function drawK(){const [g,w,h]=size($('cK'));const X0=24,Y0=h-20,pw=w-X0-30,ph=h-30;frame(g,w,h);if(!D.k)return;const t0=D.k[0][0],t1=D.k.at(-1)[0]+3*3600000,bw=pw*3*3600000/(t1-t0);
+  g.strokeStyle='#1f2a38';g.fillStyle='#8a97a8';g.textAlign='right';for(let k=0;k<=9;k++){const Y=Y0-k/9*ph;if(k%3===0||k===5){g.beginPath();g.moveTo(X0,Y);g.lineTo(X0+pw,Y);g.stroke();g.fillText(k,X0-4,Y+4)}}
+  g.textAlign='left';[[5,'G1'],[6,'G2'],[7,'G3'],[8,'G4'],[9,'G5']].forEach(([k,s])=>{g.fillStyle='#8a97a8';g.fillText(s,X0+pw+4,Y0-k/9*ph+11)});
+  timeAxis(g,X0,Y0,pw,ph,t0,t1,86400000);
+  const nowX=X0+(Date.now()-t0)/(t1-t0)*pw;g.strokeStyle='#e7edf3';g.setLineDash([3,3]);g.beginPath();g.moveTo(nowX,Y0);g.lineTo(nowX,Y0-ph);g.stroke();g.setLineDash([]);g.fillStyle='#e7edf3';g.textAlign='center';g.fillText('now',nowX,Y0-ph+10);
+  for(const [t,k,kind] of D.k){const X=X0+(t-t0)/(t1-t0)*pw,H=Math.max(1,k/9*ph);g.globalAlpha=kind==='predicted'?.45:1;g.fillStyle=gOf(k)>=3?'#ff6b5e':gOf(k)>=1?'#ffcf5a':k>=3.67?'#e8c46a':'#5fd6a0';g.fillRect(X+1,Y0-H,Math.max(1,bw-2),H)}g.globalAlpha=1}
+// ---- now tiles ----
+function tile(id,cls){$(id).parentElement.className='tile '+(cls||'')}
+function renderNow(){
+  if(D.x){const f=D.x.at(-1)[1],c=fclass(f);$('nX').textContent=c;$('nXs').textContent=c[0]==='X'?'major flare under way':c[0]==='M'?'moderate flare under way':c[0]==='C'?'small flare level':'quiet';tile('nX',c[0]==='X'?'bad':c[0]==='M'?'warn':'ok')}
+  if(D.w){const v=D.w.at(-1)[1],min=L1KM/v/60;$('nW').textContent=Math.round(v)+' km/s';$('nWs').textContent=`reaches Earth from L1 in about ${Math.round(min)} min`;tile('nW',v>700?'bad':v>500?'warn':'ok')}
+  if(D.b){const b=D.b.at(-1)[1];$('nB').textContent=(b>0?'+':'')+b.toFixed(1)+' nT';$('nBs').textContent=b<-10?'strongly south: storms likely':b<0?'pointing south: the door is open':'pointing north: the door is shut';tile('nB',b<-10?'bad':b<0?'warn':'ok')}
+  if(D.kn!=null){const k=D.kn,G=gOf(k);$('nK').textContent='Kp '+kpTxt(k);$('nKs').textContent=(G?['','G1 minor storm','G2 moderate storm','G3 strong storm','G4 severe storm','G5 extreme storm'][G]:k>=3.67?'unsettled, active':'quiet')+(D.kEst?' (estimate)':'');tile('nK',G>=3?'bad':G>=1?'warn':'ok')}
+  if(D.s){const s=D.s;const r=+s.R.Scale||0,ss=+s.S.Scale||0,gg=+s.G.Scale||0;$('nS').textContent=`R${r} S${ss} G${gg}`;$('nSs').textContent=r||ss||gg?'radio, radiation, storm: something is active':'radio, radiation and storm scales all calm';tile('nS',Math.max(r,ss,gg)>=3?'bad':Math.max(r,ss,gg)>=1?'warn':'ok')}
+  const ages=[['X-rays',D.xt],['solar wind',D.wt],['Kp',D.kt]].filter(a=>a[1]);$('age').innerHTML=ages.length?'Latest readings: '+ages.map(a=>`${a[0]} <b>${fmtAgo(a[1])}</b>`).join(' · ')+'. Times on charts are Indian Standard Time.':'';
+  if(D.w){$('wStats').innerHTML=[['Speed now',Math.round(D.w.at(-1)[1])+' km/s'],['Fastest in 24 h',Math.round(Math.max(...D.w.map(p=>p[1])))+' km/s'],['Warning time at L1',Math.round(L1KM/D.w.at(-1)[1]/60)+' min'],['Density now',D.wd!=null?D.wd.toFixed(1)+' /cm³':'—']].map(c=>`<div class="stat"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('')}
+}
+function renderFlares(){if(!D.f)return;const top=[...D.f].sort((a,b)=>b.max_xrlong-a.max_xrlong).slice(0,6);
+  $('flares').innerHTML='<tr><th>Peak (IST)</th><th>NOAA class</th><th class="n">Peak flux</th></tr>'+top.map(f=>`<tr><td>${utc(f.max_time).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Kolkata'})}</td><td><b>${f.max_class}</b></td><td class="n">${f.max_xrlong.toExponential(2)} W/m²</td></tr>`).join('')}
+// ---- scales ----
+const SC=[['R','Radio blackouts','from X-ray flares, within minutes',[['R1','M1 flare','weak loss of short-wave radio on the sunlit side'],['R2','M5','limited blackout of radio for tens of minutes'],['R3','X1','wide-area radio blackout for about an hour'],['R4','X10','radio out for one to two hours; GPS errors'],['R5','X20','complete short-wave blackout for hours']]],
+ ['S','Radiation storms','fast protons, within hours',[['S1','10 pfu','minor effects on polar radio'],['S2','100 pfu','extra radiation dose on polar flights'],['S3','1,000 pfu','astronauts should shelter on spacewalks'],['S4','10,000 pfu','satellite memory upsets, star trackers fooled'],['S5','100,000 pfu','unavoidable dose to astronauts; satellites may be lost']]],
+ ['G','Geomagnetic storms','from storm clouds, in one to four days',[['G1','Kp 5','weak grid swings; aurora at high latitudes'],['G2','Kp 6','high-latitude grids alarmed'],['G3','Kp 7','satellite drag rises; GPS problems'],['G4','Kp 8','widespread voltage control problems'],['G5','Kp 9','grids can collapse; aurora seen far south, as in India in May 2024']]]];
+const LC=['#e8c46a','#ffcf5a','#ff9a3c','#ff6b5e','#e0408a'];
+$('scales').innerHTML=SC.map(s=>`<div><h2 style="font-size:20px">${s[0]} · ${s[1]}</h2><p class="note">${s[2]}</p><table>${s[3].map((r,i)=>`<tr><td><span class="lvl" style="background:${LC[i]}">${r[0]}</span></td><td style="white-space:nowrap">${r[1]}</td><td class="note">${r[2]}</td></tr>`).join('')}</table></div>`).join('')+'<p class="note" style="grid-column:1/-1;margin:0">Thresholds from the NOAA Space Weather Scales; effects summarised. pfu = proton flux units, particles above 10 MeV per cm² per second per steradian.</p>';
+// ---- storm launcher: drag-based model ----
+function dbm(v0,w,gam){const g=gam*1e-7,r0=20*RS,S=v0>=w?1:-1,R=t=>S/g*Math.log(1+S*g*(v0-w)*t)+w*t+r0,V=t=>(v0-w)/(1+S*g*(v0-w)*t)+w;
+  const hit=r=>{let lo=0,hi=60*86400;for(let i=0;i<70;i++){const m=(lo+hi)/2;R(m)<r?lo=m:hi=m}return lo};const tE=hit(AU),tL=hit(AU-L1KM);return {tE,vE:V(tE),tL,warn:tE-tL,R,V}}
+let gam=0.1,M=null;
+function runC(){const v=+$('iV').value,w=+$('iW').value;$('oV').textContent=nf.format(v)+' km/s ('+nf.format(Math.round(v*3.6))+' km/h)';$('oW').textContent=w+' km/s'+(D.w&&Math.abs(w-Math.round(D.w.at(-1)[1]/5)*5)<3?' (today’s)':'');
+  M=dbm(v,w,gam);const h=M.tE/3600,days=h>=48?(h/24).toFixed(1)+' days':h.toFixed(1)+' h';
+  $('cmeS').innerHTML=[['Reaches Earth in',days],['Arrives at',nf.format(Math.round(M.vE))+' km/s'],['Warning from L1',Math.round(M.warn/60)+' min'],['Average speed',nf.format(Math.round(AU/M.tE))+' km/s']].map(c=>`<div class="stat"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  const arr=new Date(Date.now()+M.tE*1000).toLocaleString('en-IN',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Kolkata'});
+  $('cmeV').innerHTML=(h<17.6?`<b style="color:var(--bad)">Faster than Carrington.</b> `:h<24?`<b style="color:var(--warn)">A Carrington-class sprint.</b> `:h>72?`<b style="color:var(--ok)">A slow cloud.</b> `:'<b>A typical fast cloud.</b> ')+
+   `Launched now, it would arrive about ${arr} IST at ${nf.format(Math.round(M.vE))} km/s, after ${days}. The spacecraft at L1 would see it just ${Math.round(M.warn/60)} minutes before it hits. `+
+   (v>w?`The wind slowed it by ${nf.format(Math.round(v-M.vE))} km/s on the way.`:`The wind pushed it up by ${nf.format(Math.round(M.vE-v))} km/s.`);
+  drawC(0)}
+let anim=0,raf=0;
+function drawC(f){const [g,w,h]=size($('cme'));g.clearRect(0,0,w,h);const sx=40,ex=w-40,cy=h/2,P=r=>sx+(r/AU)*(ex-sx);
+  const sun=g.createRadialGradient(sx,cy,0,sx,cy,34);sun.addColorStop(0,'#fff6d8');sun.addColorStop(.45,'#ffb347');sun.addColorStop(1,'rgba(255,140,40,0)');g.fillStyle=sun;g.beginPath();g.arc(sx,cy,34,0,7);g.fill();
+  g.fillStyle='#4aa3ff';g.beginPath();g.arc(ex,cy,7,0,7);g.fill();g.fillStyle='#e7edf3';g.font='12px "IBM Plex Sans",sans-serif';g.textAlign='center';g.fillText('Earth',ex,cy+24);g.fillText('Sun',sx,cy+48);
+  const lx=P(AU-L1KM);g.strokeStyle='#5fd6a0';g.setLineDash([3,3]);g.beginPath();g.moveTo(lx,cy-40);g.lineTo(lx,cy+40);g.stroke();g.setLineDash([]);g.fillStyle='#5fd6a0';g.fillText('L1',lx-14,cy-30);g.font='10px "IBM Plex Sans",sans-serif';g.fillText('Aditya-L1',lx-26,cy+52);
+  if(!M)return;const T=M.tE*f,r=Math.min(AU,M.R(T)),X=P(r),spread=Math.max(10,(X-sx)*0.42);
+  g.strokeStyle='rgba(255,179,71,.85)';g.lineWidth=3;g.beginPath();g.arc(X-spread,cy,spread,-0.75,0.75);g.stroke();g.fillStyle='rgba(255,179,71,.12)';g.beginPath();g.moveTo(sx,cy);g.arc(X-spread,cy,spread,-0.75,0.75);g.closePath();g.fill();
+  g.fillStyle='#e7edf3';g.font='12px "IBM Plex Sans",sans-serif';g.textAlign='left';g.fillText(`${(T/3600).toFixed(1)} h · ${Math.round(M.V(T))} km/s`,8,16)}
+function play(){cancelAnimationFrame(raf);const t0=performance.now();const step=now=>{const f=Math.min(1,(now-t0)/4000);drawC(f);if(f<1)raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}
+['iV','iW'].forEach(id=>$(id).addEventListener('input',()=>{runC();drawC(1)}));['iV','iW'].forEach(id=>$(id).addEventListener('change',play));
+$('gBtns').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;gam=+b.dataset.g;$('gBtns').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));runC();play()});
+document.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>{$('iV').value=b.dataset.v;runC();play()}));
+$('useLive').addEventListener('click',()=>{if(D.w){$('iW').value=Math.round(D.w.at(-1)[1]/5)*5;runC();play()}});
+// ---- checks ----
+function renderChecks(){const rows=[];const avg=dbm(489,400,0.1),fast=dbm(3200,400,0.1);
+  rows.push(['Average cloud (489 km/s) to Earth','“several days”',(avg.tE/86400).toFixed(1)+' days','model']);
+  rows.push(['Fastest cloud ever measured (3,200 km/s)','—',(fast.tE/3600).toFixed(1)+' h','model']);
+  let lo=500,hi=20000;for(let i=0;i<50;i++){const m=(lo+hi)/2;dbm(m,400,0.1).tE/3600>17.6?lo=m:hi=m}
+  rows.push(['Carrington 1859: speed needed for 17.6 h in normal wind',`17.6 h, path “cleared” by an earlier cloud`,nf.format(Math.round(lo/10)*10)+' km/s, above any measured','explains why a cleared path was needed']);
+  rows.push(['A magnetic cloud 0.3 AU across, passing L1 at 450 km/s','about 1 day',(0.3*AU/450/3600).toFixed(0)+' h','arithmetic']);
+  rows.push(['May 2024 G5 storm: warning at L1 at 750–950 km/s','—',`${Math.round(L1KM/950/60)}–${Math.round(L1KM/750/60)} min`,'arithmetic']);
+  if(D.f){const n=D.f.length,ok=D.f.filter(f=>fclass(f.max_xrlong)===f.max_class).length;rows.push([`This week’s flares: class worked out here from the raw flux`,`NOAA’s own labels, ${n} flares`,`${ok} of ${n} match`,'live']);}
+  if(D.x&&D.f){const big=[...D.f].sort((a,b)=>b.max_xrlong-a.max_xrlong)[0];rows.push(['Biggest flare this week',big.max_class,fclass(big.max_xrlong),'live'])}
+  $('check').innerHTML='<tr><th>What</th><th>Published or NOAA</th><th>This page</th><th>Kind</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td class="note">${r[3]}</td></tr>`).join('')}
+// ---- load ----
+async function load(){failed=0;const jobs=[
+  get('json/goes/primary/xrays-1-day.json').then(d=>{const a=d.filter(x=>x.energy==='0.1-0.8nm'&&x.flux>0).map(x=>[utc(x.time_tag).getTime(),x.flux]).sort((a,b)=>a[0]-b[0]);D.x=a;D.xt=a.at(-1)[0]}),
+  get('json/goes/primary/xray-flares-7-day.json').then(d=>{D.f=d.filter(x=>x.max_class&&x.max_xrlong>0)}),
+  get('json/rtsw/rtsw_wind_1m.json',30000).then(d=>{const a=d.filter(x=>x.active&&x.proton_speed>0);const pts=[];let last=0;for(const x of a.slice().reverse()){const t=utc(x.time_tag).getTime();if(t-last>=5*60000){pts.push([t,x.proton_speed]);last=t}}D.w=pts;D.wt=utc(a[0].time_tag).getTime();D.wd=a[0].proton_density}),
+  get('json/rtsw/rtsw_mag_1m.json',30000).then(d=>{const a=d.filter(x=>x.active&&x.bz_gsm!=null);const pts=[];let last=0;for(const x of a.slice().reverse()){const t=utc(x.time_tag).getTime();if(t-last>=5*60000){pts.push([t,x.bz_gsm]);last=t}}D.b=pts}),
+  get('products/noaa-planetary-k-index-forecast.json').then(d=>{D.k=d.map(x=>[utc(x.time_tag).getTime(),+x.kp,x.observed]);const obs=D.k.filter(x=>x[2]!=='predicted');D.kn=obs.at(-1)[1];D.kEst=obs.at(-1)[2]==='estimated';D.kt=obs.at(-1)[0]+3*3600000}),
+  get('products/noaa-scales.json').then(d=>{D.s=d['0']})];
+  const res=await Promise.allSettled(jobs);failed=res.filter(r=>r.status==='rejected').length;
+  if(failed===jobs.length){$('offline').style.display='block';$('offline').textContent='The live data could not be loaded here. Some previews block outside data; open this page on the Golapada website. The storm launcher below still works.';$('age').textContent='No live data.'}
+  else if(failed){$('offline').style.display='block';$('offline').textContent=`${failed} of ${jobs.length} live feeds did not answer just now. What loaded is shown; the page tries again every five minutes.`}else $('offline').style.display='none';
+  if(D.w&&!load.done){$('iW').value=Math.round(D.w.at(-1)[1]/5)*5;load.done=1}
+  renderNow();renderFlares();drawX();drawW();drawK();renderChecks();runC();drawC(1)}
+showSun();runC();renderChecks();drawC(1);load();setInterval(()=>{load();showSun()},5*60000);
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{drawX();drawW();drawK();drawC(1)},120)});
+window.__sw={D,fclass,dbm};
+})();
+</script>
+
+</html>

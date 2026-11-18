@@ -11,6 +11,7 @@ OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().paren
 LABS = [
  ("tonight.html","Tonight's Sky","What you can see tonight with your own eyes: the planets and where to look, the Moon, and the space station passing over.","tonight","night",'#9db8ff'),
  ("earth-from-above.html","Earth from Above","Today's photographs of the whole sunlit Earth from NASA's camera 1.5 million km away. Spin the day and find India.","tonight explore","",'#6ec3ff'),
+ ("space-weather.html","Space Weather Now","Live from NOAA and NASA: the Sun right now, solar flares, the solar wind and storm levels, plus a storm launcher that predicts when a solar cloud hits Earth.","tonight explore learn india","energy",'#ffb347'),
  ("satellite-watch.html","Satellite Watch","The space stations, Hubble, NavIC and the brightest satellites live on a world map, and when each one passes over your city.","tonight india","orbits",'#7ee0c8'),
     ("gaganyaan-lab.html","Gaganyaan Lab","India's crew capsule: escape a failing rocket, orbit at 400 km and splash down under parachutes, checked against ISRO's 2018 and 2023 abort tests.","mission india learn","motion gravity orbits",'#ff9a3c'),
  ("chandrayaan-3.html","Chandrayaan-3 Moon Lab","India's 40-day road to the Moon flown again from ISRO's own orbit reports, then land Vikram yourself with four 800 N engines.","mission india","gravity orbits",'#ff9933'),
