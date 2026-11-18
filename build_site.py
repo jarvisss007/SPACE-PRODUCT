@@ -41,6 +41,7 @@ PAGES = [
     ("reentry-lab.html", "Re-entry", "NjXosYNX9sCeCWVThB7VhT"),
     ("one-sky-lab.html", "One Sky", "8wnKFX4tTwV3Sbd2jBAzWD"),
     ("planetary-defense-lab.html", "Defense", "UtRh4Wahi2S7pytfcBcXBc"),
+    ("schools.html", "For schools", "7nffqBM7LHBTznHTZ5fA5M"),
     ("worksheets.html", "Worksheets", "WL3LspZGoLK2qfmncyT82E"),
     ("aryabhata-lab.html", "Aryabhata", "LaFFtHTwWZh7EiU6gL9F8Z"),
     ("nalanda.html", "Nalanda", "9GzdyyvJ8zRcBAznWXM37B"),
@@ -99,6 +100,39 @@ def build() -> None:
         '.wrap{max-width:640px;margin:15vh auto;padding:0 16px}a{color:#74c7ff}</style>'
         '<div class="wrap"><h1>Lost in orbit</h1><p>That page is not here. <a href="./">Go to the Golapada home page</a>.</p></div>',
         "404.html"), encoding="utf-8")
+    write_offline_zip()
+
+
+def write_offline_zip() -> None:
+    """docs/golapada-offline.zip: every web page, for schools without steady internet.
+    Fixed timestamps keep the zip byte-identical unless a page changes."""
+    import zipfile
+    pages = sorted(p for p in WEB.glob("*.html") if p.name != "404.html")
+    readme = ("Golapada offline
+
+
+
+Unzip this folder and open index.html in any web browser.
+
+"
+              "Everything is calculated on your own computer. Fonts, the live Earth photographs
+
+"
+              "and the satellite-tracking library need the internet; satellite positions are from
+
+"
+              "the day this copy was made, so download a fresh one every week or two.
+
+")
+    with zipfile.ZipFile(WEB / "golapada-offline.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+        info = zipfile.ZipInfo("golapada/README.txt", (2026, 1, 1, 0, 0, 0))
+        info.compress_type = zipfile.ZIP_DEFLATED
+        z.writestr(info, readme)
+        for p in pages:
+            info = zipfile.ZipInfo("golapada/" + p.name, (2026, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            z.writestr(info, p.read_bytes())
+    print(f"built golapada-offline.zip ({len(pages)} pages)")
 
 
 # ---- the public website (docs/), for GitHub Pages or any static host ----
