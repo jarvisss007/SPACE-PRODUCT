@@ -22,6 +22,7 @@ PAGES = [
     ("rocket-lab.html", "Rockets", "4ZaBFQRVW2jUmBzCpVSHiU"),
     ("navic-lab.html", "NavIC", "DTgnmQzwPso42LJYg5ZR7w"),
     ("space-debris-lab.html", "Debris", "QNYG3ukJSGU1rWvASCXXJx"),
+    ("gaganyaan-lab.html", "Gaganyaan", "6wABpadDbgD2bTpGxGxfFW"),
     ("chandrayaan-3.html", "Moon", "XUK9zxrq87WJyK17kfWNLF"),
     ("mangalyaan.html", "Mangalyaan", "Q5T2DFByz6EPAzpzHmgXSE"),
     ("mars-landing-lab.html", "Landing", "7DJKbEScJuDeNiYbadxjZ9"),

@@ -12,7 +12,7 @@ Each `*.html` file at the top level is one self-contained lab: one file with no 
 |---|---|
 | Live | Tonight's Sky (`tonight.html`), Earth from Above (`earth-from-above.html`, NASA's daily EPIC photos loaded live), Satellite Watch (`satellite-watch.html`) |
 | For teachers | Worksheets (`worksheets.html`): printable, one per school topic, with an answer key |
-| Rockets and Earth orbit | Starship Catch, Rocket Lab, NavIC Lab, Space Debris Lab, Re-entry Lab, Planetary Defense Lab |
+| Rockets and Earth orbit | Starship Catch, Rocket Lab, Gaganyaan Lab, NavIC Lab, Space Debris Lab, Re-entry Lab, Planetary Defense Lab |
 | Moon, Mars and planets | Chandrayaan-3 Moon Lab, Mangalyaan Mars Lab, Mars Landing Lab, Mars Campaign, Solar System Lab, Gravity Assist Lab, Ion Engine Lab, Touch the Sun, Lagrange Point Lab |
 | What if | One Sky Lab: every space agency working as one |
 | Deep space | Voyager Now, Telescope Lab, Milky Way Atlas, Exoplanet Explorer, Black Hole and Wormhole Lab, Spacecraft Archive |

@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Gaganyaan Lab · Golapada">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gaganyaan Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: India's crew capsule in three benches: escape (abort sim), the orbit, and coming home (deorbit, entry, parachutes); then the road so far, the checks and the limits. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--saffron:#ff9a3c;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--green:#3fbf7f;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--saffron)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h2 small{font-size:.6em;color:var(--saffron);letter-spacing:.12em;margin-right:8px}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.facts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}@media (max-width:900px){.facts{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:480px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fact{border-left:3px solid var(--saffron);padding:4px 10px}.fact b{display:block;font-family:var(--display);font-size:26px;line-height:1.1}.fact span{font-size:12px;color:var(--dim)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"]{background:var(--saffron);border-color:var(--saffron);color:#1c0a02}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--saffron)}select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px;width:100%}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:12px}label.f output{font-family:var(--display);font-size:17px;color:var(--ink)}
+label.c{display:flex;gap:8px;align-items:center;font-size:13.5px;color:#c3ccd6;margin-bottom:12px}label.c input{accent-color:var(--saffron);width:18px;height:18px}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}#ab{aspect-ratio:16/9}#ret{aspect-ratio:16/8}#orb{aspect-ratio:1/1;max-width:420px;margin:0 auto}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line)}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat.ok{border-top-color:var(--ok)}.stat.warn{border-top-color:var(--gold)}.stat.bad{border-top-color:var(--bad)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--dim);margin-top:6px}.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.road{list-style:none;margin:0;padding:0;display:grid;gap:0}.road li{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.road b{font-family:var(--display);font-size:17px;color:var(--saffron)}.road li.plan b{color:var(--dim)}.road li.plan{color:#aeb8c4}.road em{font-style:normal;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-left:6px}
+@media (max-width:520px){.road li{grid-template-columns:minmax(0,1fr);gap:2px}}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-in"><a href="index.html" class="sa-brand">Golapada</a><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html" aria-current="page">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="planetary-defense-lab.html">Defense</a><a href="worksheets.html">Worksheets</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">India’s crew ship · real test flights · Newton’s laws</div>
+    <h1>Gaganyaan Lab</h1>
+    <p>Gaganyaan (“sky craft” in Sanskrit) is the capsule ISRO is building to fly Indian astronauts on an Indian rocket. Before anyone rides it, ISRO has to prove three things: the crew can escape if the rocket fails, the ship can live in orbit, and the capsule can come home through the fire and land softly in the sea. This lab lets you fly all three, with a model checked against ISRO’s real test flights.</p>
+  </header>
+
+  <section class="card" aria-label="Gaganyaan in numbers">
+    <div class="facts">
+      <div class="fact"><b>3</b><span>crew (2 or 3)</span></div>
+      <div class="fact"><b>400 km</b><span>orbit height</span></div>
+      <div class="fact"><b>7 days</b><span>longest stay</span></div>
+      <div class="fact"><b>8.2 t</b><span>launch mass with service module</span></div>
+      <div class="fact"><b>3.5 m</b><span>crew module width</span></div>
+      <div class="fact"><b>&lt; 11 m/s</b><span>speed at splashdown</span></div>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2><small>1</small>Escape!</h2>
+      <p>On top of the capsule sits the Crew Escape System: solid rocket motors that can yank the crew module off a failing rocket in a fraction of a second. ISRO has tested it twice. Replay those tests, or pick your own moment for the rocket to fail.</p>
+      <div class="seg" id="abPre"><button type="button" data-p="pad">Pad abort, 2018</button><button type="button" data-p="tv">TV-D1, 2023</button><button type="button" data-p="d2">Faster, Mach 1.4</button></div>
+      <label class="f">Rocket fails at a height of <output id="oH"></output><input type="range" id="iH" min="0" max="30" step="0.5" value="11"></label>
+      <label class="f">Rocket speed then <output id="oM"></output><input type="range" id="iM" min="0" max="3" step="0.05" value="1.2"></label>
+      <label class="c"><input type="checkbox" id="oneA"> One main parachute fails to open</label>
+      <div class="verdict" id="abV"></div>
+    </section>
+    <section class="card">
+      <h2>The escape</h2>
+      <canvas id="ab" aria-label="Height against distance for the crew module after the abort"></canvas>
+      <div class="legend"><span><i style="background:var(--saffron)"></i>escape motors</span><span><i style="background:var(--gold)"></i>coasting</span><span><i style="background:var(--lox)"></i>drogue chutes</span><span><i style="background:var(--ok)"></i>main chutes</span><span><i style="background:#5a6576"></i>the dead rocket</span></div>
+      <div class="stats" id="abS"></div>
+    </section>
+  </div>
+
+  <div class="two">
+    <section class="card">
+      <h2><small>2</small>In orbit</h2>
+      <p>Once in orbit, the crew circles Earth at about 400 km. Move the height to see how the orbit changes. Lower is cheaper to reach but the thin air there drags the ship down sooner.</p>
+      <label class="f">Orbit height <output id="oO"></output><input type="range" id="iO" min="200" max="600" step="10" value="400"></label>
+      <label class="f">Days in orbit <output id="oD"></output><input type="range" id="iD" min="1" max="7" step="1" value="3"></label>
+      <div class="stats" id="orS" style="grid-template-columns:repeat(2,minmax(0,1fr))"></div>
+    </section>
+    <section class="card">
+      <h2>Earth and the orbit, to scale</h2>
+      <canvas id="orb" aria-label="Earth with the Gaganyaan orbit drawn to scale"></canvas>
+      <p class="note" style="margin-top:8px" id="orT"></p>
+    </section>
+  </div>
+
+  <div class="two">
+    <section class="card">
+      <h2><small>3</small>Coming home</h2>
+      <p>To come home, the service module fires its five 440-newton engines against the direction of travel. That small push lowers the far side of the orbit into the air. Too gentle and the capsule only grazes the atmosphere. Too hard and it dives in steeply, the braking crushes the crew and the heat shield takes a beating.</p>
+      <label class="f">Braking burn <output id="oB"></output><input type="range" id="iB" min="40" max="400" step="5" value="120"></label>
+      <label class="f">Steering<select id="mode"><option value="auto">Autopilot: roll the lift to stay under 4 g</option><option value="ball">No lift (ballistic backup)</option></select></label>
+      <label class="c"><input type="checkbox" id="oneR"> One main parachute fails to open</label>
+      <div class="verdict" id="reV"></div>
+    </section>
+    <section class="card">
+      <h2>The way down</h2>
+      <canvas id="ret" aria-label="Height and speed against time from entry to splashdown"></canvas>
+      <div class="legend"><span><i style="background:var(--saffron)"></i>height, falling through the fire</span><span><i style="background:var(--lox)"></i>height under drogues</span><span><i style="background:var(--ok)"></i>height under mains</span><span><i style="background:#c3ccd6"></i>speed</span></div>
+      <div class="stats" id="reS"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>The road so far</h2>
+    <ul class="road" id="road"></ul>
+    <p class="note" style="margin-top:8px">Planned dates are ISRO’s targets as reported in late 2026 and have slipped before. Check ISRO for the latest.</p>
+  </section>
+
+  <section class="card">
+    <h2>How far to trust it</h2>
+    <p class="note">The escape motor’s push and the parachute sizes are not published. They were set once so the model matches the height and distance of the 2018 pad abort and lands under 11 m/s. Everything about TV-D1 below is then a real prediction, worked out by the page each time it loads.</p>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">Flights are worked out in one vertical plane with no wind, through the US Standard Atmosphere 1976. The escape is a single steady thrust of 975 kN for 5.98 s on a 12.6 t stack, steered by a steady pitch-over. The real system has five kinds of motor, grid fins and its own sequence. The rocket in the escape chart is simply shut down and left to coast, as TV-D1’s was. The return uses the Re-entry Lab model: constant drag and lift, the Sutton–Graves heating estimate, a round Earth that does not spin. Parachutes open on a fixed rule: drogues once the capsule has slowed below 216 m/s, mains at 2 km. Reefing holds each main at 15% of its area for the first 7 s, as in the 2022 drop test. Masses: 12.6 t for the escape stack and 4.5 t for the crew module, from the two tests. The service module’s engine efficiency (315 s) is assumed.</p>
+  </section>
+
+  <footer>Sources: Wikipedia articles “Gaganyaan” (launch mass 8,200 kg; crew module 3.5 m; 400 km for up to seven days; five 440 N engines; parachutes take the capsule from over 216 m/s to under 11 m/s, and one is enough; low-altitude escape motor 842 kN for 5.98 s; 2022 drop test of a 5 t dummy from 2.5 km with reefing cut after 7 s), “ISRO Pad Abort Test” (5 July 2018: 12.6 t, 10 g, 2.75 km high, splashdown 2.9 km out, 259 s), “Test Vehicle Abort Mission-1” (21 October 2023: abort near 11 km at Mach 1.2; event times; about 15 km high; landing mass 4.5 t), “Gaganyaan-1” (uncrewed, with Vyommitra, planned Q4 2026), “Axiom Mission 4” (Shubhanshu Shukla, 25 June to 15 July 2025) and “Bharatiya Antariksh Station” (first module 2028, completion 2035, 52 t). Atmosphere: US Standard Atmosphere 1976. Heating: Sutton and Graves, NASA TR R-376. An independent model, not made by or with ISRO.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const RE=6371e3,MU=3.986004418e14,G0=9.80665,D=Math.PI/180,nf=new Intl.NumberFormat('en-US');
+const ATM=[[0,1.225],[5,0.7364],[10,0.4135],[15,0.1948],[20,0.08891],[25,0.04008],[30,0.01841],[40,0.003996],[50,0.001027],[60,3.097e-4],[70,8.283e-5],[80,1.846e-5],[90,3.416e-6],[100,5.604e-7],[110,9.708e-8],[120,2.222e-8],[130,8.152e-9],[150,2.076e-9],[200,2.541e-10],[300,1.916e-11],[400,2.803e-12],[500,5.215e-13],[600,1.137e-13]];
+function rho(h){const k=h/1000;if(k<=0)return 1.225;if(k>=600)return 1.137e-13;let i=0;while(ATM[i+1][0]<k)i++;const [a,ra]=ATM[i],[b,rb]=ATM[i+1];return ra*Math.exp(Math.log(rb/ra)*(k-a)/(b-a))}
+function sound(h){const k=h/1000,T=k<11?288.15-6.5*k:k<20?216.65:k<32?216.65+(k-20):k<47?228.65+2.8*(k-32):270.65;return Math.sqrt(1.4*287.05*T)}
+// ---- shared parachute model (assumed sizes, see checks) ----
+const CH={cdaCM:11,cdaDrog:40,cdaMain:640,hMain:2000,reef:7,reefF:0.15,mCM:4500};
+// ---- 1. escape ----
+const ESC={m0:12600,F:975e3,tb:5.98,isp:230,pitch:5,cdaStack:7};
+function abort(h0,mach,gam0,tm,nMain){const md=ESC.F/(ESC.isp*G0),dt=0.02;let t=0,x=0,h=Math.max(1,h0),v=Math.max(1,mach*sound(h0)),g=gam0*D,m=ESC.m0,ph='burn',peak=0,apo=h,mt=null;const ev=[],path=[];
+  // dead rocket: coasts from the same state with its own ballistic coefficient (assumed 4,000 kg/m2)
+  let rx=0,rh=h,rv=v,rg=g;const rp=[];
+  while(h>=0&&t<3000){let T=0;
+    if(t<ESC.tb){T=ESC.F;m-=md*dt}else if(ph==='burn')ph='coast';
+    if((ph==='burn'||ph==='coast')&&t>=tm.ces){ph='cm';m=CH.mCM;ev.push(['Escape tower thrown off',t,h])}
+    if(ph==='cm'&&t>=tm.chute){if(h>CH.hMain){ph='drog';ev.push(['Drogue chutes',t,h])}else{ph='main';mt=t;ev.push(['Main chutes',t,h])}}
+    if(ph==='drog'&&h<=CH.hMain){ph='main';mt=t;ev.push(['Main chutes',t,h])}
+    const cda=ph==='burn'||ph==='coast'?ESC.cdaStack:ph==='cm'?CH.cdaCM:ph==='drog'?CH.cdaDrog:(t-mt<CH.reef?CH.reefF:1)*CH.cdaMain*nMain;
+    const a=T/m-.5*rho(h)*v*v*cda/m;v+=(a-G0*Math.sin(g))*dt;g+=((ph==='burn'?-ESC.pitch*D:0)-G0*Math.cos(g)/v)*dt;if(v<0.5)v=0.5;
+    h+=v*Math.sin(g)*dt;x+=v*Math.cos(g)*dt;t+=dt;const felt=Math.abs(a)/G0;if(felt>peak&&(ph==='burn'||ph==='coast'))peak=felt;if(h>apo)apo=h;
+    if(rh>0){const ra=-.5*rho(rh)*rv*rv/4000;rv+=(ra-G0*Math.sin(rg))*dt;rg+=-G0*Math.cos(rg)/Math.max(rv,1)*dt;rh+=rv*Math.sin(rg)*dt;rx+=rv*Math.cos(rg)*dt}
+    if(path.length===0||t-path.at(-1)[0]>=0.25){path.push([t,x,h,ph]);if(rh>0)rp.push([t,rx,rh])}
+    if(t<=5.001&&Math.abs(t-5)<dt/2){var sep5=Math.hypot(x-rx,h-rh)}}
+  path.push([t,x,0,ph]);return {t,x,apo,peak,ev,v,path,rp,sep5}}
+const PRE={pad:{h:0,m:0,g:90,tm:{ces:20,chute:29},name:'the 2018 pad abort'},tv:{h:11,m:1.2,g:65,tm:{ces:30,chute:37.3},name:'TV-D1'},d2:{h:14,m:1.4,g:65,tm:{ces:30,chute:37.3},name:'a faster abort (height assumed)'}};
+const $=id=>document.getElementById(id);let preset='tv',A=null;
+function runA(){const h=+$('iH').value*1000,M=+$('iM').value,p=PRE[preset]||PRE.tv;const pad=h<500&&M<0.05;
+  $('oH').textContent=(h/1000).toFixed(1)+' km'+(pad?' (on the pad)':'');$('oM').textContent=M<0.05?'standing still':'Mach '+M.toFixed(2)+' ('+nf.format(Math.round(M*sound(h)*3.6))+' km/h)';
+  const tm=pad?PRE.pad.tm:PRE.tv.tm;A=abort(h,M,pad?90:65,tm,$('oneA').checked?1:2);
+  const cells=[['Hardest push',A.peak.toFixed(1)+' g',A.peak>15?'bad':A.peak>10.5?'warn':'ok'],['Top of the arc',(A.apo/1000).toFixed(2)+' km',''],['Clear of the rocket after 5 s',nf.format(Math.round(A.sep5||0))+' m',''],['Splashdown speed',A.v.toFixed(1)+' m/s',A.v<11?'ok':'bad'],
+    ['Lands from the failure point',(A.x/1000).toFixed(1)+' km',''],['Time to splashdown',Math.floor(A.t/60)+' min '+String(Math.round(A.t%60)).padStart(2,'0')+' s',''],['Main chutes, after failure',A.ev.find(e=>e[0]==='Main chutes')?Math.round(A.ev.find(e=>e[0]==='Main chutes')[1])+' s':'—',''],['Drogues, after failure',A.ev.find(e=>e[0]==='Drogue chutes')?Math.round(A.ev.find(e=>e[0]==='Drogue chutes')[1])+' s':'not needed','']];
+  $('abS').innerHTML=cells.map(c=>`<div class="stat ${c[2]}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  $('abV').innerHTML=A.v>=11?`<b class="bad">Hard landing.</b> With one main chute the capsule hits the water at ${A.v.toFixed(1)} m/s, over the 11 m/s limit. In this model the second chute is needed.`
+   :`<b class="ok">Crew safe.</b> The motors pulled the capsule ${nf.format(Math.round(A.sep5||0))} m clear of the rocket in 5 seconds at up to ${A.peak.toFixed(1)} g. It reached ${(A.apo/1000).toFixed(1)} km and splashed down ${(A.x/1000).toFixed(1)} km away at ${A.v.toFixed(1)} m/s${$('oneA').checked?', even on one main chute: that is why there are two.':'.'}`;
+  drawA()}
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+const PHC={burn:'#ff9a3c',coast:'#e8c46a',cm:'#e8c46a',drog:'#74c7ff',main:'#5fd6a0'};
+function axes(g,X0,Y0,pw,ph,xm,ym,xl,yl,w){g.strokeStyle='#1f2a38';g.fillStyle='#8a97a8';g.font='11px "IBM Plex Sans",sans-serif';g.lineWidth=1;
+  const st=v=>{const e=Math.pow(10,Math.floor(Math.log10(v/4))),f=v/4/e;return (f<2?2:f<5?5:10)*e};
+  const sx=st(xm),sy=st(ym);g.textAlign='center';for(let a=0;a<=xm+1e-9;a+=sx){const X=X0+a/xm*pw;g.beginPath();g.moveTo(X,Y0);g.lineTo(X,Y0-ph);g.stroke();g.fillText(+a.toFixed(2),X,Y0+14)}
+  g.textAlign='right';for(let a=0;a<=ym+1e-9;a+=sy){const Y=Y0-a/ym*ph;g.beginPath();g.moveTo(X0,Y);g.lineTo(X0+pw,Y);g.stroke();g.fillText(+a.toFixed(2),X0-5,Y+4)}
+  g.textAlign='left';g.fillText(yl,X0+4,Y0-ph+12);g.textAlign='right';g.fillText(xl,X0+pw,Y0-ph+12)}
+function drawA(){const cv=$('ab');size(cv);const g=cv.getContext('2d'),w=cv.clientWidth,h=cv.clientHeight,X0=40,Y0=h-22,pw=w-X0-12,ph=h-22-10;
+  const xm=Math.max(2,A.x/1000*1.1,...A.rp.map(p=>p[1]/1000)),ym=Math.max(2,A.apo/1000*1.15);const xmax=Math.min(xm,Math.max(A.x/1000*1.6,3)),P=(x,y)=>[X0+x/1000/xmax*pw,Y0-y/1000/ym*ph];
+  g.clearRect(0,0,w,h);axes(g,X0,Y0,pw,ph,xmax,ym,'distance, km','height, km');
+  g.save();g.beginPath();g.rect(X0,Y0-ph,pw,ph);g.clip();
+  g.strokeStyle='#5a6576';g.setLineDash([4,4]);g.lineWidth=1.5;g.beginPath();A.rp.forEach((p,i)=>{const [X,Y]=P(p[1],p[2]);i?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();g.setLineDash([]);
+  g.lineWidth=2.5;for(let i=1;i<A.path.length;i++){const a=A.path[i-1],b=A.path[i];g.strokeStyle=PHC[b[3]];g.beginPath();g.moveTo(...P(a[1],a[2]));g.lineTo(...P(b[1],b[2]));g.stroke()}
+  g.fillStyle='#e7edf3';g.font='11px "IBM Plex Sans",sans-serif';g.textAlign='left';
+  A.ev.forEach((e,i)=>{const p=A.path.reduce((b,q)=>Math.abs(q[0]-e[1])<Math.abs(b[0]-e[1])?q:b);const [X,Y]=P(p[1],p[2]);g.beginPath();g.arc(X,Y,3.5,0,7);g.fill();const s=e[0]+' · '+Math.round(e[1])+' s',right=X>X0+pw*0.55;g.textAlign=right?'right':'left';g.fillText(s,right?X-8:X+8,Math.min(Y0-6,Math.max(Y0-ph+24,Y+(i%2?16:-6))))});
+  const [X,Y]=P(0,A.path[0][2]);g.fillStyle='#ff6b5e';g.beginPath();g.arc(X,Y,5,0,7);g.fill();g.fillText('rocket fails',X+7,Y+14);g.restore()}
+// ---- 2. orbit ----
+function runO(){const hk=+$('iO').value,days=+$('iD').value,r=RE+hk*1000,v=Math.sqrt(MU/r),T=2*Math.PI*r/v;const n=days*86400/T;
+  // drag lifetime: orbit-averaged decay, ballistic coefficient of the 8.2 t stack (Cd 2.2, 3.5 m wide)
+  const B=8200/(2.2*Math.PI*3.5*3.5/4);let a=r,t=0;while(a>RE+150e3&&t<3e9){const dadt=-Math.sqrt(MU*a)*rho(a-RE)/B;const dt=Math.min(86400,Math.abs(5e3/dadt));a+=dadt*dt;t+=dt}
+  const sh=Math.asin(RE/r),dark=sh/Math.PI;// fraction of orbit in Earth's shadow (orbit through the Sun line)
+  $('oO').textContent=hk+' km'+(hk===400?' (Gaganyaan)':'');$('oD').textContent=days+(days===1?' day':' days');
+  const life=t/86400;
+  $('orS').innerHTML=[['Speed',nf.format(Math.round(v*3.6))+' km/h'],['Once around',(T/60).toFixed(1)+' min'],['Orbits in '+days+(days>1?' days':' day'),Math.floor(n)],['Sunrises seen',Math.floor(n)],['Night each orbit, up to',Math.round(dark*T/60)+' min'],['Left alone, falls in about',life>3650?'over 10 years':life>365?(life/365).toFixed(1)+' years':Math.round(life)+' days']].map(c=>`<div class="stat"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  $('orT').textContent=`At ${hk} km the orbit is only ${(hk/6371*100).toFixed(1)}% of Earth’s radius above the ground: drawn to scale, it hugs the planet. The crew sees about ${Math.floor(86400/T)} sunrises a day. The decay time assumes the whole 8.2 t ship and average solar activity.`;
+  const cv=$('orb');size(cv);const g=cv.getContext('2d'),w=cv.clientWidth,hh=cv.clientHeight,cx=w/2,cy=hh/2,R=Math.min(w,hh)*0.36,ro=R*r/RE;g.clearRect(0,0,w,hh);
+  const gr=g.createRadialGradient(cx-R*.3,cy-R*.3,R*.1,cx,cy,R);gr.addColorStop(0,'#2d6fae');gr.addColorStop(1,'#0c2a4a');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,R,0,7);g.fill();
+  g.fillStyle='rgba(0,0,0,.45)';g.beginPath();g.arc(cx,cy,R,-Math.PI/2,Math.PI/2);g.fill();
+  g.strokeStyle='rgba(116,199,255,.35)';g.lineWidth=R*0.012+1;g.beginPath();g.arc(cx,cy,R*(1+100/6371),0,7);g.stroke();
+  g.strokeStyle='#ff9a3c';g.lineWidth=2;g.beginPath();g.arc(cx,cy,ro,0,7);g.stroke();
+  g.fillStyle='#e7edf3';g.beginPath();g.arc(cx,cy-ro,4,0,7);g.fill();g.font='12px "IBM Plex Sans",sans-serif';g.textAlign='center';g.fillText('Gaganyaan, '+hk+' km',cx,cy-ro-10);
+  g.fillStyle='#8a97a8';g.fillText('the air (100 km)',cx,cy+R*(1+100/6371)+16);g.textAlign='left';g.fillText('night side',8,hh-10);g.textAlign='right';g.fillText('Sun →',w-8,hh-10)}
+// ---- 3. coming home ----
+function fly(v0,gam0,mode,nMain){const m=CH.mCM,cd=1.3,ld=mode==='ball'?0:0.25,rn=4.2,Aref=Math.PI*3.5*3.5/4,B=m/(cd*Aref);let v=v0,g=gam0,h=122e3,x=0,t=0,peakG=0,peakGh=0,peakQ=0,heat=0,ph='fire',mt=null,skipped=false,tD=null,tM=null;const out=[],dt=0.05;
+  while(h>0&&t<8000){const r=RE+h,gr=MU/r/r,rr=rho(h);let Dd,L=0;
+    if(ph==='fire'){Dd=.5*rr*v*v/B;L=ld*Dd;const n=Math.hypot(Dd,L)/G0;let k=1;if(ld>0){k=0.2+0.3*(n-4)-0.006*v*Math.sin(g);if(n<0.3)k=1;k=Math.max(-1,Math.min(1,k))}L*=k;
+      if(v<216&&h<30e3){ph='drog';tD=t}}
+    else{if(ph==='drog'&&h<=CH.hMain){ph='main';mt=tM=t}const cda=ph==='drog'?CH.cdaDrog:(t-mt<CH.reef?CH.reefF:1)*CH.cdaMain*nMain;Dd=.5*rr*v*v*cda/m}
+    v+=(-Dd-gr*Math.sin(g))*dt;g+=(L-(gr-v*v/r)*Math.cos(g))/v*dt;h+=v*Math.sin(g)*dt;x+=v*Math.cos(g)*dt*RE/r;t+=dt;
+    const n=Math.hypot(Dd,L)/G0;if(ph==='fire'&&n>peakG){peakG=n;peakGh=h}if(ph==='fire'){const q=1.7415e-4*Math.sqrt(rr/rn)*v**3;if(q>peakQ)peakQ=q;heat+=q*dt}
+    if(out.length===0||t-out.at(-1)[0]>=1)out.push([t,h,v,ph]);if(h>123e3&&g>0){skipped=true;break}}
+  out.push([t,Math.max(h,0),v,ph]);return {peakG,peakGh,peakQ,heat,t,x,skipped,out,v,tD,tM}}
+let RT=null;
+function runR(){const dv=+$('iB').value,r1=RE+400e3,v1=Math.sqrt(MU/r1),v2=v1-dv,a=1/(2/r1-v2*v2/MU),rp=2*a-r1,re=RE+122e3;
+  const sm=8200,ve=315*G0,burn=sm*(1-Math.exp(-dv/ve))/(2200/ve);
+  $('oB').textContent=dv+' m/s, a '+(burn/60).toFixed(1)+'-minute burn';
+  let html,cells;
+  if(rp>re-2e3){RT=null;$('reV').innerHTML=`<b class="bad">Not deep enough.</b> The low point of the new orbit is ${Math.round((rp-RE)/1000)} km up, above the air that matters. The capsule would graze the top of the atmosphere for many orbits. Burn harder.`;$('reS').innerHTML='';drawR();return}
+  const ve2=Math.sqrt(MU*(2/re-1/a)),h=Math.sqrt(MU*a*(1-((r1-rp)/(r1+rp))**2)),gam=-Math.acos(Math.min(1,h/(re*ve2)));
+  RT=fly(ve2,gam,$('mode').value,$('oneR').checked?1:2);const G=RT.peakG;
+  cells=[['Low point of new orbit',Math.round((rp-RE)/1000)+' km',''],['Entry angle at 122 km',(-gam/D).toFixed(2)+'°',''],['Hardest braking',RT.skipped?'—':G.toFixed(1)+' g',G>10?'bad':G>6?'warn':'ok'],['Peak heating',(RT.peakQ/1e6).toFixed(2)+' MW/m²',RT.peakQ>3e6?'warn':''],
+    ['Drogues open at',RT.tD?(RT.out.find(o=>o[0]>=RT.tD)||RT.out.at(-1))[1]/1000>0?((RT.out.find(o=>o[0]>=RT.tD)||[0,0])[1]/1000).toFixed(1)+' km':'—':'—',''],['Splashdown speed',RT.v.toFixed(1)+' m/s',RT.v<11?'ok':'bad'],['Air to sea',Math.floor(RT.t/60)+' min',''],['Flies over the ground',nf.format(Math.round(RT.x/1000))+' km','']];
+  $('reS').innerHTML=cells.map(c=>`<div class="stat ${c[2]}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  $('reV').innerHTML=RT.skipped?`<b class="bad">Skipped out.</b> Too shallow: the capsule bounced off the upper air.`:G>10?`<b class="bad">Too steep for the crew.</b> ${G.toFixed(1)} g, above the 10 g this page uses as the crew limit. Use a gentler burn or let the autopilot steer.`
+   :RT.v>=11?`<b class="bad">Hard landing.</b> Through the fire safely at ${G.toFixed(1)} g, but one main chute lands it at ${RT.v.toFixed(1)} m/s.`
+   :`<b class="ok">Home.</b> Braking peaked at ${G.toFixed(1)} g at ${(RT.peakGh/1000).toFixed(0)} km. The shield faced ${(RT.peakQ/1e6).toFixed(1)} MW per square metre, about ${nf.format(Math.round(RT.peakQ/1361))} times the sunlight on a spacecraft. Splashdown at ${RT.v.toFixed(1)} m/s${$('oneR').checked?' on one chute: still safe, as the design intends.':'.'}`;
+  drawR()}
+function drawR(){const cv=$('ret');size(cv);const g=cv.getContext('2d'),w=cv.clientWidth,h=cv.clientHeight,X0=40,Y0=h-22,pw=w-X0-44,ph=h-22-10;g.clearRect(0,0,w,h);
+  if(!RT){g.fillStyle='#8a97a8';g.font='13px "IBM Plex Sans",sans-serif';g.textAlign='center';g.fillText('No entry: the orbit still misses the air.',w/2,h/2);return}
+  const tm=RT.t/60*1.02,P=(t,y)=>[X0+t/60/tm*pw,Y0-y/125e3*ph],V=(t,v)=>[X0+t/60/tm*pw,Y0-v/8000*ph];axes(g,X0,Y0,pw,ph,tm,125,'minutes after reaching 122 km','height, km');
+  g.fillStyle='#8a97a8';g.textAlign='left';for(let s=0;s<=8;s+=2){g.fillText(s+'',X0+pw+6,Y0-s/8*ph+4)}g.fillText('km/s',X0+pw+4,Y0-ph+12);
+  g.lineWidth=2.5;const C={fire:'#ff9a3c',drog:'#74c7ff',main:'#5fd6a0'};for(let i=1;i<RT.out.length;i++){const a=RT.out[i-1],b=RT.out[i];g.strokeStyle=C[b[3]];g.beginPath();g.moveTo(...P(a[0],a[1]));g.lineTo(...P(b[0],b[1]));g.stroke()}
+  g.strokeStyle='#c3ccd6';g.lineWidth=1.5;g.beginPath();RT.out.forEach((o,i)=>{const [X,Y]=V(o[0],o[2]);i?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke()}
+// ---- road ----
+const ROAD=[['1984','Rakesh Sharma becomes the first Indian in space, flying on the Soviet Soyuz T-11 under the Interkosmos programme.'],['2007','SRE-1, ISRO’s first capsule to come back from orbit, splashes into the Bay of Bengal.'],['2014','CARE, a test crew module, flies on the first LVM3 and comes home under parachutes.'],['5 Jul 2018','Pad abort test: escape motors pull a 12.6 t test stack to 2.75 km at 10 g.'],['18 Nov 2022','Parachute drop test: a 5 t dummy falls from 2.5 km out of an Il-76 and lands softly.'],['21 Oct 2023','TV-D1: the escape system fires at Mach 1.2, about 11 km up. The crew module is picked up from the Bay of Bengal.'],['Jun–Jul 2025','Shubhanshu Shukla, a Gaganyaan astronaut-designate, flies to the International Space Station on Axiom Mission 4.'],
+ ['Q4 2026','Gaganyaan-1 (G1): first uncrewed orbital flight, carrying the robot Vyommitra.',1],['2027 or later','First Indian crew on an Indian rocket.',1],['2028','First module of the Bharatiya Antariksh Station, India’s planned space station at about 400–450 km.',1],['2035','The station complete: about 52 t, with crews staying 3 to 6 months.',1]];
+$('road').innerHTML=ROAD.map(r=>`<li class="${r[2]?'plan':''}"><div><b>${r[0]}</b>${r[2]?'<em>planned</em>':''}</div><div>${r[1]}</div></li>`).join('');
+// ---- checks (computed live) ----
+function checks(){const pad=abort(0,0,90,PRE.pad.tm,2),tv=abort(11000,1.2,65,PRE.tv.tm,2),one=abort(11000,1.2,65,PRE.tv.tm,1);const tvM=tv.ev.find(e=>e[0]==='Main chutes');
+  const rows=[['Pad abort: hardest push','10 g',pad.peak.toFixed(1)+' g','miss'],['Pad abort: highest point','2.75 km',(pad.apo/1000).toFixed(2)+' km','tuned'],['Pad abort: splashdown distance','2.9 km',(pad.x/1000).toFixed(1)+' km','tuned'],['Pad abort: whole flight','259 s',Math.round(pad.t)+' s','prediction'],
+    ['TV-D1: highest point','about 15 km',(tv.apo/1000).toFixed(1)+' km','prediction'],['TV-D1: main chutes, time after liftoff','307.9 s',Math.round(tvM[1]+60.9)+' s','prediction'],['TV-D1: splashdown, time after liftoff','584.4 s',Math.round(tv.t+60.9)+' s','prediction'],
+    ['Splashdown speed, two mains','under 11 m/s',tv.v.toFixed(1)+' m/s','set'],['Splashdown speed, one main','“one is enough”',one.v.toFixed(1)+' m/s','prediction']];
+  $('check').innerHTML='<tr><th>What</th><th class="n">Published</th><th class="n">This model</th><th>Kind</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${r[2]}</td><td class="note">${r[3]==='miss'?'short: one steady burn spreads the push out, the real motors kick harder for less time':r[3]==='tuned'?'used to set the escape push':r[3]==='set'?'used to size the parachutes':'real prediction'}</td></tr>`).join('')}
+// ---- wiring ----
+document.querySelectorAll('#abPre button').forEach(b=>b.addEventListener('click',()=>{preset=b.dataset.p;const p=PRE[preset];$('iH').value=p.h;$('iM').value=p.m;document.querySelectorAll('#abPre button').forEach(x=>x.setAttribute('aria-pressed',x===b));runA()}));
+['iH','iM'].forEach(id=>$(id).addEventListener('input',()=>{document.querySelectorAll('#abPre button').forEach(x=>x.setAttribute('aria-pressed','false'));runA()}));$('oneA').addEventListener('change',runA);
+['iO','iD'].forEach(id=>$(id).addEventListener('input',runO));['iB','mode','oneR'].forEach(id=>$(id).addEventListener('input',runR));$('oneR').addEventListener('change',runR);
+document.querySelector('#abPre [data-p="tv"]').setAttribute('aria-pressed','true');
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{drawA();runO();drawR()},120)});
+runA();runO();runR();checks();
+window.__gagan={abort,fly,PRE,get A(){return A},get RT(){return RT}};
+})();
+</script>
+
+</html>
