@@ -37,6 +37,7 @@ PAGES = [
     ("black-hole-lab.html", "Black holes", "4cEbohQeaFS4ezqs2R8Ahb"),
     ("spacecraft-archive.html", "Missions", "RDxM4WQDNdVSRngpy9R218"),
     ("reentry-lab.html", "Re-entry", "NjXosYNX9sCeCWVThB7VhT"),
+    ("one-sky-lab.html", "One Sky", "8wnKFX4tTwV3Sbd2jBAzWD"),
     ("planetary-defense-lab.html", "Defense", "UtRh4Wahi2S7pytfcBcXBc"),
     ("aryabhata-lab.html", "Aryabhata", "LaFFtHTwWZh7EiU6gL9F8Z"),
     ("nalanda.html", "Nalanda", "9GzdyyvJ8zRcBAznWXM37B"),

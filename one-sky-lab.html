@@ -1,0 +1,147 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>One Sky Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a what-if, kept honest. The pooled money, who can already do what, a mission you assemble from everyone's strengths, the price differences worth learning from, and the one place it already happened (the ISS). Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--one:#7fe0ff;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}*{box-sizing:border-box}
+.wrap{max-width:1180px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--one)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 8px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.big{font-family:var(--display);font-weight:700;font-size:clamp(40px,7vw,72px);line-height:1;color:var(--one)}
+canvas{display:block;width:100%;background:#02030a;border-radius:8px}#bars{aspect-ratio:16/8}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.mx td.c{text-align:center;font-size:16px}.mx td.c.y{color:var(--ok)}.mx td.c.n{color:#3a4658}.mx tr.all td{background:rgba(127,224,255,.08);font-weight:600}.mx th.c{text-align:center;writing-mode:horizontal-tb}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}.ok{color:var(--ok)}.bad{color:var(--bad)}.mid{color:var(--gold)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;font-size:13.5px}
+button[aria-pressed="true"]{background:var(--one);border-color:var(--one);color:#03202a}button:focus-visible,input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.steps{display:grid;gap:8px;margin-top:12px}.step{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--panel2);border-radius:8px;padding:10px 12px;border-left:4px solid var(--line)}
+.step.y{border-left-color:var(--ok)}.step.n{border-left-color:var(--bad)}.step b{font-family:var(--display);font-size:17px}.step span{font-size:13px;color:#c3ccd6}.who{font-size:12.5px;color:var(--dim);text-align:right}
+.verdict{margin-top:10px;padding:12px 14px;border-radius:8px;background:var(--panel2);font-size:14.5px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:10px}label.f output{font-family:var(--display);font-size:17px;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--one)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}.kv span{color:var(--dim)}.kv b{text-align:right}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">A what-if, worked out with real numbers</div>
+    <h1>One Sky Lab</h1>
+    <p>Every space agency has something the others want. NASA flew people to the Moon. China brought rock back from its far side. Japan returned dust from asteroids. Europe landed on Titan. India put an orbiter around Mars for US$73 million. What if they stopped duplicating each other and worked as one? This page adds up what is real today, then lets you assemble missions from everyone’s strengths.</p>
+  </header>
+
+  <div class="two">
+    <section class="card">
+      <h2>The money, side by side</h2>
+      <div class="big" id="total"></div>
+      <p class="note" id="totalNote"></p>
+      <canvas id="bars" aria-label="Annual budgets of the six largest civil space agencies"></canvas>
+    </section>
+    <section class="card">
+      <h2>Proof it can work</h2>
+      <p>It has happened once. Five agencies, from the United States, Russia, Europe, Japan and Canada, built the International Space Station together.</p>
+      <div class="kv">
+        <span>Lived in without a break since</span><b>2 November 2000</b>
+        <span>People who have visited (Aug 2025)</span><b>290, from 26 countries</b>
+        <span>Total cost to 2010</span><b>about US$150 billion</b>
+        <span>NASA’s share, 1985–2015</span><b>$58.7 billion</b>
+        <span>Russia / Europe / Japan / Canada</span><b>$12 / 5 / 5 / 2 billion</b>
+        <span>36 shuttle flights to build it</span><b>about $50.4 billion</b>
+      </div>
+      <p class="note" style="margin-top:10px">It is the longest continuous human presence in space. The station shows both sides of working together: it achieved what none of the partners had done alone, and it has been called the most expensive single object ever built.</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Who can already do what</h2>
+    <p>Each tick is a capability the agency has actually demonstrated, with its first mission named when you hover or tap it. Put the rows together and every box is filled.</p>
+    <div class="scroll"><table class="mx" id="mx"></table></div>
+    <p class="note" style="margin-top:8px">“Reusable” here means the agency’s own launch systems (NASA’s Space Shuttle). Private companies such as SpaceX, which now reuse rocket boosters routinely, are not agencies and are left out of this table.</p>
+  </section>
+
+  <section class="card">
+    <h2>Assemble a mission from everyone’s best</h2>
+    <div class="seg" id="goals"></div>
+    <div class="steps" id="steps"></div>
+    <div class="verdict" id="mv"></div>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>Same goal, different price</h2>
+      <p>Missions are never identical, so prices do not compare one to one. But the gaps show how much each agency could learn from the others.</p>
+      <div class="scroll"><table id="cost"></table></div>
+    </section>
+    <section class="card">
+      <h2>Pool the money</h2>
+      <p>Suppose each of the six agencies put a share of its yearly budget into one joint programme. How much would that buy, priced at what real missions cost?</p>
+      <label class="f">Share of each budget put into the pool <output id="oP"></output><input type="range" id="iP" min="1" max="30" value="5"></label>
+      <div class="kv" id="pool"></div>
+      <p class="note" style="margin-top:10px">An illustration only. Real joint missions also pay for coordination across languages, laws and time zones, and the cheapest missions are cheap partly because they are small.</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Why it doesn’t happen more</h2>
+    <p>Space hardware is also military hardware: the same rocket that carries a satellite can carry a warhead, so countries guard it. US law has barred NASA from working with China without approval from the FBI and Congress since 2011. Partnerships also have to survive wars, sanctions and elections. And working together does not change physics: Mars is still months away and rockets still need the same push. What it changes is who pays, how much gets duplicated, and how fast the best ideas spread.</p>
+  </section>
+
+  <footer>Sources: Wikipedia “List of government space agencies” (annual budgets in millions of US dollars: NASA 25,400 (2025), CNSA 18,150 (2023), ESA 9,080 (2025), JAXA 2,388 (2022), Roscosmos 1,950 (2025), ISRO 1,831 (2022); the launch, exploration and human-spaceflight capability tables, with their first missions), “International Space Station” (partners, continuous occupation since 2 November 2000, 290 visitors from 26 countries as of August 2025, cost to 2010 and its split, and the US restriction on cooperation with China), “Mars Orbiter Mission” (₹450 crore, US$73 million), “MAVEN” ($582.5 million to build, launch and operate for two years), “Hayabusa2” (16.4 billion yen estimated in 2010), “James Webb Space Telescope” ($10 billion) and “Chandrayaan-3” (₹615 crore). Budgets come from different years and exchange rates, so the totals are approximate. An independent page, not affiliated with any agency.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),nf=new Intl.NumberFormat('en-US');
+const AG=[{k:'nasa',n:'NASA',c:'United States',b:25400,y:2025,col:'#74c7ff'},{k:'cnsa',n:'CNSA',c:'China',b:18150,y:2023,col:'#ff6b5e'},{k:'esa',n:'ESA',c:'Europe',b:9080,y:2025,col:'#b6a4ff'},{k:'jaxa',n:'JAXA',c:'Japan',b:2388,y:2022,col:'#f5a3c7'},{k:'ros',n:'Roscosmos',c:'Russia',b:1950,y:2025,col:'#e8c46a'},{k:'isro',n:'ISRO',c:'India',b:1831,y:2022,col:'#ff9933'}];
+const TOT=AG.reduce((a,x)=>a+x.b,0);
+$('total').innerHTML='$'+(TOT/1000).toFixed(1)+' billion<span style="font-size:.38em;color:var(--dim);margin-left:8px">a year</span>';
+$('totalNote').textContent=`The six largest civil space agencies together. NASA alone is ${Math.round(AG[0].b/TOT*100)}% of it; ISRO does a Moon landing and a Mars orbiter on ${(AG[5].b/TOT*100).toFixed(1)}%.`;
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+function bars(){const c=$('bars'),g=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,L=w<480?78:110,bh=(h-16)/AG.length,S=(w-L-70)/AG[0].b;g.fillStyle='#02030a';g.fillRect(0,0,w,h);g.font='600 13px "Saira Condensed",sans-serif';
+  AG.forEach((a,i)=>{const y=8+i*bh;g.fillStyle='#c3ccd6';g.fillText(w<480?a.n:`${a.n} (${a.c})`,8,y+bh*.62);g.fillStyle=a.col;g.fillRect(L,y+bh*.22,Math.max(2,a.b*S),bh*.56);g.fillStyle='#e7edf3';g.fillText(`$${(a.b/1000).toFixed(1)}B · ${a.y}`,L+a.b*S+6,y+bh*.62)})}
+// capability matrix from the published tables: [agency, value per column, first mission per column]
+const COLS=[['orbit','Reaches orbit'],['cryo','Cryogenic engines'],['reuse','Reusable launcher'],['crew','People to orbit'],['station','Space station'],['dock','Docking'],['orbiter','Orbits another world'],['land','Soft landing'],['rover','Rover'],['sample','Sample return'],['moonmen','People on the Moon']];
+const CAP={
+ nasa:{orbit:'Juno I',cryo:'RL10',reuse:'Space Shuttle',crew:'Mercury-Redstone 3',station:'Skylab',dock:'Gemini 8',orbiter:'Lunar Orbiter 1',land:'Surveyor 1',rover:'Sojourner',sample:'Apollo 11',moonmen:'Apollo 11'},
+ cnsa:{orbit:'Long March 1',cryo:'YF-73',crew:'Shenzhou 5',station:'Tiangong-1',dock:'Shenzhou 8',orbiter:'Chang’e 1',land:'Chang’e 3',rover:'Yutu',sample:'Chang’e 5'},
+ esa:{orbit:'Ariane 1',cryo:'Ariane',orbiter:'Mars Express',land:'Huygens (on Titan)'},
+ jaxa:{orbit:'Lambda-4S',cryo:'LE-7',orbiter:'Hiten',land:'Hayabusa',rover:'MINERVA-II',sample:'Hayabusa'},
+ ros:{orbit:'Soyuz-U',cryo:'yes',crew:'Soyuz TM-14',station:'Mir',dock:'Soyuz TM-14 to Mir',orbiter:'ExoMars Trace Gas Orbiter'},
+ isro:{orbit:'SLV',cryo:'CE-7.5 / CE-20',dock:'SpaDeX',orbiter:'Chandrayaan-1',land:'Chandrayaan-3',rover:'Pragyan'}};
+$('mx').innerHTML='<tr><th>Agency</th>'+COLS.map(c=>`<th class="c">${c[1]}</th>`).join('')+'</tr>'+AG.map(a=>`<tr><td><b>${a.n}</b></td>${COLS.map(c=>{const v=CAP[a.k][c[0]];return `<td class="c ${v?'y':'n'}" title="${v?(a.n+': '+v):'not yet'}">${v?'✓':'·'}</td>`}).join('')}</tr>`).join('')+`<tr class="all"><td>All together</td>${COLS.map(c=>`<td class="c y">✓</td>`).join('')}</tr>`;
+// missions
+const GOALS=[
+ {k:'msr',n:'Bring rock home from Mars',need:[['orbit','Launch it'],['cryo','A powerful upper stage'],['orbiter','Arrive and orbit Mars'],['land','Land softly'],['rover','Drive to the best rocks'],['dock','Meet up in orbit to hand over the sample'],['sample','Bring a sample back through Earth’s air']]},
+ {k:'moonbase',n:'A crewed base on the Moon',need:[['orbit','Launch heavy cargo'],['cryo','Hydrogen–oxygen engines'],['crew','Fly people'],['dock','Dock ships together'],['station','Keep people alive for months'],['land','Land on the Moon'],['moonmen','Land people and bring them home'],['rover','Drive across the surface']]},
+ {k:'cheapmars',n:'A low-cost Mars orbiter',need:[['orbit','Launch it'],['cryo','An efficient upper stage'],['orbiter','Arrive and orbit Mars']]},
+ {k:'asteroid',n:'Sample an asteroid that might hit Earth',need:[['orbit','Launch it'],['orbiter','Match its orbit'],['land','Touch down on it'],['rover','Hop around the surface'],['sample','Bring a sample back']]},
+ {k:'titan',n:'A drone on Saturn’s moon Titan',need:[['orbit','Launch it'],['cryo','A powerful upper stage'],['orbiter','Reach the outer planets'],['land','Land through a thick atmosphere'],['rover','Move around the surface']]}];
+let goal='msr';
+$('goals').innerHTML=GOALS.map(g=>`<button type="button" data-g="${g.k}" aria-pressed="${g.k===goal}">${g.n}</button>`).join('');
+document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{goal=b.dataset.g;document.querySelectorAll('[data-g]').forEach(x=>x.setAttribute('aria-pressed',x===b));mission()});
+function mission(){const G=GOALS.find(g=>g.k===goal);const alone=AG.filter(a=>G.need.every(([c])=>CAP[a.k][c]));
+  $('steps').innerHTML=G.need.map(([c,lab])=>{const who=AG.filter(a=>CAP[a.k][c]);return `<div class="step ${who.length?'y':'n'}"><div><b>${lab}</b><br><span>${COLS.find(x=>x[0]===c)[1]}</span></div><div class="who">${who.length?who.map(a=>`${a.n}: ${CAP[a.k][c]}`).join('<br>'):'nobody yet'}</div></div>`}).join('');
+  const best=G.need.map(([c])=>AG.filter(a=>CAP[a.k][c]).sort((x,y)=>x.b-y.b)[0]);const team=[...new Set(best.map(a=>a.n))];
+  const names=a=>a.length<3?a.map(x=>x.n).join(' and '):a.slice(0,-1).map(x=>x.n).join(', ')+' and '+a.at(-1).n;
+  $('mv').innerHTML=`<b class="${alone.length?'ok':'mid'}">${alone.length?`${names(alone)} ${alone.length>1?'have':'has'} each shown every building block on its own.`:'No single agency has shown every building block yet.'}</b> Some of those were shown only at the Moon, which is far easier than Mars or Titan, so “shown it” is not the same as “ready to do it here”. Together, every step has been flown by someone; the leanest agency with each step proven gives a team of ${team.join(', ')}.`}
+// cost comparisons
+const USD_PER_INR=1/82,USD_PER_JPY=1/88; // rough rates near each mission's date
+const COST=[['Mars orbiter','ISRO Mangalyaan (2013)',73e6],['Mars orbiter','NASA MAVEN (2013)',582.5e6],['Moon lander and rover','ISRO Chandrayaan-3 (2023)',615e7*USD_PER_INR],['Asteroid sample return','JAXA Hayabusa2 (2014)',16.4e9*USD_PER_JPY],['Space telescope','NASA/ESA/CSA Webb (2021)',10e9]];
+$('cost').innerHTML='<tr><th>Goal</th><th>Mission</th><th class="n">Cost</th></tr>'+COST.map(([g,m,c])=>`<tr><td>${g}</td><td>${m}</td><td class="n">$${c>=1e9?(c/1e9).toFixed(1)+'B':Math.round(c/1e6)+'M'}</td></tr>`).join('')+`<tr><td colspan="3" class="note">MAVEN cost ${(582.5/73).toFixed(1)} times Mangalyaan for a different set of instruments and a longer prime mission. Chandrayaan-3 and Hayabusa2 are converted from rupees and yen at rough rates of their time.</td></tr>`;
+function pool(){const p=+$('iP').value/100,P=TOT*1e6*p;$('oP').textContent=$('iP').value+'%';
+  $('pool').innerHTML=`<span>Joint budget each year</span><b>$${(P/1e9).toFixed(1)} billion</b>`+COST.map(([g,m,c])=>`<span>${m.split(' (')[0]}-class missions it could pay for</span><b>${P/c>=10?nf.format(Math.floor(P/c)):(P/c).toFixed(1)} a year</b>`).join('')}
+$('iP').addEventListener('input',pool);
+const c=$('bars');size(c);new ResizeObserver(()=>{size(c);bars()}).observe(c);bars();mission();pool();
+window.__one={AG,CAP,GOALS,TOT};
+})();
+</script>
