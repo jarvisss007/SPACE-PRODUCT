@@ -44,7 +44,7 @@ LABS = [
 ]
 USES = [("all","Everything"),("tonight","Look up tonight"),("learn","Learn a topic"),("mission","Fly a mission"),("india","India in space"),("explore","Explore the universe"),("ancient","Ancient astronomy")]
 TOPICS = [
- ("gravity","Gravitation","Why things fall, why the Moon stays up, and how far a planet's pull reaches. A core topic in Class 9 and Class 11 physics."),
+ ("gravity","Gravitation","Why things fall, why the Moon stays up, and how far a planet's pull reaches. A core topic in Class 11 physics (the new Class 9 book, Exploration, leaves it out)."),
  ("orbits","Satellites and orbits","Orbital speed, escape speed, geostationary orbits and how satellites find your position."),
  ("motion","Laws of motion and momentum","Newton's laws in action: rockets, collisions with asteroids, and stealing speed from a planet. Class 9 and Class 11 physics."),
  ("energy","Energy, drag and heat","Where a spacecraft's energy goes when air slows it down, and why re-entry is so hot."),
