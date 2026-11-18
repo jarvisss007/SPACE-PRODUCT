@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Meteor Showers · Golapada">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Meteor Showers</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: the next showers as cards, then the peak night for your city (radiant, Moon, meteors per hour), then where the meteors come from (the parent's orbit crossing Earth's), the energy in a grain, checks and limits. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--met:#9ee7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--moon:#d9dde3;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--met)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--met)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}@media (max-width:620px){.row{grid-template-columns:minmax(0,1fr)}}
+.showers{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.sh{text-align:left;display:flex;flex-direction:column;gap:2px;background:var(--panel2);border:1px solid var(--line);border-top:3px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer;font:inherit;color:var(--ink)}
+.sh[aria-pressed="true"]{border-color:var(--met);border-top-color:var(--met);background:#10202a}.sh b{font-family:var(--display);font-size:21px;text-transform:uppercase;line-height:1.05}.sh span{font-size:12.5px;color:#c3ccd6}.sh em{font-style:normal;font-size:12px;color:var(--dim)}
+.sh.soon{border-top-color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line)}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat.ok{border-top-color:var(--ok)}.stat.warn{border-top-color:var(--gold)}.stat.bad{border-top-color:var(--bad)}
+select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px;width:100%}select:focus-visible,.sh:focus-visible,input:focus-visible{outline:2px solid var(--met);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--met)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:12px}label.f output{font-family:var(--display);font-size:17px;color:var(--ink)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}#night{aspect-ratio:16/8}#orb{aspect-ratio:1/1;max-width:520px;margin:0 auto}#nrg{aspect-ratio:16/8}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--dim);margin-top:6px}.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-in"><a href="index.html" class="sa-brand">Golapada</a><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html" aria-current="page">Meteors</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="worksheets.html">Worksheets</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Shooting stars · comet dust · your own sky</div>
+    <h1>Meteor Showers</h1>
+    <p>A shooting star is a grain of dust, often smaller than a grain of sand, hitting the air at up to 70 km/s and burning up 100 km above you. Most of that dust was shed by comets. Their crumbs spread along the comet’s path, and every year Earth ploughs through the same streams on the same dates. Pick a shower to see when and where to look from your city, how the Moon will interfere, and why it happens on that date at all.</p>
+  </header>
+
+  <section class="card">
+    <h2>The next showers</h2>
+    <div class="showers" id="list"></div>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>Your peak night</h2>
+      <div class="row">
+        <label class="f">City<select id="city"></select></label>
+        <label class="f">Your sky<select id="sky"><option value="6.5">Dark village, far from lights</option><option value="5.5" selected>Small town</option><option value="4.5">Big city</option></select></label>
+      </div>
+      <div class="verdict" id="nightV"></div>
+      <div class="stats" id="nightS"></div>
+    </section>
+    <section class="card">
+      <h2>Through the night</h2>
+      <canvas id="night" aria-label="Height of the radiant and the Moon through the peak night, with expected meteors each hour"></canvas>
+      <div class="legend"><span><i style="background:var(--met)"></i>radiant height</span><span><i style="background:var(--moon)"></i>Moon height</span><span><i style="background:rgba(158,231,255,.35);height:8px"></i>meteors you might count each hour</span></div>
+    </section>
+  </div>
+
+  <div class="two">
+    <section class="card">
+      <h2>Why on this date?</h2>
+      <p>Each shower belongs to a parent: a comet, or in two cases a rocky asteroid. Its dust spreads along the parent’s orbit. Where that orbit passes closest to Earth’s, Earth runs into the dust, at the same point in its orbit every year. This chart works the date out from the parent’s orbit alone and checks it against the date observers see.</p>
+      <div class="stats" id="orbS" style="grid-template-columns:repeat(2,minmax(0,1fr))"></div>
+      <div class="verdict" id="orbV"></div>
+    </section>
+    <section class="card">
+      <h2>The parent’s orbit and Earth’s</h2>
+      <canvas id="orb" aria-label="Top-down view of Earth's orbit and the parent comet's orbit, with the crossing point"></canvas>
+      <div class="legend"><span><i style="background:#4aa3ff"></i>Earth’s orbit</span><span><i style="background:var(--met)"></i>parent above Earth’s orbit plane</span><span><i style="background:rgba(158,231,255,.35)"></i>below it</span><span><i style="background:var(--gold);height:8px;width:8px;border-radius:50%"></i>closest point: the shower</span></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>A grain with a bullet’s punch</h2>
+    <p>Speed is everything. Energy of motion grows with the square of speed, so a one-gram grain at shower speeds carries more energy than the same mass of explosive. That energy heats the grain and the air around it until both glow.</p>
+    <canvas id="nrg" aria-label="Energy of a one-gram grain at each shower's speed, compared with TNT"></canvas>
+    <p class="note" style="margin-top:8px" id="nrgT"></p>
+  </section>
+
+  <section class="card">
+    <h2>How far to trust it</h2>
+    <p class="note">Every predicted date below comes only from the parent’s published orbit: the page finds where it passes closest to Earth’s orbit and when Earth reaches that spot. No shower dates are fed in.</p>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">Rates use the standard zenithal hourly rate formula: the number seen equals ZHR × sin(radiant height) ÷ r<sup>6.5 − limiting magnitude</sup>. The page assumes r = 2 for every shower; real values run about 2 to 3. The Moon is assumed to brighten the sky by up to 1.5 magnitudes when full and above the horizon. Hours count only once the Sun is 12° below the horizon. Real showers rise and fall over several nights around the peak, and a ZHR is an ideal that few observers reach. Parent orbits are today’s. Dust released centuries ago has drifted, so a few showers peak a few days from the predicted point, and Halley’s two showers come from dust far from its present path. Sun and Moon positions use the same low-precision formulas as <a href="tonight.html">Tonight’s Sky</a>.</p>
+  </section>
+
+  <footer>Sources: Wikipedia articles on each shower (radiant, peak date, speed and ZHR): “Quadrantids” (Jan 3, 41 km/s, 120), “Lyrids” (Apr 23, 46.8 km/s, 18), “Eta Aquariids” (May 6, 66 km/s, 55), “Perseids” (Aug 13, 58.8 km/s, 100), “Draconids” (Oct 8, 20 km/s, variable), “Orionids” (Oct 21, 66.9 km/s, 20), “Taurids” (Southern Nov 5, 27.7 km/s, 5), “Leonids” (Nov 17, 70–71 km/s, 15), “Geminids” (Dec 14, 35 km/s, 120), “Ursids” (Dec 22, 33 km/s, 10). Parent orbits from the Wikipedia articles on 2003 EH1, C/1861 G1 (Thatcher), Halley’s Comet, Comet Swift–Tuttle, 21P/Giacobini–Zinner, Comet Encke, 55P/Tempel–Tuttle, 3200 Phaethon and 8P/Tuttle. ZHR formula: “Zenithal hourly rate”. “Meteor shower” lists the Beta Taurids, a daytime shower in late June from Comet Encke. TNT: 4.184 MJ per kg by definition. Chelyabinsk, 15 February 2013, 1,491 people hurt indirectly: “Chelyabinsk meteor”. An independent page.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),D=Math.PI/180,EPS=23.4393*D,nf=new Intl.NumberFormat('en-US');
+const norm=a=>((a%360)+360)%360;
+// ---- Sun, Moon, horizon (same formulas as Tonight's Sky) ----
+const radec=v=>{const r=Math.hypot(...v);return {ra:Math.atan2(v[1],v[0]),dec:Math.asin(v[2]/r),r}};
+const eclToEq=([x,y,z])=>[x,y*Math.cos(EPS)-z*Math.sin(EPS),y*Math.sin(EPS)+z*Math.cos(EPS)];
+function sun(jd){const n=jd-2451545,L=(280.460+0.9856474*n)*D,g=(357.528+0.9856003*n)*D,lam=L+(1.915*Math.sin(g)+0.020*Math.sin(2*g))*D;return {...radec([Math.cos(lam),Math.cos(EPS)*Math.sin(lam),Math.sin(EPS)*Math.sin(lam)]),lam}}
+function moon(jd){const d=jd-2451545,Lp=218.316+13.176396*d,Mp=(134.963+13.064993*d)*D,F=(93.272+13.229350*d)*D,Dm=(297.850+12.190749*d)*D,Ms=(357.529+0.98560028*d)*D;
+  const lam=(Lp+6.289*Math.sin(Mp)+1.274*Math.sin(2*Dm-Mp)+0.658*Math.sin(2*Dm)+0.214*Math.sin(2*Mp)-0.186*Math.sin(Ms)-0.114*Math.sin(2*F)-0.059*Math.sin(2*Dm-2*Mp)-0.057*Math.sin(2*Dm-Ms-Mp)+0.053*Math.sin(2*Dm+Mp)+0.046*Math.sin(2*Dm-Ms)+0.041*Math.sin(Ms-Mp)-0.035*Math.sin(Dm)-0.031*Math.sin(Ms+Mp))*D,
+    bet=(5.128*Math.sin(F)+0.281*Math.sin(Mp+F)+0.278*Math.sin(Mp-F)+0.173*Math.sin(2*Dm-F))*D;
+  return {...radec(eclToEq([Math.cos(bet)*Math.cos(lam),Math.cos(bet)*Math.sin(lam),Math.sin(bet)])),lam,bet}}
+function lit(jd){const m=moon(jd),s=sun(jd);return (1-Math.cos(Math.acos(Math.cos(m.bet)*Math.cos(m.lam-s.lam))))/2}
+const gmst=jd=>norm(280.46061837+360.98564736629*(jd-2451545))*D;
+function alt(o,jd,lat,lon){const H=gmst(jd)+lon*D-o.ra,la=lat*D;return Math.asin(Math.sin(la)*Math.sin(o.dec)+Math.cos(la)*Math.cos(o.dec)*Math.cos(H))/D}
+const JD=ms=>ms/864e5+2440587.5;
+function offset(tz,ms){const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).formatToParts(new Date(ms)).map(x=>[x.type,x.value]));return Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute)-Math.floor(ms/60000)*60000}
+// ---- showers [key, name, month, day, RA h, Dec, speed km/s, ZHR, parent, parent orbit q,e,i,Ω,ω, note] ----
+const SH=[
+ ['QUA','Quadrantids',1,3,15+28/60,50,41,120,'asteroid 2003 EH1',[1.19006,0.618907,70.866,282.9725,171.371],'Sharp peak, only a few hours long.'],
+ ['LYR','Lyrids',4,23,18+10/60,33,46.8,18,'Comet Thatcher (C/1861 G1)',[0.921,0.983,79.773,31.867,213.45],'Recorded in China in 687 BCE, among the oldest shower records.'],
+ ['ETA','Eta Aquariids',5,6,22+20/60,-1,66,55,'Halley’s Comet',[0.59278,0.96658,161.96,59.396,112.05],'Best from the southern hemisphere and the tropics, India included.'],
+ ['PER','Perseids',8,13,3+13/60,58,58.8,100,'Comet Swift–Tuttle',[0.9595,0.9632,113.45,139.44,153.00],'Warm August nights in the north, but often in India’s monsoon clouds.'],
+ ['DRA','Draconids',10,8,17.467,54,20,null,'Comet 21P/Giacobini–Zinner',[1.009,0.7111,32.05,195.3,172.9],'Usually quiet, but it has stormed in some years. The slowest meteors here.'],
+ ['ORI','Orionids',10,21,6+21/60,15.6,66.9,20,'Halley’s Comet',[0.59278,0.96658,161.96,59.396,112.05],'Halley’s dust again, on the other side of its orbit.'],
+ ['STA','Southern Taurids',11,5,3+35/60,14.4,27.7,5,'Comet Encke',[0.339,0.84711,11.344,334.01,187.28],'Few, slow and known for bright fireballs.'],
+ ['LEO','Leonids',11,17,10+17/60,21.6,70.5,15,'Comet 55P/Tempel–Tuttle',[0.975,0.90587,162.48,235.41,172.45],'The fastest meteors. Every 33 years or so it can storm: thousands an hour in 1966.'],
+ ['GEM','Geminids',12,14,7+28/60,32,35,120,'asteroid 3200 Phaethon',[0.13998,0.8899,22.26,265.22,322.19],'The year’s richest shower, and it starts before midnight.'],
+ ['URS','Ursids',12,22,14+36/60,75.3,33,10,'Comet 8P/Tuttle',[1.026,0.82023,54.911,270.20,207.49],'Around the solstice, best from the far north.']];
+const IN='Asia/Kolkata';const CITIES=[['Delhi',28.61,77.21,IN],['Mumbai',19.08,72.88,IN],['Bengaluru',12.97,77.59,IN],['Chennai',13.08,80.27,IN],['Kolkata',22.57,88.36,IN],['Hyderabad',17.39,78.49,IN],['Jaipur',26.91,75.79,IN],['Guwahati',26.14,91.74,IN],['Srinagar',34.08,74.80,IN],['Leh (dark skies)',34.15,77.58,IN],['London',51.51,-0.13,'Europe/London'],['New York',40.71,-74.01,'America/New_York'],['Sydney',-33.87,151.21,'Australia/Sydney'],['Tokyo',35.68,139.69,'Asia/Tokyo'],['Dubai',25.2,55.27,'Asia/Dubai'],['Nairobi',-1.29,36.82,'Africa/Nairobi']];
+$('city').innerHTML=CITIES.map((c,i)=>`<option value="${i}">${c[0]}</option>`).join('');
+// next peak date (UTC midday on the published day) on or after today
+function nextPeak(s,now=Date.now()){let y=new Date(now).getUTCFullYear();let t=Date.UTC(y,s[2]-1,s[3],12);if(t<now-864e5)t=Date.UTC(y+1,s[2]-1,s[3],12);return t}
+let sel=SH.slice().sort((a,b)=>nextPeak(a)-nextPeak(b))[0][0];
+function list(){const order=SH.slice().sort((a,b)=>nextPeak(a)-nextPeak(b));
+  $('list').innerHTML=order.map(s=>{const t=nextPeak(s),days=Math.round((t-Date.now())/864e5),k=lit(JD(t));return `<button type="button" class="sh${days<=30?' soon':''}" data-k="${s[0]}" aria-pressed="${s[0]===sel}"><b>${s[1]}</b><span>${new Date(t).toLocaleDateString(undefined,{timeZone:'UTC',day:'numeric',month:'short',year:'numeric'})} · ${days<=0?'tonight':days===1?'tomorrow':'in '+days+' days'}</span><span>Up to ${s[7]?s[7]+' an hour':'a variable number'} · ${s[6]} km/s</span><em>Moon ${Math.round(k*100)}% lit · from ${s[8]}</em></button>`}).join('');
+  document.querySelectorAll('.sh').forEach(b=>b.onclick=()=>{sel=b.dataset.k;list();all()})}
+['city','sky'].forEach(id=>$(id).addEventListener('change',night));
+// ---- peak night ----
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);const g=c.getContext('2d');g.setTransform(r,0,0,r,0,0);return g}
+function night(){const s=SH.find(x=>x[0]===sel),c=CITIES[+$('city').value],lm0=+$('sky').value,R=2,peak=nextPeak(s);
+  const day=new Date(peak),y=day.getUTCFullYear(),m=day.getUTCMonth(),d=day.getUTCDate()-1;
+  const t18=Date.UTC(y,m,d,18)-offset(c[3],Date.UTC(y,m,d,18));const rad={ra:s[4]*15*D,dec:s[5]*D};const pts=[];
+  for(let i=0;i<=72;i++){const t=t18+i*10*60000,jd=JD(t),ha=alt(rad,jd,c[1],c[2]),mo=moon(jd),ma=alt(mo,jd,c[1],c[2]),sa=alt(sun(jd),jd,c[1],c[2]),k=lit(jd);
+    const lm=lm0-(ma>0?1.5*k*Math.min(1,ma/20+0.3):0);const hr=sa<-12&&ha>0&&s[7]?s[7]*Math.sin(ha*D)/Math.pow(R,6.5-lm):0;pts.push({t,ha,ma,sa,hr,k})}
+  const best=pts.reduce((a,p)=>p.hr>a.hr?p:a,pts[0]),tot=pts.reduce((a,p)=>a+p.hr/6,0),fmt=t=>new Date(t).toLocaleTimeString(undefined,{timeZone:c[3],hour:'numeric',minute:'2-digit'});
+  const radRise=pts.find(p=>p.ha>0),k=pts[36].k,nightName=new Date(t18).toLocaleDateString(undefined,{timeZone:c[3],day:'numeric',month:'short'})+' – '+new Date(t18+864e5).toLocaleDateString(undefined,{timeZone:c[3],day:'numeric',month:'short'});
+  $('nightS').innerHTML=[['Best hour',best.hr>0.5?fmt(best.t):'—',''],['Meteors that hour',best.hr>0.5?'about '+Math.round(best.hr):'very few',best.hr>=20?'ok':best.hr>=5?'warn':'bad'],['All night',s[7]?'about '+nf.format(Math.round(tot)):'—',''],['Moon',Math.round(k*100)+'% lit',k>0.6?'bad':k>0.3?'warn':'ok']].map(x=>`<div class="stat ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
+  const dirn=s[5]>c[1]+10?'north':s[5]<c[1]-40?'south':'';
+  $('nightV').innerHTML=!s[7]?`<b class="mid">${s[1]}: unpredictable.</b> Usually only a few an hour, but the radiant is ${radRise?'up from '+fmt(radRise.t):'below your horizon all night'}. Watch on the night of ${nightName}.`
+   :!radRise?`<b class="bad">${s[1]} stay below your horizon.</b> The radiant never rises from ${c[0]}. Try a city further ${s[5]<0?'south':'north'}.`
+   :`<b>${s[1]}, night of ${nightName}.</b> The radiant, the point the meteors seem to fly from, ${pts[0].ha>0?'is already up at dusk':'rises around '+fmt(radRise.t)}${dirn?' in the '+dirn:''}. Lie back and look at the whole sky, not at the radiant. Under a ${$('sky').selectedOptions[0].text.toLowerCase()} sky you might count about <b>${Math.round(best.hr)}</b> in the best hour, around ${fmt(best.t)}. ${k>0.6?'A bright Moon will wash out the faint ones.':k<0.25?'The Moon is out of the way: a good year.':'The Moon will hide some of the fainter ones.'}`;
+  const cv=$('night'),g=size(cv),w=cv.clientWidth,h=cv.clientHeight,X0=32,Y0=h-22,pw=w-X0-36,ph=h-32,X=i=>X0+i/72*pw,Y=a=>Y0-Math.max(0,a)/90*ph,hm=Math.max(10,...pts.map(p=>p.hr)),YH=v=>Y0-v/hm*ph;g.clearRect(0,0,w,h);g.font='11px "IBM Plex Sans",sans-serif';
+  pts.forEach((p,i)=>{if(p.sa>-12){g.fillStyle=p.sa>-6?'rgba(116,199,255,.10)':'rgba(116,199,255,.05)';g.fillRect(X(i),Y0-ph,pw/72+0.5,ph)}});
+  for(let a=0;a<=90;a+=30){g.strokeStyle='#1f2a38';g.beginPath();g.moveTo(X0,Y(a));g.lineTo(X0+pw,Y(a));g.stroke();g.fillStyle='#8a97a8';g.textAlign='right';g.fillText(a+'°',X0-4,Y(a)+4)}
+  g.textAlign='left';g.fillStyle='#9ee7ff';for(let v=0;v<=hm;v+=Math.max(5,Math.ceil(hm/4/5)*5)){g.fillText(v,X0+pw+6,YH(v)+4)}g.fillText('/hour',X0+pw+2,Y0-ph+10);
+  pts.forEach((p,i)=>{if(p.hr>0){g.fillStyle='rgba(158,231,255,.28)';g.fillRect(X(i),YH(p.hr),pw/72+0.5,Y0-YH(p.hr))}});
+  [['ha','#9ee7ff',2.5],['ma','#d9dde3',1.5]].forEach(([k2,col,lw])=>{g.strokeStyle=col;g.lineWidth=lw;g.beginPath();let on=false;pts.forEach((p,i)=>{if(p[k2]>0){on?g.lineTo(X(i),Y(p[k2])):g.moveTo(X(i),Y(p[k2]));on=true}else on=false});g.stroke()});g.lineWidth=1;
+  g.fillStyle='#8a97a8';g.textAlign='center';for(let i=0;i<=72;i+=12)g.fillText(fmt(pts[i].t),Math.min(w-20,Math.max(24,X(i))),h-5)}
+// ---- parent orbit: closest approach to Earth's orbit ----
+function pos(el,nu){const [q,e,i,O,w]=el,r=q*(1+e)/(1+e*Math.cos(nu)),u=w*D+nu,Oo=O*D,ii=i*D;return [r*(Math.cos(Oo)*Math.cos(u)-Math.sin(Oo)*Math.sin(u)*Math.cos(ii)),r*(Math.sin(Oo)*Math.cos(u)+Math.cos(Oo)*Math.sin(u)*Math.cos(ii)),r*Math.sin(u)*Math.sin(ii)]}
+function closest(el){const e=el[1],lim=Math.PI-1e-3,N=6000,arr=[];for(let k=0;k<=N;k++){const nu=-lim+2*lim*k/N,[x,y,z]=pos(el,nu),d=Math.hypot(Math.hypot(x,y)-1,z);arr.push({d,nu,L:Math.atan2(y,x)/D})}
+  const mins=[];for(let k=1;k<N;k++)if(arr[k].d<arr[k-1].d&&arr[k].d<=arr[k+1].d)mins.push(arr[k]);return mins.sort((a,b)=>a.d-b.d)}
+function sunLonDate(lam,yr){const j0=JD(Date.UTC(yr,0,1));let best=0,bd=1e9;for(let d=0;d<366;d+=0.02){const s=norm(sun(j0+d).lam/D),df=Math.abs(norm(s-lam+180)-180);if(df<bd){bd=df;best=d}}return Date.UTC(yr,0,1)+best*864e5}
+function predict(s){const pub=Date.UTC(2026,s[2]-1,s[3],12),c=closest(s[9]).slice(0,3).map(m=>({...m,t:sunLonDate(norm(m.L+180),2026)}));c.forEach(m=>{let dd=(m.t-pub)/864e5;if(dd>182)dd-=365;if(dd<-182)dd+=365;m.dd=dd});
+  const use=c.filter(m=>m.d<0.25).sort((a,b)=>Math.abs(a.dd)-Math.abs(b.dd))[0]||c[0];return {...use,all:c}}
+function orb(){const s=SH.find(x=>x[0]===sel),P=predict(s);
+  $('orbS').innerHTML=[['Closest to Earth’s orbit',P.d.toFixed(3)+' AU ('+nf.format(Math.round(P.d*149.6))+' million km)',P.d<0.05?'ok':P.d<0.2?'warn':'bad'],['Predicted date',new Date(P.t).toLocaleDateString(undefined,{timeZone:'UTC',day:'numeric',month:'short'}),''],['Observed peak',new Date(Date.UTC(2026,s[2]-1,s[3],12)).toLocaleDateString(undefined,{timeZone:'UTC',day:'numeric',month:'short'}),''],['Difference',(Math.abs(P.dd)<0.5?'same day':(P.dd>0?'+':'−')+Math.abs(P.dd).toFixed(0)+(Math.abs(P.dd)>=1.5?' days':' day')),Math.abs(P.dd)<=4?'ok':'warn']].map(x=>`<div class="stat ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
+  $('orbV').innerHTML=`${s[1]} come from ${s[8]}. ${s[10]} ${P.d<0.05?'Its orbit passes almost through Earth’s, so Earth meets the dust head-on.':'Its orbit today misses Earth’s by '+P.d.toFixed(2)+' AU. The dust that reaches us was shed long ago, when the orbit sat a little differently.'}`;
+  const cv=$('orb'),g=size(cv),w=cv.clientWidth,h=cv.clientHeight,cx=w/2,cy=h/2,Qa=s[9][1]<1?s[9][0]*(1+s[9][1])/(1-s[9][1]):9,Rmax=Math.min(3.5,Math.max(1.7,Qa*1.08)),sc=Math.min(w,h)/2/Rmax*0.95;g.clearRect(0,0,w,h);
+  g.fillStyle='#ffc24a';g.beginPath();g.arc(cx,cy,5,0,7);g.fill();g.strokeStyle='#4aa3ff';g.lineWidth=1.5;g.beginPath();g.arc(cx,cy,sc,0,7);g.stroke();g.lineWidth=1;
+  const lim=Math.PI-1e-3;let prev=null;for(let k=0;k<=1500;k++){const nu=-lim+2*lim*k/1500,p=pos(s[9],nu),X=cx+p[0]*sc,Y=cy-p[1]*sc;if(prev&&Math.hypot(p[0],p[1])<Rmax*1.05){g.strokeStyle=p[2]>=0?'#9ee7ff':'rgba(158,231,255,.35)';g.lineWidth=p[2]>=0?2:1.5;g.beginPath();g.moveTo(prev[0],prev[1]);g.lineTo(X,Y);g.stroke()}prev=[X,Y]}g.lineWidth=1;
+  const pc=pos(s[9],P.nu);g.fillStyle='#e8c46a';g.beginPath();g.arc(cx+pc[0]*sc,cy-pc[1]*sc,6,0,7);g.fill();
+  const eL=P.L*D;g.fillStyle='#4aa3ff';g.beginPath();g.arc(cx+Math.cos(eL)*sc,cy-Math.sin(eL)*sc,4,0,7);g.fill();
+  g.font='12px "IBM Plex Sans",sans-serif';g.fillStyle='#e7edf3';g.textAlign='center';g.fillText('Earth on '+new Date(P.t).toLocaleDateString(undefined,{timeZone:'UTC',day:'numeric',month:'short'}),cx+Math.cos(eL)*sc*1.18,cy-Math.sin(eL)*sc*1.18+4);
+  g.fillStyle='#8a97a8';g.fillText('Sun',cx,cy+18);g.textAlign='left';g.fillText('view from above the planets’ plane · Earth’s orbit 1 AU',8,h-8)}
+// ---- energy ----
+function nrg(){const cv=$('nrg'),g=size(cv),w=cv.clientWidth,h=cv.clientHeight,rows=SH.slice().sort((a,b)=>b[6]-a[6]),L=w<520?96:130,rh=(h-8)/rows.length,TNT=4.184,mx=0.5*0.001*71000**2/1e6;g.clearRect(0,0,w,h);g.font='12px "IBM Plex Sans",sans-serif';
+  const xT=L+(w-L-110)*(TNT/1000)/mx;
+  rows.forEach((s,i)=>{const E=0.5*0.001*(s[6]*1000)**2/1e6,y=4+i*rh,bw=(w-L-110)*E/mx;g.fillStyle=s[0]===sel?'#e7edf3':'#c3ccd6';g.textAlign='left';g.fillText(s[1],4,y+rh*.62);g.fillStyle=s[0]===sel?'#9ee7ff':'rgba(158,231,255,.5)';g.fillRect(L,y+rh*.22,bw,rh*.56);g.fillStyle='#e7edf3';g.fillText(E.toFixed(2)+' MJ · '+(E/TNT*1000).toFixed(0)+' g of TNT',L+bw+6,y+rh*.62)});
+  g.strokeStyle='#ff6b5e';g.setLineDash([4,3]);g.beginPath();g.moveTo(xT,0);g.lineTo(xT,h);g.stroke();g.setLineDash([]);
+  const s=SH.find(x=>x[0]===sel),E=0.5*0.001*(s[6]*1000)**2;
+  $('nrgT').textContent=`A 1 g ${s[1].replace(/s$/,'')} grain at ${s[6]} km/s carries ${(E/1e6).toFixed(2)} MJ, as much as ${(E/4.184e3).toFixed(0)} g of TNT. The dashed line is 1 g of TNT (4.2 kJ). Real shower grains are mostly far lighter than a gram. A rock about 18 m across, travelling at 19 km/s, became the Chelyabinsk fireball of 2013. Its shock wave broke windows and 1,491 people were hurt.`}
+// ---- checks ----
+function checks(){$('check').innerHTML='<tr><th>Shower</th><th>Parent</th><th class="n">Closest approach</th><th class="n">Predicted</th><th class="n">Observed peak</th><th class="n">Off by</th></tr>'+SH.map(s=>{const P=predict(s);return `<tr><td>${s[1]}</td><td>${s[8]}</td><td class="n">${P.d.toFixed(3)} AU</td><td class="n">${new Date(P.t).toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short'})}</td><td class="n">${new Date(Date.UTC(2026,s[2]-1,s[3],12)).toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short'})}</td><td class="n ${Math.abs(P.dd)<=4?'ok':'mid'}">${Math.abs(P.dd)<0.5?'0':(P.dd>0?'+':'−')+Math.abs(P.dd).toFixed(0)} d</td></tr>`}).join('')+
+  (()=>{const enc=SH.find(s=>s[0]==='STA'),o=closest(enc[9]).filter(m=>m.d<0.25).map(m=>sunLonDate(norm(m.L+180),2026)).find(t=>new Date(t).getUTCMonth()===5);return o?`<tr><td colspan="6" class="note">Comet Encke’s orbit also comes close on ${new Date(o).toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'long'})}. That is the Beta Taurids, a daytime shower in late June listed in the “Meteor shower” article. The model found a real shower nobody fed in.</td></tr>`:''})()}
+function all(){night();orb();nrg()}
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(all,150)});
+list();all();checks();
+window.__met={SH,predict,closest,lit,nextPeak};
+})();
+</script>
+
+</html>
