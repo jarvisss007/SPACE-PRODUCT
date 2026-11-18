@@ -1,0 +1,322 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Aryabhata Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Tiro+Devanagari+Sanskrit&display=swap">
+<style>
+/* Layout: portrait hero, then four numbered experiments (the order follows the Aryabhatiya's own chapters: Gitika, Ganita, Kala, Gola), each an idea + a live test + a verdict. Single dark look: night sky over Kusumapura. */
+:root{
+  color-scheme:dark;
+  --void:#05070d; --panel:#0b1017; --panel2:#121a25; --line:#1f2a38;
+  --ink:#e7edf3; --dim:#8a97a8; --gold:#e8c46a; --lox:#74c7ff; --mars:#e0774a; --ok:#5fd6a0; --bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --deva:"Tiro Devanagari Sanskrit","Noto Serif Devanagari",serif;
+}
+html,body{background:var(--void)}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+*{box-sizing:border-box}
+.wrap{max-width:1120px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--gold)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(22px,3.4vw,30px);line-height:1.05;margin:0 0 4px;text-transform:uppercase;text-wrap:balance}
+.num{font-family:var(--display);color:var(--gold);font-weight:600;letter-spacing:.14em;font-size:13px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:66ch;color:#c3ccd6}
+a{color:var(--lox)}
+.hero{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:22px 30px;align-items:center}
+@media (max-width:820px){.hero{grid-template-columns:minmax(0,1fr)}}
+#portrait{display:block;width:100%;max-width:360px;aspect-ratio:4/5;margin:0 auto;border:1px solid var(--line);border-radius:6px;background:#0a0f1c}
+.cap{font-size:12px;color:var(--dim);text-align:center;margin-top:6px}
+.deva{font-family:var(--deva);color:var(--gold);font-size:18px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media (max-width:560px){.facts{grid-template-columns:1fr 1fr}}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0}
+.fact b{display:block;font-family:var(--display);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.fact span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.exp{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:18px 26px}
+@media (max-width:860px){.exp{grid-template-columns:minmax(0,1fr)}}
+.exp canvas{display:block;width:100%;border-radius:4px;background:#070b14}
+blockquote{margin:6px 0 12px;padding:8px 12px;border-left:2px solid var(--gold);color:#dfe6ee;font-style:italic;max-width:62ch;background:rgba(232,196,106,.05)}
+blockquote cite{display:block;font-style:normal;font-size:12px;color:var(--dim);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13.5px}
+td,th{padding:6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+td.n,th.n{text-align:right}
+.verdict{margin-top:12px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px;color:#dfe6ee}
+.verdict b{color:var(--ok)}.verdict b.bad{color:var(--bad)}.verdict b.mid{color:var(--gold)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#1a1404}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.big{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+footer{color:var(--dim);font-size:12.5px;max-width:92ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Starship Atlas"><div class="sa-in"><a href="index.html" class="sa-brand">Starship Atlas</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html" aria-current="page">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <section class="hero">
+    <div><canvas id="portrait" aria-label="Imagined illustration of Aryabhata with a palm-leaf manuscript and a gnomon"></canvas>
+      <div class="cap">Imagined. No portrait from his lifetime survives.</div></div>
+    <div>
+      <div class="eyebrow">Kusumapura, 499 CE · tested on spaceflight</div>
+      <h1>Aryabhata Lab</h1>
+      <div class="deva">आर्यभटीय</div>
+      <p>At 23, Aryabhata wrote the Aryabhatiya, 121 verses in four chapters: numbers, mathematics, time and the sphere. He says when, himself: when three quarter-ages and sixty times sixty years of the Kali Yuga had passed, 23 years of his life had passed. That is 499 CE, so he was born in 476.</p>
+      <p>This page takes four of his ideas, implements them exactly as he wrote them, and puts each one to work on a modern spaceflight problem. Each test ends with a verdict: where his idea still holds, and where a spacecraft needs more.</p>
+      <div class="facts">
+        <div class="fact"><span>Earth turns, per yuga</span><b>1,582,237,500</b></div>
+        <div class="fact"><span>Circumference / diameter</span><b>3.1416</b></div>
+        <div class="fact"><span>Sine table entries</span><b>24</b></div>
+      </div>
+      <p style="margin-top:12px"><a href="mars-campaign.html">His planet clock is also one of the five in the Mars campaign planner.</a> He is often said to have headed nearby <a href="nalanda.html">Nalanda</a>; his own book names only Kusumapura, and the sources do not show the Nalanda link.</p>
+    </div>
+  </section>
+
+  <section class="exp" aria-labelledby="h1x">
+    <div>
+      <div class="num">Idea 1 · Golapada 9 and Dasagitika 1</div>
+      <h2 id="h1x">The Earth turns, the stars stand still</h2>
+      <blockquote>“As a man in a boat going forward sees a stationary object moving backward”<cite>Golapada 9, Clark 1930. The verse goes on: so at Lanka the stars appear to drift west.</cite></blockquote>
+      <p>Most astronomers of his time, and for a thousand years after, said the sky turns around a fixed Earth. Aryabhata said the opposite and counted it: the Earth turns eastward 1,582,237,500 times in a yuga of 4,320,000 years. Subtract the Sun's 4,320,000 trips round the sky and you get the solar days, and from those the length of one turn against the stars.</p>
+      <p><b>Spaceflight test.</b> A rocket launched east starts with the ground's speed for free. Using his rotation period, how much speed does each launch site hand a rocket?</p>
+      <div class="seg" id="sites"></div>
+      <div class="big" id="boost">—</div>
+      <p id="boostNote" style="margin-top:6px"></p>
+      <table id="dayTable"></table>
+      <div class="verdict" id="v1"></div>
+    </div>
+    <div><canvas id="earth" style="aspect-ratio:1" aria-label="Earth seen from above the North Pole turning eastward under fixed stars"></canvas>
+      <div class="seg" id="views"><button type="button" data-v="space" aria-pressed="true">View from space</button><button type="button" data-v="boat" aria-pressed="false">View from the boat</button></div>
+      <p class="cap" style="text-align:left" id="earthCap"></p></div>
+  </section>
+
+  <section class="exp" aria-labelledby="h2x">
+    <div>
+      <div class="num">Idea 2 · Ganitapada 10</div>
+      <h2 id="h2x">π from four steps of arithmetic</h2>
+      <blockquote>“Add 4 to 100, multiply by 8, and add 62,000.”<cite>Ganitapada 10, Clark 1930: the result is approximately the circumference of a circle 20,000 across.</cite></blockquote>
+      <p>(100 + 4) × 8 + 62,000 = 62,832, and 62,832 ÷ 20,000 = 3.1416. He called it approximate, which it is: it is off by 7 parts in 10 million.</p>
+      <p><b>Spaceflight test.</b> Swap his π into every orbit formula a mission planner uses.</p>
+      <table id="piTable"></table>
+      <div class="verdict" id="v2"></div>
+    </div>
+    <div><canvas id="piCanvas" style="aspect-ratio:4/3" aria-label="Circle of diameter 20,000 with the circumference 62,832 unrolled"></canvas></div>
+  </section>
+
+  <section class="exp" aria-labelledby="h3x">
+    <div>
+      <div class="num">Idea 3 · Dasagitika 12</div>
+      <h2 id="h3x">A sine table in 24 numbers</h2>
+      <p>Aryabhata compressed trigonometry into one verse of 24 differences: 225, 224, 222, 219, 215, 210, 205, 199, 191, 183, 174, 164, 154, 143, 131, 119, 106, 93, 79, 65, 51, 37, 22, 7. Add them up in steps of 3¾° and you get the half-chord (<i>jya</i>) of each angle, on a circle of radius 3,438, chosen so that the radius is close to one radian measured in arc-minutes (21,600 ÷ 2π). They sum to exactly 3,438. The word <i>jya</i>, through Arabic <i>jiba</i> and a Latin mistranslation, became our “sine”.</p>
+      <p><b>Spaceflight test.</b> Plot Mars's position around the Sun with his sines, interpolating between entries as Indian astronomers did, and measure how far off the spacecraft would aim.</p>
+      <table id="sinTable"></table>
+      <div class="verdict" id="v3"></div>
+    </div>
+    <div><canvas id="sinCanvas" style="aspect-ratio:4/3" aria-label="Error of Aryabhata's sine table across 0 to 90 degrees"></canvas>
+      <p class="cap" style="text-align:left">Gold: his sines minus true sines, magnified 1,000 times. Dots: the 24 table entries themselves.</p></div>
+  </section>
+
+  <section class="exp" aria-labelledby="h4x">
+    <div>
+      <div class="num">Idea 4 · Golapada 5 and 37</div>
+      <h2 id="h4x">Moonlight is sunlight; eclipses are shadows</h2>
+      <p>He wrote that half of the Earth, the planets and the stars is dark with their own shadow and the half turned to the Sun is lit (Golapada 5), and that the Moon hides the Sun and the great shadow of the Earth hides the Moon (Golapada 37), not a demon swallowing them. A century later Brahmagupta attacked the verse and defended the demon Rahu (Brahmasphutasiddhanta XI.9). Aryabhata was right.</p>
+      <p><b>Spaceflight test.</b> Lunar landers plan around sunlight: a south-pole landing needs the Sun up and the lighting repeats every synodic month. Predict the next full moons from his counts (Moon 57,753,336 and Sun 4,320,000 trips round the sky per yuga, both starting together at the Kali Yuga) and compare with the modern mean lunar theory.</p>
+      <div class="scroll"><table id="moonTable"></table></div>
+      <div class="verdict" id="v4"></div>
+    </div>
+    <div><canvas id="shadow" style="aspect-ratio:4/3" aria-label="Sun, Earth and the Earth's shadow cone reaching past the Moon"></canvas>
+      <p class="cap" style="text-align:left" id="shadowCap"></p></div>
+  </section>
+
+  <footer>Sources: Aryabhatiya in W. E. Clark's 1930 translation (Dasagitika 1, Ganitapada 10, Kalakriyapada 10, Golapada 5, 9 and 37, read from the archive.org scan); the sine-difference verse (Dasagitika 12) as given in “Āryabhaṭa's sine table” and standard histories; Brahmasphutasiddhanta XI.9 as quoted by Clark. Modern comparisons: sidereal day 86,164.0905 s, Earth equatorial radius 6,378.137 km, mean synodic month and mean full moons from J. Meeus, Astronomical Algorithms, ch. 49 (mean phases, terrestrial time). Launch-site latitudes are approximate. The portrait is an imagined illustration.</footer>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id),D=Math.PI/180,TAU=Math.PI*2,nf=new Intl.NumberFormat('en-US');
+const dpr=()=>Math.min(2,devicePixelRatio||1);
+function fit(c){const r=dpr(),w=c.clientWidth,h=c.clientHeight;if(c.width!==Math.round(w*r)){c.width=Math.round(w*r);c.height=Math.round(h*r)}const g=c.getContext('2d');g.setTransform(r,0,0,r,0,0);return [g,w,h]}
+let seed=5;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+
+/* ---------- Aryabhata's numbers ---------- */
+const AR={sun:4320000,moon:57753336,rot:1582237500,yuga:4320000,pi:62832/20000,
+  dif:[225,224,222,219,215,210,205,199,191,183,174,164,154,143,131,119,106,93,79,65,51,37,22,7]};
+AR.civil=AR.rot-AR.sun;                      // solar days in a yuga
+AR.sid=AR.civil/AR.rot*86400;               // one turn against the stars, seconds
+AR.synodic=AR.civil/(AR.moon-AR.sun);       // days, new moon to new moon
+AR.J=[0];for(const d of AR.dif)AR.J.push(AR.J[AR.J.length-1]+d);
+function jya(deg){let a=((deg%360)+360)%360,s=1;if(a>180){a-=180;s=-1}if(a>90)a=180-a;const x=a/3.75,i=Math.min(23,Math.floor(x));return s*(AR.J[i]+(x-i)*AR.dif[i])/3438}
+const MOD={sid:86164.0905,Re:6378.137,synodic:29.530588861};
+
+/* ---------- portrait (imagined) ---------- */
+function drawPortrait(){
+  const [g,w,h]=fit($('portrait'));seed=5;
+  let gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,'#0b1430');gr.addColorStop(1,'#05070d');g.fillStyle=gr;g.fillRect(0,0,w,h);
+  for(let i=0;i<120;i++){g.fillStyle=`rgba(255,255,255,${.2+rnd()*.7})`;g.fillRect(rnd()*w,rnd()*h*.6,1.2,1.2)}
+  // star trails around the pole: the sky the boat-verse explains
+  g.strokeStyle='rgba(232,196,106,.18)';g.lineWidth=1;for(let r=20;r<w*.75;r+=13){g.beginPath();g.arc(w*.78,h*.16,r,Math.PI*.55,Math.PI*.95);g.stroke()}
+  const gold='#e8c46a',s=w/360;g.save();g.translate(w*.42,h*.58);g.scale(s,s);
+  g.lineCap='round';g.lineJoin='round';
+  // seated figure in profile, facing right: shawl, topknot, manuscript on the knee
+  g.fillStyle='#141c2e';g.strokeStyle=gold;g.lineWidth=2.2;
+  g.beginPath();g.moveTo(-70,150);g.bezierCurveTo(-90,60,-60,-20,-18,-36);g.bezierCurveTo(10,-46,40,-30,48,0);g.bezierCurveTo(60,40,70,90,110,120);g.lineTo(130,150);g.closePath();g.fill();g.stroke();
+  // head
+  g.beginPath();g.arc(12,-78,30,0,TAU);g.fillStyle='#1c2640';g.fill();g.stroke();
+  g.beginPath();g.arc(-4,-112,12,0,TAU);g.fillStyle='#141c2e';g.fill();g.stroke();
+  // face profile
+  g.beginPath();g.moveTo(38,-92);g.lineTo(46,-76);g.lineTo(38,-72);g.moveTo(40,-62);g.lineTo(32,-60);g.stroke();
+  g.beginPath();g.arc(28,-86,2,0,TAU);g.fillStyle=gold;g.fill();
+  // tilak
+  g.beginPath();g.moveTo(40,-100);g.lineTo(40,-92);g.stroke();
+  // arm and palm-leaf manuscript
+  g.beginPath();g.moveTo(10,-10);g.bezierCurveTo(30,30,60,52,92,58);g.stroke();
+  g.save();g.translate(110,62);g.rotate(-.18);g.fillStyle='#c9a85a';g.fillRect(-46,-9,92,18);g.strokeStyle='#5a4512';g.lineWidth=1;
+  for(let k=-36;k<=36;k+=12){g.beginPath();g.moveTo(k,-6);g.lineTo(k+8,-6);g.moveTo(k,0);g.lineTo(k+6,0);g.moveTo(k,6);g.lineTo(k+9,6);g.stroke()}
+  g.strokeStyle=gold;g.lineWidth=2;g.strokeRect(-46,-9,92,18);g.restore();
+  // gnomon (sanku) and its shadow on the ground
+  g.strokeStyle=gold;g.lineWidth=2.2;g.beginPath();g.moveTo(-130,150);g.lineTo(-130,70);g.stroke();
+  g.strokeStyle='rgba(232,196,106,.45)';g.beginPath();g.moveTo(-130,150);g.lineTo(-200,150);g.stroke();
+  g.restore();
+  // ground line and the spinning-Earth emblem
+  g.strokeStyle='rgba(232,196,106,.5)';g.beginPath();g.moveTo(0,h*.58+150*s);g.lineTo(w,h*.58+150*s);g.stroke();
+  const ex=w*.8,ey=h*.86,er=w*.07;g.strokeStyle=gold;g.lineWidth=1.6;g.beginPath();g.arc(ex,ey,er,0,TAU);g.stroke();
+  g.beginPath();g.ellipse(ex,ey,er,er*.35,0,0,TAU);g.stroke();g.beginPath();g.arc(ex,ey,er*1.35,-2.6,-1.2);g.stroke();
+  g.beginPath();const ax=ex+Math.cos(-1.2)*er*1.35,ay=ey+Math.sin(-1.2)*er*1.35;g.moveTo(ax,ay);g.lineTo(ax-8,ay-2);g.moveTo(ax,ay);g.lineTo(ax-3,ay+8);g.stroke();
+  g.font='600 13px "Saira Condensed",sans-serif';g.fillStyle=gold;g.textAlign='left';g.fillText('ĀRYABHAṬA · BORN 476 CE',14,h-16);
+}
+
+/* ---------- 1: rotation and launch boost ---------- */
+const SITES=[['Sriharikota (ISRO)',13.72],['Kourou (ESA)',5.24],['Boca Chica (Starbase)',25.99],['Kennedy (NASA)',28.57],['Baikonur',45.96]];
+let site=0,view='space';
+const boostOf=(lat,T)=>TAU*MOD.Re*Math.cos(lat*D)/T;
+function updRotation(){
+  const [n,lat]=SITES[site],bA=boostOf(lat,AR.sid),bM=boostOf(lat,MOD.sid);
+  $('boost').textContent=bA.toFixed(3)+' km/s free, heading east';
+  $('boostNote').textContent=`From ${n} at ${lat.toFixed(2)}° N: about ${(bA/7.8*100).toFixed(1)}% of the 7.8 km/s needed to stay in low orbit. A westward launch would have to fight the same amount, a ${(2*bA).toFixed(2)} km/s swing. With the modern day length the figure is ${bM.toFixed(3)} km/s: the difference is ${((bA-bM)*1e6).toFixed(0)} mm/s.`;
+  const fmt=s=>{const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return `${h} h ${m} m ${x.toFixed(2)} s`};
+  $('dayTable').innerHTML=`<tr><th>One turn against the stars</th><th class="n">Seconds</th><th class="n"></th></tr>
+    <tr><td>Aryabhata (from his yuga counts)</td><td class="n">${AR.sid.toFixed(3)}</td><td class="n">${fmt(AR.sid)}</td></tr>
+    <tr><td>Modern</td><td class="n">${MOD.sid.toFixed(3)}</td><td class="n">${fmt(MOD.sid)}</td></tr>
+    <tr class="tot"><td>Difference</td><td class="n">${(AR.sid-MOD.sid).toFixed(3)}</td><td class="n">1 part in ${nf.format(Math.round(MOD.sid/Math.abs(AR.sid-MOD.sid)))}</td></tr>`;
+  $('v1').innerHTML=`<b>Holds.</b> His Earth turns once every 23 h 56 m 4.10 s, ${(AR.sid-MOD.sid).toFixed(3)} s from the atomic-clock value. Every launch site still uses the effect he described: ISRO launches eastward over the Bay of Bengal from Sriharikota for exactly this free ${boostOf(13.72,AR.sid).toFixed(2)} km/s. Over a full year his day drifts by only ${((AR.sid-MOD.sid)*365.25).toFixed(1)} s.`;
+  [...$('sites').children].forEach((b,i)=>b.setAttribute('aria-pressed',i===site));
+}
+SITES.forEach(([n],i)=>{const b=document.createElement('button');b.type='button';b.textContent=n.split(' (')[0];b.addEventListener('click',()=>{site=i;updRotation()});$('sites').append(b)});
+[...$('views').children].forEach(b=>b.addEventListener('click',()=>{view=b.dataset.v;[...$('views').children].forEach(o=>o.setAttribute('aria-pressed',o===b))}));
+const SKY=[];for(let i=0;i<160;i++)SKY.push({a:rnd()*TAU,r:.35+rnd()*.65,b:.3+rnd()*.7,y:rnd(),x:rnd()});
+function drawEarth(tsec){
+  const [g,w,h]=fit($('earth'));g.fillStyle='#04060c';g.fillRect(0,0,w,h);
+  const spin=tsec*TAU/12;  // one turn per 12 s on screen, i.e. his 86,164 s compressed
+  if(view==='space'){
+    for(const s of SKY){g.fillStyle=`rgba(255,255,255,${s.b})`;g.fillRect(w/2+Math.cos(s.a)*s.r*w*.5,h/2+Math.sin(s.a)*s.r*h*.5,1.4,1.4)}
+    const R=w*.3;let gr=g.createRadialGradient(w/2-R*.3,h/2-R*.3,R*.1,w/2,h/2,R);gr.addColorStop(0,'#3f8ed8');gr.addColorStop(1,'#0c2e66');g.fillStyle=gr;g.beginPath();g.arc(w/2,h/2,R,0,TAU);g.fill();
+    g.save();g.translate(w/2,h/2);g.rotate(-spin);g.strokeStyle='rgba(255,255,255,.12)';for(let k=0;k<12;k++){g.beginPath();g.moveTo(0,0);g.lineTo(Math.cos(k*TAU/12)*R,Math.sin(k*TAU/12)*R);g.stroke()}
+    for(const [r] of [[.35],[.65]]){g.beginPath();g.arc(0,0,R*r,0,TAU);g.stroke()}
+    const [n,lat]=SITES[site],rr=R*(lat/90);const px=rr,py=0;g.fillStyle='#e8c46a';g.beginPath();g.arc(px,py,5,0,TAU);g.fill();
+    // eastward velocity arrow (counter-clockwise seen from above the North Pole)
+    const L=R*.55*Math.cos(lat*D);g.strokeStyle='#e8c46a';g.lineWidth=2.5;g.beginPath();g.moveTo(px,py);g.lineTo(px,py-L);g.stroke();g.beginPath();g.moveTo(px,py-L);g.lineTo(px-6,py-L+10);g.moveTo(px,py-L);g.lineTo(px+6,py-L+10);g.stroke();
+    g.restore();g.fillStyle='#fff';g.beginPath();g.arc(w/2,h/2,3,0,TAU);g.fill();
+    g.font='600 13px "Saira Condensed",sans-serif';g.fillStyle='#e8c46a';g.fillText('NORTH POLE · EARTH TURNS EAST · STARS FIXED',12,h-12);
+    $('earthCap').textContent=`Looking down on the North Pole. The gold dot is ${SITES[site][0]}; the arrow is the free eastward speed it gives a rocket. One turn here is 12 seconds; in his numbers it is 86,164.10.`;
+  }else{
+    // from the deck: the stars drift west past the mast, like the shore past a boat
+    let gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,'#0a1330');gr.addColorStop(1,'#1a2440');g.fillStyle=gr;g.fillRect(0,0,w,h);
+    for(const s of SKY){const x=((s.x*w*1.4+tsec*w*.06)%(w*1.4))-w*.2,y=s.y*h*.62;g.fillStyle=`rgba(255,255,255,${s.b})`;g.fillRect(x,y,1.6,1.6)}
+    g.fillStyle='#0b0f18';g.beginPath();g.moveTo(w*.1,h*.82);g.lineTo(w*.9,h*.82);g.lineTo(w*.78,h*.94);g.lineTo(w*.22,h*.94);g.closePath();g.fill();
+    g.strokeStyle='#e8c46a';g.lineWidth=2;g.beginPath();g.moveTo(w*.5,h*.82);g.lineTo(w*.5,h*.35);g.stroke();
+    g.fillStyle='rgba(116,199,255,.25)';g.fillRect(0,h*.86,w,h*.14);
+    g.font='600 13px "Saira Condensed",sans-serif';g.fillStyle='#e8c46a';g.fillText('← STARS SEEM TO MOVE WEST',12,24);g.textAlign='right';g.fillText('THE BOAT (EARTH) GOES EAST →',w-12,h*.8);g.textAlign='left';
+    $('earthCap').textContent='Golapada 9 from the deck: the boat (the Earth) moves east, so the fixed stars appear to slide west, the way the shore slides past a moving boat.';
+  }
+}
+
+/* ---------- 2: pi ---------- */
+function updPi(){
+  const AU=1.495978707e8,MU=1.32712440018e11,R2=1.523679*AU,a=(AU+R2)/2,rel=(AR.pi-Math.PI)/Math.PI;
+  const tof=p=>p*Math.sqrt(a**3/MU),dT=tof(AR.pi)-tof(Math.PI);
+  const leo=6678,P=p=>2*p*Math.sqrt(leo**3/398600.4418);
+  const rows=[['Value of π','3.1416','3.14159265…'],['Earth–Mars transfer time',`${(tof(AR.pi)/86400).toFixed(5)} days`,`${(tof(Math.PI)/86400).toFixed(5)} days`],
+    ['Low Earth orbit period (300 km)',`${P(AR.pi).toFixed(2)} s`,`${P(Math.PI).toFixed(2)} s`],['Length of Earth’s orbit',`${nf.format(Math.round(2*AR.pi*AU))} km`,`${nf.format(Math.round(TAU*AU))} km`]];
+  $('piTable').innerHTML='<tr><th>Formula</th><th class="n">With his π</th><th class="n">With true π</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${r[2]}</td></tr>`).join('');
+  $('v2').innerHTML=`<b>Holds for planning.</b> His π is ${(rel*1e6).toFixed(2)} millionths too big. It stretches a 259-day trip to Mars by ${dT.toFixed(0)} seconds and the Earth's orbit by ${nf.format(Math.round(2*(AR.pi-Math.PI)*AU))} km. <b class="mid">Not for navigation:</b> deep-space tracking resolves positions to metres, so flight software uses π to 15 or more digits.`;
+  const [g,w,h]=fit($('piCanvas'));g.fillStyle='#070b14';g.fillRect(0,0,w,h);
+  const r=Math.min(w,h)*.22,cx=w*.3,cy=h*.42;g.strokeStyle='#e8c46a';g.lineWidth=2;g.beginPath();g.arc(cx,cy,r,0,TAU);g.stroke();
+  g.strokeStyle='#74c7ff';g.beginPath();g.moveTo(cx-r,cy);g.lineTo(cx+r,cy);g.stroke();
+  g.font='600 14px "Saira Condensed",sans-serif';g.fillStyle='#74c7ff';g.textAlign='center';g.fillText('20,000',cx,cy-6);
+  const y=h*.82,len=w*.86,x0=w*.07;g.strokeStyle='#e8c46a';g.lineWidth=4;g.beginPath();g.moveTo(x0,y);g.lineTo(x0+len,y);g.stroke();
+  g.strokeStyle='#74c7ff';g.lineWidth=2;for(let k=0;k<=3;k++){const x=x0+len*k*20000/62832;g.beginPath();g.moveTo(x,y-8);g.lineTo(x,y+8);g.stroke()}
+  g.fillStyle='#e8c46a';g.fillText('62,832 unrolled = 3 diameters + 2,832',w/2,y+26);
+  g.fillStyle='#c3ccd6';g.textAlign='left';g.font='500 13px "IBM Plex Sans",sans-serif';
+  ['(100 + 4) × 8 = 832','832 + 62,000 = 62,832','62,832 ÷ 20,000 = 3.1416'].forEach((l,i)=>g.fillText(l,w*.58,h*.3+i*24));
+}
+
+/* ---------- 3: sine table ---------- */
+function updSine(){
+  let mx=0,at=0;for(let d=0;d<=90;d+=.01){const e=Math.abs(jya(d)-Math.sin(d*D));if(e>mx){mx=e;at=d}}
+  let mxT=0,atT=0;for(let k=0;k<=24;k++){const e=Math.abs(AR.J[k]/3438-Math.sin(k*3.75*D));if(e>mxT){mxT=e;atT=k*3.75}}
+  const R2=1.523679*1.495978707e8,miss=mx*R2,missT=mxT*R2,arcmin=Math.asin(mx)/D*60;
+  $('sinTable').innerHTML=`<tr><th>Test</th><th class="n">Result</th></tr>
+    <tr><td>Sum of the 24 differences</td><td class="n">${AR.J[24]} (the radius, exactly)</td></tr>
+    <tr><td>Worst error at a table entry (${atT.toFixed(2)}°)</td><td class="n">${mxT.toExponential(1)}</td></tr>
+    <tr><td>Worst error between entries (${at.toFixed(1)}°)</td><td class="n">${mx.toExponential(1)} ≈ ${arcmin.toFixed(1)} arc-minutes</td></tr>
+    <tr><td>Mars's position, worst miss</td><td class="n">${nf.format(Math.round(miss))} km</td></tr>
+    <tr><td>In Mars diameters (6,779 km)</td><td class="n">${(miss/6779).toFixed(1)}</td></tr>`;
+  $('v3').innerHTML=`<b>Holds for the naked eye.</b> His worst error is about ${arcmin.toFixed(1)} arc-minutes, close to the sharpest a human eye can see, so for 5th-century astronomy the table was as good as observation. <b class="bad">Fails for a spacecraft:</b> aiming at Mars with it would miss by up to ${nf.format(Math.round(miss))} km, ${(miss/6779).toFixed(0)} times the planet's width. The method lived on: Madhava of Kerala later extended this difference idea into infinite series for the sine around 1400 CE.`;
+  const [g,w,h]=fit($('sinCanvas'));g.fillStyle='#070b14';g.fillRect(0,0,w,h);
+  const l=44,r=12,t=14,b=30,X=d=>l+d/90*(w-l-r),sc=1000,ymax=.6,Y=e=>t+(h-t-b)/2-(e*sc)/ymax*(h-t-b)/2;
+  g.strokeStyle='#1f2a38';g.font='11px "IBM Plex Sans",sans-serif';g.fillStyle='#8a97a8';g.textAlign='right';g.textBaseline='middle';
+  for(const v of [-.5,0,.5]){g.beginPath();g.moveTo(l,Y(v/sc));g.lineTo(w-r,Y(v/sc));g.stroke();g.fillText((v/sc).toFixed(4),l-6,Y(v/sc))}
+  g.textAlign='center';g.textBaseline='top';for(const d of [0,30,60,90])g.fillText(d+'°',X(d),h-b+8);
+  g.strokeStyle='#e8c46a';g.lineWidth=1.6;g.beginPath();for(let d=0;d<=90;d+=.1){const e=jya(d)-Math.sin(d*D);d?g.lineTo(X(d),Y(e)):g.moveTo(X(d),Y(e))}g.stroke();
+  g.fillStyle='#74c7ff';for(let k=0;k<=24;k++){const d=k*3.75;g.beginPath();g.arc(X(d),Y(AR.J[k]/3438-Math.sin(d*D)),2.6,0,TAU);g.fill()}
+}
+
+/* ---------- 4: Moon months and the Earth's shadow ---------- */
+function updMoon(){
+  // Aryabhata: mean Sun and Moon together (new moon) at the Kali Yuga, sunrise at Lanka on the Ujjain meridian, -3101 Feb 18
+  const JDK=588465.5+.25-75.77/360,syn=AR.synodic;
+  // Meeus ch. 49 mean phases (TT): JDE = 2451550.09766 + 29.530588861 k + 0.00015437 T^2 - 0.000000150 T^3 + 0.00000000073 T^4
+  const meeus=k=>{const T=k/1236.85;return 2451550.09766+29.530588861*k+0.00015437*T*T-1.5e-7*T**3+7.3e-10*T**4};
+  const now=Date.now()/864e5+2440587.5;let k=Math.ceil((now-2451550.09766)/29.530588861-.5)+.5;
+  const rows=[];let sum=0;
+  for(let i=0;i<12;i++,k++){const jm=meeus(k),n=Math.round((jm-JDK)/syn-.5),ja=JDK+(n+.5)*syn,d=(ja-jm)*24;sum+=d;
+    rows.push(`<tr><td>${new Date((jm-2440587.5)*864e5).toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'UTC'})} UT</td><td class="n">${new Date((ja-2440587.5)*864e5).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'UTC'})}</td><td class="n">${d>0?'+':''}${d.toFixed(1)} h</td></tr>`)}
+  $('moonTable').innerHTML='<tr><th>Mean full moon, modern</th><th class="n">Aryabhata</th><th class="n">Difference</th></tr>'+rows.join('');
+  const avg=sum/12,days=Math.abs(avg)/24;
+  $('v4').innerHTML=`<b>Holds.</b> His synodic month is ${syn.toFixed(6)} days against the modern ${MOD.synodic.toFixed(6)}: off by ${((MOD.synodic-syn)*86400).toFixed(1)} s a month. Counted forward ${nf.format(Math.round((now-JDK)/365.25))} years from the Kali Yuga, his full moons still land about ${days<1?(Math.abs(avg)).toFixed(0)+' hours':days.toFixed(1)+' days'} ${avg>0?'late':'early'} on the modern mean ones, close enough to plan a season of lunar landings, not the hour of one. His physics of eclipses is simply correct, and the geometry below is his reasoning with modern sizes.`;
+  // shadow geometry: similar triangles (his reasoning), modern dimensions
+  const Ds=1392700,De=12742,dS=149.6e6,Lsh=De*dS/(Ds-De),dM=384400,widthAtMoon=De*(1-dM/Lsh);
+  const [g,w,h]=fit($('shadow'));g.fillStyle='#04060c';g.fillRect(0,0,w,h);
+  const sx=w*.06,ex=w*.42,cy=h*.5,er=h*.08,tipX=ex+(w*.9-ex),mX=ex+(tipX-ex)*dM/Lsh;
+  let gr=g.createRadialGradient(sx,cy,2,sx,cy,h*.36);gr.addColorStop(0,'#fff3c4');gr.addColorStop(.5,'#ffbf4a');gr.addColorStop(1,'rgba(255,150,40,0)');g.fillStyle=gr;g.beginPath();g.arc(sx,cy,h*.36,0,TAU);g.fill();
+  g.fillStyle='rgba(0,0,0,.65)';g.strokeStyle='rgba(232,196,106,.6)';g.beginPath();g.moveTo(ex,cy-er);g.lineTo(tipX,cy);g.lineTo(ex,cy+er);g.closePath();g.fill();g.stroke();
+  g.strokeStyle='rgba(232,196,106,.25)';g.setLineDash([4,5]);g.beginPath();g.moveTo(sx,cy-h*.2);g.lineTo(ex,cy-er);g.moveTo(sx,cy+h*.2);g.lineTo(ex,cy+er);g.stroke();g.setLineDash([]);
+  gr=g.createRadialGradient(ex-er*.3,cy-er*.3,1,ex,cy,er);gr.addColorStop(0,'#5aa6ff');gr.addColorStop(1,'#123c7a');g.fillStyle=gr;g.beginPath();g.arc(ex,cy,er,0,TAU);g.fill();
+  g.fillStyle='#b98a7a';g.beginPath();g.arc(mX,cy,er*.27,0,TAU);g.fill();
+  g.font='600 12px "Saira Condensed",sans-serif';g.fillStyle='#e8c46a';g.textAlign='center';
+  g.fillText('SUN',sx+10,cy+h*.3);g.fillText('EARTH',ex,cy+er+16);g.fillText('MOON IN THE SHADOW',mX,cy-er*.27-10);g.fillText('SHADOW TIP',tipX,cy+18);
+  $('shadowCap').textContent=`Similar triangles: Earth's diameter × Sun distance ÷ (Sun's diameter − Earth's diameter) = a shadow ${nf.format(Math.round(Lsh))} km long, ${(Lsh/dM).toFixed(1)} times the Moon's distance. Where the Moon crosses it the shadow is still ${nf.format(Math.round(widthAtMoon))} km wide, wider than the Moon (3,475 km), so total lunar eclipses happen. Not to scale.`;
+}
+
+function frame(ms){drawEarth(ms/1000);requestAnimationFrame(frame)}
+function all(){drawPortrait();updRotation();updPi();updSine();updMoon()}
+all();new ResizeObserver(()=>{drawPortrait();updPi();updSine();updMoon()}).observe(document.body);
+window.__arya={AR,jya,all};
+requestAnimationFrame(frame);
+})();
+</script>

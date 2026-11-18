@@ -1,0 +1,165 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Re-entry Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: an entry bench. Pick a capsule, a speed, an angle and how to steer; the flight is drawn with g-load and heating; the corridor chart shows the whole range of angles; then the checks and the capsule data. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--hot:#ff7a3c;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--hot)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"],button.primary{background:var(--hot);border-color:var(--hot);color:#1c0a02}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--hot)}select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px;width:100%}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:12px}label.f output{font-family:var(--display);font-size:17px;color:var(--ink)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}
+#trj{aspect-ratio:16/9}#gq{aspect-ratio:16/7}#cor{aspect-ratio:16/7;cursor:crosshair}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line)}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat.ok{border-top-color:var(--ok)}.stat.warn{border-top-color:var(--gold)}.stat.bad{border-top-color:var(--bad)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Real capsules · the real atmosphere · Newton and Allen–Eggers</div>
+    <h1>Re-entry Lab</h1>
+    <p>Coming home is the most violent part of a space flight. A capsule from the Moon hits the top of the air at 11 km/s, and the air has to take away almost all of that speed in a few minutes. Come in too shallow and the capsule skips back out to space. Come in too steep and the braking crushes the crew and the heat burns through the shield. Pick a capsule and try to thread the gap.</p>
+  </header>
+
+  <div class="two">
+    <section class="card">
+      <h2>Set up the entry</h2>
+      <label class="f">Capsule<select id="veh"></select></label>
+      <p class="note" id="vehNote" style="margin-top:-6px"></p>
+      <label class="f">Coming home from <output id="oV"></output><input type="range" id="iV" min="7.4" max="13" step="0.05" value="11.03"></label>
+      <div class="seg" style="margin:-6px 0 12px"><button type="button" data-v="7.8">Low orbit</button><button type="button" data-v="11.03">The Moon</button><button type="button" data-v="12.9">Stardust’s comet</button></div>
+      <label class="f">Entry angle at 122 km, below level <output id="oA"></output><input type="range" id="iA" min="1" max="15" step="0.05" value="6.5"></label>
+      <label class="f">Steering<select id="mode"><option value="auto">Autopilot: roll the lift to stay under 4 g</option><option value="up">Lift held up</option><option value="ball">No lift (ballistic, like a Soyuz failure)</option><option value="down">Lift held down</option></select></label>
+      <div class="verdict" id="verdict"></div>
+    </section>
+    <section class="card">
+      <h2>The descent</h2>
+      <canvas id="trj" aria-label="Altitude against distance travelled, coloured by the braking force"></canvas>
+      <canvas id="gq" style="margin-top:8px" aria-label="Braking force in g and heating against time"></canvas>
+      <div class="stats" id="stats"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>The corridor</h2>
+    <p>Every entry angle, flown with the capsule, speed and steering above. Below the shaded band the capsule skips back out to space; to the right the g-load climbs fast. The band is the corridor: the window a returning ship has to hit, many thousands of kilometres out, before it reaches the air. Tap the chart to fly that angle.</p>
+    <canvas id="cor" aria-label="Peak braking force against entry angle, with the skip-out region marked"></canvas>
+    <p class="note" id="corTxt" style="margin-top:8px"></p>
+  </section>
+
+  <section class="card">
+    <h2>How far to trust it</h2>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>The capsules</h2>
+    <div class="scroll"><table id="caps"></table></div>
+    <p class="note" style="margin-top:8px">Mass and diameter set how much air a capsule needs to slow down (its “ballistic coefficient”). Lift lets it steer: by rolling, the crew points the lift up, down or sideways, which is how Apollo, Soyuz and Orion keep the g-load low and land near the ships. Numbers marked “assumed” are typical values for that kind of capsule, not published figures.</p>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">The flight is computed in one plane over a round Earth that does not spin, through the US Standard Atmosphere 1976. The drag coefficient and lift are held constant at their hypersonic values, so the last few kilometres before the parachutes are only rough. Heating is the Sutton–Graves estimate at the stagnation point from the air flowing straight onto the shield. It leaves out the glowing gas’s own radiation, which matters above about 10 km/s, so the fastest entries are hotter than shown. The autopilot is a simple rule, not Apollo’s actual guidance.</p>
+  </section>
+
+  <footer>Sources: atmosphere, US Standard Atmosphere 1976. Peak braking for a ballistic entry, H. J. Allen and A. J. Eggers, NACA Report 1381 (1958). Heating, K. Sutton and R. A. Graves, NASA TR R-376 (1971). Stardust: entry at 46,440 km/h (12.9 km/s), 34 g peak at 55 km, subsonic within 110 s, from the Wikipedia article “Stardust (spacecraft)”; capsule size, mass and entry angle from the NASA/JPL entry analysis (Desai et al., 2008). Capsule diameters: Apollo 3.9 m, Orion 5.02 m and 8.5 t, Gaganyaan 3.5 m and about 5 t, from their Wikipedia articles. Artemis I entered at about 40,000 km/h. An independent model.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const RE=6371e3,MU=3.986004418e14,G0=9.80665,D=Math.PI/180,nf=new Intl.NumberFormat('en-US');
+const ATM=[[0,1.225],[5,0.7364],[10,0.4135],[15,0.1948],[20,0.08891],[25,0.04008],[30,0.01841],[40,0.003996],[50,0.001027],[60,3.097e-4],[70,8.283e-5],[80,1.846e-5],[90,3.416e-6],[100,5.604e-7],[110,9.708e-8],[120,2.222e-8],[130,8.152e-9],[150,2.076e-9]];
+function rho(h){const k=h/1000;if(k<=0)return 1.225;if(k>=150)return 2.076e-9*Math.exp(-(k-150)/30);let i=0;while(ATM[i+1][0]<k)i++;const [a,ra]=ATM[i],[b,rb]=ATM[i+1];return ra*Math.exp(Math.log(rb/ra)*(k-a)/(b-a))}
+function sound(h){const k=h/1000,T=k<11?288.15-6.5*k:k<20?216.65:k<32?216.65+(k-20):k<47?228.65+2.8*(k-32):k<51?270.65:k<71?270.65-2.8*(k-51):Math.max(186.9,214.65-2*(k-71));return Math.sqrt(1.4*287.05*T)}
+const VEH={
+ apollo:{name:'Apollo command module',m:5500,d:3.91,cd:1.3,ld:0.3,rn:4.7,crew:true,note:'3.9 m across. Mass at entry about 5.5 t (assumed; Apollo 10 landed at 4.9 t). Lift-to-drag 0.3 (assumed).'},
+ orion:{name:'Orion (Artemis)',m:8500,d:5.02,cd:1.3,ld:0.27,rn:6.0,crew:true,note:'5.02 m across, about 8.5 t. Lift-to-drag 0.27 (assumed). Artemis I came home at about 40,000 km/h.'},
+ gagan:{name:'Gaganyaan crew module',m:5000,d:3.5,cd:1.3,ld:0.25,rn:4.2,crew:true,note:'India’s crew capsule: 3.5 m across, about 5 t (the parachute tests used a 5 t stand-in). Lift-to-drag 0.25 (assumed).'},
+ soyuz:{name:'Soyuz descent module',m:2950,d:2.17,cd:1.3,ld:0.3,rn:2.4,crew:true,note:'2.2 m across, about 2.95 t, with a little lift from its off-centre weight (both assumed). Built for returns from low orbit.'},
+ stardust:{name:'Stardust sample capsule',m:45.8,d:0.8128,cd:1.5,ld:0,rn:0.2202,crew:false,note:'0.81 m, 45.8 kg, no lift. Brought comet dust home in 2006 at 12.9 km/s, the fastest return of any human-made object.'}};
+// entry: v0 m/s, gam0 deg (negative = down), mode
+function bankFor(c,mode){if(mode==='up')return ()=>0;if(mode==='down')return ()=>180;if(mode==='ball')return ()=>0;
+  const B=c.m/(c.cd*Math.PI*c.d*c.d/4);return s=>{const n=.5*rho(s.h)*s.v*s.v/B*Math.sqrt(1+c.ld*c.ld)/G0,vy=s.v*Math.sin(s.g);let k=0.2+0.3*(n-4)-0.006*vy;if(n<0.3)k=1;k=Math.max(-1,Math.min(1,k));return Math.acos(k)/D}}
+function fly(c,v0,gam0,mode,h0=122e3,dt=0.05){const ld=mode==='ball'?0:c.ld,bank=bankFor(c,mode);let v=v0,g=gam0*D,h=h0,x=0,t=0,peakG=0,peakGh=0,peakQ=0,heat=0,subT=null,skipped=false;const out=[];const A=Math.PI*c.d*c.d/4,B=c.m/(c.cd*A);
+  while(h>0&&t<5000){const r=RE+h,gr=MU/r/r,rr=rho(h),Dd=.5*rr*v*v/B,L=ld*Dd,s=bank({t,h,v,g})*D;
+    v+=(-Dd-gr*Math.sin(g))*dt;g+=((L*Math.cos(s))-(gr-v*v/r)*Math.cos(g))/v*dt;h+=v*Math.sin(g)*dt;x+=v*Math.cos(g)*dt*RE/r;t+=dt;
+    const n=Math.hypot(Dd,L)/G0;if(n>peakG){peakG=n;peakGh=h}const q=1.7415e-4*Math.sqrt(rr/c.rn)*v*v*v;if(q>peakQ)peakQ=q;heat+=q*dt;if(subT===null&&v<sound(h))subT=t;
+    if(out.length===0||t-out.at(-1)[0]>=1)out.push([t,x,h,v,n,q]);if(h>h0+1000&&g>0){skipped=true;break}if(v<150&&h<25e3)break}
+  out.push([t,x,h,v,0,0]);return {peakG,peakGh,peakQ,heat,subT,t,x,skipped,out,B}}
+// ---- UI ----
+const $=id=>document.getElementById(id);const veh=$('veh');for(const [k,c] of Object.entries(VEH))veh.add(new Option(c.name,k));
+let R=null;
+function cur(){return {c:VEH[veh.value],v:+$('iV').value*1000,a:-+$('iA').value,mode:$('mode').value}}
+function run(){const s=cur();$('oV').textContent=(s.v/1000).toFixed(2)+' km/s'+(Math.abs(s.v-7800)<60?' (low orbit)':Math.abs(s.v-11030)<60?' (the Moon)':Math.abs(s.v-12900)<60?' (Stardust)':'');$('oA').textContent=(-s.a).toFixed(2)+'°';$('vehNote').textContent=s.c.note;
+  R=fly(s.c,s.v,s.a,s.mode);const lim=s.c.crew?10:60;const g=R.peakG;
+  const cells=[['Peak braking',R.skipped?'—':g.toFixed(1)+' g',R.skipped?'':g>lim?'bad':g>6?'warn':'ok'],['At altitude',R.skipped?'—':(R.peakGh/1000).toFixed(0)+' km',''],['Peak heating',(R.peakQ/1e6).toFixed(2)+' MW/m²',R.peakQ>8e6?'bad':R.peakQ>3e6?'warn':''],['Down to sound speed',R.skipped||R.subT===null?'—':(R.subT/60).toFixed(1)+' min',''],
+   ['Heat soaked up',(R.heat/1e6).toFixed(0)+' MJ/m²',''],['Distance flown',nf.format(Math.round(R.x/1000))+' km',''],['Time in the air',(R.t/60).toFixed(1)+' min',''],['Ballistic coefficient',Math.round(R.B)+' kg/m²','']];
+  $('stats').innerHTML=cells.map(c=>`<div class="stat ${c[2]}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  $('verdict').innerHTML=R.skipped?`<b class="bad">Skipped out.</b> Too shallow: the capsule bounced off the upper air and is heading back to space, slower but now on a long orbit it was never meant to fly. Steepen the angle or point the lift down.`
+   :g>lim?`<b class="bad">${s.c.crew?'Crew in danger':'Too steep'}.</b> ${g.toFixed(1)} g at ${(R.peakGh/1000).toFixed(0)} km. ${s.c.crew?'That is above the 10 g this page uses as the crew limit. Make the angle shallower, or let the autopilot roll the lift.':'Even an uncrewed capsule has limits.'}`
+   :`<b class="ok">Home.</b> Peak ${g.toFixed(1)} g at ${(R.peakGh/1000).toFixed(0)} km, heating peaked at ${(R.peakQ/1e6).toFixed(1)} MW per square metre, about ${Math.round(R.peakQ/1361)} times the sunlight on a spacecraft near Earth.`;
+  drawTrj();drawGQ();drawCor()}
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+function gcol(n){const t=Math.min(1,n/12);return `rgb(${Math.round(95+t*160)},${Math.round(214-t*140)},${Math.round(160-t*100)})`}
+function drawTrj(){const cv=$('trj'),g=cv.getContext('2d'),w=cv.clientWidth,h=cv.clientHeight,X0=40,Y0=h-24,pw=w-X0-10,ph=h-24-12,xm=Math.max(800,Math.ceil(R.x/1000/500)*500),P=(x,y)=>[X0+x/1000/xm*pw,Y0-y/125e3*ph];
+  g.fillStyle='#02030a';g.fillRect(0,0,w,h);const sky=g.createLinearGradient(0,Y0-ph,0,Y0);sky.addColorStop(0,'rgba(10,14,40,0)');sky.addColorStop(1,'rgba(60,110,200,.22)');g.fillStyle=sky;g.fillRect(X0,Y0-ph,pw,ph);
+  g.font='600 11px "Saira Condensed",sans-serif';g.fillStyle='#8a97a8';g.strokeStyle='#1f2a38';for(let k=0;k<=120;k+=20){const [,y]=P(0,k*1e3);g.beginPath();g.moveTo(X0,y);g.lineTo(X0+pw,y);g.stroke();g.fillText(k+' km',2,y+4)}
+  for(let k=0;k<=xm;k+=xm>2000?1000:250){const [x]=P(k*1e3,0);g.fillText(nf.format(k)+' km',x-10,h-7)}
+  g.lineWidth=3;for(let i=1;i<R.out.length;i++){const a=R.out[i-1],b=R.out[i],[x1,y1]=P(a[1],a[2]),[x2,y2]=P(b[1],b[2]);g.strokeStyle=gcol(b[4]);g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke()}g.lineWidth=1;
+  const last=R.out.at(-1),[lx,ly]=P(last[1],last[2]);g.fillStyle='#fff';g.beginPath();g.arc(lx,ly,4,0,7);g.fill();
+  g.fillStyle='#8a97a8';g.fillText('COLOUR = BRAKING FORCE: GREEN GENTLE, RED HARD',X0+6,14)}
+function drawGQ(){const cv=$('gq'),g=cv.getContext('2d'),w=cv.clientWidth,h=cv.clientHeight,X0=40,Y0=h-22,pw=w-X0-40,ph=h-22-12,tm=Math.max(60,R.t),gm=Math.max(5,Math.ceil(R.peakG/5)*5),qm=Math.max(1,Math.ceil(R.peakQ/1e6));
+  g.fillStyle='#02030a';g.fillRect(0,0,w,h);g.font='600 11px "Saira Condensed",sans-serif';g.strokeStyle='#1f2a38';g.fillStyle='#8a97a8';
+  for(let k=0;k<=4;k++){const y=Y0-k/4*ph;g.beginPath();g.moveTo(X0,y);g.lineTo(X0+pw,y);g.stroke();g.fillStyle='#e7edf3';g.fillText((gm*k/4).toFixed(0)+' g',4,y+4);g.fillStyle='#ff7a3c';g.fillText((qm*k/4).toFixed(1),X0+pw+4,y+4)}
+  for(let m=0;m<=tm/60;m+=tm>600?2:1){const x=X0+m*60/tm*pw;g.fillStyle='#8a97a8';g.fillText(m+' min',x-8,h-6)}
+  const line=(k,sc,col)=>{g.strokeStyle=col;g.lineWidth=1.8;g.beginPath();R.out.forEach((o,i)=>{const x=X0+o[0]/tm*pw,y=Y0-o[k]/sc*ph;i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();g.lineWidth=1};line(4,gm,'#e7edf3');line(5,qm*1e6,'#ff7a3c');
+  g.fillStyle='#e7edf3';g.fillText('BRAKING (g)',X0+6,12);g.fillStyle='#ff7a3c';g.fillText('HEATING (MW/m²)',X0+90,12)}
+let CORR=null,corKey='';
+function drawCor(){const s=cur(),key=[veh.value,s.v,s.mode].join();if(key!==corKey){corKey=key;CORR=[];for(let a=1;a<=15.001;a+=0.25){const r=fly(s.c,s.v,-a,s.mode,122e3,0.1);CORR.push([a,r.skipped?null:r.peakG])}}
+  const cv=$('cor'),g=cv.getContext('2d'),w=cv.clientWidth,h=cv.clientHeight,X0=40,Y0=h-24,pw=w-X0-10,ph=h-24-12,gm=Math.min(80,Math.max(15,Math.ceil(Math.max(...CORR.map(c=>c[1]||0))/10)*10)),P=(a,n)=>[X0+(a-1)/14*pw,Y0-Math.min(n,gm)/gm*ph];
+  g.fillStyle='#02030a';g.fillRect(0,0,w,h);g.font='600 11px "Saira Condensed",sans-serif';g.strokeStyle='#1f2a38';g.fillStyle='#8a97a8';
+  for(let k=0;k<=gm;k+=gm>40?20:5){const [,y]=P(1,k);g.beginPath();g.moveTo(X0,y);g.lineTo(X0+pw,y);g.stroke();g.fillText(k+' g',4,y+4)}for(let a=1;a<=15;a+=2){const [x]=P(a,0);g.fillText(a+'°',x-6,h-7)}
+  const lim=s.c.crew?10:60,skipEnd=CORR.filter(c=>c[1]===null).reduce((m,c)=>Math.max(m,c[0]),0),okA=CORR.filter(c=>c[1]!==null&&c[1]<=lim);
+  if(skipEnd){const [x]=P(skipEnd+0.125,0);g.fillStyle='rgba(116,199,255,.12)';g.fillRect(X0,Y0-ph,x-X0,ph);g.fillStyle='#74c7ff';g.fillText('SKIPS OUT',X0+6,Y0-ph+14)}
+  if(okA.length){const [x1]=P(okA[0][0]-0.125,0),[x2]=P(okA.at(-1)[0]+0.125,0);g.fillStyle='rgba(95,214,160,.16)';g.fillRect(x1,Y0-ph,x2-x1,ph);g.fillStyle='#5fd6a0';g.fillText('CORRIDOR',x1+4,Y0-ph+28)}
+  if(s.c.crew){const [,y]=P(1,10);g.strokeStyle='rgba(255,107,94,.7)';g.setLineDash([4,4]);g.beginPath();g.moveTo(X0,y);g.lineTo(X0+pw,y);g.stroke();g.setLineDash([]);g.fillStyle='#ff6b5e';g.fillText('10 g',X0+pw-26,y-4)}
+  g.strokeStyle='#ffa24a';g.lineWidth=2;g.beginPath();let on=false;for(const [a,n] of CORR){if(n===null){on=false;continue}const [x,y]=P(a,n);on?g.lineTo(x,y):g.moveTo(x,y);on=true}g.stroke();g.lineWidth=1;
+  const [sx]=P(-s.a,0);g.strokeStyle='#fff';g.setLineDash([3,3]);g.beginPath();g.moveTo(sx,Y0-ph);g.lineTo(sx,Y0);g.stroke();g.setLineDash([]);
+  $('corTxt').textContent=okA.length?`For this capsule, speed and steering, the corridor runs from ${okA[0][0].toFixed(2)}° to ${okA.at(-1)[0].toFixed(2)}° below level: ${(okA.at(-1)[0]-okA[0][0]+0.25).toFixed(2)}° wide${s.c.crew?' under 10 g':''}.`:'No angle works for this combination: try another steering mode or a slower return.'}
+$('cor').addEventListener('click',e=>{const b=$('cor').getBoundingClientRect(),a=1+(e.clientX-b.left-40)/(b.width-50)*14;$('iA').value=Math.max(1,Math.min(15,a)).toFixed(2);run()});
+['veh','iV','iA','mode'].forEach(id=>$(id).addEventListener('input',run));
+document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{$('iV').value=b.dataset.v;run()});
+// ---- checks ----
+(()=>{const sd=fly(VEH.stardust,12.9e3,-8.2,'ball',125e3,0.02);
+  // Allen-Eggers in its own idealised world: exponential air, no gravity, flat Earth
+  function ae(ang){const H=7000,c={m:500,d:1,cd:1};const B=c.m/(c.cd*Math.PI/4);let v=7500,g=ang*D,h=150e3,pk=0;const dt=0.005;while(h>0){const rr=1.225*Math.exp(-h/H),Dd=.5*rr*v*v/B;v-=Dd*dt;h+=v*Math.sin(g)*dt;pk=Math.max(pk,Dd/G0);if(v<50)break}return [pk,7500**2*Math.sin(-ang*D)/(2*Math.E*H)/G0]}
+  const a1=ae(-10),a2=ae(-45),soyN=fly(VEH.soyuz,7.6e3,-1.35,'auto',100e3),soyB=fly(VEH.soyuz,7.6e3,-1.35,'ball',100e3);
+  const rows=[['Stardust capsule, 2006: peak braking','34 g',sd.peakG.toFixed(1)+' g','mid'],['Stardust: altitude of peak braking','55 km',(sd.peakGh/1000).toFixed(0)+' km','ok'],['Stardust: down to the speed of sound','within 110 s',sd.subT.toFixed(0)+' s after 125 km','mid'],
+   ['Allen–Eggers formula, 10° entry (ideal air, no gravity)',a1[1].toFixed(2)+' g',a1[0].toFixed(2)+' g','ok'],['Allen–Eggers formula, 45° entry',a2[1].toFixed(2)+' g',a2[0].toFixed(2)+' g','ok'],
+   ['Soyuz from low orbit: steered, then ballistic','ballistic returns are “hard on the occupants”',`${soyN.peakG.toFixed(1)} g steered, ${soyB.peakG.toFixed(1)} g ballistic`,'']];
+  $('check').innerHTML='<tr><th>Test</th><th>Real or textbook</th><th>This model</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]}">${r[2]}</td></tr>`).join('')+'<tr><td colspan="3" class="note">The Allen–Eggers rows test the code itself: in the idealised world the formula assumes, the simulator should and does agree to within a tenth of a percent. Stardust tests the physics against a real flight; the time is counted from 125 km up, and the published 40 s and 110 s may count from a different start.</td></tr>';
+  $('caps').innerHTML='<tr><th>Capsule</th><th class="n">Diameter</th><th class="n">Mass</th><th class="n">Lift ÷ drag</th><th class="n">Ballistic coefficient</th></tr>'+Object.values(VEH).map(c=>`<tr><td>${c.name}</td><td class="n">${c.d} m</td><td class="n">${nf.format(c.m)} kg</td><td class="n">${c.ld}</td><td class="n">${Math.round(c.m/(c.cd*Math.PI*c.d*c.d/4))} kg/m²</td></tr>`).join('')})();
+for(const id of ['trj','gq','cor']){const c=$(id);size(c);new ResizeObserver(()=>{size(c);if(R){drawTrj();drawGQ();drawCor()}}).observe(c)}
+run();
+window.__re={fly,VEH,run,get R(){return R}};
+})();
+</script>

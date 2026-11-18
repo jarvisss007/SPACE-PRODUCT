@@ -1,0 +1,147 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>NavIC Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a navigation-geometry bench. The constellation's ground tracks and a live map of position quality over the region, a satellite roster you can switch on and off, then city readings and the checks. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--nav:#ff9933;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--nav)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"],button.primary{background:var(--nav);border-color:var(--nav);color:#1c0e02}button:focus-visible,input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--nav)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}
+#map{aspect-ratio:5/4}
+.sat{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font-size:13px;padding:6px 0;border-bottom:1px solid var(--line)}.sat input{width:18px;height:18px;accent-color:var(--nav)}.sat small{color:var(--dim)}
+.tag{font-size:11px;padding:2px 6px;border-radius:3px;background:var(--panel2);white-space:nowrap}.tag.ok{color:var(--ok)}.tag.bad{color:var(--bad)}.tag.mid{color:var(--gold)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">India’s own GPS · geometry of a position fix · four satellites or nothing</div>
+    <h1>NavIC Lab</h1>
+    <p>NavIC is India’s satellite navigation system, built so that India does not depend on America’s GPS. Its satellites hang high over the Indian Ocean: three stay over fixed points, and four trace figure-eights across the equator. A receiver works out where it is by timing signals from several satellites at once. That needs at least four working satellites in view: one each for east, north and height, and one more for the receiver’s own clock. In March 2026, after a string of atomic-clock failures, only three NavIC satellites could still give positions. This page shows what that means.</p>
+  </header>
+
+  <section class="card">
+    <div class="seg" style="margin-bottom:10px"><span class="note">Constellation</span><button type="button" data-s="design" aria-pressed="false">As designed: 7</button><button type="button" data-s="mar26" aria-pressed="true">March 2026: 3</button><button type="button" data-s="now" aria-pressed="false">If NVS-03 joins: 4</button></div>
+    <div class="two">
+      <div>
+        <canvas id="map" aria-label="Map of position quality across the Indian Ocean region with the satellites' ground tracks"></canvas>
+        <label class="note" style="display:block;margin-top:8px">Time of day (UTC) <b id="oT" style="color:var(--ink)"></b><input type="range" id="iT" min="0" max="1436" step="4" value="360"></label>
+        <div class="seg" style="margin-top:4px"><button type="button" id="play" class="primary">Play the day</button><button type="button" id="worst" aria-pressed="false">Show the worst moment of the day</button></div>
+      </div>
+      <div>
+        <h2 style="font-size:20px">Satellites</h2>
+        <div id="roster"></div>
+        <p class="note" style="margin-top:8px">Tick a satellite to switch it on. Status from ISRO’s reports as collected in the NavIC article; satellites with failed clocks still send short messages but cannot give a position.</p>
+      </div>
+    </div>
+    <div class="verdict" id="sum"></div>
+  </section>
+
+  <section class="card">
+    <h2>What a receiver in each city gets</h2>
+    <p>Position error is roughly the error in each satellite’s range times a number called PDOP, which depends only on the satellites’ geometry. Satellites spread across the sky give a small PDOP; bunched satellites give a large one. Below 4 is good; above 10 is poor. Here are the best and worst values across a whole day.</p>
+    <div class="scroll"><table id="cities"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Checks</h2>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">Orbits are perfect circles at geosynchronous height, using the published slots: geostationary at 32.5°E, 83°E and 129.5°E, inclined about 5°, and two inclined planes crossing the equator at 55°E and 111.75°E at 29°. The phasing of the two satellites sharing each inclined plane is not published in our sources, so it is assumed to be a quarter of a day apart. (Half a day would put both at the figure-eight’s crossing point at the same moment, twice a day, collapsing the geometry.) When each slot starts its daily loop is a guess too, so the exact time of the worst moment may differ. Signals are counted from 5° above the horizon, and buildings, terrain and the ionosphere are ignored. The map shows geometry only; it is not a forecast of service. NavIC can also use GPS satellites alongside its own in combined receivers, and this page leaves that out.</p>
+  </section>
+
+  <footer>Sources: Wikipedia article “NavIC” (orbital slots and inclinations; satellite status table; primary service area of India and 1,500 km around it, with 10–20 m position accuracy; only IRNSS-1B, IRNSS-1I and NVS-01 able to provide positioning as of March 2026; NVS-02’s fuel-system failure; NVS-03 at 111.75°E listed operational there, but as of 18 November 2026 the public CelesTrak satellite catalogue has no object of that name, so the four-satellite case is shown as “if NVS-03 joins”). Earth model WGS-84 radius; geosynchronous radius 42,164 km. An independent model, not affiliated with ISRO.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const D=Math.PI/180,RE=6378.137,RS=42164,$=id=>document.getElementById(id);
+// slot: GEO longitude or IGSO node longitude, inclination, phase (deg of argument of latitude at 00:00 UTC; assumed)
+const SATS=[
+ {id:'1B',name:'IRNSS-1B',type:'IGSO',lon:55,inc:29,ph:0,st:'ok',note:'working'},
+ {id:'1I',name:'IRNSS-1I',type:'IGSO',lon:55,inc:29,ph:90,st:'ok',note:'working'},
+ {id:'1D',name:'IRNSS-1D',type:'IGSO',lon:111.75,inc:29,ph:180,st:'bad',note:'decommissioned'},
+ {id:'1E',name:'IRNSS-1E',type:'IGSO',lon:111.75,inc:29,ph:270,st:'bad',note:'clocks failed'},
+ {id:'N3',name:'NVS-03',type:'IGSO',lon:111.75,inc:29,ph:270,st:'mid',note:'planned for 111.75°E; not in the public catalogue'},
+ {id:'1F',name:'IRNSS-1F',type:'GEO',lon:32.5,inc:5,ph:0,st:'bad',note:'clocks failed March 2026'},
+ {id:'1C',name:'IRNSS-1C',type:'GEO',lon:83,inc:5,ph:0,st:'bad',note:'clocks failed'},
+ {id:'N1',name:'NVS-01',type:'GEO',lon:129.5,inc:5.1,ph:0,st:'ok',note:'working; replaced 1G'}];
+const SCEN={design:['1B','1I','1D','1E','1F','1C','N1'],mar26:['1B','1I','N1'],now:['1B','1I','N1','N3']};
+let on=new Set(SCEN.mar26);
+const SID=86164.0905;
+function satECEF(s,tMin){const u=(s.ph+360*tMin*60/SID)*D,i=s.inc*D;const x=Math.cos(u),y=Math.cos(i)*Math.sin(u),z=Math.sin(i)*Math.sin(u);
+  // in the Earth-fixed frame the node stays at its longitude; the satellite's longitude is node + atan2(y,x) - u (earth turns as fast as the satellite goes round)
+  const lon=s.lon*D+Math.atan2(y,x)-u,lat=Math.asin(z);return [RS*Math.cos(lat)*Math.cos(lon),RS*Math.cos(lat)*Math.sin(lon),RS*Math.sin(lat),lat/D,((lon/D+540)%360)-180]}
+function pdop(lat,lon,sats){const la=lat*D,lo=lon*D,o=[RE*Math.cos(la)*Math.cos(lo),RE*Math.cos(la)*Math.sin(lo),RE*Math.sin(la)],up=[Math.cos(la)*Math.cos(lo),Math.cos(la)*Math.sin(lo),Math.sin(la)];const G=[];
+  for(const p of sats){const d=[p[0]-o[0],p[1]-o[1],p[2]-o[2]],r=Math.hypot(...d),e=Math.asin((d[0]*up[0]+d[1]*up[1]+d[2]*up[2])/r);if(e>5*D)G.push([d[0]/r,d[1]/r,d[2]/r,1])}
+  if(G.length<4)return {n:G.length,p:Infinity};const N=[...Array(4)].map((_,i)=>[...Array(4)].map((_,j)=>G.reduce((a,g)=>a+g[i]*g[j],0)));const inv=inv4(N);if(!inv)return {n:G.length,p:Infinity};return {n:G.length,p:Math.sqrt(inv[0][0]+inv[1][1]+inv[2][2])}}
+function inv4(m){const a=m.map((r,i)=>[...r,...[0,1,2,3].map(j=>i===j?1:0)]);for(let c=0;c<4;c++){let p=c;for(let r=c+1;r<4;r++)if(Math.abs(a[r][c])>Math.abs(a[p][c]))p=r;if(Math.abs(a[p][c])<1e-12)return null;[a[c],a[p]]=[a[p],a[c]];const k=a[c][c];for(let j=0;j<8;j++)a[c][j]/=k;for(let r=0;r<4;r++)if(r!==c){const f=a[r][c];for(let j=0;j<8;j++)a[r][j]-=f*a[c][j]}}return a.map(r=>r.slice(4))}
+const active=t=>SATS.filter(s=>on.has(s.id)).map(s=>satECEF(s,t));
+// ---- roster ----
+function roster(){$('roster').innerHTML=SATS.map(s=>`<label class="sat"><input type="checkbox" data-id="${s.id}" ${on.has(s.id)?'checked':''}><span>${s.name} <small>${s.type==='GEO'?'stays over '+s.lon+'°E':'figure-eight at '+s.lon+'°E'}</small></span><span class="tag ${s.st}">${s.note}</span></label>`).join('');
+  document.querySelectorAll('#roster input').forEach(c=>c.onchange=()=>{c.checked?on.add(c.dataset.id):on.delete(c.dataset.id);document.querySelectorAll('[data-s]').forEach(b=>b.setAttribute('aria-pressed','false'));refresh()})}
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{on=new Set(SCEN[b.dataset.s]);document.querySelectorAll('[data-s]').forEach(x=>x.setAttribute('aria-pressed',x===b));roster();refresh()});
+// ---- map ----
+const LON0=30,LON1=140,LAT0=-35,LAT1=50,cv=$('map'),g=cv.getContext('2d');let tMin=360,worstMode=false,playing=false,lastF=0;
+const CITIES=[['Delhi',28.6,77.2],['Mumbai',19.1,72.9],['Chennai',13.1,80.3],['Kolkata',22.6,88.4],['Bengaluru',12.97,77.6],['Srinagar',34.1,74.8],['Guwahati',26.1,91.7],['Port Blair',11.7,92.7],['Colombo',6.9,79.9],['Dubai',25.2,55.3],['Singapore',1.35,103.8],['Perth',-31.95,115.86],['Nairobi',-1.29,36.82]];
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+const col=p=>!isFinite(p)?[60,16,20]:p<2.5?[60,170,120]:p<4?[110,190,110]:p<6?[200,180,80]:p<10?[220,130,60]:[180,60,50];
+let worstGrid=null,worstKey='';
+function grid(step=2){const out=[];for(let la=LAT1;la>=LAT0;la-=step)for(let lo=LON0;lo<=LON1;lo+=step)out.push([la,lo]);return out}
+function drawMap(){const w=cv.clientWidth,h=cv.clientHeight,X=lo=>(lo-LON0)/(LON1-LON0)*w,Y=la=>(LAT1-la)/(LAT1-LAT0)*h;g.fillStyle='#02030a';g.fillRect(0,0,w,h);
+  const step=2;let vals;if(worstMode){const key=[...on].sort().join();if(key!==worstKey){worstKey=key;worstGrid=grid(step).map(([la,lo])=>{let m=0;for(let t=0;t<1436;t+=30){const r=pdop(la,lo,active(t));m=Math.max(m,r.p)}return m})}vals=worstGrid}
+  else{const sats=active(tMin);vals=grid(step).map(([la,lo])=>pdop(la,lo,sats).p)}
+  const cw=w/((LON1-LON0)/step+1),ch=h/((LAT1-LAT0)/step+1);grid(step).forEach(([la,lo],i)=>{const c=col(vals[i]);g.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},.55)`;g.fillRect(X(lo)-cw/2,Y(la)-ch/2,cw+1,ch+1)});
+  g.strokeStyle='rgba(231,237,243,.12)';g.font='600 11px "Saira Condensed",sans-serif';g.fillStyle='#8a97a8';for(let lo=40;lo<=140;lo+=20){g.beginPath();g.moveTo(X(lo),0);g.lineTo(X(lo),h);g.stroke();g.fillText(lo+'°E',X(lo)+3,h-4)}for(let la=-30;la<=50;la+=20){g.beginPath();g.moveTo(0,Y(la));g.lineTo(w,Y(la));g.stroke();g.fillText(la===0?'EQUATOR':Math.abs(la)+'°'+(la>0?'N':'S'),3,Y(la)-3)}
+  // tracks + satellites
+  for(const s of SATS){if(!on.has(s.id))continue;g.strokeStyle='rgba(255,153,51,.6)';g.beginPath();for(let t=0;t<=1440;t+=10){const p=satECEF(s,t),x=X(p[4]),y=Y(p[3]);t?g.lineTo(x,y):g.moveTo(x,y)}g.stroke();if(!worstMode){const p=satECEF(s,tMin);g.fillStyle='#fff';g.beginPath();g.arc(X(p[4]),Y(p[3]),4,0,7);g.fill();g.fillStyle='#ffcf99';const tw=g.measureText(s.name).width;g.fillText(s.name,Math.min(X(p[4])+6,w-tw-2),Y(p[3])-5)}}
+  const quiet=w<520?new Set(['Bengaluru','Srinagar','Guwahati','Colombo','Port Blair']):new Set();for(const [n,la,lo] of CITIES){g.fillStyle='#e7edf3';g.beginPath();g.arc(X(lo),Y(la),2.5,0,7);g.fill();if(quiet.has(n))continue;g.fillStyle='#cfd6de';const tw=g.measureText(n).width;g.fillText(n,Math.min(X(lo)+4,w-tw-2),Math.min(Y(la)+11,h-16))}
+  // legend
+  const L=[['< 2.5',[60,170,120]],['2.5–4',[110,190,110]],['4–6',[200,180,80]],['6–10',[220,130,60]],['> 10',[180,60,50]],['no fix',[60,16,20]]];let lx=8;for(const [t,c] of L){g.fillStyle=`rgb(${c})`;g.fillRect(lx,8,12,10);g.fillStyle='#e7edf3';g.fillText(t,lx+15,17);lx+=g.measureText(t).width+26}
+  g.fillStyle='#8a97a8';g.fillText(worstMode?'PDOP AT THE WORST MOMENT OF THE DAY':'PDOP NOW',8,32)}
+function hhmm(t){return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')+' UTC'}
+function refresh(){$('oT').textContent=hhmm(tMin);drawMap();
+  const n=on.size,goodWorking=[...on].every(id=>SATS.find(s=>s.id===id).st==='ok');const ind=pdop(22,79,active(tMin));
+  $('sum').innerHTML=n<4?`<b class="bad">No position anywhere.</b> With ${n} satellite${n===1?'':'s'} a receiver has ${n} equations and 4 unknowns: east, north, height and its own clock error. It can still receive NavIC’s short messages, but it cannot tell where it is. This was NavIC’s situation in March 2026.`
+   :`${ind.p<4?'<b class="ok">Positions work over central India.</b>':ind.p<10?'<b class="mid">Positions work, but poorly.</b>':'<b class="bad">Too few satellites in view.</b>'} At ${hhmm(tMin)}, a receiver near the centre of India sees ${ind.n} of them with a PDOP of ${isFinite(ind.p)?ind.p.toFixed(1):'none'}. ${n===4?'With exactly four, losing any one satellite, or one dipping behind a hill, ends the fix.':''}${goodWorking?'':' Some ticked satellites have failed clocks in reality.'}`;cityTable()}
+function cityTable(){const sats=t=>active(t);let h='<tr><th>Place</th><th class="n">Satellites in view</th><th class="n">Best PDOP</th><th class="n">Worst PDOP</th><th class="n">Position error at 5 m per range</th></tr>';
+  for(const [n,la,lo] of CITIES){let best=Infinity,worst=0,nv=[99,0];for(let t=0;t<1436;t+=20){const r=pdop(la,lo,sats(t));best=Math.min(best,r.p);worst=Math.max(worst,r.p);nv=[Math.min(nv[0],r.n),Math.max(nv[1],r.n)]}
+    const f=p=>isFinite(p)?p.toFixed(1):'no fix',c=p=>!isFinite(p)?'bad':p<4?'ok':p<10?'mid':'bad';h+=`<tr><td>${n}</td><td class="n">${nv[0]===nv[1]?nv[0]:nv[0]+'–'+nv[1]}</td><td class="n ${c(best)}">${f(best)}</td><td class="n ${c(worst)}">${f(worst)}</td><td class="n">${isFinite(worst)?Math.round(best*5)+'–'+Math.round(worst*5)+' m':'none'}</td></tr>`}
+  $('cities').innerHTML=h}
+$('iT').oninput=()=>{tMin=+$('iT').value;playing=false;$('play').textContent='Play the day';refresh()};
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'Pause':'Play the day';if(playing&&worstMode){worstMode=false;$('worst').setAttribute('aria-pressed','false')}};
+$('worst').onclick=e=>{worstMode=!worstMode;e.target.setAttribute('aria-pressed',worstMode);playing=false;$('play').textContent='Play the day';refresh()};
+function loop(ts){const dt=lastF?Math.min(.1,(ts-lastF)/1000):0;lastF=ts;if(playing){tMin=(tMin+dt*90)%1436;$('iT').value=Math.round(tMin);tMin=Math.round(tMin);refresh()}requestAnimationFrame(loop)}
+// ---- checks ----
+(()=>{const igso=SATS[0];let latMax=0,lonMin=1e9,lonMax=-1e9;for(let t=0;t<1436;t+=2){const p=satECEF(igso,t);latMax=Math.max(latMax,p[3]);lonMin=Math.min(lonMin,p[4]);lonMax=Math.max(lonMax,p[4])}
+  const save=on;on=new Set(SCEN.design);const inside=[['Delhi',28.6,77.2],['Chennai',13.1,80.3],['Guwahati',26.1,91.7],['Port Blair',11.7,92.7]],far=[['Perth',-31.95,115.86],['Nairobi',-1.29,36.82]];
+  const worstAt=(la,lo)=>{let m=0;for(let t=0;t<1436;t+=20)m=Math.max(m,pdop(la,lo,active(t)).p);return m};const wi=Math.max(...inside.map(c=>worstAt(c[1],c[2]))),wf=Math.min(...far.map(c=>worstAt(c[1],c[2])));on=save;
+  const rows=[['Figure-eight reaches north and south to','the 29° inclination',latMax.toFixed(1)+'° each side of the equator','ok'],['Figure-eight sways east–west by',' ',`±${((lonMax-lonMin)/2).toFixed(1)}° around ${igso.lon}°E`,''],
+   ['Full design: worst PDOP across India in a day','service promised over India',wi.toFixed(1)+' (Delhi, Chennai, Guwahati, Port Blair)','ok'],['Full design: worst PDOP far outside (Perth, Nairobi)','only an extended area, accuracy not assured',isFinite(wf)?wf.toFixed(1):'no fix at times','mid'],
+   ['Range error implied by the 10–20 m accuracy promise','',`about ${(10/wi).toFixed(0)}–${(20/wi).toFixed(0)} m per satellite at that worst PDOP`,''],['Satellites needed for a fix','4',`3 gives no fix anywhere on the map, at any hour`,'ok']];
+  $('check').innerHTML='<tr><th>Test</th><th>Published</th><th>This model</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]}">${r[2]}</td></tr>`).join('')})();
+size(cv);new ResizeObserver(()=>{size(cv);drawMap()}).observe(cv);roster();refresh();requestAnimationFrame(loop);
+window.__nav={SATS,pdop,active,satECEF,setOn:a=>{on=new Set(a);refresh()}};
+})();
+</script>

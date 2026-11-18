@@ -1,0 +1,316 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Solar System Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: an instrument console. Orrery first (where everything is), then the world picker that drives three panels: NASA data, the mission calculator, and the landing trials with an attempt log. Single dark look: deep space. */
+:root{
+  color-scheme:dark;
+  --void:#04060b; --panel:#0b1017; --panel2:#121a25; --line:#1f2a38;
+  --ink:#e7edf3; --dim:#8a97a8; --sun:#ffc860; --lox:#74c7ff; --mars:#e0774a; --gold:#e8c46a; --ok:#5fd6a0; --bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+html,body{background:var(--void)}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--lox)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,56px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:72ch;color:#c3ccd6}
+a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.orrery{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.orrery{grid-template-columns:minmax(0,1fr)}}
+#orr{display:block;width:100%;aspect-ratio:1/1;max-height:620px;background:#02030a;border-radius:4px}
+.ctl{display:flex;flex-direction:column;gap:12px}
+.ctl label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim)}
+.ctl output{font-family:var(--display);font-size:18px;font-weight:600;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--lox)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"]{background:var(--lox);border-color:var(--lox);color:#04121e}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.worlds{display:flex;flex-wrap:wrap;gap:6px}
+.worlds button{display:flex;align-items:center;gap:6px}
+.worlds i{display:inline-block;width:10px;height:10px;border-radius:50%}
+.three{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.three{grid-template-columns:minmax(0,1fr)}}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13.5px}
+td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+td.n,th.n{text-align:right}
+tr.sel td{background:rgba(116,199,255,.08)}
+.scroll{overflow-x:auto}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}
+.verdict b.ok{color:var(--ok)}.verdict b.bad{color:var(--bad)}.verdict b.mid{color:var(--gold)}
+.land{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.land{grid-template-columns:minmax(0,1fr)}}
+#lander{display:block;width:100%;aspect-ratio:4/3;border-radius:4px;background:#000;touch-action:none}
+.gauges{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+.gauges div{background:var(--panel2);border-radius:4px;padding:6px 8px;min-width:0}
+.gauges span{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.gauges b{font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+#thrBtn{min-height:56px;font-size:16px;flex:1}
+select{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 8px}
+.chip{font-family:var(--display);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;border-radius:3px}
+.chip.ok{background:rgba(95,214,160,.15);color:var(--ok)}.chip.bad{background:rgba(255,107,94,.15);color:var(--bad)}.chip.mid{background:rgba(232,196,106,.15);color:var(--gold)}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Starship Atlas"><div class="sa-in"><a href="index.html" class="sa-brand">Starship Atlas</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html" aria-current="page">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">NASA and JPL numbers · every planet · try, fail, try again</div>
+    <h1>Solar System Lab</h1>
+    <p>The planets are where JPL's own orbital elements put them on the date you choose, back to Aryabhata's sky in 499 CE. Pick a world to see NASA's figures for it, the cost of sending a Starship there, and then try to land on it yourself. Every attempt is logged, so you can learn each world by trial and error.</p>
+  </header>
+
+  <section class="card orrery">
+    <canvas id="orr" aria-label="Orbits of the planets to scale on a log-distance view, with their positions on the chosen date"></canvas>
+    <div class="ctl">
+      <label>Date <output id="oDate"></output><input id="iDate" type="range" min="-547000" max="36600" step="1" value="0"></label>
+      <div class="seg"><button type="button" data-jump="today">Today</button><button type="button" data-jump="499">Aryabhata, 499 CE</button><button type="button" data-jump="1610">Galileo, 1610</button><button type="button" data-jump="1969">Apollo 11</button><button type="button" id="runT" aria-pressed="false">Run time</button></div>
+      <label>Scale <span class="seg"><button type="button" data-sc="log" aria-pressed="true">Log distances</button><button type="button" data-sc="inner" aria-pressed="false">Inner planets, true scale</button></span></label>
+      <div id="orrInfo" style="font-size:13.5px;color:#c3ccd6"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Pick a world</h2>
+    <div class="worlds" id="worlds"></div>
+  </section>
+
+  <div class="three">
+    <section class="card"><h2 id="dH">NASA fact sheet</h2><div class="scroll"><table id="data"></table></div></section>
+    <section class="card"><h2 id="mH">Sending a Starship</h2><div class="scroll"><table id="mission"></table></div><div class="verdict" id="mVerdict"></div>
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-top:10px">Payload to the surface <output id="oPay" style="font-family:var(--display);font-size:16px;color:var(--ink)"></output><input id="iPay" type="range" min="0" max="150" step="5" value="50"></label></section>
+  </div>
+
+  <section class="card">
+    <h2 id="lH">Landing trials</h2>
+    <div class="land">
+      <div>
+        <canvas id="lander" aria-label="Lander descending toward the surface"></canvas>
+        <div class="gauges"><div><span>Height</span><b id="gH">—</b></div><div><span>Descent</span><b id="gV">—</b></div><div><span>Propellant</span><b id="gF">—</b></div><div><span>Throttle</span><b id="gT">—</b></div></div>
+      </div>
+      <div>
+        <p id="lIntro"></p>
+        <div class="seg" style="margin:8px 0"><button type="button" id="lStart">Start descent</button><button type="button" id="lAuto">Watch the autopilot</button>
+          <select id="lEng" aria-label="Engines"><option value="raptor">1 Raptor (2,300 kN, 40–100%)</option><option value="thr">Landing thrusters (400 kN, 0–100%)</option><option value="3r">3 Raptors (6,900 kN, 40–100%)</option></select></div>
+        <div class="seg"><button type="button" id="thrBtn">Hold to fire · or Space / ↑</button></div>
+        <p style="font-size:13px;color:var(--dim);margin-top:8px">Touch down at 2 m/s or less for a clean landing, up to 5 m/s for a hard one. Faster is a crash. Running out of propellant ends your control.</p>
+        <h2 style="margin-top:12px;font-size:20px">Attempt log</h2>
+        <div class="scroll"><table id="log"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Sources: physical data from NASA's <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/">Planetary Fact Sheet</a> and the per-planet, Jovian and Saturnian satellite sheets (NSSDC). Orbits from E. M. Standish and J. G. Williams, JPL approximate positions, Tables 2a and 2b, valid 3000 BC to 3000 AD (<a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html">ssd.jpl.nasa.gov</a>); JPL no longer lists Pluto, so its position is not drawn. Titan's surface (93.65 K, 1,467 hPa) from the Huygens probe (Fulchignoni et al., Nature 438, 2005); its surface density and scale height are derived from those with the ideal gas law. Mission figures are patched-conic estimates on circular, coplanar orbits from a 300 km Earth orbit, with no gravity assists; real missions to the outer planets use flybys and need far less. Ship: 125 t dry, 1,550 t of propellant, Isp 375 s. Landing propellant figures assume a 120 t lander. The orrery bends distances logarithmically so Mercury and Neptune fit on one screen.
+  </footer>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id),D=Math.PI/180,TAU=Math.PI*2,nf=new Intl.NumberFormat('en-US'),G0=9.80665;
+const clamp=(x,a,b)=>x<a?a:x>b?b:x;
+
+/* ---------- JPL Table 2a + 2b ---------- */
+const EL={
+ mercury:[[0.38709843,0.20563661,7.00559432,252.25166724,77.45771895,48.33961819],[0,0.00002123,-0.00590158,149472.67486623,0.15940013,-0.12214182]],
+ venus:[[0.72332102,0.00676399,3.39777545,181.97970850,131.76755713,76.67261496],[-0.00000026,-0.00005107,0.00043494,58517.81560260,0.05679648,-0.27274174]],
+ earth:[[1.00000018,0.01673163,-0.00054346,100.46691572,102.93005885,-5.11260389],[-0.00000003,-0.00003661,-0.01337178,35999.37306329,0.31795260,-0.24123856]],
+ mars:[[1.52371243,0.09336511,1.85181869,-4.56813164,-23.91744784,49.71320984],[0.00000097,0.00009149,-0.00724757,19140.29934243,0.45223625,-0.26852431]],
+ jupiter:[[5.20248019,0.04853590,1.29861416,34.33479152,14.27495244,100.29282654],[-0.00002864,0.00018026,-0.00322699,3034.90371757,0.18199196,0.13024619],[-0.00012452,0.06064060,-0.35635438,38.35125000]],
+ saturn:[[9.54149883,0.05550825,2.49424102,50.07571329,92.86136063,113.63998702],[-0.00003065,-0.00032044,0.00451969,1222.11494724,0.54179478,-0.25015002],[0.00025899,-0.13434469,0.87320147,38.35125000]],
+ uranus:[[19.18797948,0.04685740,0.77298127,314.20276625,172.43404441,73.96250215],[-0.00020455,-0.00001550,-0.00180155,428.49512595,0.09266985,0.05739699],[0.00058331,-0.97731848,0.17689245,7.67025000]],
+ neptune:[[30.06952752,0.00895439,1.77005520,304.22289287,46.68158724,131.78635853],[0.00006447,0.00000818,0.00022400,218.46515314,0.01009938,-0.00606302],[-0.00041348,0.68346318,-0.10162547,7.67025000]]};
+function elems(name,jd){const [b,r,x]=EL[name],T=(jd-2451545)/36525;const el=b.map((v,i)=>v+r[i]*T);return {el,T,x}}
+function pos(name,jd){const {el,T,x}=elems(name,jd);let [a,e,I,L,wb,O]=el;let M=L-wb;if(x)M+=x[0]*T*T+x[1]*Math.cos(x[3]*T*D)+x[2]*Math.sin(x[3]*T*D);M=((M+180)%360+360)%360-180;
+  const w=wb-O,es=e/D;let E=M+es*Math.sin(M*D);for(let k=0;k<30;k++){const dE=(M-(E-es*Math.sin(E*D)))/(1-e*Math.cos(E*D));E+=dE;if(Math.abs(dE)<1e-8)break}
+  const xp=a*(Math.cos(E*D)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E*D),cw=Math.cos(w*D),sw=Math.sin(w*D),cO=Math.cos(O*D),sO=Math.sin(O*D),cI=Math.cos(I*D);
+  return [(cw*cO-sw*sO*cI)*xp+(-sw*cO-cw*sO*cI)*yp,(cw*sO+sw*cO*cI)*xp+(-sw*sO+cw*cO*cI)*yp]}
+function orbitPath(name,jd){const {el}=elems(name,jd),[a,e,I,L,wb,O]=el,w=wb-O,cw=Math.cos(w*D),sw=Math.sin(w*D),cO=Math.cos(O*D),sO=Math.sin(O*D),cI=Math.cos(I*D),pts=[];
+  for(let k=0;k<=120;k++){const E=k/120*TAU,xp=a*(Math.cos(E)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E);pts.push([(cw*cO-sw*sO*cI)*xp+(-sw*cO-cw*sO*cI)*yp,(cw*sO+sw*cO*cI)*xp+(-sw*sO+cw*cO*cI)*yp])}return pts}
+
+/* ---------- worlds: NASA NSSDC fact sheets ---------- */
+// g m/s2, vesc km/s, R km, day h, temp C, P bar, moons, rho0 kg/m3, H km, parent, a AU (or km from parent), mu km3/s2
+const AU=1.495978707e8,MUS=1.32712440018e11;
+const W=[
+ {id:'mercury',name:'Mercury',col:'#b3a89a',g:3.7,ve:4.3,R:2439.5,day:4222.6,T:167,P:0,moons:0,rho:0,H:0,a:0.387,mu:22032,surf:true,note:'No air at all: every metre per second of a landing is paid in propellant.'},
+ {id:'venus',name:'Venus',col:'#e8cf8f',g:8.9,ve:10.4,R:6052,day:2802,T:464,P:92,moons:0,rho:65,H:15.9,a:0.723,mu:324859,surf:true,note:'Air 65 times denser than Earth’s at the surface, 464 °C and 92 bar. The longest any lander has lasted there is Venera 13’s 127 minutes in 1982.'},
+ {id:'earth',name:'Earth',col:'#4aa3ff',g:9.8,ve:11.2,R:6378,day:24,T:15,P:1.014,moons:1,rho:1.217,H:8.5,a:1,mu:398600,surf:true,note:'The reference world: Starship’s own home field.'},
+ {id:'moon',name:'Moon',col:'#c9c9cc',g:1.6,ve:2.4,R:1737.5,day:708.7,T:-20,P:0,moons:0,rho:0,H:0,parent:'earth',am:384400,mu:4902.8,surf:true,note:'No air; a lander must carry all its braking. Gravity is a sixth of Earth’s, so a single Raptor is far too strong to hover.'},
+ {id:'mars',name:'Mars',col:'#e0774a',g:3.7,ve:5.0,R:3396,day:24.7,T:-65,P:0.00636,moons:2,rho:0.016,H:11.0,a:1.524,mu:42828,surf:true,note:'Air thin enough that it slows a ship only so far; the last few hundred metres per second must be burned off.'},
+ {id:'jupiter',name:'Jupiter',col:'#d9b38c',g:23.1,ve:59.5,R:71492,day:9.9,T:-110,P:null,moons:95,rho:0,H:27,a:5.203,mu:126686534,surf:false,note:'No surface. Below the clouds pressure climbs past 1,000 bar; the Galileo probe was crushed within an hour in 1995.'},
+ {id:'io',name:'Io',col:'#e8d36a',g:1.80,ve:2.56,R:1821.5,day:42.5,T:-143,P:0,moons:0,rho:0,H:0,parent:'jupiter',am:421800,mu:5959.9,surf:true,note:'The most volcanic body known, deep inside Jupiter’s radiation belts.'},
+ {id:'europa',name:'Europa',col:'#d8cdb4',g:1.31,ve:2.03,R:1560.8,day:85.2,T:-160,P:0,moons:0,rho:0,H:0,parent:'jupiter',am:671100,mu:3202.7,surf:true,note:'An ice shell over a global ocean, the leading place to look for life beyond Earth.'},
+ {id:'ganymede',name:'Ganymede',col:'#a99b86',g:1.43,ve:2.74,R:2631.2,day:171.7,T:-163,P:0,moons:0,rho:0,H:0,parent:'jupiter',am:1070400,mu:9887.8,surf:true,note:'The largest moon in the solar system, bigger than Mercury, with its own magnetic field.'},
+ {id:'callisto',name:'Callisto',col:'#7d7266',g:1.24,ve:2.44,R:2410.3,day:400.5,T:-139,P:0,moons:0,rho:0,H:0,parent:'jupiter',am:1882700,mu:7179.3,surf:true,note:'Outside Jupiter’s worst radiation: the usual pick for a base in the Jupiter system.'},
+ {id:'saturn',name:'Saturn',col:'#e3cf9e',g:9.0,ve:35.5,R:60268,day:10.7,T:-140,P:null,moons:274,rho:0,H:59.5,a:9.537,mu:37931187,surf:false,note:'No surface, and less dense than water overall.'},
+ {id:'titan',name:'Titan',col:'#d9a35c',g:1.35,ve:2.64,R:2575,day:382.7,T:-179.5,P:1.467,moons:0,rho:5.2,H:20.8,parent:'saturn',am:1221870,mu:8978.1,surf:true,note:'Thicker air than Earth’s and low gravity: you could fly here with wings. Huygens landed in 2005 under a parachute.'},
+ {id:'enceladus',name:'Enceladus',col:'#f2f5f7',g:0.113,ve:0.239,R:252,day:32.9,T:-198,P:0,moons:0,rho:0,H:0,parent:'saturn',am:238020,mu:7.21,surf:true,note:'Geysers of ocean water spray from its south pole. Gravity is so weak a jump could almost leave it.'},
+ {id:'uranus',name:'Uranus',col:'#9fd8e0',g:8.7,ve:21.3,R:25559,day:17.2,T:-195,P:null,moons:28,rho:0,H:27.7,a:19.19,mu:5793939,surf:false,note:'Spins on its side, axis tilted 97.8°.'},
+ {id:'neptune',name:'Neptune',col:'#5b7fe0',g:11.0,ve:23.5,R:24764,day:16.1,T:-200,P:null,moons:16,rho:0,H:19.7,a:30.07,mu:6836529,surf:false,note:'The fastest winds measured in the solar system, up to 580 m/s.'},
+ {id:'pluto',name:'Pluto',col:'#c9b29b',g:0.6,ve:1.2,R:1188,day:153.3,T:-225,P:0.00001,moons:5,rho:0,H:0,a:39.48,mu:869.6,surf:true,note:'A thin nitrogen haze, mountains of water ice and a heart-shaped nitrogen glacier seen by New Horizons in 2015.'},
+];
+let sel=W.find(w=>w.id==='mars');
+
+/* ---------- mission estimate: patched conics, circular coplanar, from 300 km LEO ---------- */
+const SHIP={dry:125,cap:1550,isp:375};
+function mission(w,pay){
+  const host=w.parent?W.find(x=>x.id===w.parent):w,r1=AU,r2=host.a*AU,at=(r1+r2)/2;
+  const tof=Math.PI*Math.sqrt(at**3/MUS)/86400;
+  const vinfD=Math.abs(Math.sqrt(MUS*(2/r1-1/at))-Math.sqrt(MUS/r1)),vinfA=Math.abs(Math.sqrt(MUS/r2)-Math.sqrt(MUS*(2/r2-1/at)));
+  const r0=6678,dep=Math.sqrt(vinfD**2+2*398600.4418/r0)-Math.sqrt(398600.4418/r0);
+  let arrive,how;
+  if(w.id==='moon'){arrive=0.45+2.65;how='Halo-orbit insertion and descent'}
+  else if(w.id==='earth'){arrive=0;how='Already here'}
+  else if(w.parent){const muP=host.mu,rm=w.am,vh=Math.sqrt(vinfA**2+2*muP/rm),vm=Math.sqrt(muP/rm),vrel=vh-vm;
+    arrive=w.rho>1?Math.max(.1,vrel*.15):Math.sqrt(vrel**2+w.ve**2)*1.05;how=w.rho>1?`Braked mostly by ${w.name}'s air, then a short burn`:`Fall to ${w.name}'s orbit at ${nf.format(rm)} km, then brake to its surface with no air`;}
+  else if(!w.surf){arrive=Math.sqrt(vinfA**2+w.ve**2)-Math.sqrt(w.mu/(w.R*1.5));how='Capture into orbit (no surface to land on)'}
+  else if(w.rho>0.01){arrive=w.id==='venus'?0.05:0.75;how=w.id==='venus'?'Heat-shield entry, the air does the rest':'Entry in the air, then a landing burn'}
+  else{arrive=Math.sqrt(vinfA**2+w.ve**2)*1.05;how='Braking burn all the way down, no air'}
+  if(w.id==='earth'){return {tof:0,dep:0,arrive:0,total:0,how,prop:0,fits:true}}
+  const total=(w.id==='moon'?3.15:dep)+arrive,ve=G0*SHIP.isp/1000,mf=SHIP.dry+pay,prop=mf*(Math.exp(total/ve)-1);
+  const maxPay=Math.max(0,(SHIP.cap)/(Math.exp(total/ve)-1)-SHIP.dry);
+  return {tof:w.id==='moon'?4.5:tof,dep:w.id==='moon'?3.15:dep,vinfA,arrive,total,how,prop,fits:prop<=SHIP.cap,maxPay,tankers:Math.ceil(Math.max(0,prop-50)/100),entry:w.rho?Math.sqrt(vinfA**2+w.ve**2):null};
+}
+function nextWindow(w){
+  const host=w.parent?W.find(x=>x.id===w.parent):w;if(!EL[host.id]||host.id==='earth'||w.id==='moon')return null;
+  const r2=host.a*AU,at=(AU+r2)/2,tof=Math.PI*Math.sqrt(at**3/MUS)/86400,n2=360/(Math.PI*2*Math.sqrt(r2**3/MUS)/86400),lead=((180-n2*tof)%360+360)%360;
+  const now=Date.now()/864e5+2440587.5,lon=(p,jd)=>{const q=pos(p,jd);return Math.atan2(q[1],q[0])/D};
+  let prev=null;for(let d=0;d<4000;d+=1){const jd=now+d,f=((lon(host.id,jd)-lon('earth',jd)-lead)%360+540)%360-180;if(prev!==null&&Math.sign(prev)!==Math.sign(f)&&Math.abs(prev-f)<30)return {jd,tof};prev=f}return null;
+}
+const fmtJD=jd=>new Date((jd-2440587.5)*864e5).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+const dur=d=>d<60?`${d.toFixed(1)} days`:d<730?`${Math.round(d)} days`:`${(d/365.25).toFixed(1)} years`;
+
+function showWorld(){
+  const w=sel;$('dH').textContent=`${w.name} · NASA fact sheet`;$('mH').textContent=`Sending a Starship to ${w.name}`;$('lH').textContent=`Landing trials · ${w.name}`;
+  const r=(k,v)=>`<tr><td>${k}</td><td class="n">${v}</td></tr>`;
+  $('data').innerHTML='<tr><th>Quantity</th><th class="n">Value</th></tr>'+r('Surface gravity',`${w.g} m/s² (${(w.g/9.8).toFixed(2)} × Earth)`)+r('Escape velocity',`${w.ve} km/s`)+r('Radius',`${nf.format(w.R)} km`)
+    +r('Length of day',w.day>48?`${nf.format(w.day)} h (${(w.day/24).toFixed(1)} Earth days)`:`${w.day} h`)+r('Mean temperature',`${w.T} °C`)
+    +r('Surface pressure',w.P===null?'none: no surface':w.P===0?'none: airless':`${w.P} bar`)+(w.rho?r('Air density at the surface',`${w.rho} kg/m³`)+r('Scale height',`${w.H} km`):'')
+    +(w.parent?r('Orbits',`${W.find(x=>x.id===w.parent).name}, ${nf.format(w.am)} km out`):r('Distance from the Sun',`${w.a} AU`))+r('Moons',w.moons)
+    +`<tr><td colspan="2" style="color:#c3ccd6">${w.note}</td></tr>`;
+  updMission();resetLander();
+  [...$('worlds').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===w.id));
+}
+function updMission(){
+  const w=sel,pay=+$('iPay').value,m=mission(w,pay);$('oPay').textContent=pay+' t';
+  if(w.id==='earth'){$('mission').innerHTML='';$('mVerdict').innerHTML='Starship launches from here. Pick another world.';return}
+  const r=(k,v)=>`<tr><td>${k}</td><td class="n">${v}</td></tr>`,win=nextWindow(w);
+  $('mission').innerHTML='<tr><th>Leg</th><th class="n">Figure</th></tr>'+r('Trip time (Hohmann, no flybys)',dur(m.tof))+r('Leaving Earth orbit',`${m.dep.toFixed(2)} km/s`)
+    +(m.vinfA&&w.id!=='moon'?r('Arrival speed relative to the target',`${m.vinfA.toFixed(2)} km/s`):'')+(m.entry?r('Atmospheric entry speed',`${m.entry.toFixed(1)} km/s`):'')
+    +r(m.how,`${m.arrive.toFixed(2)} km/s`)+`<tr><td><b>Total from Earth orbit</b></td><td class="n"><b>${m.total.toFixed(2)} km/s</b></td></tr>`
+    +r(`Propellant for ${pay} t of payload`,m.prop>9999?'more than 10,000 t':`${nf.format(Math.round(m.prop))} t`)
+    +(win?r('Next departure window',`${fmtJD(win.jd)}`):'')+r('Most payload a refilled Starship could carry',m.maxPay>0?`${nf.format(Math.round(m.maxPay))} t`:'none');
+  let v;
+  if(!w.surf)v=`<b class="mid">Orbit only.</b> ${w.name} has no surface; a Starship could at most be captured into orbit, which costs ${m.arrive.toFixed(1)} km/s on arrival.`;
+  else if(m.fits)v=`<b class="ok">Possible.</b> About ${nf.format(Math.round(m.prop))} t of propellant: ${m.tankers} tanker flight${m.tankers===1?'':'s'} after the ship reaches orbit.${w.id==='venus'?' Getting down is easy; surviving the surface is the problem.':''}`;
+  else v=`<b class="bad">Not in one ship.</b> ${m.total.toFixed(1)} km/s is beyond what one refilled Starship can give even with no payload. It would need propellant waiting at the destination, staging, or gravity assists off other planets and moons, which is how real outer-planet missions do it.`;
+  $('mVerdict').innerHTML=v;
+}
+W.forEach(w=>{const b=document.createElement('button');b.type='button';b.dataset.id=w.id;b.innerHTML=`<i style="background:${w.col}"></i>${w.name}`;b.addEventListener('click',()=>{sel=w;showWorld();drawOrr()});$('worlds').append(b)});
+$('iPay').addEventListener('input',updMission);
+
+/* ---------- orrery ---------- */
+let jd=Date.now()/864e5+2440587.5,scale='log',runT=false;const JD0=2451545;
+const PL=['mercury','venus','earth','mars','jupiter','saturn','uranus','neptune'];
+const oc=$('orr');
+function drawOrr(){
+  const r=Math.min(2,devicePixelRatio||1),w=oc.clientWidth,h=oc.clientHeight;if(oc.width!==Math.round(w*r)){oc.width=Math.round(w*r);oc.height=Math.round(h*r)}const g=oc.getContext('2d');g.setTransform(r,0,0,r,0,0);
+  g.fillStyle='#02030a';g.fillRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)*.47;
+  const map=(x,y)=>{const d=Math.hypot(x,y);if(!d)return [cx,cy];const k=scale==='log'?R*Math.log10(1+d/0.25)/Math.log10(1+31/0.25)/d:R/1.7;return [cx+x*k,cy-y*k]};
+  let gr=g.createRadialGradient(cx,cy,0,cx,cy,14);gr.addColorStop(0,'#fff6d8');gr.addColorStop(.4,'#ffc860');gr.addColorStop(1,'rgba(255,170,60,0)');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,14,0,TAU);g.fill();
+  const list=scale==='log'?PL:PL.slice(0,4);
+  for(const p of list){const wo=W.find(x=>x.id===p);g.strokeStyle=wo.id===sel.id||sel.parent===wo.id?'rgba(116,199,255,.7)':'rgba(255,255,255,.14)';g.lineWidth=wo.id===sel.id||sel.parent===wo.id?1.6:1;
+    g.beginPath();orbitPath(p,jd).forEach((q,i)=>{const [x,y]=map(q[0],q[1]);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();
+    const [x,y]=map(...pos(p,jd));g.fillStyle=wo.col;g.beginPath();g.arc(x,y,p==='jupiter'||p==='saturn'?6:4.5,0,TAU);g.fill();
+    g.font='600 12px "Saira Condensed",sans-serif';g.fillStyle='#c3ccd6';g.fillText(wo.name.toUpperCase(),x+8,y-6)}
+  const dt=new Date((jd-2440587.5)*864e5);$('oDate').textContent=jd<2299161?julDate(jd)+' (Julian)':dt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+  const pe=pos('earth',jd),pm=pos('mars',jd),dm=Math.hypot(pe[0]-pm[0],pe[1]-pm[1])*149.5978707;
+  $('orrInfo').innerHTML=`Earth to Mars on this date: <b>${nf.format(Math.round(dm))} million km</b>. ${Math.abs(jd-2451545)>365.25*1000?'JPL rates its elements valid from 3000 BC to 3000 AD.':''} Distances ${scale==='log'?'are compressed logarithmically; angles are true.':'are to true scale.'}`;
+  if(!dragD)$('iDate').value=Math.round(jd-JD0);
+}
+function julDate(j){const J=Math.floor(j+.5),c=J+32082,d=Math.floor((4*c+3)/1461),e=c-Math.floor(1461*d/4),m=Math.floor((5*e+2)/153);const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const y=d-4800+Math.floor(m/10);return `${e-Math.floor((153*m+2)/5)+1} ${M[m+2-12*Math.floor(m/10)]} ${y>0?y+' CE':(1-y)+' BCE'}`}
+let dragD=false;$('iDate').addEventListener('input',()=>{jd=JD0+ +$('iDate').value;drawOrr()});$('iDate').addEventListener('pointerdown',()=>dragD=true);addEventListener('pointerup',()=>dragD=false);
+document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.jump;jd=k==='today'?Date.now()/864e5+2440587.5:k==='499'?1903332.5:k==='1610'?2309129.5:2440423.5;drawOrr()}));
+document.querySelectorAll('[data-sc]').forEach(b=>b.addEventListener('click',()=>{scale=b.dataset.sc;document.querySelectorAll('[data-sc]').forEach(o=>o.setAttribute('aria-pressed',o===b));drawOrr()}));
+$('runT').addEventListener('click',()=>{runT=!runT;$('runT').setAttribute('aria-pressed',runT)});
+
+/* ---------- landing trials ---------- */
+const lc=$('lander');let L=null,fire=false,auto=false,attempts=[];
+const ENG={raptor:{T:2300e3,min:.4,isp:330,name:'1 Raptor'},thr:{T:400e3,min:0,isp:300,name:'Landing thrusters'},'3r':{T:6900e3,min:.4,isp:330,name:'3 Raptors'}};
+function resetLander(){
+  const w=sel;L=null;auto=false;fire=false;
+  if(!w.surf){$('lIntro').innerHTML=`<b>${w.name} has no surface to land on.</b> A ship descending into it would be crushed long before reaching any solid layer. Pick a moon or a rocky world.`;drawLander();return}
+  const air=w.rho>0.001,h0=3000,mass=120e3+20e3;  // 120 t lander + 20 t of landing propellant
+  const vt=air?Math.sqrt(2*mass*w.g/(w.rho*Math.exp(-h0/(w.H*1000))*60)):Infinity;
+  const v0=-Math.min(air?vt:Infinity,w.g<1?40:120);
+  L={h:h0,v:v0,fuel:20e3,dry:120e3,thr:0,t:0,done:false,res:null,v0};
+  $('lIntro').innerHTML=`Start: ${nf.format(h0)} m up, falling at ${Math.abs(v0).toFixed(0)} m/s${air?' (about the speed the air allows at that height)':''}, with 20 t of propellant. Gravity here is ${w.g} m/s². ${w.id==='venus'?'The air is so thick that the ship barely needs its engines: watch the heat instead.':w.id==='titan'?'Titan’s air and low gravity make this the gentlest landing in the solar system.':w.g<0.2?'Gravity is tiny: the danger is overshooting back up.':''}`;
+  drawLander();
+}
+function stepLander(dt){
+  if(!L||L.done)return;const w=sel,E=ENG[$('lEng').value],m=L.dry+L.fuel;
+  if(auto){const a=E.T/m-w.g,dh=Math.max(.5,L.h),need=L.v*L.v/(2*dh);let want=(need+w.g)*m/E.T;if(L.v>-1.5&&L.h<3)want=w.g*m/E.T*.98;if(L.v>-0.5&&L.h>3)want=0;L.thr=need>a*.55||(L.h<40&&L.v<-2)?clamp(want,0,1):0}
+  else L.thr=fire?1:0;
+  let th=L.thr;if(th>0)th=Math.max(th,E.min);if(L.fuel<=0)th=0;
+  const T=E.T*th,md=T/(G0*E.isp),rho=w.rho?w.rho*Math.exp(-L.h/(w.H*1000)):0,drag=.5*rho*L.v*Math.abs(L.v)*60;
+  const acc=(T-drag)/m-w.g;L.v+=acc*dt;L.h+=L.v*dt;L.fuel=Math.max(0,L.fuel-md*dt);L.t+=dt;L.thrShown=th;
+  if(L.h<=0){L.h=0;L.done=true;const s=Math.abs(L.v);L.res=s<=2?'clean':s<=5?'hard':'crash';
+    if(w.id==='venus'&&L.res!=='crash')L.res+=' (then cooked)';
+    attempts.unshift({w:w.name,eng:E.name,v:s,fuel:L.fuel/1000,res:L.res,auto});renderLog()}
+  if(L.h>8000){L.done=true;L.res='flew away';attempts.unshift({w:w.name,eng:E.name,v:Math.abs(L.v),fuel:L.fuel/1000,res:'flew away',auto});renderLog()}
+}
+function renderLog(){
+  $('log').innerHTML='<tr><th>World</th><th>Engines</th><th class="n">Touchdown</th><th class="n">Fuel left</th><th>Result</th></tr>'+attempts.slice(0,12).map(a=>{const k=a.res.startsWith('clean')?'ok':a.res.startsWith('hard')?'mid':'bad';
+    return `<tr><td>${a.w}${a.auto?' · autopilot':''}</td><td>${a.eng}</td><td class="n">${a.v.toFixed(1)} m/s</td><td class="n">${a.fuel.toFixed(1)} t</td><td><span class="chip ${k}">${a.res}</span></td></tr>`}).join('');
+}
+const SKY={venus:['#d9b25a','#8a6a2a'],earth:['#2d6fc0','#a8d0f0'],mars:['#c48e62','#e6b48a'],titan:['#a5713a','#d8a35c']};
+function drawLander(){
+  const r=Math.min(2,devicePixelRatio||1),w=lc.clientWidth,h=lc.clientHeight;if(lc.width!==Math.round(w*r)){lc.width=Math.round(w*r);lc.height=Math.round(h*r)}const g=lc.getContext('2d');g.setTransform(r,0,0,r,0,0);
+  const wo=sel,sky=SKY[wo.id]||['#000','#05060a'];let gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,sky[0]);gr.addColorStop(1,sky[1]);g.fillStyle=gr;g.fillRect(0,0,w,h);
+  if(!SKY[wo.id]){g.fillStyle='#fff';for(let i=0;i<80;i++){g.globalAlpha=.3+(i*37%7)/10;g.fillRect((i*97)%w,(i*53)%(h*.7),1.2,1.2)}g.globalAlpha=1}
+  const gy=h*.86;g.fillStyle=wo.col;g.fillRect(0,gy,w,h-gy);g.fillStyle='rgba(0,0,0,.25)';for(let i=0;i<9;i++){g.beginPath();g.ellipse((i*131)%w,gy+8+(i*17)%(h-gy-10),20+(i*7)%25,4,0,0,TAU);g.fill()}
+  if(!L){g.font='600 16px "Saira Condensed",sans-serif';g.fillStyle='#e7edf3';g.textAlign='center';g.fillText(wo.surf?'PRESS START DESCENT':'NO SURFACE',w/2,h/2);g.textAlign='left';return}
+  const y=gy-(L.h/3000)*(gy-h*.08),x=w/2,s=h/260;
+  if(L.thrShown>0){const len=40*L.thrShown*s*(1+.1*Math.sin(performance.now()/30));const fg=g.createLinearGradient(x,y,x,y+len);fg.addColorStop(0,'rgba(255,240,210,.95)');fg.addColorStop(1,'rgba(255,120,40,0)');g.fillStyle=fg;g.beginPath();g.moveTo(x-4*s,y);g.quadraticCurveTo(x,y+len*1.1,x+4*s,y);g.fill()}
+  g.save();g.translate(x,y);g.scale(s,s);const sg=g.createLinearGradient(-5,0,5,0);sg.addColorStop(0,'#59616b');sg.addColorStop(.35,'#eef2f5');sg.addColorStop(1,'#434a52');g.fillStyle=sg;
+  g.beginPath();g.moveTo(-5,0);g.lineTo(-5,-48);g.bezierCurveTo(-5,-56,-2,-60,0,-62);g.bezierCurveTo(2,-60,5,-56,5,-48);g.lineTo(5,0);g.closePath();g.fill();
+  g.strokeStyle='#9aa3ad';g.lineWidth=1.2;g.beginPath();g.moveTo(-4,-2);g.lineTo(-9,3);g.moveTo(4,-2);g.lineTo(9,3);g.stroke();g.restore();
+  if(L.done){g.font=`700 ${Math.max(18,w*.045)}px "Saira Condensed",sans-serif`;g.textAlign='center';g.fillStyle=L.res.startsWith('clean')?'#5fd6a0':L.res.startsWith('hard')?'#e8c46a':'#ff6b5e';g.fillText(L.res.toUpperCase()+` · ${Math.abs(L.v).toFixed(1)} M/S`,w/2,h*.2);g.textAlign='left'}
+  $('gH').textContent=`${nf.format(Math.round(L.h))} m`;$('gV').textContent=`${Math.abs(L.v).toFixed(1)} m/s`;$('gF').textContent=`${(L.fuel/1000).toFixed(1)} t`;$('gT').textContent=`${Math.round((L.thrShown||0)*100)}%`;
+}
+$('lStart').addEventListener('click',()=>{resetLander()});
+$('lAuto').addEventListener('click',()=>{resetLander();if(L)auto=true});
+$('lEng').addEventListener('change',resetLander);
+const press=v=>{fire=v;$('thrBtn').setAttribute('aria-pressed',v)};
+$('thrBtn').addEventListener('pointerdown',e=>{e.preventDefault();press(true)});['pointerup','pointerleave','pointercancel'].forEach(ev=>$('thrBtn').addEventListener(ev,()=>press(false)));
+addEventListener('keydown',e=>{if((e.code==='Space'||e.key==='ArrowUp')&&L&&!L.done){e.preventDefault();press(true)}});addEventListener('keyup',e=>{if(e.code==='Space'||e.key==='ArrowUp')press(false)});
+
+let last=0;
+function frame(ms){const dt=Math.min(.05,(ms-last)/1000||0);last=ms;if(runT){jd+=dt*120;drawOrr()}for(let k=0;k<4;k++)stepLander(dt/4);drawLander();requestAnimationFrame(frame)}
+showWorld();renderLog();new ResizeObserver(()=>{drawOrr();drawLander()}).observe(document.body);drawOrr();
+window.__lab={W,mission,nextWindow,pos,setWorld:id=>{sel=W.find(w=>w.id===id);showWorld()},get L(){return L},step:stepLander,auto:()=>{resetLander();if(L)auto=true},set jd(v){jd=v;drawOrr()}};
+requestAnimationFrame(frame);
+})();
+</script>

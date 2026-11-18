@@ -1,0 +1,84 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Starship Atlas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a mission index. Title, then the simulators in the order a journey takes them (launch, refill and fly, the worlds, the stars), then the ancient-astronomy wing, then the sources. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--violet:#b6a4ff;--mars:#e0774a;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--flame)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(40px,8vw,76px);line-height:.9;margin:6px 0 10px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:0 0 10px}
+p{margin:0;max-width:70ch;color:#c3ccd6}
+#strip{display:block;width:100%;height:120px;border-radius:6px;background:#02030a}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+a.tile{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0;transition:border-color .15s,transform .15s}
+a.tile:hover,a.tile:focus-visible{border-color:var(--lox);transform:translateY(-2px);outline:none}
+a.tile .k{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+a.tile b{font-family:var(--display);font-weight:700;font-size:26px;line-height:1;text-transform:uppercase}
+a.tile span{font-size:13.5px;color:#c3ccd6}
+a.tile em{font-style:normal;font-size:12px;color:var(--dim);margin-top:auto}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Twenty-six apps · real numbers · one journey</div>
+    <h1>Starship Atlas</h1>
+    <p>From catching a rocket booster at the launch tower to the edge of the Local Group, and back fifteen centuries to the Indian astronomers who first counted the planets’ turns. Every figure comes from a cited source or a calculation shown on the page; where the evidence runs out, the page says so.</p>
+  </header>
+  <canvas id="strip" aria-label="A strip of the journey from the launch tower to the galaxy"></canvas>
+
+  <section>
+    <h2>The journey</h2>
+    <div class="grid">
+      <a class="tile" href="https://claude.ai/artifact/HRrym68cV7YcEbuycixy2p"><span class="k" style="color:#7ee0c8">1 · Live now</span><b>Satellite Watch</b><span>The space stations, Hubble, NavIC and the brightest satellites on a live world map, and when each passes over your city, and whether you can see it.</span><em>Public CelesTrak orbits, SGP4</em></a>
+      <a class="tile" href="https://claude.ai/artifact/D2UgmPBXpzcKUxY7qnzQdB"><span class="k" style="color:var(--flame)">2 · Launch and catch</span><b>Starship Catch Simulator</b><span>Physics-flown ascent and booster return, hot staging, both tower catches, failure modes, and a booster you can fly onto the arms yourself.</span><em>Thrust, drag, gravity, propellant reserve</em></a>
+      <a class="tile" href="https://claude.ai/artifact/4ZaBFQRVW2jUmBzCpVSHiU"><span class="k" style="color:#ff7a5c">3 · Design the rocket</span><b>Rocket Lab</b><span>Build a rocket from 11 real engines, from the F-1 and Raptor to ISRO’s Vikas and CE-20, fly its ascent, and see whether it reaches orbit, the Moon or Mars. Saturn V checks out within 2%.</span><em>Engine data sheets, rocket equation, gravity turn</em></a>
+      <a class="tile" href="https://claude.ai/artifact/DTgnmQzwPso42LJYg5ZR7w"><span class="k" style="color:#ff9933">4 · Around Earth</span><b>NavIC Lab</b><span>India’s own GPS: ground tracks, position quality across the region hour by hour, and why three working satellites in March 2026 meant no fix at all.</span><em>Satellite geometry, PDOP, ISRO status</em></a>
+      <a class="tile" href="https://claude.ai/artifact/QNYG3ukJSGU1rWvASCXXJx"><span class="k" style="color:#ff8f6b">5 · Junk in orbit</span><b>Space Debris Lab</b><span>Break up a satellite and watch the pieces fall: India’s 2019 Mission Shakti at 283 km against the 2009 collision at 789 km, where the junk stays for decades.</span><em>US Standard Atmosphere, orbital decay</em></a>
+      <a class="tile" href="https://claude.ai/artifact/XUK9zxrq87WJyK17kfWNLF"><span class="k" style="color:#ff9933">6 · To the Moon</span><b>Chandrayaan-3 Moon Lab</b><span>India’s 40-day road to the Moon flown again from ISRO’s own orbit numbers: it finds the Moon on the right day. Then land Vikram yourself with four 800 N engines.</span><em>ISRO orbit reports, Earth–Moon gravity</em></a>
+      <a class="tile" href="https://claude.ai/artifact/Q5T2DFByz6EPAzpzHmgXSE"><span class="k" style="color:var(--mars)">7 · India at Mars</span><b>Mangalyaan Mars Lab</b><span>ISRO’s Mars Orbiter Mission rebuilt from its own burn log: every burn time predicted, the 298-day crossing, and a launch-window chart that shows ISRO picked the cheapest days.</span><em>ISRO burn log, JPL elements, Lambert</em></a>
+      <a class="tile" href="https://claude.ai/artifact/7DJKbEScJuDeNiYbadxjZ9"><span class="k" style="color:var(--mars)">8 · Land on Mars</span><b>Mars Landing Lab</b><span>The seven minutes from 5.8 km/s to standing still: heat shield, supersonic parachute and a sky crane you fly yourself. Checked against Curiosity and Perseverance.</span><em>Mars atmosphere, NASA EDL timeline</em></a>
+      <a class="tile" href="https://claude.ai/artifact/T7vLYNDGc7GY4DEWtM2hwF"><span class="k" style="color:var(--mars)">9 · Refill and fly</span><b>Mars Campaign</b><span>Tanker flights and boil-off, real launch windows, the Moon or Mars, a propellant plant on Mars for the trip home, and five ancient planet clocks.</span><em>Rocket equation, conic transfers, JPL longitudes</em></a>
+      <a class="tile" href="https://claude.ai/artifact/D6UzQQEY6ngBZNt9xur2q2"><span class="k" style="color:var(--lox)">10 · Every world</span><b>Solar System Lab</b><span>An orrery from 499 CE to 2100, NASA data for 16 worlds, the cost of a Starship to each, and landing trials with an attempt log.</span><em>NASA fact sheets, JPL elements, Huygens</em></a>
+      <a class="tile" href="https://claude.ai/artifact/PrNazFz9h9iZwcTgoZufjY"><span class="k" style="color:var(--gold)">11 · Borrowed speed</span><b>Gravity Assist Lab</b><span>Voyager’s flybys rebuilt from JPL positions and arrival dates alone, predicting how close it passed each planet to within 5%. Then a 300-year search for the next Grand Tour.</span><em>Lambert’s problem, JPL elements, Flandro 1966</em></a>
+      <a class="tile" href="https://claude.ai/artifact/3fbbRqFRksvudZPdzmVq4w"><span class="k" style="color:#7fb2ff">12 · The gentle engine</span><b>Ion Engine Lab</b><span>How NASA’s Dawn went further than any spacecraft before it on a push the weight of a sheet of paper: its record re-derived, and a slow spiral out of Earth orbit.</span><em>Rocket equation, Edelbaum, NSTAR</em></a>
+      <a class="tile" href="https://claude.ai/artifact/PnkK14ys8Py76PPtzFJqjn"><span class="k" style="color:#ffb347">13 · To the Sun</span><b>Touch the Sun</b><span>Why the Sun is the hardest place to reach, and Parker Solar Probe’s seven Venus flybys rebuilt from NASA’s orbit table, down to 191 km/s.</span><em>Kepler, vis-viva, Venus flybys</em></a>
+      <a class="tile" href="https://claude.ai/artifact/21WDJwTNzvBc2rM3Ajv5aH"><span class="k" style="color:#ffc24a">14 · Balance points</span><b>Lagrange Point Lab</b><span>The five places where the Sun’s and Earth’s pulls balance, which of them hold, and Aditya-L1’s halo orbit computed to its real 177.86-day lap.</span><em>Three-body problem, differential correction</em></a>
+      <a class="tile" href="https://claude.ai/artifact/WrQw7GKArg2WtZNMSwZjc8"><span class="k" style="color:var(--gold)">15 · Still out there</span><b>Voyager Now</b><span>Where both Voyagers are as you read, how long a message takes, the one-light-day crossing of November 2026, and the slow fade of their power.</span><em>Live distances, JPL Earth orbit</em></a>
+      <a class="tile" href="https://claude.ai/artifact/2z13hH9Do9mCvREK8BHAhz"><span class="k" style="color:var(--violet)">16 · The stars</span><b>Milky Way Atlas</b><span>One zoom from the planets through the Oort cloud and the 106 nearest stars to the galaxy and Andromeda, with travel times up to a 1 g relativistic ship.</span><em>Nearest-star catalogue, GRAVITY 2019</em></a>
+      <a class="tile" href="https://claude.ai/artifact/WLHTz37drfmw38LnwAXFX9"><span class="k" style="color:#d8b4ff">17 · Eyes on the sky</span><b>Telescope Lab</b><span>How sharp Hubble, Webb, AstroSat and your eye can see, two stars at a time, what each can make out on the Moon and Mars, and why Webb has to be so cold.</span><em>Diffraction, Airy pattern, Wien’s law</em></a>
+      <a class="tile" href="https://claude.ai/artifact/TYsrHB7Nchm1y7yuMq6BfG"><span class="k" style="color:#5fd6c4">18 · Other suns</span><b>Exoplanet Explorer</b><span>All 6,470 confirmed planets around other stars: size against starlight, a live transit simulator, the rocky worlds with Earth-like light, and how long the trip would take.</span><em>NASA Exoplanet Archive</em></a>
+      <a class="tile" href="https://claude.ai/artifact/4cEbohQeaFS4ezqs2R8Ahb"><span class="k" style="color:#ffb347">19 · Beyond</span><b>Black Hole and Wormhole Lab</b><span>A black hole ray-traced from general relativity, the real ones from Gaia BH1 to M87*, a Starship’s fall with clocks and tides, and wormholes with the exotic matter they would need.</span><em>Schwarzschild geodesics, EHT, Gaia</em></a>
+      <a class="tile" href="https://claude.ai/artifact/RDxM4WQDNdVSRngpy9R218"><span class="k" style="color:var(--gold)">20 · Who went before</span><b>Spacecraft Archive</b><span>Every solar system mission since Sputnik: a clickable launch timeline, filters by destination and nation, the firsts, and NASA’s own pictures.</span><em>251 missions, 10 nations and agencies</em></a>
+      <a class="tile" href="https://claude.ai/artifact/NjXosYNX9sCeCWVThB7VhT"><span class="k" style="color:#ff7a3c">21 · Coming home</span><b>Re-entry Lab</b><span>Bring Apollo, Orion, Gaganyaan, Soyuz or Stardust back through the air: skip out, burn up or thread the corridor. Checked against Stardust’s 34 g and the Allen–Eggers formula.</span><em>US Standard Atmosphere, Sutton–Graves heating</em></a>
+      <a class="tile" href="https://claude.ai/artifact/UtRh4Wahi2S7pytfcBcXBc"><span class="k" style="color:#c9a27e">22 · Defend Earth</span><b>Planetary Defense Lab</b><span>NASA’s DART hit re-measured from Dimorphos’s orbit periods, then plan the deflection of an asteroid headed for Earth.</span><em>DART, Kepler, momentum</em></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Fifteen centuries back</h2>
+    <div class="grid">
+      <a class="tile" href="https://claude.ai/artifact/LaFFtHTwWZh7EiU6gL9F8Z"><span class="k" style="color:var(--gold)">499 CE</span><b>Aryabhata Lab</b><span>His spinning Earth, π, 24-number sine table and lunar months, implemented from his verses and tested on launch sites, Mars aiming and Moon-landing light.</span><em>Aryabhatiya, Clark 1930</em></a>
+      <a class="tile" href="https://claude.ai/artifact/9GzdyyvJ8zRcBAznWXM37B"><span class="k" style="color:#c4623f">5th–13th c.</span><b>Nalanda Mahavihara</b><span>A working rebuild of the monastery’s water clock from Yijing’s eyewitness account, legend sorted from evidence, and the manuscripts that survived.</span><em>Yijing, Xuanzang, museum colophons</em></a>
+      <a class="tile" href="https://claude.ai/artifact/4jbD63EEZBxcEbE7WXseMN"><span class="k" style="color:var(--gold)">What if</span><b>Starship Through Time</b><span>Hand a Starship to Aryabhata, Varahamihira, Brahmagupta or Nalanda and fly to Mars on their own numbers. The outcome is computed.</span><em>Their planet clocks against modern counts</em></a>
+
+      <a class="tile" href="https://claude.ai/artifact/RHr7yep3A95fUrPY78nS57"><span class="k" style="color:var(--gold)">Case files</span><b>Clues in Old Books</b><span>Old records tested against modern science: the Kali Yuga planet gathering checked with JPL tables, Earth’s slowing spin from ancient eclipses, the 1054 guest star, and dating the Vedanga Jyotisha.</span><em>JPL, NASA ΔT, Song records, precession</em></a>    </div>
+  </section>
+
+  <footer>Built from: NASA NSSDC planetary and satellite fact sheets; JPL approximate planetary positions (Standish and Williams); the Huygens HASI results (Fulchignoni et al. 2005); the nearest-star list (RECONS and Gaia); GRAVITY Collaboration 2019; Surya Siddhanta (Burgess 1860), Aryabhatiya (Clark 1930), Pancha Siddhantika (Neugebauer and Pingree 1970), Brahmagupta’s kalpa numbers via D. Duke (2008); Yijing (Takakusu 1896), Xuanzang and Hui Li (Beal). Independent models, not affiliated with SpaceX, NASA or ISRO.</footer>
+</div>
+<script>
+(()=>{const c=document.getElementById('strip');function draw(){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);const g=c.getContext('2d');g.setTransform(r,0,0,r,0,0);
+  const gr=g.createLinearGradient(0,0,w,0);gr.addColorStop(0,'#1a1430');gr.addColorStop(.25,'#05061a');gr.addColorStop(1,'#020208');g.fillStyle=gr;g.fillRect(0,0,w,h);
+  let s=7;const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647};g.fillStyle='#fff';for(let i=0;i<160;i++){g.globalAlpha=.2+rnd()*.8;g.fillRect(rnd()*w,rnd()*h,1.2,1.2)}g.globalAlpha=1;
+  g.fillStyle='#2a2f38';g.fillRect(w*.04,h*.1,6,h*.9);g.fillStyle='#e7edf3';g.fillRect(w*.04+12,h*.25,6,h*.75);
+  const pl=[['#4aa3ff',.16,9],['#c9c9cc',.21,4],['#e0774a',.3,6],['#d9b38c',.42,14],['#e3cf9e',.53,12],['#9fd8e0',.62,9],['#5b7fe0',.69,9]];for(const [col,x,rad] of pl){g.fillStyle=col;g.beginPath();g.arc(w*x,h/2,rad,0,Math.PI*2);g.fill()}
+  const gx=w*.86,gy=h/2;const gg=g.createRadialGradient(gx,gy,0,gx,gy,h*.48);gg.addColorStop(0,'rgba(255,230,190,.9)');gg.addColorStop(.3,'rgba(190,200,255,.35)');gg.addColorStop(1,'rgba(120,140,255,0)');g.fillStyle=gg;g.beginPath();g.ellipse(gx,gy,h*.9,h*.32,-.25,0,Math.PI*2);g.fill();
+  g.font='600 12px "Saira Condensed",sans-serif';g.fillStyle='#8a97a8';g.fillText('TOWER',w*.035,h-6);g.fillText('PLANETS',w*.3,h-6);g.fillText('MILKY WAY',w*.82,h-6)}
+draw();new ResizeObserver(draw).observe(c)})();
+</script>

@@ -1,0 +1,118 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Touch the Sun</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: Parker Solar Probe. Why the Sun is the hardest place to reach, the seven Venus flybys that shrank the orbit, the checks against the published orbit table, then the heat. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--sun:#ffb347;--venus:#e3c27a;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--sun)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"],button.primary{background:var(--sun);border-color:var(--sun);color:#1c1002}button:focus-visible,input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--sun)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}
+#orb{aspect-ratio:1/1;max-height:600px}#bars{aspect-ratio:16/6;min-height:220px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}.kv span{color:var(--dim)}.kv b{text-align:right;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+tr.on td{color:var(--sun)}.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Parker Solar Probe · seven Venus flybys · 191 km/s</div>
+    <h1>Touch the Sun</h1>
+    <p>The Sun is the hardest place in the solar system to reach. Earth carries everything launched from it around the Sun at 29.8 km/s, and to fall inward a spacecraft has to cancel almost all of that sideways speed. Leaving the solar system altogether takes less. NASA’s Parker Solar Probe got there by passing Venus seven times, each pass shedding a little more speed. On 24 December 2024 it skimmed 6.16 million km above the Sun’s surface at 191 km/s, the fastest anything people have built has ever gone.</p>
+  </header>
+
+  <section class="card">
+    <h2>Why the Sun is so hard to reach</h2>
+    <p>The push a spacecraft needs after leaving Earth, for different destinations, counting only the Sun’s gravity.</p>
+    <canvas id="bars" aria-label="Push needed from Earth's orbit to reach various destinations"></canvas>
+  </section>
+
+  <div class="two">
+    <section class="card">
+      <h2>Seven flybys, seven orbits</h2>
+      <canvas id="orb" aria-label="Parker Solar Probe's seven orbits shrinking towards the Sun, with Venus's orbit"></canvas>
+      <label class="note" style="display:block;margin-top:8px">After Venus flyby <b id="oS" style="color:var(--ink)"></b><input type="range" id="iS" min="1" max="7" step="1" value="7"></label>
+      <div class="seg"><button type="button" class="primary" id="play">Play the seven years</button></div>
+    </section>
+    <section class="card">
+      <h2>This orbit</h2>
+      <div class="kv" id="kv"></div>
+      <div class="verdict" id="heat"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>The test: rebuild the orbit table</h2>
+    <p>NASA published each orbit’s closest distance, period and top speed. Kepler and Newton connect the three: from the distance and the period alone, the top speed follows. Then, for each Venus flyby, the bend between one published orbit and the next fixes how close Parker had to pass Venus. That is compared with the mission plan.</p>
+    <div class="scroll"><table id="check"></table></div>
+    <p class="note" style="margin-top:8px">The flyby altitudes were planned in 2014, before launch, and the real flybys were adjusted afterwards, so the comparison there is looser. In every case the speed relative to Venus stays the same before and after, about 23.3 km/s, as a flyby with no engine firing requires.</p>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">All orbits are drawn with their closest points lined up and in one plane; in reality each flyby also turned the orbit a little. Venus’s orbit is a circle. The first flyby is left out of the test because it depends on the launch orbit, which our sources do not give. The sunlight figure is for a surface facing the Sun squarely; how hot the shield gets also depends on its coating and how it sheds heat.</p>
+  </section>
+
+  <footer>Sources: Wikipedia article “Parker Solar Probe”, citing NASA and JHU APL: the orbit table (closest distances 35.66 to 9.86 solar radii, periods 150 to 88 days, speeds 95 to 192 km/s), the seven Venus flybys with their planned altitudes (Guo et al., 2014), the 24 December 2024 approach at 6.16 million km above the surface and 191 km/s, and 475 times the sunlight at Earth. Sun GM and Venus GM from JPL; solar radius 695,700 km; solar constant 1,361 W/m². An independent model, not affiliated with NASA.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),nf=new Intl.NumberFormat('en-US');
+const MU=1.32712440018e11,AU=1.495978707e8,RS=695700,DAY=86400,MUV=324859,RV=6051.8,rV=0.723332*AU,vV=Math.sqrt(MU/rV),vE=Math.sqrt(MU/AU);
+const ST=[[35.66,150,95,'2018'],[27.85,130,109,'2019'],[20.35,112.5,129,'2020'],[15.98,102,147,'2021'],[13.28,96,163,'2021'],[11.42,92,176,'2023'],[9.86,88,192,'2024']];
+const FLY=[[2548,'in','Oct 2018'],[3023,'in','Dec 2019'],[834,'out','Jul 2020'],[2392,'out','Feb 2021'],[3786,'in','Oct 2021'],[3939,'in','Aug 2023'],[317,'out','Nov 2024']];
+const orb=(rpRs,Pd)=>{const a=Math.cbrt(MU*(Pd*DAY/(2*Math.PI))**2),rp=rpRs*RS,e=1-rp/a;return {a,rp,e,ra:a*(1+e),vp:Math.sqrt(MU*(2/rp-1/a))}};
+const OR=ST.map(s=>orb(s[0],s[1]));
+function atVenus(o,dir){const v=Math.sqrt(MU*(2/rV-1/o.a)),h=Math.sqrt(MU*o.a*(1-o.e*o.e)),vt=h/rV,vr=Math.sqrt(Math.max(0,v*v-vt*vt))*(dir==='in'?-1:1);return [vr,vt-vV]}
+const FB=[null];for(let i=1;i<7;i++){const d=FLY[i][1],a=atVenus(OR[i-1],d),b=atVenus(OR[i],d),na=Math.hypot(...a),nb=Math.hypot(...b),turn=Math.acos((a[0]*b[0]+a[1]*b[1])/(na*nb)),v=(na+nb)/2;FB.push({na,nb,turn,alt:MUV/v/v*(1/Math.sin(turn/2)-1)-RV})}
+// ---- bars ----
+function vAp(rp,ra){const a=(rp+ra)/2;return Math.sqrt(MU*(2/ra-1/a))}
+const BARS=[['Leave the solar system for ever',Math.SQRT2*vE-vE,'#74c7ff'],['Reach Mars',Math.sqrt(MU*(2/AU-2/(AU+1.524*AU)))-vE,'#e0774a'],['Reach Mercury’s distance',vE-vAp(0.387*AU,AU),'#b0a8a0'],['Reach Parker’s final 9.86 solar radii, directly',vE-vAp(9.86*RS,AU),'#ffb347'],['Hit the Sun’s surface',vE-vAp(RS,AU),'#ff6b5e'],['What Parker’s rocket gave it, worked out from its first orbit',12.7,'#5fd6a0']];
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+function drawBars(){const c=$('bars'),g=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight;g.fillStyle='#02030a';g.fillRect(0,0,w,h);const n=BARS.length,bh=(h-30)/n,L=Math.min(w*.46,300),S=(w-L-60)/32;g.font='600 12px "Saira Condensed",sans-serif';
+  BARS.forEach(([lab,v,col],i)=>{const y=10+i*bh;g.fillStyle='#c3ccd6';const txt=w<520?['Leave the solar system','Reach Mars','Reach Mercury','Parker’s orbit, directly','Hit the Sun','Parker’s real launch'][i]:lab;g.fillText(txt,8,y+bh*.6);g.fillStyle=col;g.fillRect(L,y+bh*.2,v*S,bh*.55);g.fillStyle='#e7edf3';g.fillText(v.toFixed(1)+' km/s',L+v*S+6,y+bh*.6)});
+  g.fillStyle='#8a97a8';g.fillText(w<520?'Earth’s speed: 29.8 km/s':'Earth’s own speed around the Sun: 29.8 km/s',w<520?8:L,h-6)}
+// ---- orbit map ----
+let st=7,playing=false,pt=0,lf=0;const cv=$('orb'),og=cv.getContext('2d');
+function drawOrb(){const w=cv.clientWidth,h=cv.clientHeight,S=Math.min(w,h)/2/(1.05*AU)*0.95,cx=w*0.36,cy=h/2;og.fillStyle='#02030a';og.fillRect(0,0,w,h);
+  og.strokeStyle='rgba(116,199,255,.25)';og.setLineDash([3,4]);og.beginPath();og.arc(cx,cy,AU*S,0,7);og.stroke();og.setLineDash([]);og.strokeStyle='rgba(227,194,122,.6)';og.beginPath();og.arc(cx,cy,rV*S,0,7);og.stroke();
+  og.font='600 11px "Saira Condensed",sans-serif';og.fillStyle='#74c7ff';og.fillText('EARTH’S ORBIT',cx+AU*S*0.62,cy-AU*S*0.8);og.fillStyle='#e3c27a';og.fillText('VENUS’S ORBIT',cx+rV*S*0.55,cy+rV*S*0.88);
+  OR.forEach((o,i)=>{if(i>=st)return;const b=o.a*Math.sqrt(1-o.e*o.e),cxo=cx+(o.a-o.rp)*S*-1;og.strokeStyle=i===st-1?'#ffb347':`rgba(255,179,71,${.15+.08*i})`;og.lineWidth=i===st-1?2:1;og.beginPath();og.ellipse(cx-(o.a-o.rp)*S+o.a*S-o.a*S,cy,o.a*S,b*S,0,0,7);og.stroke();og.lineWidth=1});
+  // closest points sit to the right of the Sun; orbits centred to the left
+  const o=OR[st-1],sg=og.createRadialGradient(cx,cy,0,cx,cy,14);sg.addColorStop(0,'#fff6d8');sg.addColorStop(1,'rgba(255,179,71,0)');og.fillStyle=sg;og.beginPath();og.arc(cx,cy,14,0,7);og.fill();
+  // spacecraft moving on the current orbit
+  const M=pt*2*Math.PI;let E=M;for(let k=0;k<30;k++)E-=(E-o.e*Math.sin(E)-M)/(1-o.e*Math.cos(E));const px=o.a*(Math.cos(E)-o.e),py=o.a*Math.sqrt(1-o.e*o.e)*Math.sin(E);
+  og.fillStyle='#fff';og.beginPath();og.arc(cx+px*S,cy-py*S,3.5,0,7);og.fill();
+  og.fillStyle='#8a97a8';og.fillText('ORBIT AFTER FLYBY '+st+' ('+ST[st-1][3]+')',10,16);og.fillText('SUN AT LEFT CENTRE; CLOSEST POINTS ON ITS RIGHT',10,h-8)}
+function stage(){$('oS').textContent=st+' of 7 · '+FLY[st-1][2];const s=ST[st-1],o=OR[st-1],I=(AU/o.rp)**2;
+  $('kv').innerHTML=`<span>Closest to the Sun’s centre</span><b>${s[0]} solar radii = ${(o.rp/1e6).toFixed(2)} million km</b><span>Farthest</span><b>${(o.ra/AU).toFixed(2)} AU</b><span>Lap time</span><b>${s[1]} days</b><span>Top speed, published</span><b>${s[2]} km/s</b><span>Top speed, from distance and lap time</span><b>${o.vp.toFixed(1)} km/s</b><span>Venus pass that made this orbit</span><b>${nf.format(FLY[st-1][0])} km up, ${FLY[st-1][1]==='in'?'heading in':'heading out'}</b>`;
+  $('heat').innerHTML=`At closest approach sunlight is <b>${Math.round(I)} times</b> as strong as at Earth: about ${nf.format(Math.round(I*1.361))} kW on every square metre facing the Sun.${st===7?' NASA quotes 475 times.':''}`;
+  drawOrb();table()}
+function table(){let h='<tr><th>Orbit</th><th class="n">Closest (solar radii)</th><th class="n">Lap (days)</th><th class="n">Top speed: published</th><th class="n">model</th><th class="n">Venus pass: planned</th><th class="n">model</th></tr>';
+  ST.forEach((s,i)=>{const f=FB[i],d=f?Math.round(f.alt-FLY[i][0]):null;h+=`<tr${i===st-1?' class="on"':''}><td>After flyby ${i+1}</td><td class="n">${s[0]}</td><td class="n">${s[1]}</td><td class="n">${s[2]} km/s</td><td class="n ${Math.abs(OR[i].vp-s[2])/s[2]<.01?'ok':'mid'}">${OR[i].vp.toFixed(1)}</td><td class="n">${nf.format(FLY[i][0])} km</td><td class="n">${f?nf.format(Math.round(f.alt))+' km':'not tested'}</td></tr>`});
+  $('check').innerHTML=h}
+$('iS').oninput=()=>{st=+$('iS').value;playing=false;$('play').textContent='Play the seven years';stage()};
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'Pause':'Play the seven years';if(playing&&st===7){st=1;stage()}};
+let acc=0;function loop(ts){const dt=lf?Math.min(.1,(ts-lf)/1000):0;lf=ts;pt=(pt+dt/(ST[st-1][1]/30))%1;if(playing){acc+=dt;if(acc>2.6){acc=0;if(st<7){st++;$('iS').value=st;stage()}else{playing=false;$('play').textContent='Play the seven years'}}}drawOrb();requestAnimationFrame(loop)}
+for(const id of ['bars','orb']){const c=$(id);size(c);new ResizeObserver(()=>{size(c);id==='bars'?drawBars():drawOrb()}).observe(c)}
+drawBars();stage();requestAnimationFrame(loop);
+window.__sun={OR,FB,BARS,stage};
+})();
+</script>

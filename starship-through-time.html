@@ -1,0 +1,256 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Starship Through Time</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Tiro+Devanagari+Sanskrit&display=swap">
+<style>
+/* Layout: era picker on top, the mission film in the middle, the computed outcome beside it, then the comparison table. Single dark look: a night launch from an ancient city. */
+:root{
+  color-scheme:dark;
+  --void:#06060b; --panel:#0e0d14; --panel2:#17151f; --line:#2a2633;
+  --ink:#ece8f0; --dim:#9a93a6; --gold:#e8c46a; --brick:#c4623f; --lox:#74c7ff; --mars:#e0774a; --ok:#5fd6a0; --bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --deva:"Tiro Devanagari Sanskrit","Noto Serif Devanagari",serif;
+}
+html,body{background:var(--void)}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+*{box-sizing:border-box}
+.wrap{max-width:1180px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--gold)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,56px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 8px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:70ch;color:#d3cddb}
+a{color:var(--lox)}
+.eras{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:820px){.eras{grid-template-columns:1fr 1fr}}
+.era{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;cursor:pointer;color:var(--ink);font:inherit;display:flex;flex-direction:column;gap:2px;min-width:0}
+.era[aria-pressed="true"]{border-color:var(--gold);background:var(--panel2);box-shadow:inset 0 3px 0 var(--gold)}
+.era b{font-family:var(--display);font-size:22px;font-weight:700;text-transform:uppercase;line-height:1.05}
+.era span{font-size:12.5px;color:var(--dim)}
+.era .yr{font-family:var(--display);color:var(--gold);font-size:15px;letter-spacing:.06em}
+.main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#000}
+#film{display:block;width:100%;aspect-ratio:16/10;max-width:100%}
+.hud{position:absolute;left:12px;top:10px;pointer-events:none;max-width:75%}
+.hud .tag{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.hud .big{font-family:var(--display);font-weight:700;font-size:clamp(20px,3.6vw,34px);line-height:1;text-transform:uppercase;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.bar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-top:10px}
+button.b{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 11px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+button.b[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#1a1404}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#scrub{flex:1 1 100%;accent-color:var(--gold);margin:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;min-width:0}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-variant-numeric:tabular-nums;font-size:13.5px}
+.kv span{color:var(--dim)}.kv b{text-align:right;font-weight:600}
+.outcome{margin-top:12px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}
+.outcome b.ok{color:var(--ok)}.outcome b.bad{color:var(--bad)}
+.units{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:6px}
+@media (max-width:600px){.units{grid-template-columns:1fr 1fr}}
+.unit{background:var(--panel2);border-radius:4px;padding:8px 10px;min-width:0}
+.unit span{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.unit b{font-family:var(--display);font-size:20px;font-weight:600}
+.unit i{font-style:normal;font-size:12px;color:var(--dim)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+td,th{padding:7px 8px 7px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}
+.spec{border-left:2px solid var(--brick);padding-left:12px}
+footer{color:var(--dim);font-size:12.5px;max-width:96ch}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">A what-if, computed</div>
+    <h1>Starship Through Time</h1>
+    <p>Put a modern Starship in the hands of India's classical astronomers, at their own observatory towns, in their own century, and fly it to Mars on <i>their</i> numbers: their planet clock picks the launch date, their trigonometry aims it, their units keep time. Everything about the rocket is modern; everything about the navigation is theirs. The outcome below is calculated, not imagined. The story around it is labelled as a story.</p>
+  </header>
+
+  <div class="eras" id="eras" role="group" aria-label="Choose an era"></div>
+
+  <div class="main">
+    <div>
+      <div class="stage"><canvas id="film" aria-label="Mission film: launch, orbit, cruise and arrival"></canvas>
+        <div class="hud"><div class="tag" id="tag"></div><div class="big" id="big"></div></div></div>
+      <div class="bar">
+        <button class="b" id="play" type="button">Pause</button>
+        <button class="b" id="restart" type="button">Restart</button>
+        <button class="b" id="nav" type="button" aria-pressed="false">Navigator sights Mars mid-cruise</button>
+        <input id="scrub" type="range" min="0" max="60" step="0.05" value="0" aria-label="Mission timeline">
+      </div>
+    </div>
+    <div class="card">
+      <h2 id="oTitle">Mission computer</h2>
+      <div class="kv" id="kv"></div>
+      <div class="outcome" id="outcome"></div>
+      <h2 style="margin-top:14px">Mission time in their units</h2>
+      <div class="units" id="units"></div>
+    </div>
+  </div>
+
+  <section class="card">
+    <h2>All four eras side by side</h2>
+    <div class="scroll"><table id="cmp"></table></div>
+    <p style="margin-top:10px">Why the clocks miss: they track the <i>average</i> motion of the planets very well (Mars's year to a few hours in 687 days), but Mars's real orbit is noticeably oval, so its true position swings up to about 10° either side of the average. The siddhantas did have correction rules for this (the <i>manda</i> correction); this page flies on the mean motions alone, the part of their work that is a pure count of revolutions. The aiming error from Aryabhata's sine table (up to 112,000 km at Mars) is small beside it.</p>
+  </section>
+
+  <section class="card spec">
+    <h2>What would have happened: the story</h2>
+    <div id="story"></div>
+  </section>
+
+  <footer>Planet clocks as on the <a href="https://claude.ai/artifact/T7vLYNDGc7GY4DEWtM2hwF">Mars campaign page</a>: Aryabhatiya (Clark 1930), Varahamihira's Pancha Siddhantika (Neugebauer &amp; Pingree 1970), Brahmagupta via D. Duke (2008). The “modern” comparison is the same circular, coplanar mean-motion model used there (J2000 elements), not a full ephemeris, so the misses measure the ancient counts against modern counts. Errors are computed frame-free, as Mars at arrival relative to Earth at departure, so the different zero points of the Indian and modern zodiacs cancel. Time units: 1 ghatika = 24 min, 1 vinadi = 24 s, 1 prana ≈ 4 s; a Nalanda water-clock sinking at the equinox is about 45 min (Yijing). Dates before 1582 are in the Julian calendar. Ahargana is the day count from the start of the Kali Yuga, 18 February 3102 BC. Launch and orbit times are modern Starship figures. See also the <a href="https://claude.ai/artifact/LaFFtHTwWZh7EiU6gL9F8Z">Aryabhata Lab</a> and <a href="https://claude.ai/artifact/9GzdyyvJ8zRcBAznWXM37B">Nalanda</a>.</footer>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id),TAU=Math.PI*2,D=Math.PI/180,nf=new Intl.NumberFormat('en-US');
+const lerp=(a,b,k)=>a+(b-a)*k,clamp=(x,a,b)=>x<a?a:x>b?b:x,smooth=(a,b,x)=>{x=clamp((x-a)/(b-a),0,1);return x*x*(3-2*x)};
+const fr=x=>x-Math.floor(x),wrap=x=>((x%360)+540)%360-180,JD2000=2451545.0;
+const jdJul=(y,m,d)=>{const a=Math.floor((14-m)/12),Y=y+4800-a,M=m+12*a-3;return d+Math.floor((153*M+2)/5)+365*Y+Math.floor(Y/4)-32083-0.5};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function julStr(jd){const J=Math.floor(jd+.5),c=J+32082,d=Math.floor((4*c+3)/1461),e=c-Math.floor(1461*d/4),m=Math.floor((5*e+2)/153);
+  return `${e-Math.floor((153*m+2)/5)+1} ${MON[m+2-12*Math.floor(m/10)]} ${d-4800+Math.floor(m/10)} CE`}
+
+/* ---------- planet clocks (mean motions), same as the Mars campaign page ---------- */
+const CL={
+  modern:{E:d=>100.46457+0.98560910*d,M:d=>355.45332+0.52403840*d},
+  arya:(()=>{const ep=588465.5+.25-75.77/360,days=1577917500,k=d=>JD2000+d-ep;return {E:d=>180+360*fr(k(d)*4320000/days),M:d=>360*fr(k(d)*2296824/days)}})(),
+  vara:(()=>{const ep=1905588.5-75.77/360,ah=d=>JD2000+d-ep;return {E:d=>180+360*fr((ah(d)-.0525)*800/292207),M:d=>{const n=ah(d)/687;return (360*fr(n)+75+35/60+Math.floor(n)*14/216000)%360}}})(),
+  brahma:(()=>{const C=1577916450000,JDK=588465.5+.25-75.77/360,l=(r,d)=>360*fr(r*4567/10000+r*(JD2000+d-JDK)/C);return {E:d=>180+l(4320000000,d),M:d=>l(2296828522,d)}})()};
+const MU=1.32712440018e11,AU=1.495978707e8,R1=AU,R2=1.523679*AU,TOF=258.87,NU=179.99;
+function findWindow(ck,fromJD){const c=CL[ck];let prev=null;for(let d=fromJD-JD2000;d<fromJD-JD2000+900;d++){const f=wrap(c.M(d+TOF)-c.E(d)-NU);if(prev!==null&&prev>0&&f<=0&&prev-f<10)return JD2000+d-1+prev/(prev-f);prev=f}return null}
+
+/* ---------- eras ---------- */
+const ERAS=[
+  {id:'arya',name:'Aryabhata',year:499,site:'Kusumapura (Patna)',lat:25.61,clock:'arya',clockName:'Aryabhatiya',unitNote:'ghatika and prana',
+   story:['Aryabhata argued the Earth turns while the stars stand still (Golapada 9). Ninety minutes into this flight his ship would see India slide east beneath it: the first direct proof of his most attacked idea, eleven centuries before Copernicus.','His Mars window falls a week from the modern date, but flying on mean motions alone he would arrive millions of kilometres from Mars. His own manda corrections, or a single sighting of Mars from the ship, would close the gap.']},
+  {id:'vara',name:'Varahamihira',year:550,site:'Ujjain (Avanti)',lat:23.18,clock:'vara',clockName:'Pancha Siddhantika',unitNote:'ghatika',
+   story:['Ujjain was the prime meridian of Indian astronomy; every siddhanta reckoned time from midnight there. Launching from Avanti, the mission clock would start at the very meridian the texts were written for.','Varahamihira compiled five rival astronomies side by side. A real flight would have been the ultimate referee between them: the one whose Mars sat closest to the real Mars would win.']},
+  {id:'brahma',name:'Brahmagupta',year:628,site:'Bhinmal',lat:25.00,clock:'brahma',clockName:'Brahmasphutasiddhanta',unitNote:'ghatika',
+   story:['Brahmagupta attacked Aryabhata for explaining eclipses as shadows and defended the demon Rahu (XI.9). A ship between the Earth and the Moon during a lunar eclipse would have photographed the Earth’s round shadow sliding across the Moon, ending that argument in Aryabhata’s favour.','His own planet counts are the best of the four here: the smallest miss at Mars.']},
+  {id:'nalanda',name:'Nalanda',year:640,site:'Nalanda Mahavihara',lat:25.14,clock:'brahma',clockName:'Brahmagupta (newest of the day)',unitNote:'water-clock sinkings',
+   story:['In 640 Xuanzang was studying at Nalanda. The monastery measured its day with a sinking copper bowl and a drum, 32 sinkings to a day and night. The whole climb to orbit would be over long before the first sinking of the bowl.','Nalanda’s logicians argued that what perception can settle, scripture may not overrule. A photograph of the round, turning Earth is exactly the kind of perception they had in mind.']},
+];
+let era=ERAS[0],nav=false,t=0,playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,last=0,M={};
+const SIDE=86164.0905;
+function compute(e){
+  const from=jdJul(e.year,1,1),dep=findWindow(e.clock,from),depM=findWindow("modern",from),arr=dep+TOF;
+  const d0=dep-JD2000,d1=arr-JD2000,ph=c=>wrap(CL[c].M(d1)-CL[c].E(d0)),err=wrap(ph('modern')-ph(e.clock));
+  const miss=Math.abs(err)*D*R2,fix=miss*1000/(TOF/2*86400),boost=TAU*6378.137*Math.cos(e.lat*D)/SIDE;
+  return {dep,depM,arr,err,miss,fix,boost,diff:dep-depM,ahar:Math.round(arr-(588465.5+.25-75.77/360))};
+}
+function renderEra(){
+  M=compute(era);
+  $('oTitle').textContent=`${era.name}'s mission · ${era.year} CE`;
+  const row=(k,v)=>`<span>${k}</span><b>${v}</b>`;
+  $('kv').innerHTML=row('Launch site',`${era.site}, ${era.lat.toFixed(2)}° N`)+row('Free speed from the Earth’s turn',`${M.boost.toFixed(3)} km/s east`)
+    +row(`Departure picked by the ${era.clockName}`,julStr(M.dep))+row('Modern model’s best date',`${julStr(M.depM)} (${M.diff>0?'+':''}${M.diff.toFixed(1)} days)`)
+    +row('Arrival at Mars',julStr(M.arr))+row('Kali Yuga day count at arrival',nf.format(M.ahar))
+    +row('Where their clock puts Mars vs where it is',`${Math.abs(M.err).toFixed(2)}°`)+row('Distance off at arrival',`${(M.miss/1e6).toFixed(1)} million km`);
+  $('outcome').innerHTML=nav?`<b class="ok">Arrives.</b> Halfway out, a navigator sights Mars against the stars, finds it ${Math.abs(M.err).toFixed(1)}° from where the ${era.clockName} said, and burns ${(M.fix/1000).toFixed(2)} km/s to correct. That costs about ${Math.round(283*(Math.exp(M.fix/(9.80665*380))-1))} t more propellant for a ship carrying 100 t to Mars, one more tanker flight in orbit before departure.`
+    :`<b class="bad">Misses Mars by ${(M.miss/1e6).toFixed(1)} million km</b>, about ${nf.format(Math.round(M.miss/6779))} times the planet's width, flying on the mean planet clock alone. Turn on the navigator to see the fix.`;
+  const asc=8.5*60,orbit=90*60,trip=TOF*86400;
+  const U=[['Climb to orbit','8½ min',asc],['One orbit','90 min',orbit],['Earth to Mars',`${Math.round(TOF)} days`,trip]];
+  $('units').innerHTML=U.map(([k,mod,s])=>{const g=s/1440,txt=era.id==='nalanda'?`${(s/2700).toFixed(s<2700?2:0)} sinkings`:g<1?`${Math.round(s/4)} pranas`:g<10?`${g.toFixed(2)} ghatikas`:`${nf.format(Math.round(g))} ghatikas`;
+    return `<div class="unit"><span>${k}</span><b>${txt}</b><i>${mod}</i></div>`}).join('')+`<div class="unit"><span>Correction burn</span><b>${(M.fix/1000).toFixed(2)} km/s</b><i>if sighted</i></div>`;
+  $('story').innerHTML=era.story.map(s=>`<p>${s}</p>`).join('')+'<p style="color:var(--dim);font-size:13px">The paragraphs above are speculation built on the computed numbers; the numbers are not.</p>';
+  [...$('eras').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===era.id));
+}
+ERAS.forEach(e=>{const b=document.createElement('button');b.type='button';b.className='era';b.dataset.id=e.id;
+  b.innerHTML=`<span class="yr">${e.year} CE</span><b>${e.name}</b><span>${e.site}</span><span>Clock: ${e.clockName}</span>`;
+  b.addEventListener('click',()=>{era=e;renderEra();t=0;playing=true;syncBtn()});$('eras').append(b)});
+function compareTable(){
+  $('cmp').innerHTML='<tr><th>Era</th><th>Launch site</th><th class="n">Window vs modern</th><th class="n">Mars error</th><th class="n">Miss at arrival</th><th class="n">Fix needed</th></tr>'+ERAS.map(e=>{const m=compute(e);
+    return `<tr><td><b>${e.name}</b> · ${e.year}</td><td>${e.site}</td><td class="n">${m.diff>0?'+':''}${m.diff.toFixed(1)} d</td><td class="n">${Math.abs(m.err).toFixed(2)}°</td><td class="n">${(m.miss/1e6).toFixed(1)} M km</td><td class="n">${(m.fix/1000).toFixed(2)} km/s</td></tr>`}).join('');
+}
+
+/* ---------- the film ---------- */
+const cv=$('film');let W=0,H=0,cx;
+const STARS=[];let sd=3;const rnd=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};for(let i=0;i<200;i++)STARS.push({u:rnd(),v:rnd(),b:.25+rnd()*.75});
+function resize(){const r=Math.min(2,devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*r);cv.height=Math.round(H*r);cx=cv.getContext('2d');cx.setTransform(r,0,0,r,0,0)}
+const END=60,PH=[[0,'Countdown','At the launch site'],[6,'Liftoff','Climb to orbit'],[16,'One orbit','Low Earth orbit'],[27,'Burn for Mars','Leaving Earth'],[30,'Cruise','Inner solar system'],[54,'Arrival','At Mars']];
+function stars(a){cx.fillStyle='#fff';for(const s of STARS){cx.globalAlpha=s.b*a;cx.fillRect(s.u*W,s.v*H,1.3,1.3)}cx.globalAlpha=1}
+function rocket(x,y,s,flame){cx.save();cx.translate(x,y);cx.scale(s,s);
+  if(flame){const g=cx.createLinearGradient(0,0,0,40);g.addColorStop(0,'rgba(255,240,210,.95)');g.addColorStop(.4,'rgba(255,150,60,.7)');g.addColorStop(1,'rgba(255,90,40,0)');cx.fillStyle=g;cx.beginPath();cx.moveTo(-4,0);cx.quadraticCurveTo(-7,20,0,42+Math.sin(performance.now()/40)*3);cx.quadraticCurveTo(7,20,4,0);cx.fill()}
+  const g=cx.createLinearGradient(-4.5,0,4.5,0);g.addColorStop(0,'#59616b');g.addColorStop(.35,'#eef2f5');g.addColorStop(1,'#434a52');cx.fillStyle=g;
+  cx.beginPath();cx.moveTo(-4.5,0);cx.lineTo(-4.5,-58);cx.bezierCurveTo(-4.5,-66,-2,-70,0,-72);cx.bezierCurveTo(2,-70,4.5,-66,4.5,-58);cx.lineTo(4.5,0);cx.closePath();cx.fill();
+  cx.fillStyle='#2c3138';cx.fillRect(-7,-12,2.5,10);cx.fillRect(4.5,-12,2.5,10);cx.fillRect(-6,-58,1.8,6);cx.fillRect(4.2,-58,1.8,6);cx.restore()}
+function sceneSite(u){
+  let g=cx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#05061a');g.addColorStop(.7,'#1a1430');g.addColorStop(1,'#2a1a22');cx.fillStyle=g;cx.fillRect(0,0,W,H);stars(1);
+  const gy=H*.8;cx.fillStyle='#120d10';cx.fillRect(0,gy,W,H-gy);
+  cx.fillStyle='rgba(116,199,255,.16)';cx.fillRect(0,gy+H*.06,W,H*.06); // river
+  // brick city silhouettes: vihara, temple spire, palms
+  cx.fillStyle='#3a1f18';cx.fillRect(W*.04,gy-H*.12,W*.28,H*.12);for(let k=0;k<7;k++){cx.fillStyle='#1c0f0c';cx.fillRect(W*.06+k*W*.038,gy-H*.08,W*.018,H*.05)}
+  cx.fillStyle='#4a261c';cx.beginPath();cx.moveTo(W*.36,gy);cx.lineTo(W*.39,gy-H*.26);cx.lineTo(W*.42,gy);cx.closePath();cx.fill();
+  cx.strokeStyle='#1a0f0c';cx.lineWidth=3;for(const px of [.74,.8,.9]){cx.beginPath();cx.moveTo(W*px,gy);cx.quadraticCurveTo(W*px+6,gy-H*.12,W*px+2,gy-H*.2);cx.stroke();
+    cx.fillStyle='#1a0f0c';for(let a=0;a<5;a++){cx.beginPath();cx.ellipse(W*px+2+Math.cos(a*1.25)*10,gy-H*.2+Math.sin(a*1.25)*3,12,3,a*1.25,0,TAU);cx.fill()}}
+  // tower and rocket
+  const tx=W*.58,lift=smooth(6,16,u*16),ry=gy-lift*lift*(gy+H*.3),s=H/360;
+  cx.fillStyle='#2a2f38';cx.fillRect(tx-W*.035,gy-H*.62,W*.012,H*.62);
+  if(u*16>5.5){cx.globalCompositeOperation='lighter';g=cx.createRadialGradient(tx,gy,0,tx,gy,H*.3*clamp(1-lift,0,1)+5);g.addColorStop(0,'rgba(255,200,140,.7)');g.addColorStop(1,'rgba(255,120,40,0)');cx.fillStyle=g;cx.fillRect(0,0,W,H);cx.globalCompositeOperation='source-over'}
+  rocket(tx,ry,s*2.2,u*16>5.8);
+  if(u*16<6){cx.font=`700 ${Math.max(18,W*.05)}px "Saira Condensed",sans-serif`;cx.fillStyle='#e8c46a';cx.textAlign='center';cx.fillText(`${Math.max(1,Math.ceil((6-u*16)/6*10))} vinadi`,W/2,H*.18);cx.textAlign='left'}
+}
+function sceneOrbit(u){
+  cx.fillStyle='#02030a';cx.fillRect(0,0,W,H);stars(.8);
+  const R=Math.min(W,H)*.34,cxp=W*.5,cyp=H*.55;let g=cx.createRadialGradient(cxp-R*.3,cyp-R*.3,R*.1,cxp,cyp,R);g.addColorStop(0,'#3f8ed8');g.addColorStop(1,'#0b2a5e');cx.fillStyle=g;cx.beginPath();cx.arc(cxp,cyp,R,0,TAU);cx.fill();
+  // turning Earth: longitude lines slide east; the launch site rides with them (Golapada 9)
+  const spin=u*TAU;cx.save();cx.beginPath();cx.arc(cxp,cyp,R,0,TAU);cx.clip();cx.strokeStyle='rgba(255,255,255,.14)';
+  for(let k=0;k<12;k++){const a=k*TAU/12+spin;const x=Math.sin(a)*R;if(Math.cos(a)>0){cx.beginPath();cx.ellipse(cxp,cyp,Math.abs(x),R,0,0,TAU);cx.stroke()}}
+  const la=era.lat*D,lo=spin+.4,sx=cxp+Math.sin(lo)*R*Math.cos(la),sy=cyp-Math.sin(la)*R;
+  if(Math.cos(lo)>0){cx.fillStyle='#e8c46a';cx.beginPath();cx.arc(sx,sy,5,0,TAU);cx.fill();cx.font='600 13px "Saira Condensed",sans-serif';cx.fillText(era.site.toUpperCase(),sx+8,sy-6)}
+  cx.restore();
+  cx.strokeStyle='rgba(231,237,243,.25)';cx.setLineDash([3,6]);cx.beginPath();cx.ellipse(cxp,cyp,R*1.25,R*.42,-.2,0,TAU);cx.stroke();cx.setLineDash([]);
+  const oa=u*TAU*1.0,ox=cxp+Math.cos(oa)*R*1.25,oy=cyp+Math.sin(oa)*R*.42;cx.fillStyle='#fff';cx.beginPath();cx.arc(ox,oy,3.5,0,TAU);cx.fill();
+  cx.font='600 13px "Saira Condensed",sans-serif';cx.fillStyle='#e8c46a';cx.fillText('THE EARTH TURNS UNDER THE SHIP · GOLAPADA 9, SEEN',12,H-14);
+}
+function sceneBurn(u){cx.fillStyle='#02030a';cx.fillRect(0,0,W,H);stars(1);
+  const R=W*(1.3-u*.4),cyy=H*(1.05+u*.2)+R;const g=cx.createRadialGradient(W*.4,cyy,R*.98,W*.4,cyy,R*1.03);g.addColorStop(0,'#0b2a5e');g.addColorStop(.5,'#3f8ed8');g.addColorStop(.53,'#9fd2ff');g.addColorStop(1,'rgba(120,180,255,0)');
+  cx.fillStyle=g;cx.beginPath();cx.arc(W*.4,cyy,R*1.03,0,TAU);cx.fill();cx.save();cx.translate(W*.55,H*.42);cx.rotate(Math.PI/2.4);rocket(0,0,H/300,u<.9);cx.restore()}
+function sceneCruise(u){
+  cx.fillStyle='#02030a';cx.fillRect(0,0,W,H);stars(.6);
+  const cxp=W*.5,cyp=H*.54,S=Math.min(W,H)*.42/R2,d0=M.dep-JD2000,day=d0+u*TOF;
+  const pos=(lon,r)=>[cxp+Math.cos(-lon*D)*r*S,cyp+Math.sin(-lon*D)*r*S];
+  cx.strokeStyle='rgba(116,199,255,.35)';cx.beginPath();cx.arc(cxp,cyp,R1*S,0,TAU);cx.stroke();cx.strokeStyle='rgba(224,119,74,.4)';cx.beginPath();cx.arc(cxp,cyp,R2*S,0,TAU);cx.stroke();
+  let g=cx.createRadialGradient(cxp,cyp,0,cxp,cyp,20);g.addColorStop(0,'#fff6d8');g.addColorStop(.4,'#ffc860');g.addColorStop(1,'rgba(255,170,60,0)');cx.fillStyle=g;cx.beginPath();cx.arc(cxp,cyp,20,0,TAU);cx.fill();
+  // draw everything in the modern frame; the ancient prediction is offset by the computed phase error
+  const lE0=CL.modern.E(d0),a=(R1+R2)/2,e=(R2-R1)/(R2+R1),n=Math.sqrt(MU/a**3),Mn=u*Math.PI,aim=nav?0:-M.err;
+  let E=Mn;for(let k=0;k<10;k++)E=E-(E-e*Math.sin(E)-Mn)/(1-e*Math.cos(E));const nu=2*Math.atan(Math.sqrt((1+e)/(1-e))*Math.tan(E/2)),r=a*(1-e*e)/(1+e*Math.cos(nu));
+  const corr=nav?smooth(.45,.55,u):0,shipLon=lE0+nu/D+(1-corr)*(-M.err)*smooth(0,1,u)*0+(nav?0:-M.err*u),[sx,sy]=pos(shipLon,r);
+  const [ex,ey]=pos(CL.modern.E(day),R1),[mx,my]=pos(CL.modern.M(day),R2),[gx,gy]=pos(CL.modern.M(day)-M.err,R2);
+  cx.fillStyle='#4aa3ff';cx.beginPath();cx.arc(ex,ey,6,0,TAU);cx.fill();cx.fillStyle='#e0774a';cx.beginPath();cx.arc(mx,my,6,0,TAU);cx.fill();
+  cx.strokeStyle='rgba(232,196,106,.9)';cx.setLineDash([3,3]);cx.beginPath();cx.arc(gx,gy,7,0,TAU);cx.stroke();cx.setLineDash([]);
+  cx.fillStyle='#fff';cx.beginPath();cx.arc(sx,sy,3.2,0,TAU);cx.fill();
+  cx.font='600 13px "Saira Condensed",sans-serif';cx.textBaseline='middle';cx.fillStyle='#9fd2ff';cx.fillText('EARTH',ex+10,ey);cx.fillStyle='#f0a07a';cx.fillText('MARS',mx+10,my);
+  cx.fillStyle='#e8c46a';cx.fillText(`MARS BY THE ${era.clockName.toUpperCase().split(' (')[0]}`,gx+10,gy+14);cx.fillStyle='#fff';cx.fillText('STARSHIP',sx+8,sy-12);
+  if(nav&&u>.45&&u<.6){cx.fillStyle='#5fd6a0';cx.fillText(`SIGHTING · CORRECTION ${(M.fix/1000).toFixed(2)} KM/S`,12,24)}
+  cx.textBaseline='alphabetic';cx.fillStyle='#9a93a6';cx.fillText(julStr(JD2000+day).toUpperCase(),12,H-12);
+}
+function sceneArrive(u){
+  cx.fillStyle='#02030a';cx.fillRect(0,0,W,H);stars(.7);
+  const mx=W*.5,my=H*.55,mr=Math.min(W,H)*.22;let g=cx.createRadialGradient(mx-mr*.3,my-mr*.3,mr*.1,mx,my,mr);g.addColorStop(0,'#e89a6a');g.addColorStop(1,'#7a3418');cx.fillStyle=g;cx.beginPath();cx.arc(mx,my,mr,0,TAU);cx.fill();
+  cx.font=`700 ${Math.max(16,W*.034)}px "Saira Condensed",sans-serif`;cx.textAlign='center';
+  if(nav){cx.fillStyle='#5fd6a0';cx.fillText('ARRIVED · CORRECTED BY SIGHTING',W/2,H*.14);rocket(mx+mr*1.3,my-mr*.2,H/420,false)}
+  else{cx.fillStyle='#ff6b5e';cx.fillText(`MISSED BY ${(M.miss/1e6).toFixed(1)} MILLION KM`,W/2,H*.14);cx.fillStyle='#9a93a6';cx.font='600 13px "Saira Condensed",sans-serif';cx.fillText('THE SHIP PASSES FAR BEYOND THE EDGE OF THIS VIEW',W/2,H*.92)}
+  cx.textAlign='left';
+}
+function render(){
+  if(!W)return;const ph=PH.filter(p=>t>=p[0]).slice(-1)[0];
+  if(t<16)sceneSite(t/16);else if(t<27)sceneOrbit((t-16)/11);else if(t<30)sceneBurn((t-27)/3);else if(t<54)sceneCruise((t-30)/24);else sceneArrive((t-54)/6);
+  $('tag').textContent=`${era.name} · ${era.site} · ${era.year} CE`;$('big').textContent=ph[1];if(!drag)$('scrub').value=t;
+}
+let drag=false;
+function frame(ms){const dt=Math.min(.05,(ms-last)/1000||0);last=ms;if(playing){t+=dt;if(t>=END){t=END;playing=false;syncBtn()}}render();requestAnimationFrame(frame)}
+const syncBtn=()=>{$('play').textContent=playing?'Pause':t>=END?'Replay':'Play'};
+$('play').addEventListener('click',()=>{if(!playing&&t>=END)t=0;playing=!playing;syncBtn()});
+$('restart').addEventListener('click',()=>{t=0;playing=true;syncBtn()});
+$('nav').addEventListener('click',()=>{nav=!nav;$('nav').setAttribute('aria-pressed',nav);renderEra()});
+$('scrub').addEventListener('input',()=>{t=+$('scrub').value});$('scrub').addEventListener('pointerdown',()=>drag=true);addEventListener('pointerup',()=>drag=false);
+renderEra();compareTable();new ResizeObserver(resize).observe(cv);resize();syncBtn();
+window.__tt={compute,ERAS,set t(v){t=v},draw:render,setEra:i=>{era=ERAS[i];renderEra()}};
+requestAnimationFrame(frame);
+})();
+</script>

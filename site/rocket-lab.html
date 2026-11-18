@@ -1,0 +1,221 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Rocket Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a design bench. Presets and payload on top, the stage editor on the left, the flight (trajectory film + readouts) on the right, then the model check against real rockets and the engine catalogue. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--flame)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:72ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}@media (max-width:940px){.bench{grid-template-columns:minmax(0,1fr)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"],button.primary{background:var(--flame);border-color:var(--flame);color:#1c1002}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.stage{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--flame);border-radius:4px;padding:10px;margin-bottom:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px}
+.stage h3{grid-column:1/-1;margin:0;font-family:var(--display);font-size:16px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.stage label{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--dim);min-width:0}
+select,input[type=number]{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 7px;width:100%;min-width:0}
+input[type=range]{width:100%;accent-color:var(--flame)}
+.mini{font-size:12px;color:var(--dim);grid-column:1/-1}
+#film{display:block;width:100%;aspect-ratio:16/10;background:#02030a;border-radius:4px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:13.5px;font-variant-numeric:tabular-nums;margin-top:10px}.kv span{color:var(--dim)}.kv b{text-align:right;font-weight:600}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}.verdict b.ok{color:var(--ok)}.verdict b.bad{color:var(--bad)}.verdict b.mid{color:var(--gold)}
+.targets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}@media (max-width:560px){.targets{grid-template-columns:1fr 1fr}}
+.tgt{background:var(--panel2);border-radius:4px;padding:6px 8px;font-size:12px;border-top:3px solid var(--line)}.tgt.ok{border-top-color:var(--ok)}.tgt.no{border-top-color:var(--bad)}.tgt b{display:block;font-family:var(--display);font-size:16px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Starship Atlas"><div class="sa-in"><a href="index.html" class="sa-brand">Starship Atlas</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html" aria-current="page">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Real engines · real physics · your rocket</div>
+    <h1>Rocket Lab</h1>
+    <p>Start from a real rocket or design your own: pick engines from the catalogue, stack stages, load propellant, set the payload, and fly it. The simulator flies the ascent with thrust that changes with altitude, air drag, gravity and a gravity turn, then tells you what orbit you reached and how much push is left for the Moon or Mars.</p>
+  </header>
+
+  <section class="card">
+    <div class="seg"><span class="note" style="margin-right:6px">Start from</span><button type="button" data-p="satv" aria-pressed="true">Saturn V (Apollo)</button><button type="button" data-p="lvm3" aria-pressed="false">ISRO LVM3</button><button type="button" data-p="mine" aria-pressed="false">A blank design</button></div>
+  </section>
+
+  <div class="bench">
+    <section class="card">
+      <h2>Stages</h2>
+      <div id="stages"></div>
+      <div class="seg"><button type="button" id="addSt">Add a stage on top</button><button type="button" id="rmSt">Remove the top stage</button></div>
+      <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-top:14px">Payload <output id="oPay" style="font-family:var(--display);font-size:17px;color:var(--ink)"></output><input id="iPay" type="range" min="0" max="200" step="0.5" value="43.5"></label>
+      <div class="seg" style="margin-top:8px"><button type="button" class="primary" id="go">Launch</button><button type="button" id="maxBtn">Find the most it can lift to orbit</button></div>
+    </section>
+    <section class="card">
+      <h2 id="fH">Flight</h2>
+      <canvas id="film" aria-label="Altitude and speed of the rocket during the ascent"></canvas>
+      <div class="kv" id="kv"></div>
+      <div class="targets" id="targets"></div>
+      <div class="verdict" id="verdict"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>How far to trust it</h2>
+    <p>Before you rely on a number from a model, check it against something real. Here are the two rockets whose full stage data is published, flown by this simulator against what they actually did.</p>
+    <div class="scroll"><table id="check"></table></div>
+    <p class="note" style="margin-top:8px">The simulator flies one fixed pitch program and simple guidance; real rockets fly trajectories optimised for each mission, which is worth several percent. For LVM3 we also had to assume the S200 booster’s sea-level performance and use its average thrust, and its upper stage pushes with less than half a g, where the steering a real flight computer does matters most. Treat results within about 10% of a goal as a coin toss.</p>
+  </section>
+
+  <section class="card">
+    <h2>Other rockets, published figures</h2>
+    <p>These do not publish full stage masses, so they are shown for comparison rather than simulated.</p>
+    <div class="scroll"><table id="others"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Engine catalogue</h2>
+    <div class="scroll"><table id="engines"></table></div>
+  </section>
+
+  <footer>Engine and stage figures from each engine’s and rocket’s Wikipedia infobox (which cite the manufacturers, NASA and ISRO): Raptor thrust 230 tf at sea level and 258 tf in vacuum (Raptor 2), Isp about 330 s at sea level; Merlin 1D 845/981 kN, 282/311 s (2013 figures); RS-25 1,860/2,279 kN, 366/452.3 s; F-1 6,770/7,770 kN, 263/304 s; RD-180 3,830/4,150 kN, 311/338 s; BE-4 2,460 kN, 340 s; Vikas 2 766 kN each (846 kN in vacuum, from the L110 stage total), 262/293 s; CE-20 186.36 kN, 442 s; RL10 110.1 kN, 465.5 s; J-2 from the S-II and S-IVB stage totals, 424 s. Saturn V stages from its infobox (masses in pounds converted); LVM3 stages from its infobox. Our derivations, marked in the catalogue: Raptor’s vacuum Isp scaled from its thrust ratio; S200 sea-level Isp; how vacuum-only engines perform low in the air. Velocity goals from a 200 km orbit: geostationary transfer +2.45 km/s, the Moon +3.15 km/s, Mars +3.6 km/s. Part of the <a href="index.html">Starship Atlas</a>.</footer>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id),nf=new Intl.NumberFormat('en-US'),g0=9.80665,R=6371e3,MU=3.986004418e14,D=Math.PI/180;
+/* engine catalogue: thrust kN (per engine), Isp s; sl=null means vacuum-only (cannot light at sea level) */
+const ENG={
+  raptor:{n:'Raptor 2 (SpaceX)',sl:2256,vac:2530,isl:330,ivac:370,f:'methane / oxygen',der:'vacuum Isp scaled from thrust ratio'},
+  merlin:{n:'Merlin 1D (SpaceX)',sl:845,vac:981,isl:282,ivac:311,f:'kerosene / oxygen'},
+  rs25:{n:'RS-25 (Shuttle, SLS)',sl:1860,vac:2279,isl:366,ivac:452.3,f:'hydrogen / oxygen'},
+  f1:{n:'F-1 (Saturn V)',sl:6770,vac:7770,isl:263,ivac:304,f:'kerosene / oxygen'},
+  rd180:{n:'RD-180 (Atlas V)',sl:3830,vac:4150,isl:311,ivac:338,f:'kerosene / oxygen'},
+  be4:{n:'BE-4 (Blue Origin)',sl:2460,vac:2460,isl:340,ivac:340,f:'methane / oxygen',der:'one Isp and thrust given; used at all heights'},
+  vikas:{n:'Vikas 2 (ISRO)',sl:766,vac:846,isl:262,ivac:293,f:'UDMH / N₂O₄'},
+  s200:{n:'S200 solid booster (ISRO)',sl:3399,vac:3578.2,isl:240,ivac:274.5,f:'solid (HTPB)',der:'average thrust; sea-level figures assumed'},
+  j2:{n:'J-2 (Saturn V upper stages)',sl:null,vac:889.6,isl:null,ivac:424,f:'hydrogen / oxygen'},
+  ce20:{n:'CE-20 (ISRO cryogenic)',sl:null,vac:186.36,isl:null,ivac:442,f:'hydrogen / oxygen'},
+  rl10:{n:'RL10 (Centaur)',sl:null,vac:110.1,isl:null,ivac:465.5,f:'hydrogen / oxygen'}};
+const lb=x=>x*0.45359237;
+const PRESETS={
+  satv:{name:'Saturn V',cd:60,pay:43.5,st:[{e:'f1',k:5,prop:lb(4881000-303000)/1000,dry:lb(303000)/1000},{e:'j2',k:5,prop:lb(1037000-95000)/1000,dry:lb(95000)/1000},{e:'j2',k:1,prop:lb(265600-33600)/1000,dry:lb(33600)/1000}]},
+  lvm3:{name:'LVM3',cd:25,pay:4.2,st:[{e:'s200',k:2,prop:410,dry:62},{e:'vikas',k:2,prop:116,dry:9,para:114},{e:'ce20',k:1,prop:28,dry:5}]},
+  mine:{name:'Your rocket',cd:20,pay:5,st:[{e:'merlin',k:9,prop:400,dry:25},{e:'vikas',k:1,prop:60,dry:5}]}};
+let cur=JSON.parse(JSON.stringify(PRESETS.satv)),pkey='satv',last=null;
+
+/* ---------- flight simulator ---------- */
+const PITCH=[[0,0],[500,3],[3000,15],[10000,35],[20000,50],[40000,63],[70000,74],[120000,84]];
+const pitch=h=>{for(let k=1;k<PITCH.length;k++)if(h<PITCH[k][0]){const [a,b]=PITCH[k-1],[c,d]=PITCH[k];return b+(d-b)*(h-a)/(c-a)}return 86};
+function stagesOf(d){return d.st.map(s=>{const E=ENG[s.e];return {T_sl:E.sl==null?null:E.sl*s.k,T_vac:E.vac*s.k,isp_sl:E.isl,isp_vac:E.ivac,prop:s.prop*1000,dry:s.dry*1000,para:s.para??null,vacOnly:E.sl==null}})}
+function fly(stages,pay,cdA){
+  const dt=.1,S=stages.map(s=>({...s,left:s.prop,on:false,done:false,tIgn:null}));let best={apo:-1e9,peri:-6371,v:0,h:0};let m=S.reduce((a,s)=>a+s.prop+s.dry,0)+pay,x=0,h=0,vx=0,vy=0,t=0,maxQ=0;const log=[],events=[];S[0].on=true;S[0].tIgn=0;
+  while(t<4000){
+    S.forEach((s,k)=>{if(k===0||s.on||s.done)return;const prev=S[k-1];if(s.para!=null&&prev.tIgn!=null&&t>=prev.tIgn+s.para){s.on=true;s.tIgn=t;events.push([t,`Stage ${k+1} lights`])}else if(s.para==null&&S.slice(0,k).every(q=>q.done)){s.on=true;s.tIgn=t;events.push([t,`Stage ${k+1} lights`])}});
+    const p=Math.exp(-Math.max(0,h)/7600);let T=0,md=0;
+    for(const [k,s] of S.entries())if(s.on&&!s.done){const Ts=(s.T_vac-(s.T_vac-(s.T_sl??s.T_vac*.6))*p)*1000,isp=s.isp_vac-(s.isp_vac-(s.isp_sl??s.isp_vac*.6))*p;T+=Ts;const mdo=Ts/(g0*isp);md+=mdo;s.left-=mdo*dt;
+      if(s.left<=0){s.done=true;s.on=false;m-=s.dry+Math.max(0,s.left);s.left=0;events.push([t,`Stage ${k+1} empty, dropped`])}}
+    const r=R+h,g=MU/r/r,cen=vx*vx/r,v=Math.hypot(vx,vy),rho=1.225*Math.exp(-Math.max(0,h)/7600),q=.5*rho*v*v;maxQ=Math.max(maxQ,q);
+    let th;if(!S[0].done)th=pitch(h)*D;else if(T>0){const aN=g-cen+(Math.min(900,Math.max(-300,(200e3-h)*.006))-vy)/15;th=Math.PI/2-Math.asin(Math.max(-.3,Math.min(.95,aN/(T/m))))}else th=Math.atan2(vx,vy);
+    const dr=v>0?q*cdA/m/v:0,a=m>0?T/m:0;vx+=(a*Math.sin(th)-dr*vx)*dt;vy+=(a*Math.cos(th)-g+cen-dr*vy)*dt;if(h<=0&&vy<0)vy=0;x+=vx*dt;h+=vy*dt;m-=md*dt;t+=dt;
+    if(Math.round(t*10)%20===0){log.push([t,x,h,Math.hypot(vx,vy)]);const rr=R+h,v2=vx*vx+vy*vy,en=v2/2-MU/rr;if(en<0){const aa=-MU/(2*en),hh=rr*vx,e=Math.sqrt(Math.max(0,1+2*en*hh*hh/MU/MU)),apo=(aa*(1+e)-R)/1000;if(apo>best.apo)best={apo,peri:(aa*(1-e)-R)/1000,v:Math.sqrt(v2),h}}}
+    const vc=Math.sqrt(MU/r),lastS=S[S.length-1];
+    let pe=-1;if(lastS.on&&h>150e3){const v2=vx*vx+vy*vy,en=v2/2-MU/r;if(en<0){const aa=-MU/(2*en),hh=r*vx;pe=aa*(1-Math.sqrt(Math.max(0,1+2*en*hh*hh/MU/MU)))-R}else pe=1e9}
+    if(pe>150e3||(lastS.on&&h>150e3&&vx>=vc&&Math.abs(vy)<80)){log.push([t,x,h,Math.hypot(vx,vy)]);return {ok:true,t,h,x,m,maxQ,log,events,left:g0*lastS.isp_vac*Math.log(m/(m-lastS.left)),twr:stages[0]}}
+    if(S.every(s=>s.done))break;if(h<0&&t>20)break}
+  return {ok:false,t,h,x,v:best.v,peri:best.peri,apo:Math.max(0,best.apo),maxQ,log,events};
+}
+function maxPay(stages,cdA){let lo=0,hi=400e3;if(!fly(stages,0,cdA).ok)return 0;for(let i=0;i<24;i++){const mid=(lo+hi)/2;fly(stages,mid,cdA).ok?lo=mid:hi=mid}return lo}
+
+/* ---------- stage editor ---------- */
+function renderStages(){
+  const host=$('stages');host.innerHTML='';
+  cur.st.forEach((s,i)=>{const E=ENG[s.e],div=document.createElement('div');div.className='stage';
+    const opts=Object.entries(ENG).map(([k,e])=>`<option value="${k}" ${k===s.e?'selected':''}>${e.n}</option>`).join('');
+    const T=E.sl==null?E.vac*s.k:E.sl*s.k,wet=s.prop+s.dry;
+    div.innerHTML=`<h3><span>Stage ${i+1}${i===0?' · lifts off':''}</span><span class="note">${nf.format(Math.round(wet))} t loaded</span></h3>
+      <label>Engine<select data-i="${i}" data-f="e">${opts}</select></label>
+      <label>How many<input type="number" min="1" max="40" step="1" value="${s.k}" data-i="${i}" data-f="k"></label>
+      <label>Propellant (t)<input type="number" min="0.5" step="0.5" value="${+s.prop.toFixed(1)}" data-i="${i}" data-f="prop"></label>
+      <label>Empty stage (t)<input type="number" min="0.1" step="0.1" value="${+s.dry.toFixed(1)}" data-i="${i}" data-f="dry"></label>
+      ${i>0?`<label>Light it<select data-i="${i}" data-f="para"><option value="" ${s.para==null?'selected':''}>after the stage below empties</option><option value="0" ${s.para===0?'selected':''}>together with the stage below</option><option value="114" ${s.para===114?'selected':''}>114 s after the stage below (LVM3)</option></select></label>`:''}
+      <span class="mini">${E.f}${E.sl==null?' · vacuum engine: cannot lift off from the ground':''} · ${nf.format(Math.round(T))} kN · burns about ${Math.round(s.prop*1000*g0*(E.ivac+(E.isl??E.ivac))/2/(E.vac*s.k*1000))} s${E.der?' · '+E.der:''}</span>`;
+    host.append(div)});
+  host.querySelectorAll('[data-f]').forEach(el=>el.addEventListener('change',()=>{const s=cur.st[+el.dataset.i],f=el.dataset.f;
+    if(f==='e')s.e=el.value;else if(f==='para')s.para=el.value===''?null:+el.value;else s[f]=Math.max(+el.min||0,+el.value||0);pkey='mine';markPreset();renderStages();run()}));
+}
+function markPreset(){document.querySelectorAll('[data-p]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===pkey))}
+document.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>{pkey=b.dataset.p;cur=JSON.parse(JSON.stringify(PRESETS[pkey]));$('iPay').value=cur.pay;markPreset();renderStages();run()}));
+$('addSt').addEventListener('click',()=>{if(cur.st.length>=4)return;cur.st.push({e:'rl10',k:1,prop:20,dry:2.5});pkey='mine';markPreset();renderStages();run()});
+$('rmSt').addEventListener('click',()=>{if(cur.st.length<=1)return;cur.st.pop();pkey='mine';markPreset();renderStages();run()});
+$('iPay').addEventListener('input',()=>{$('oPay').textContent=(+$('iPay').value).toFixed(1)+' t'});$('iPay').addEventListener('change',run);
+$('go').addEventListener('click',run);
+
+/* ---------- run and show ---------- */
+let film=null;
+function run(){
+  const pay=+$('iPay').value;$('oPay').textContent=pay.toFixed(1)+' t';const st=stagesOf(cur);const lift=st[0];
+  const m0=st.reduce((a,s)=>a+s.prop+s.dry,0)+pay*1000,twr=(lift.T_sl??0)*1000/(m0*g0);
+  const r=twr<=1.0?{ok:false,t:0,h:0,x:0,v:0,peri:-6371,apo:0,maxQ:0,log:[[0,0,0,0]],events:[]}:fly(st,pay*1000,cur.cd||20);last=r;
+  $('fH').textContent=`Flight · ${cur.name}`;
+  const k=(a,v)=>`<span>${a}</span><b>${v}</b>`;
+  $('kv').innerHTML=k('Mass at liftoff',`${nf.format(Math.round(m0/1000))} t`)+k('Thrust over weight at liftoff',twr.toFixed(2))+(r.maxQ?k('Peak air pressure on the rocket (max-Q)',`${(r.maxQ/1000).toFixed(0)} kPa`):'')
+    +(r.ok?k('Reached orbit after',`${Math.floor(r.t/60)} min ${Math.round(r.t%60)} s at ${Math.round(r.h/1000)} km`)+k('Push left in the top stage',`${(r.left/1000).toFixed(2)} km/s`):k('Best it managed',twr<=1?'never left the pad':`${Math.round(Math.max(0,r.apo))} km high, falling back`));
+  const left=r.ok?r.left/1000:-1;
+  $('targets').innerHTML=[['Low Earth orbit',0],['Geostationary transfer',2.45],['The Moon',3.15],['Mars',3.6]].map(([n,need])=>{const okk=r.ok&&left>=need;return `<div class="tgt ${okk?'ok':'no'}"><b>${n}</b>${r.ok?(okk?'reachable':`short by ${(need-left).toFixed(2)} km/s`):'no orbit'}</div>`}).join('');
+  const vacStart=st[0].vacOnly;
+  $('verdict').innerHTML=twr<=1?`<b class="bad">It cannot lift off.</b> ${vacStart?'Vacuum engines cannot run at sea level. ':''}Thrust must beat weight: add engines to stage 1 or carry less.`
+    :r.ok?`<b class="ok">In orbit.</b> ${left<3.15&&left>=3.15*.95?'Enough for a geostationary transfer orbit, and it falls just short of the Moon by a margin inside this simulator’s error: real flights with optimised trajectories make it.':left>=3.15?'It even has the push to send the payload to the Moon'+(left>=3.6?' or Mars':'')+'.':left>=2.45?'Enough left for a geostationary transfer orbit, not the Moon.':'Only enough to reach low orbit.'}`
+    :`<b class="bad">Falls short.</b> At best it reached ${Math.round(r.apo)} km high at ${nf.format(Math.round(r.v||0))} m/s, about ${nf.format(Math.round(Math.max(0,7790-(r.v||0))))} m/s short of orbital speed, and fell back. Lighten the payload, add propellant, or improve the upper stage.`;
+  film={r,t0:performance.now()};drawFilm();
+}
+$('maxBtn').addEventListener('click',()=>{const st=stagesOf(cur),mp=maxPay(st,cur.cd||20)/1000;$('iPay').value=Math.min(200,mp).toFixed(1);run();$('verdict').innerHTML+=` <br><b class="mid">Most it can lift to a 200 km orbit in this simulator: ${mp.toFixed(1)} t.</b>`});
+const cv=$('film');
+function drawFilm(){if(!film)return;const r=film.r,dpr=Math.min(2,devicePixelRatio||1),w=cv.clientWidth,h=cv.clientHeight;cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle='#02030a';g.fillRect(0,0,w,h);const L=r.log;if(!L.length)return;const xmax=Math.max(400e3,...L.map(p=>p[1]))*1.05,hmax=Math.max(250e3,...L.map(p=>p[2]))*1.1;
+  const l=46,b=26,t=12,rr=12,X=x=>l+x/xmax*(w-l-rr),Y=y=>h-b-y/hmax*(h-t-b);
+  g.strokeStyle='#1f2a38';g.fillStyle='#8a97a8';g.font='11px "IBM Plex Sans",sans-serif';g.textAlign='right';g.textBaseline='middle';
+  for(let k=0;k<=hmax;k+=50e3){g.beginPath();g.moveTo(l,Y(k));g.lineTo(w-rr,Y(k));g.stroke();g.fillText((k/1000)+' km',l-6,Y(k))}
+  g.textAlign='center';g.textBaseline='top';const stepX=xmax>2000e3?500e3:200e3;for(let k=0;k<=xmax;k+=stepX)g.fillText((k/1000)+' km',X(k),h-b+6);
+  g.strokeStyle='rgba(95,214,160,.4)';g.setLineDash([4,4]);g.beginPath();g.moveTo(l,Y(200e3));g.lineTo(w-rr,Y(200e3));g.stroke();g.setLineDash([]);g.fillStyle='rgba(95,214,160,.8)';g.textAlign='left';g.fillText('TARGET ORBIT 200 KM',l+4,Y(200e3)-14);
+  const frac=Math.min(1,(performance.now()-film.t0)/5000),n=Math.max(1,Math.floor(L.length*frac));
+  g.strokeStyle=r.ok?'#ffa24a':'#ff6b5e';g.lineWidth=2.4;g.beginPath();for(let i=0;i<n;i++){const p=L[i];i?g.lineTo(X(p[1]),Y(p[2])):g.moveTo(X(p[1]),Y(p[2]))}g.stroke();
+  const p=L[n-1];g.fillStyle='#fff';g.beginPath();g.arc(X(p[1]),Y(p[2]),4,0,Math.PI*2);g.fill();
+  g.fillStyle='#e7edf3';g.textAlign='left';g.fillText(`T+${Math.round(p[0])} s · ${Math.round(p[2]/1000)} km · ${nf.format(Math.round(p[3]))} m/s`,l+6,t+2);
+  for(const [te,msg] of r.events){if(te>p[0])continue;const q=L.find(z=>z[0]>=te)||p;g.fillStyle='#8a97a8';g.beginPath();g.arc(X(q[1]),Y(q[2]),3,0,Math.PI*2);g.fill()}
+  if(frac<1)requestAnimationFrame(drawFilm)}
+
+/* ---------- model check and tables ---------- */
+function check(){
+  const sv=stagesOf(PRESETS.satv),lv=stagesOf(PRESETS.lvm3),a=fly(sv,43500,60),bmax=maxPay(lv,25)/1000;
+  $('check').innerHTML='<tr><th>Test</th><th class="n">Real rocket</th><th class="n">This simulator</th><th>Verdict</th></tr>'
+    +`<tr><td>Saturn V: push left in orbit with Apollo’s 43.5 t, needed for the Moon</td><td class="n">about 3.15 km/s</td><td class="n">${(a.left/1000).toFixed(2)} km/s</td><td>within ${Math.round(Math.abs(1-a.left/3150)*100)}%</td></tr>`
+    +`<tr><td>LVM3: most it can lift to low orbit</td><td class="n">10 t (ISRO)</td><td class="n">${bmax.toFixed(1)} t</td><td>${Math.round((1-bmax/10)*100)}% pessimistic</td></tr>`;
+  $('others').innerHTML='<tr><th>Rocket</th><th class="n">Liftoff mass</th><th class="n">To low orbit</th><th>Notes</th></tr>'+[
+    ['Falcon 9 (Full Thrust)','549 t','22.8 t expendable; 17.5 t when the booster lands at sea','9 Merlin 1D, then 1 Merlin Vacuum (348 s)'],
+    ['Starship','about 5,000 t','15 t (Block 1), 35 t (Block 2), 100 t planned (Block 3)','Super Heavy: 275 t empty, 3,675 t loaded, 80.8 MN'],
+    ['PSLV-XL (ISRO)','320 t','3.2 t (PSLV-G, 200 km)','four stages alternating solid and liquid, six strap-on boosters'],
+    ['Saturn V','2,822–2,965 t','140 t including the S-IVB stage and Apollo spacecraft','43.5 t sent to the Moon'],
+    ['LVM3 (ISRO)','640 t','10 t; 4.2 t to geostationary transfer; 3 t to the Moon','launched Chandrayaan-3']].map(r=>`<tr><td><b>${r[0]}</b></td><td class="n">${r[1]}</td><td class="n">${r[2]}</td><td>${r[3]}</td></tr>`).join('');
+  $('engines').innerHTML='<tr><th>Engine</th><th>Propellants</th><th class="n">Thrust, sea level</th><th class="n">Thrust, vacuum</th><th class="n">Isp, sea level</th><th class="n">Isp, vacuum</th></tr>'+Object.values(ENG).map(e=>`<tr><td><b>${e.n}</b>${e.der?`<br><span class="note">${e.der}</span>`:''}</td><td>${e.f}</td><td class="n">${e.sl==null?'—':nf.format(e.sl)+' kN'}</td><td class="n">${nf.format(e.vac)} kN</td><td class="n">${e.isl==null?'—':e.isl+' s'}</td><td class="n">${e.ivac} s</td></tr>`).join('');
+}
+renderStages();run();check();new ResizeObserver(drawFilm).observe(cv);
+window.__rl={fly,stagesOf,PRESETS,maxPay,run,get last(){return last},setPreset:k=>{pkey=k;cur=JSON.parse(JSON.stringify(PRESETS[k]));$('iPay').value=cur.pay;renderStages();run()}};
+})();
+</script>

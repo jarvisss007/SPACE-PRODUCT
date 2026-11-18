@@ -1,0 +1,142 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Telescope Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: how sharp can a telescope see. Two stars seen through a chosen telescope at a chosen colour, what it can make out on real targets, why Webb must be cold, then the checks. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--flame:#ffa24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--scope:#d8b4ff;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--scope)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"]{background:var(--scope);border-color:var(--scope);color:#160a22}button:focus-visible,input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--scope)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin:10px 0}label.f output{font-family:var(--display);font-size:17px;color:var(--ink)}
+canvas{display:block;width:100%;background:#000;border-radius:4px}
+#psf{aspect-ratio:1/1;max-height:460px;image-rendering:auto}#glow{aspect-ratio:16/9}
+.kv{display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}.kv span{color:var(--dim)}.kv b{text-align:right;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Starship Atlas"><div class="sa-in"><a href="index.html" class="sa-brand">Starship Atlas</a><a href="satellite-watch.html">Live satellites</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html" aria-current="page">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="planetary-defense-lab.html">Defense</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Hubble · Webb · India’s AstroSat · the wave nature of light</div>
+    <h1>Telescope Lab</h1>
+    <p>No telescope can show a point of light as a perfect point. Light is a wave, and passing through a round mirror spreads each star into a tiny disc with faint rings, the “Airy pattern”. The bigger the mirror, the smaller the disc; the longer the wavelength, the bigger it gets. Two stars closer together than about one disc width merge into one blob. That single rule decides what every telescope can and cannot see.</p>
+  </header>
+
+  <div class="two">
+    <section class="card">
+      <h2>Two stars, one telescope</h2>
+      <div class="seg" id="scopes"></div>
+      <label class="f">Colour of light observed <output id="oL"></output><input type="range" id="iL" min="-0.8" max="1.45" step="0.01" value="-0.3"></label>
+      <label class="f">Separation between the two stars <output id="oS"></output><input type="range" id="iS" min="-2.3" max="0" step="0.01" value="-1.2"></label>
+      <canvas id="psf" aria-label="Two stars as seen through the telescope, with their Airy patterns"></canvas>
+      <div class="verdict" id="sv"></div>
+    </section>
+    <section class="card">
+      <h2>What it can make out</h2>
+      <p class="note">The smallest detail this telescope can separate at the chosen colour, on real targets.</p>
+      <div class="scroll"><table id="tg"></table></div>
+      <div class="kv" style="margin-top:12px" id="skv"></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Why Webb has to be so cold</h2>
+    <p>Everything warm glows. A telescope at room temperature glows most strongly at about 10 µm, right in the middle of the infrared that Webb was built to see, so a warm Webb would be dazzled by itself. Its sunshield keeps the mirror below 50 K, which moves its own glow far out of the way. Drag to see where an object’s glow peaks.</p>
+    <canvas id="glow" aria-label="Thermal glow spectra at different temperatures, with Webb's wavelength range shaded"></canvas>
+    <label class="f">Temperature of the glowing object <output id="oT"></output><input type="range" id="iT" min="20" max="400" step="1" value="300"></label>
+  </section>
+
+  <section class="card">
+    <h2>Checks</h2>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">The images assume a perfect, unobstructed round mirror. Real telescopes have a secondary mirror and its supports in the way, which add spikes, and Webb’s hexagonal segments give its famous six-pointed stars. Distances to Mars and Pluto are typical close-approach values. AstroSat’s ultraviolet telescope is shown at its 38 cm aperture; detector pixels can limit real images before diffraction does. Peak glow wavelengths come from Wien’s law for an ideal black body.</p>
+  </section>
+
+  <footer>Sources: Wikipedia articles “Hubble Space Telescope” (2.4 m mirror, 4.0 m² collecting area, ultraviolet to near-infrared, theoretical resolution of about 0.05 arcsec for a 2.5 m optical telescope, ground-based seeing of 0.5–1.0 arcsec), “James Webb Space Telescope” (6.5 m, 25.4 m², 0.6–28.5 µm, about six times Hubble’s collecting area, comparable resolution because it works in the infrared, kept below 50 K) and “AstroSat” (Ultraviolet Imaging Telescope). Diffraction limit 1.22 λ/D; Wien’s displacement constant 2,898 µm·K. An independent model, not affiliated with NASA, ESA or ISRO.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),nf=new Intl.NumberFormat('en-US'),RAD2AS=206264.806;
+const SCOPES=[['eye','Your eye',0.007,'0.4–0.7 µm','pupil 7 mm'],['astro','AstroSat UVIT',0.38,'0.13–0.55 µm','India, 2015'],['hubble','Hubble',2.4,'0.1–2.5 µm','NASA/ESA, 1990'],['webb','Webb',6.5,'0.6–28.5 µm','NASA/ESA/CSA, 2021'],['ground','Big ground telescope',10,'seeing-limited','0.5–1 arcsec blur']];
+let sk='hubble';
+$('scopes').innerHTML=SCOPES.map(s=>`<button type="button" data-k="${s[0]}" aria-pressed="${s[0]===sk}">${s[1]}</button>`).join('');
+document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{sk=b.dataset.k;document.querySelectorAll('[data-k]').forEach(x=>x.setAttribute('aria-pressed',x===b));if(sk==='webb'&&lam()<0.6)$('iL').value=Math.log10(2);if(sk==='astro'&&lam()>0.55)$('iL').value=Math.log10(0.25);run()});
+const lam=()=>Math.pow(10,+$('iL').value),sep=()=>Math.pow(10,+$('iS').value);
+const scope=()=>SCOPES.find(s=>s[0]===sk);
+function thetaAs(){const s=scope(),th=1.22*lam()*1e-6/s[2]*RAD2AS;return sk==='ground'?Math.max(th,0.7):th}
+function colName(l){return l<0.4?'ultraviolet':l<0.45?'violet':l<0.5?'blue':l<0.57?'green':l<0.59?'yellow':l<0.62?'orange':l<0.75?'red':l<5?'near-infrared':'mid-infrared'}
+// ---- Airy image ----
+function J1(x){if(Math.abs(x)<8){const y=x*x;const a=x*(72362614232+y*(-7895059235+y*(242396853.1+y*(-2972611.439+y*(15704.4826+y*-30.16036606)))));const b=144725228442+y*(2300535178+y*(18583304.74+y*(99447.43394+y*(376.9991397+y))));return a/b}
+  const ax=Math.abs(x),z=8/ax,y=z*z,xx=ax-2.356194491,p=1+y*(0.183105e-2+y*(-0.3516396496e-4+y*(0.2457520174e-5+y*-0.240337019e-6))),q=0.04687499995+y*(-0.2002690873e-3+y*(0.8449199096e-5+y*(-0.88228987e-6+y*0.105787412e-6)));return Math.sqrt(0.636619772/ax)*(Math.cos(xx)*p-z*Math.sin(xx)*q)*(x<0?-1:1)}
+const airy=r=>{if(r<1e-6)return 1;const x=3.8317*r;const v=2*J1(x)/x;return v*v};// r in units of the first-dark-ring radius
+function drawPSF(){const c=$('psf'),g=c.getContext('2d'),W=c.width,H=c.height,th=thetaAs(),s=sep(),field=Math.max(4*th,2.5*s),img=g.createImageData(W,H),seeing=sk==='ground';
+  const col=lam()<0.45?[160,140,255]:lam()<0.5?[120,170,255]:lam()<0.57?[120,255,160]:lam()<0.62?[255,220,120]:lam()<0.75?[255,140,110]:[255,120,200];
+  for(let j=0;j<H;j++)for(let i=0;i<W;i++){const x=(i/W-.5)*field,y=(j/H-.5)*field;const r1=Math.hypot(x+s/2,y)/th,r2=Math.hypot(x-s/2,y)/th;let v=seeing?Math.exp(-r1*r1*2)+Math.exp(-r2*r2*2):airy(r1)+airy(r2);v=Math.pow(Math.min(1,v),0.35);const k=(j*W+i)*4;img.data[k]=col[0]*v;img.data[k+1]=col[1]*v;img.data[k+2]=col[2]*v;img.data[k+3]=255}
+  g.putImageData(img,0,0);g.font=`600 ${Math.round(W/34)}px "Saira Condensed",sans-serif`;g.fillStyle='#8a97a8';g.fillText(`FIELD ${field<1?(field*1000).toFixed(0)+' MILLIARCSEC':field.toFixed(2)+' ARCSEC'} ACROSS`,10,H-12)}
+function run(){const s=scope(),l=lam(),th=thetaAs(),d=sep();$('oL').textContent=`${l<1?Math.round(l*1000)+' nm':l.toFixed(2)+' µm'} (${colName(l)})`;$('oS').textContent=d<1?(d*1000).toFixed(0)+' milliarcseconds':d.toFixed(2)+' arcseconds';
+  const inBand=sk==='eye'?l>=0.4&&l<=0.7:sk==='astro'?l>=0.13&&l<=0.55:sk==='hubble'?l<=2.5:sk==='webb'?l>=0.6:true;
+  $('sv').innerHTML=(!inBand?`<b class="bad">Outside ${s[1]}’s range (${s[3]}).</b> `:'')+(d>=th?`<b class="ok">Two stars.</b> They are ${(d/th).toFixed(1)} disc-widths apart, so ${s[1]} separates them.`:d>=th*0.8?`<b class="mid">Just merging.</b> At ${(d/th).toFixed(2)} disc-widths they blur into one elongated blob.`:`<b class="bad">One blob.</b> At ${(d/th).toFixed(2)} disc-widths apart, ${s[1]} cannot tell them apart.`);
+  const TG=[['The Moon','384,400 km',384400e3,'Apollo lunar module, 4 m wide'],['Mars at a close approach','56 million km',56e9,'Olympus Mons, 600 km wide'],['Jupiter','590 million km',590e9,'Great Red Spot, about 16,000 km'],['Pluto','5.0 billion km',5.0e12,'Pluto itself, 2,377 km across'],['Alpha Centauri','4.37 light-years',4.37*9.4607e15,'Sun-sized star, 1.4 million km'],['Proxima b’s orbit','4.24 light-years',4.24*9.4607e15,'planet–star gap, 7.5 million km']];
+  $('tg').innerHTML='<tr><th>Target</th><th class="n">Distance</th><th class="n">Smallest detail</th><th>Compare</th></tr>'+TG.map(t=>{const sz=th/RAD2AS*t[2];const f=sz<1000?Math.round(sz)+' m':sz<1e8?nf.format(Math.round(sz/1000))+' km':nf.format(Math.round(sz/1e9))+' million km';return `<tr><td>${t[0]}</td><td class="n">${t[1]}</td><td class="n">${f}</td><td>${t[3]}</td></tr>`}).join('');
+  $('skv').innerHTML=`<span>Mirror</span><b>${s[2]>=1?s[2]+' m':s[2]*100+' cm'} · ${s[4]}</b><span>Sharpest detail at this colour</span><b>${th<1?(th*1000).toFixed(0)+' milliarcseconds':th.toFixed(2)+' arcseconds'}${sk==='ground'?' (limited by the air)':''}</b><span>Light gathered, compared with Hubble’s 4.0 m²</span><b>${sk==='webb'?'25.4 m², 6.4×':sk==='hubble'?'1×':((Math.PI/4*s[2]**2)/4.0).toPrecision(2)+'×'}</b>`;drawPSF()}
+['iL','iS'].forEach(id=>$(id).addEventListener('input',run));
+// ---- glow ----
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+const planck=(l,T)=>{const h=6.626e-34,c=2.998e8,k=1.381e-23,L=l*1e-6;return 2*h*c*c/L**5/(Math.exp(h*c/(L*k*T))-1)};
+function drawGlow(){const c=$('glow'),g=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,X0=40,Y0=h-26,pw=w-X0-10,ph=h-26-14,T=+$('iT').value,X=l=>X0+(Math.log10(l)+0.5)/(Math.log10(300)+0.5)*pw;$('oT').textContent=T+' K ('+Math.round(T-273.15)+' °C)';
+  g.fillStyle='#02030a';g.fillRect(0,0,w,h);g.fillStyle='rgba(216,180,255,.12)';g.fillRect(X(0.6),14,X(28.5)-X(0.6),ph);g.font='600 11px "Saira Condensed",sans-serif';g.fillStyle='#d8b4ff';g.fillText('WEBB SEES 0.6–28.5 µm',X(0.6)+4,26);
+  g.fillStyle='rgba(116,199,255,.12)';g.fillRect(X(0.1),14,X(2.5)-X(0.1),ph);g.fillStyle='#74c7ff';g.fillText('HUBBLE 0.1–2.5 µm',X(0.1)+4,40);
+  for(const l of [0.5,1,3,10,30,100,300]){g.fillStyle='#8a97a8';g.fillText(l+' µm',X(l)-10,h-8)}
+  const curve=(TT,col,lw)=>{let mx=0;for(let l=0.4;l<300;l*=1.03)mx=Math.max(mx,planck(l,TT));g.strokeStyle=col;g.lineWidth=lw;g.beginPath();let f=true;for(let l=0.32;l<300;l*=1.02){const y=Y0-planck(l,TT)/mx*ph*0.85;f?g.moveTo(X(l),y):g.lineTo(X(l),y);f=false}g.stroke();g.lineWidth=1};
+  curve(T,'#ffa24a',2.2);const pk=2898/T;g.strokeStyle='#ffa24a';g.setLineDash([3,3]);g.beginPath();g.moveTo(X(pk),14);g.lineTo(X(pk),Y0);g.stroke();g.setLineDash([]);g.fillStyle='#ffa24a';g.fillText(`GLOW PEAKS AT ${pk.toFixed(1)} µm`,Math.min(X(pk)+4,w-130),58)}
+$('iT').addEventListener('input',drawGlow);
+// ---- checks ----
+(()=>{const r25=1.22*0.5e-6/2.5*RAD2AS,hubV=1.22*0.55e-6/2.4*RAD2AS,webb2=1.22*2e-6/6.5*RAD2AS,areaH=Math.PI/4*2.4**2,hexArea=18*(Math.sqrt(3)/2)*1.32**2;const rows=[
+  ['Diffraction limit of a 2.5 m telescope in visible light','about 0.05 arcsec',r25.toFixed(3)+' arcsec at 500 nm','ok'],
+  ['Webb’s sharpness in the infrared compared with Hubble’s in visible light','comparable',`${(webb2*1000).toFixed(0)} milliarcsec at 2 µm against ${(hubV*1000).toFixed(0)} at 550 nm`,'ok'],
+  ['Webb’s collecting area against Hubble’s','about six times',(25.4/4.0).toFixed(1)+' times (25.4 m² ÷ 4.0 m²)','ok'],
+  ['Hubble’s collecting area from its 2.4 m mirror','4.0 m²',areaH.toFixed(2)+' m² for the full disc; the published figure is smaller because the secondary mirror blocks the centre','mid'],
+  ['Webb’s area from 18 hexagons 1.32 m across','25.4 m²',hexArea.toFixed(1)+' m² before the centre and gaps are taken out','mid'],
+  ['Where a room-temperature (300 K) object glows brightest','inside Webb’s range',(2898/300).toFixed(1)+' µm','ok'],['Where a 50 K mirror glows brightest','outside it',(2898/50).toFixed(0)+' µm','ok']];
+  $('check').innerHTML='<tr><th>Test</th><th>Published</th><th>This model</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]}">${r[2]}</td></tr>`).join('')})();
+{const c=$('psf');const fit=()=>{const r=Math.min(2,devicePixelRatio||1);c.width=Math.round(c.clientWidth*r*0.6);c.height=Math.round(c.clientHeight*r*0.6);drawPSF()};new ResizeObserver(fit).observe(c);fit()}
+{const c=$('glow');size(c);new ResizeObserver(()=>{size(c);drawGlow()}).observe(c)}
+run();drawGlow();
+window.__tel={thetaAs,run,airy,J1};
+})();
+</script>
