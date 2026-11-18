@@ -1,4 +1,4 @@
-"""Build the Starship Atlas website from the app pages in this folder.
+"""Build the Kaksha Labs website from the app pages in this folder.
 
 Reads every app page, adds a shared navigation bar, turns links between the
 apps into relative links, and writes the result to ./site/. The app files
@@ -63,9 +63,9 @@ def nav_html(current: str) -> str:
     for i, (fname, label, _) in enumerate(PAGES):
         cur = ' aria-current="page"' if fname == current else ""
         cls = ' class="sa-brand"' if i == 0 else ""
-        text = "Starship Atlas" if i == 0 else label
+        text = "Kaksha Labs" if i == 0 else label
         links.append(f'<a href="{fname}"{cls}{cur}>{text}</a>')
-    return f'<nav class="sa-nav" aria-label="Starship Atlas"><div class="sa-in">{"".join(links)}</div></nav>\n'
+    return f'<nav class="sa-nav" aria-label="Kaksha Labs"><div class="sa-in">{"".join(links)}</div></nav>\n'
 
 
 def build() -> None:

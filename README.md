@@ -1,8 +1,8 @@
-# Space Product
+# Kaksha Labs
 
 Interactive space-science labs that run in any browser, built on real mission data and checked against what really happened. Every page shows its sources and a "checks" table comparing the model with published figures.
 
-The working name in the pages is still **Starship Atlas**. "Starship" is a SpaceX trademark, so the product needs its own name before launch.
+**Kaksha** (कक्षा) is the *Surya Siddhanta*'s word for a planet's orbit, and today's Hindi word for a classroom. Domains to secure: kakshalabs.com and kakshalabs.in (both unregistered when checked on 18 November 2026). Run a trademark search on ipindia.gov.in before launch.
 
 ## What is here
 
