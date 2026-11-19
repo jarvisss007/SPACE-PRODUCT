@@ -1,0 +1,34 @@
+{
+"questions": [
+{
+"q": "How close will Apophis come on 13 April 2029, and is that closer than the satellites that carry TV and weather pictures?",
+"do": "Read the cards under <b>Apophis, 13 April 2029</b> and look at the picture beside them.",
+"a": "About <b>31,640 km</b> above the surface, from JPL’s distance of 38,011 km from Earth’s centre. Geostationary satellites orbit at <b>35,793 km</b>, so Apophis passes <b>inside</b> their ring.",
+"history": false
+},
+{
+"q": "Using the energy bench, how much energy did the Chelyabinsk rock carry, and why does a rock twice as wide carry so much more?",
+"do": "Click <b>Chelyabinsk 2013</b> under <b>What if it hit?</b>, read <b>Energy</b>, then double the width.",
+"a": "About <b>400 kilotons</b> of TNT, matching the published 400–500 kt. Twice the width means <b>8 times</b> the volume and mass, so 8 times the energy at the same speed.",
+"history": false
+},
+{
+"q": "Why does the chart of passes look crowded in the past month and nearly empty in the months ahead?",
+"do": "Look at the <b>Passing Earth</b> chart either side of <b>today</b> and read the note under it.",
+"a": "Most small asteroids are discovered only <b>days before or after</b> they fly by. The future list holds only the ones already known, so it always looks emptier than it will turn out.",
+"history": false
+},
+{
+"q": "On the Palermo scale, which known asteroids rate between −2 and 0, and what does that range mean?",
+"do": "Read the top rows of <b>The risk list</b> and the explanation above it.",
+"a": "Only <b>1950 DA (29075)</b> and <b>Bennu (101955)</b>. Between −2 and 0 means the risk merits careful monitoring; below −2 means no likely consequences.",
+"history": false
+},
+{
+"q": "Where is India’s crater lake made by a meteorite, and how big is it?",
+"do": "Read <b>Rocks that changed history</b>.",
+"a": "<b>Lonar</b>, in Buldhana district, Maharashtra: <b>1.8 km</b> wide and <b>150 m</b> deep, punched into Deccan basalt. It is usually dated to about 52,000 years ago.",
+"history": true
+}
+]
+}
