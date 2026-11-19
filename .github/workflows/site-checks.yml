@@ -1,0 +1,31 @@
+name: Site checks
+
+# Opens every page in a headless browser: fails if a page crashes, scrolls sideways on a phone,
+# shows a red row in its own checks table, or grows past its size budget. Also times each page
+# on a simulated slow 4G phone. Results appear on the run's summary page.
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**", "tools/check_site.mjs", ".github/workflows/site-checks.yml"]
+  schedule:
+    - cron: "40 3 * * *"   # daily, after the 02:17 data refresh has published
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install a headless browser (on GitHub's machine only)
+        run: |
+          npm i --no-save --no-package-lock playwright@1.49.1
+          npx playwright install --with-deps chromium
+      - name: Check every page
+        run: node tools/check_site.mjs
