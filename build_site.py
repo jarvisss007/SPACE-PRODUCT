@@ -48,6 +48,7 @@ PAGES = [
     ("one-sky-lab.html", "One Sky", "8wnKFX4tTwV3Sbd2jBAzWD"),
     ("planetary-defense-lab.html", "Defense", "UtRh4Wahi2S7pytfcBcXBc"),
     ("schools.html", "For schools", "7nffqBM7LHBTznHTZ5fA5M"),
+    ("space-day.html", "Space Day", "XFqC8strPfM51DbXvPesFT"),
     ("worksheets.html", "Worksheets", "WL3LspZGoLK2qfmncyT82E"),
     ("aryabhata-lab.html", "Aryabhata", "LaFFtHTwWZh7EiU6gL9F8Z"),
     ("nalanda.html", "Nalanda", "9GzdyyvJ8zRcBAznWXM37B"),

@@ -41,6 +41,7 @@ LABS = [
  ("exoplanet-explorer.html","Exoplanet Explorer","All of the confirmed planets around other stars, a transit you can watch, and the rocky worlds with Earth-like light.","explore","light",'#5fd6c4'),
  ("black-hole-lab.html","Black Hole and Wormhole Lab","A black hole drawn from general relativity, the real ones we know, and what a wormhole would need.","explore","gravity light",'#ffb347'),
  ("spacecraft-archive.html","Spacecraft Archive","Every solar system mission since Sputnik on a clickable timeline, with the firsts and NASA's own pictures.","explore india","",'#e8c46a'),
+ ("space-day.html","National Space Day Kit","A ready-to-run 90-minute event for 23 August: run sheet, full-screen show mode with labs and quiz rounds, team scores and printable certificates.","learn india","",'#ff9933'),
  ("schools.html","Golapada for Schools","For teachers: which lab fits which NCERT chapter, eight ready 40-minute lesson plans with answers, and an offline download.","learn","",'#5fd6a0'),
  ("worksheets.html","Worksheets","Printable worksheets for school physics topics, each question tied to a lab, with a teacher answer key.","learn","",'#a8e6a1'),
  ("aryabhata-lab.html","Aryabhata Lab","Aryabhata's spinning Earth, value of π and table of sines, implemented from his verses and put to work on space problems.","ancient india learn","maths night",'#e8c46a'),
