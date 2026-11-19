@@ -1,0 +1,9 @@
+{
+ "lead": "Build a rocket from real engines and see how far it can go: to orbit, to the Moon, or to Mars.",
+ "try": "Pick a ready-made rocket at the top, like Saturn V or LVM3, and press launch. Then swap one engine and see what changes.",
+ "points": [
+  "A rocket is mostly fuel: to go further you need far more fuel, not just a little more.",
+  "Engines that throw their exhaust out faster save fuel, which is why hydrogen engines are used for the top stages.",
+  "Rockets drop empty stages on the way up so they carry less dead weight."
+ ]
+}
