@@ -1,0 +1,12 @@
+// Golapada offline support. The version changes whenever any page changes.
+const V='golapada-b80783139425',PAGES=["./", "aryabhata-lab.html", "black-hole-lab.html", "chandrayaan-3.html", "clues-in-old-books.html", "earth-from-above.html", "eclipse-lab.html", "exoplanet-explorer.html", "gaganyaan-lab.html", "gravity-assist-lab.html", "index.html", "ion-engine-lab.html", "isro-launches.html", "lagrange-lab.html", "mangalyaan.html", "mars-campaign.html", "mars-landing-lab.html", "meteor-showers.html", "milky-way-atlas.html", "nalanda.html", "navic-lab.html", "one-sky-lab.html", "planetary-defense-lab.html", "reentry-lab.html", "rocket-lab.html", "satellite-watch.html", "schools.html", "solar-system-lab.html", "space-debris-lab.html", "space-weather.html", "spacecraft-archive.html", "starship-catch.html", "starship-through-time.html", "telescope-lab.html", "tonight.html", "touch-the-sun.html", "voyager-now.html", "worksheets.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
+const LIBS=/^https:\/\/(cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.gstatic\.com)\//;
+self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(PAGES)).then(()=>self.skipWaiting()))});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V&&k.startsWith('golapada-')).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);
+  if(u.origin===location.origin){ // pages: fresh from the network when online, the saved copy when offline
+    e.respondWith(fetch(r).then(res=>{if(res.ok){const cp=res.clone();caches.open(V).then(c=>c.put(r,cp))}return res}).catch(()=>caches.match(r,{ignoreSearch:true}).then(m=>m||caches.match('./'))));return}
+  if(LIBS.test(r.url)){ // fonts and code libraries: keep a copy for offline use
+    e.respondWith(caches.match(r).then(m=>m||fetch(r).then(res=>{if(res.ok||res.type==='opaque'){const cp=res.clone();caches.open(V).then(c=>c.put(r,cp))}return res})))}
+  // live data (NOAA, NASA, CelesTrak) is never cached: it always comes from the network
+});
