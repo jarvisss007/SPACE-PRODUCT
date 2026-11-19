@@ -1,0 +1,394 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Life on the ISS</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a day aboard (24-hour scrubber + orbit view), why 16 sunrises (height and Sun-angle sliders), falling slowly (drag and reboosts), air water and food (recycling), what space does to your body (bone and radiation), space stations 1971 to today, see it for real, then expert folds. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--acc:#ff9933;--blue:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--acc)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h3{font-family:var(--display);font-weight:700;font-size:20px;margin:0 0 6px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--blue)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:16px;align-items:start}@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line);min-width:0}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stat.a{border-top-color:var(--acc)}.stat.g{border-top-color:var(--gold)}.stat.o{border-top-color:var(--ok)}.stat.b{border-top-color:var(--blue)}.stat.r{border-top-color:var(--bad)}
+input[type=range]{width:100%;accent-color:var(--acc)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:10px}label.f output{font-family:var(--display);font-size:20px;color:var(--ink)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.seg button{background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 10px;font:inherit;font-size:13.5px;cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}
+#orbit{aspect-ratio:1/1;max-width:420px;margin:0 auto}#strip{height:150px}#decay{aspect-ratio:16/7;min-height:170px}
+.now{background:var(--panel2);border-radius:6px;padding:12px 14px;border-left:4px solid var(--acc);margin-top:10px}
+.now .act{font-family:var(--display);font-size:24px;text-transform:uppercase;color:#f1f5f9}.now .kid{font-size:14.5px;color:#d6dde5;margin:4px 0 0}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14.5px}
+.key{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--dim);margin-top:6px}.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.tl{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 12px 16px}.tl li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--ok)}
+.tl li.in::before{background:var(--acc)}.tl li.p::before{background:var(--gold)}
+.tl b{font-family:var(--display);font-size:17px;color:var(--ink)}.tl span{display:block;font-size:13.5px;color:#c3ccd6}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.go{display:inline-block;margin-top:4px;background:#1d1508;border:1px solid var(--acc);color:var(--acc);border-radius:4px;padding:8px 12px;text-decoration:none;font-family:var(--display);font-size:18px;text-transform:uppercase;letter-spacing:.04em}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-bar{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;padding-block:6px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);padding:2px 6px}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible,.sa-nav button:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:2px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+.sa-nav button{flex:none;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #2c3a4d;border-radius:4px;cursor:pointer;padding:5px 10px;line-height:1.2}
+.sa-nav .sa-arr{padding:5px 8px;font-size:16px}.sa-nav .sa-arr[disabled]{opacity:.3;cursor:default}
+.sa-nav .sa-all[aria-expanded="true"]{background:#e8c46a;color:#1b1404;border-color:#e8c46a}
+.sa-nav .sa-panel{max-width:1200px;margin:0 auto;padding:6px max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:4px;max-height:70vh;overflow:auto}
+.sa-nav .sa-panel[hidden]{display:none}
+.sa-nav .sa-panel a{background:#0b1017;border:1px solid #1f2a38}.sa-nav .sa-panel a[aria-current="page"]{background:#e7edf3;color:#0a0d12;border-color:#e7edf3}
+@media (max-width:560px){.sa-nav .sa-arr{display:none}}
+@media print{.sa-nav{display:none}}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-bar"><a href="index.html" class="sa-brand">Golapada</a><button type="button" class="sa-arr" aria-label="Scroll the lab list left">‹</button><div class="sa-in"><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="mars-now.html">Mars Now</a><a href="iss-life.html" aria-current="page">ISS life</a><a href="eht-lab.html">EHT image</a><a href="comets.html">Comets</a><a href="moon-sites.html">Moon sites</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div><button type="button" class="sa-arr" aria-label="Scroll the lab list right">›</button><button type="button" class="sa-all" aria-expanded="false">All labs</button></div><div class="sa-panel" hidden><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="mars-now.html">Mars Now</a><a href="iss-life.html" aria-current="page">ISS life</a><a href="eht-lab.html">EHT image</a><a href="comets.html">Comets</a><a href="moon-sites.html">Moon sites</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<script>
+(()=>{const n=document.currentScript.previousElementSibling,s=n.querySelector('.sa-in'),[l,r]=n.querySelectorAll('.sa-arr'),b=n.querySelector('.sa-all'),p=n.querySelector('.sa-panel');
+const upd=()=>{l.disabled=s.scrollLeft<=2;r.disabled=s.scrollLeft+s.clientWidth>=s.scrollWidth-2};
+l.onclick=()=>{s.scrollLeft-=s.clientWidth*0.7};r.onclick=()=>{s.scrollLeft+=s.clientWidth*0.7};
+s.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);
+s.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&s.scrollWidth>s.clientWidth){s.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+const c=s.querySelector('[aria-current]');if(c)s.scrollLeft=c.offsetLeft-s.clientWidth/2+c.offsetWidth/2;upd();
+const close=()=>{p.hidden=true;b.setAttribute('aria-expanded','false')};
+b.onclick=()=>{const o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));if(o){const a=p.querySelector('a');if(a)a.focus()}};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!p.hidden){close();b.focus()}});
+addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
+</script>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Space stations · 1971 to now</div>
+    <h1>Life on the ISS</h1>
+    <p>Since 2 November 2000 there have always been people living in space, on the International Space Station (ISS). It flies about 420 km above us, so fast that the crew sees a sunrise roughly every hour and a half. This page lets you live through one day aboard, then works out the numbers behind it: how fast the station goes, why it slowly sinks, how the crew drinks recycled water, what weightlessness and space radiation do to the body, and where space stations go next, including India's own.</p>
+  </header>
+
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Astronauts have lived on the International Space Station without a break since November 2000. This page lets you live through one day aboard, and works out how fast the station flies, why it slowly sinks, and how the crew stays healthy.</p><p class="gs-try"><b>Try this first:</b> Under <b>A day aboard</b>, press <b>Play the day</b> and count the sunrises. Then press <b>Exercise time</b>, and in <b>Air, water and food</b> press <b>No recycling</b>, then <b>Today: 98%</b>.</p><ul><li>The station flies about 420 km up at about 7.7 km every second, so it goes round Earth in about 93 minutes and the crew sees about 16 sunrises a day.</li><li>A tiny bit of air up there slowly drags it down, so every few weeks a cargo ship fires its engines to push it back up.</li><li>The crew recycles 98% of its water, and exercises about 2½ hours a day so bones and muscles don't waste away.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
+  <section class="card">
+    <h2>A day aboard</h2>
+    <p>The ISS keeps British time (GMT). Drag the slider, or press <b>Play the day</b>. The top band is the crew's timetable; the bottom band is what is outside the window: gold for sunlight, dark for Earth's shadow.</p>
+    <div class="two">
+      <div>
+        <canvas id="orbit" role="img" aria-label="View from above the North Pole: Earth, the Sun to the left, Earth's shadow to the right, and the station's position on its orbit"></canvas>
+        <p class="note" style="text-align:center;margin-top:6px">Looking down on Earth. The orbit is drawn 4 times higher than real so you can see it.</p>
+      </div>
+      <div>
+        <div class="seg"><button type="button" id="play">Play the day</button><button type="button" id="nextSun">Next sunrise</button><button type="button" id="toEx">Exercise time</button></div>
+        <label class="f">Time on board (GMT) <output id="tO"></output><input type="range" id="t" min="0" max="1439" step="1" value="420"></label>
+        <canvas id="strip" role="img" aria-label="A 24-hour timeline: the crew's schedule above, and the 15 to 16 sunlit and shadowed parts of each orbit below"></canvas>
+        <div class="key"><span><i style="background:#3a4a8e"></i>Sleep</span><span><i style="background:#74c7ff"></i>Work</span><span><i style="background:#ff9933"></i>Exercise</span><span><i style="background:#5fd6a0"></i>Meals</span><span><i style="background:#b48cf0"></i>Calls &amp; free time</span><span><i style="background:#e8c46a"></i>Sunlight</span></div>
+        <div class="now" aria-live="polite"><div class="act" id="act"></div><p class="kid" id="actKid"></p></div>
+      </div>
+    </div>
+    <div class="stats" id="dstats"></div>
+  </section>
+
+  <section class="card">
+    <h2>Why 16 sunrises a day</h2>
+    <p>Nothing pushes the station forward. It is falling all the time, but it moves sideways so fast that the ground curves away beneath it as fast as it falls. That is an orbit. The lower the orbit, the faster it must go. Gravity sets the speed: <b>speed = √(GM ÷ r)</b>, where <i>GM</i> is Earth's gravity number and <i>r</i> is the distance from Earth's centre. Move the sliders.</p>
+    <label class="f">Height above the ground <output id="hO"></output><input type="range" id="h" min="300" max="600" step="1" value="420"></label>
+    <label class="f">Sun angle to the orbit (called "beta") <output id="bO"></output><input type="range" id="beta" min="0" max="75" step="1" value="0"></label>
+    <div class="stats" id="ostats"></div>
+    <div class="verdict" id="overd"></div>
+  </section>
+
+  <section class="card">
+    <h2>Falling slowly: drag and reboosts</h2>
+    <p>At 420 km there is still a tiny wisp of air, hundreds of billions of times thinner than the air you breathe. Hitting it at nearly 8 km/s slows the station a little every second, so it sinks. When the Sun is stormy, it heats and puffs up the upper air, and the station sinks faster. Every few weeks a docked cargo ship fires its engines to push it back up: a <b>reboost</b>. Pick the Sun's mood (the height comes from the slider above).</p>
+    <div class="seg" id="sun"></div>
+    <canvas id="decay" role="img" aria-label="Chart of the station's height over six months, sinking because of air drag and jumping back up at each reboost"></canvas>
+    <div class="stats" id="rstats"></div>
+    <div class="verdict" id="rverd"></div>
+    <p class="note">Model: drag = ½ × air density × speed² × 2.2 × 1,500 m² of area, on a 420-tonne station. The air density for each Sun setting is a rough value for that height; real density changes by several times from day to day.</p>
+  </section>
+
+  <section class="card">
+    <h2>Air, water and food</h2>
+    <p>Water is heavy and costs a lot to launch, so the ISS recycles it: sweat and breath moisture from the air, and urine. In 2023 a new machine, the <b>Brine Processor</b>, squeezed the last water out of the leftover salty urine and lifted recovery from about 93.5% to <b>98%</b>. Choose a crew and a mission length.</p>
+    <div class="seg" id="rec"></div>
+    <label class="f">People on board <output id="crewO"></output><input type="range" id="crew" min="1" max="11" step="1" value="7"></label>
+    <label class="f">Days <output id="daysO"></output><input type="range" id="days" min="10" max="365" step="1" value="180"></label>
+    <div class="stats" id="wstats"></div>
+    <div class="verdict" id="wverd"></div>
+    <p class="note">Per person per day: about 2.5 litres of drinking water (NASA's minimum allowance), about 1.8 kg of food including packaging (about 1.5 kg of actual food), and about 0.8 kg of oxygen to breathe. Washing and making oxygen use more water than this; see "What the page leaves out".</p>
+  </section>
+
+  <section class="card">
+    <h2>What space does to your body</h2>
+    <p>In weightlessness your bones and muscles stop carrying your weight, and the body starts taking them apart. Astronauts can lose up to <b>1 to 1.5% of their bone each month</b>, faster than an older person on Earth loses in a whole year. That is why each astronaut exercises about <b>2½ hours a day</b>: on a treadmill (strapped down with bungee cords), a bike, and a weight machine that uses vacuum cylinders instead of weights. Above the air, they also get far more radiation from space. Pick a stay.</p>
+    <div class="seg" id="stay"></div>
+    <label class="f">Days in space <output id="sdO"></output><input type="range" id="sd" min="1" max="365" step="1" value="180"></label>
+    <div class="stats" id="bstats"></div>
+    <div class="verdict" id="bverd"></div>
+    <p class="note">Bone: weight-bearing bones such as hips and spine, with too little exercise. Radiation: 0.2 to 0.5 millisieverts (mSv) a day inside the ISS, against about 2.4 mSv a <i>year</i> from nature for the average person on Earth.</p>
+  </section>
+
+  <section class="card">
+    <h2>Space stations, 1971 to today</h2>
+    <p>Green: done. Orange: India. Gold: still a plan, and plans often slip.</p>
+    <ul class="tl" id="tl"></ul>
+  </section>
+
+  <section class="card">
+    <h2>See it for real</h2>
+    <p>The ISS is easy to see with your own eyes: a bright, steady dot sliding across the sky just after sunset or before sunrise, taking a few minutes to cross. Our <b>Satellite Watch</b> lab shows where it is right now and when it passes over your town.</p>
+    <a class="go" href="satellite-watch.html">Open Satellite Watch →</a>
+  </section>
+
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
+    <p>The page works out its main numbers from physics and a few inputs. Here they are next to what NASA and others publish, for a 420 km orbit:</p>
+    <div class="scroll"><table id="checks"></table></div>
+  </details>
+
+  <details class="card gx"><summary>For experts: What the page leaves out</summary>
+    <p>The orbit is treated as a perfect circle around a round Earth; the real ISS orbit is slightly oval, tilted 51.6° to the equator, and Earth's bulge slowly turns it, which changes the Sun angle ("beta") over weeks. The shadow is drawn as a sharp-edged cylinder; real sunsets fade through a few seconds of orange twilight. Air density at 420 km really changes by many times with the Sun's 11-year cycle and with solar storms, and the station's drag area changes as its solar panels turn, so the drag numbers are only a rough guide. Reboosts are also used to dodge space junk and to line up with arriving spacecraft, not only to undo drag.</p>
+    <p>Water: the page counts only drinking water. The crew also uses water for food, washing and flushing, and the station splits water to make oxygen, so the real water budget is larger, and some water arrives inside food. Body: bone and muscle loss differ a lot between people and between bones, and today's exercise machines cut the loss a great deal; a 2022 study found that half a year in space still cost some astronauts bone equal to about 20 years of ageing, and only about half came back a year after landing. The page leaves out eyesight changes, fluid shifting to the head, sleep, mental health and teamwork, which also matter a lot on long missions. The daily timetable is a typical one; real days change with spacewalks, cargo ships and experiments.</p>
+  </details>
+
+  <!-- golapada-quiz:start -->
+<style>
+.gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
+.gq h2{font-family:"Saira Condensed","Noto Sans Devanagari","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
+.gq .gq-sub{font-size:13px;color:#8a97a8;margin:0 0 12px;max-width:76ch}
+.gq ol{list-style:none;margin:0;padding:0;counter-reset:gq}
+.gq li{counter-increment:gq;border-top:1px solid #1f2a38;padding:12px 0 10px 40px;position:relative}
+.gq li::before{content:counter(gq);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:#121a25;border:1px solid #2c3a4d;color:#e8c46a;font:700 15px/26px "Saira Condensed",sans-serif;text-align:center}
+.gq .gq-q{font-size:15px;color:#e7edf3;margin:0 0 4px}
+.gq .gq-do{font-size:13px;color:#8a97a8;margin:0 0 6px}.gq .gq-do b{color:#c3ccd6;font-weight:500}
+.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
+.gq details summary{cursor:pointer;font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
+.gq details summary:focus-visible,.gq button:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+.gq details p{margin:6px 0 0;padding:8px 10px;background:#121a25;border-left:3px solid #5fd6a0;border-radius:3px;font-size:14px;color:#d5dde6;max-width:76ch}
+.gq .gq-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gq button{font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
+@media print{.gq{background:#fff;border-color:#bbb}.gq h2,.gq .gq-q,.gq details p{color:#000}.gq .gq-sub,.gq .gq-do{color:#333}.gq details p{background:#fff}.gq .gq-bar{display:none}}
+</style>
+<section class="gq" aria-labelledby="gq-title"><h2 id="gq-title">Quiz: five questions</h2><p class="gq-sub">Answer each one by using the lab above, then check. Good for a class: pairs work through them, the teacher reveals the answers.</p><ol><li><p class="gq-q">How fast does the ISS fly, and how long does it take to go once round the Earth?</p><p class="gq-do"><b>Use the lab:</b> Look at <b>Speed</b> and <b>Once round Earth</b> in <b>Why 16 sunrises a day</b>, with the height slider at <b>420 km</b>.</p><details><summary>Show answer</summary><p>About <b>7.66 km every second</b> (about 27,600 km/h) and about <b>92.8 minutes</b> per lap. Lower orbits need to go faster; higher ones go slower.</p></details></li><li><p class="gq-q">Why does the crew see about 16 sunrises a day, and can there be a day with no sunset at all?</p><p class="gq-do"><b>Use the lab:</b> Press <b>Play the day</b> in <b>A day aboard</b> and watch the bottom band. Then move the <b>Sun angle to the orbit</b> slider to 75°.</p><details><summary>Show answer</summary><p>The station goes round Earth about <b>15½ times a day</b> and passes through Earth's shadow once each lap, so it gets a sunrise roughly every 93 minutes. When the Sun angle is above about <b>70°</b>, the station never enters the shadow and stays in sunshine all day.</p></details></li><li><p class="gq-q">How much does the ISS sink each month because of air drag with an average Sun, and what happens when the Sun is stormy?</p><p class="gq-do"><b>Use the lab:</b> In <b>Falling slowly: drag and reboosts</b>, press <b>Average Sun</b>, then <b>Stormy Sun</b>, and read <b>Height lost per month</b> and <b>Reboost every</b>.</p><details><summary>Show answer</summary><p>With an average Sun, about <b>2 km a month</b> (about 70 m a day), so a reboost about every <b>4 weeks</b>. A stormy Sun puffs up the upper air, so the station sinks about three times faster and needs reboosts much more often.</p></details></li><li><p class="gq-q">For 7 people over 180 days, how much new drinking water must be launched with today's 98% recycling, compared with no recycling?</p><p class="gq-do"><b>Use the lab:</b> In <b>Air, water and food</b>, set 7 people and 180 days, then press <b>No recycling</b> and <b>Today: 98%</b>.</p><details><summary>Show answer</summary><p>About <b>3,150 litres</b> with no recycling, but only about <b>63 litres</b> at 98%. That saves about 3 tonnes of launch weight. Food can't be recycled: about 2,268 kg must still be sent up.</p></details></li><li><p class="gq-q"><span class="gq-h">History</span>Who was the first Indian aboard the ISS, and on which mission and year?</p><p class="gq-do"><b>Use the lab:</b> Read <b>Space stations, 1971 to today</b>.</p><details><summary>Show answer</summary><p><b>Shubhanshu Shukla</b>, on <b>Axiom-4</b>. He launched on 25 June 2025, docked on 26 June, and returned on 15 July 2025, 41 years after Rakesh Sharma became the first Indian in space on the Soviet station Salyut 7 in 1984.</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">Show all answers</button></div><script>
+(()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
+</script></section>
+<!-- golapada-quiz:end -->
+  <footer>Sources (checked November 2026): Orbit physics: Earth's GM = 398,600.4 km³/s² and mean radius 6,371 km (standard values). ISS height about 420 km after 2026 reboosts (NASA Glenn PIMS handbook, Progress 93P reboost 19 Feb 2026, about 1.62 km gained; reports of Progress MS-32 raising it to about 422 km); 16 orbits a day, about 420 tonnes, a football field in length and the living space of a six-bedroom house (NASA “Space Station Facts and Figures”). Orbital decay 1–2 km a month and reboosts about monthly: Space.com “How does the ISS stay in orbit?”, issinfo.net, NBC News (about 90 m a day). Typical day starting 06:00 and ending 21:30 GMT with 2–2.5 h of exercise: Universe Today, New Space Economy, ESA astronaut blogs. Water recovery 98% (June 2023, Brine Processor Assembly; 93–94% before): NASA via Space.com and ABC News, 28 June 2023. Drinking water 2.5 L a day minimum: NASA OCHMO “Water” technical brief (2023). Food about 1.5 kg edible plus 0.26 kg packaging and oxygen 0.82 kg a day: NASA Life Support Baseline Values and Assumptions Document (NASA/TP-2015-218570), via its published tables; calories 1,900–3,200 a day: Canadian Space Agency. Bone loss 1–1.5% a month and about 1% a year for adults over 50: Canadian Space Agency “TBone”, Scientific Reports; two decades of ageing in six months, half recovered after a year: Gabel et al., Scientific Reports 2022 (via Live Science). Muscle loss up to 20% in 5–11 days: Canadian Space Agency “What happens to muscles in space?”. Radiation 0.2–0.5 mSv a day, 40–90 mSv in six months: NASA ASCEND paper (NTRS 20250006168); 72 mSv average over 19 six-month missions: published dosimetry study (PMC10919966); 80–160 mSv older NASA figure: The Conversation; NASA career limit 600 mSv: Live Science; Earth background 2.4 mSv a year worldwide, 12.5 mSv on the Kerala coast: Canadian Nuclear Safety Commission citing UNSCEAR. History: Salyut 1 (19 Apr 1971), Mir (19/20 Feb 1986 to 23 Mar 2001): Britannica, RussianSpaceWeb, NASA JSC history; Rakesh Sharma 3 Apr 1984, about 8 days on Salyut 7: The Print, Tribune; Zarya 20 Nov 1998 and 25 years of continuous presence on 2 Nov 2025: NASA; Tianhe 29 Apr 2021, Tiangong complete Nov 2022: Space.com, Planetary Society; Shenzhou-23 year-long stay from 24 May 2026: Sky at Night, SatNews; Axiom-4 launch 25 Jun 2025 (12:01 IST), docking 26 Jun, splashdown 15 Jul 2025: ISRO, Astronomy, Spacefacts; ISS deorbit by a SpaceX-built US Deorbit Vehicle (contract up to $843 million, June 2024), final burn around end 2030: Space.com, Spaceflight Now; Gaganyaan G1 target late 2026, crewed flight 2027: The Tribune, Blitz India (ISRO chairman, June 2026), Britannica; Bharatiya Antariksh Station: BAS-1 module by 2028 and five modules by 2035, PIB (Sept 2024), Business Standard, PIB Parliament answer (July 2026). An independent page; not affiliated with NASA, ISRO, ESA or Axiom Space.</footer>
+</div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const MU=398600.4418,RE=6371,DAY=1440;
+const fmt=(x,d=0)=>x.toLocaleString("en-IN",{minimumFractionDigits:d,maximumFractionDigits:d});
+function orbit(h,betaDeg){const r=RE+h,v=Math.sqrt(MU/r),T=2*Math.PI*r/v/60;
+ const c=Math.sqrt(1-(RE/r)**2)/Math.cos(betaDeg*Math.PI/180);const f=c>=1?0:Math.acos(c)/Math.PI;
+ return {r,v,T,perDay:DAY/T,shadowFrac:f,dark:f*T,light:(1-f)*T}}
+/* the station is in shadow when it is behind Earth and inside the cylinder of Earth's shadow */
+function inShadow(u,r,b){const cu=Math.cos(u)*Math.cos(b);return cu<0&&r*r*(1-cu*cu)<RE*RE}
+
+/* ---------- schedule ---------- */
+const S=[[0,360,"Sleep","s","Lights are dimmed. Each person sleeps in a phone-booth-sized cabin, zipped into a sleeping bag tied to the wall so they don't drift into things."],
+ [360,390,"Wake up & wash","m","No shower: they wash with a wet towel and no-rinse shampoo. Water drops would float away, so everything is wiped up."],
+ [390,435,"Breakfast","f","Food comes in pouches and cans. Drinks are powders: they add water with a needle and sip through a straw."],
+ [435,450,"Planning call","c","The whole crew talks with mission control in Houston, Moscow, Germany and Japan about the day's jobs."],
+ [450,600,"Work: experiments","w","Growing plants and crystals, testing medicines, studying their own bodies. Many experiments only work without gravity."],
+ [600,675,"Exercise: treadmill","e","Strapped to the treadmill with bungee cords so they don't float off. Running keeps bones strong."],
+ [675,780,"Work: repairs","w","Fixing pumps and fans, unpacking cargo ships. The station is like a house that needs constant care."],
+ [780,840,"Lunch","f","Crews often eat together. Salt and pepper come as liquids, because loose grains would float into eyes and machines."],
+ [840,960,"Work: experiments","w","More science, often controlled by scientists on Earth who watch through cameras."],
+ [960,1035,"Exercise: weights","e","The weight machine uses vacuum cylinders to push back like heavy weights, because ordinary weights weigh nothing here."],
+ [1035,1140,"Work","w","Finishing tasks, filming for schools, taking photos of Earth for scientists."],
+ [1140,1155,"Evening call","c","Telling mission control how the day went and planning tomorrow."],
+ [1155,1200,"Dinner","f","Fresh fruit is a treat that arrives only with cargo ships."],
+ [1200,1290,"Free time","c","Video calls home, music, and the favourite: looking out of the big Cupola window at Earth."],
+ [1290,1440,"Sleep","s","Bedtime at 21:30 GMT. With a sunrise every hour and a half, window shades help the body keep to a 24-hour day."]];
+const COL={s:"#3a4a8e",w:"#74c7ff",e:"#ff9933",f:"#5fd6a0",m:"#5fd6a0",c:"#b48cf0"};
+const exMin=S.filter(x=>x[3]==="e").reduce((a,x)=>a+x[1]-x[0],0);
+
+const st={h:420,beta:0,t:420};
+const tIn=$("#t"),hIn=$("#h"),bIn=$("#beta");
+function sunAt(m,o){return !inShadow(2*Math.PI*m/o.T,o.r,st.beta*Math.PI/180)}
+function sunrises(o,upto){let n=0,prev=sunAt(0,o);for(let m=0.25;m<=upto;m+=0.25){const s=sunAt(m,o);if(s&&!prev)n++;prev=s}return n}
+
+/* orbit view */
+const oc=$("#orbit"),og=oc.getContext("2d");
+function drawOrbit(o){const dpr=devicePixelRatio||1,W=oc.clientWidth,H=oc.clientHeight;oc.width=W*dpr;oc.height=H*dpr;og.setTransform(dpr,0,0,dpr,0,0);og.clearRect(0,0,W,H);
+ const cx=W/2,cy=H/2,Re=Math.min(W,H)*0.28,Ro=Re*(1+4*st.h/RE),b=st.beta*Math.PI/180;
+ /* sun rays from the left */
+ og.strokeStyle="rgba(232,196,106,.25)";og.lineWidth=1;for(let i=-3;i<=3;i++){og.beginPath();og.moveTo(4,cy+i*Re*0.33);og.lineTo(cx-Re*1.6,cy+i*Re*0.33);og.stroke()}
+ og.fillStyle="#e8c46a";og.font="600 13px IBM Plex Sans, sans-serif";og.fillText("Sun this way",6,18);
+ /* ring coloured by real sunlight geometry; shadow wedge behind Earth */
+ const N=240;for(let i=0;i<N;i++){const u0=2*Math.PI*i/N,u1=2*Math.PI*(i+1)/N,dark=inShadow((u0+u1)/2,o.r,b);
+  if(dark){og.fillStyle="rgba(0,0,0,.55)";og.beginPath();og.moveTo(cx,cy);og.arc(cx,cy,Ro+14,Math.PI+u0,Math.PI+u1);og.closePath();og.fill()}
+  og.strokeStyle=dark?"#2a3446":"#e8c46a";og.lineWidth=4;og.beginPath();og.arc(cx,cy,Ro,Math.PI+u0,Math.PI+u1+0.01);og.stroke()}
+ /* Earth: day side faces the Sun */
+ og.fillStyle="#1b4f7a";og.beginPath();og.arc(cx,cy,Re,0,7);og.fill();
+ og.fillStyle="#061423";og.beginPath();og.arc(cx,cy,Re,-Math.PI/2,Math.PI/2);og.fill();
+ og.fillStyle="#cfe3f5";og.font="600 12px IBM Plex Sans, sans-serif";og.textAlign="center";og.fillText("Earth",cx,cy+4);og.textAlign="left";
+ /* station */
+ const u=2*Math.PI*st.t/o.T,px=cx-Ro*Math.cos(u),py=cy-Ro*Math.sin(u),lit=!inShadow(u,o.r,b);
+ og.fillStyle=lit?"#ffffff":"#8a97a8";og.beginPath();og.arc(px,py,7,0,7);og.fill();og.strokeStyle="#ff9933";og.lineWidth=2;og.stroke();
+ og.fillStyle="#e7edf3";og.font="600 12px IBM Plex Sans, sans-serif";og.fillText("ISS",px+10,py-8);
+ if(st.beta>0){og.fillStyle="#8a97a8";og.font="12px IBM Plex Sans, sans-serif";og.fillText("Sun "+st.beta+"° above the orbit",6,H-8)}}
+
+/* 24-hour strip */
+const sc=$("#strip"),sg=sc.getContext("2d");
+function drawStrip(o){const dpr=devicePixelRatio||1,W=sc.clientWidth,H=sc.clientHeight;sc.width=W*dpr;sc.height=H*dpr;sg.setTransform(dpr,0,0,dpr,0,0);sg.clearRect(0,0,W,H);
+ const L=6,R=6,X=m=>L+m/DAY*(W-L-R),y1=8,h1=(H-40)/2,y2=y1+h1+6;
+ sg.font="11px IBM Plex Sans, sans-serif";
+ S.forEach(([a,b,n,k])=>{sg.fillStyle=COL[k];sg.fillRect(X(a),y1,X(b)-X(a)-1,h1);const w=X(b)-X(a);
+  const lab=k==="e"?"Gym":k==="s"?"Sleep":k==="w"&&w>40?"Work":k==="f"&&w>30?"Eat":"";if(lab&&w>26){sg.fillStyle="#04060b";sg.fillText(lab,X(a)+3,y1+h1/2+4)}});
+ for(let m=0;m<DAY;m+=1){sg.fillStyle=sunAt(m,o)?"#e8c46a":"#141c2a";sg.fillRect(X(m),y2,Math.max(1,X(m+1)-X(m)+0.5),h1)}
+ sg.fillStyle="#8a97a8";const step=W<480?6:3;for(let hh=0;hh<=24;hh+=step){const x=X(hh*60);sg.fillText(String(hh).padStart(2,"0")+":00",Math.min(Math.max(x-14,0),W-34),H-8)}
+ const x=X(st.t);sg.strokeStyle="#ffffff";sg.lineWidth=2;sg.beginPath();sg.moveTo(x,2);sg.lineTo(x,y2+h1+4);sg.stroke()}
+
+function nowAct(){return S.find(x=>st.t>=x[0]&&st.t<x[1])||S[0]}
+function updDay(){const o=orbit(st.h,st.beta),hh=Math.floor(st.t/60),mm=Math.floor(st.t%60);
+ $("#tO").textContent=String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+" GMT";
+ const a=nowAct(),lit=sunAt(st.t,o);$("#act").textContent=a[2];$("#actKid").textContent=a[4];
+ $("#dstats").innerHTML=`<div class="stat g"><span>Outside the window</span><b>${lit?"Sunlight":"Earth's shadow"}</b></div>
+  <div class="stat a"><span>Sunrises so far today</span><b>${sunrises(o,st.t)} of ${sunrises(o,DAY)}</b></div>
+  <div class="stat b"><span>Distance flown today</span><b>${fmt(o.v*st.t*60)} km</b></div>
+  <div class="stat o"><span>Exercise each day</span><b>${exMin/60} hours</b></div>`;
+ drawOrbit(o);drawStrip(o)}
+tIn.addEventListener("input",()=>{st.t=+tIn.value;updDay()});
+let playing=false,last=0;
+function tick(ts){if(!playing)return;if(last){st.t=(st.t+(ts-last)/1000*30)%DAY;tIn.value=Math.floor(st.t)}last=ts;updDay();requestAnimationFrame(tick)}
+$("#play").onclick=()=>{playing=!playing;$("#play").textContent=playing?"Pause":"Play the day";$("#play").setAttribute("aria-pressed",playing);last=0;if(playing)requestAnimationFrame(tick)};
+$("#nextSun").onclick=()=>{const o=orbit(st.h,st.beta);let prev=sunAt(st.t,o);for(let k=1;k<=DAY;k++){const m=(st.t+k)%DAY,s=sunAt(m,o);if(s&&!prev){st.t=m;break}prev=s}tIn.value=Math.floor(st.t);updDay()};
+$("#toEx").onclick=()=>{const e=S.filter(x=>x[3]==="e");const nx=e.find(x=>x[0]>st.t)||e[0];st.t=nx[0]+5;tIn.value=st.t;updDay()};
+
+/* ---------- orbit numbers ---------- */
+function updOrbit(){st.h=+hIn.value;st.beta=+bIn.value;const o=orbit(st.h,st.beta);
+ $("#hO").textContent=st.h+" km";$("#bO").textContent=st.beta+"°";
+ $("#ostats").innerHTML=`<div class="stat a"><span>Speed</span><b>${o.v.toFixed(2)} km/s</b></div>
+  <div class="stat b"><span>Once round Earth</span><b>${o.T.toFixed(1)} min</b></div>
+  <div class="stat g"><span>Sunrises in 24 h</span><b>${o.shadowFrac>0?o.perDay.toFixed(1):"none"}</b></div>
+  <div class="stat o"><span>Sun / shadow each orbit</span><b>${Math.round(o.light)} / ${Math.round(o.dark)} min</b></div>`;
+ $("#overd").innerHTML=`At ${st.h} km the station must fly at <b>${fmt(o.v*3600)} km/h</b>, about ${Math.round(o.v*3600/900)} times faster than a jet airliner. One lap takes ${o.T.toFixed(1)} minutes, so it goes round <b>${o.perDay.toFixed(1)} times a day</b>. `+
+  (o.shadowFrac>0?`Each lap it passes through Earth's shadow once, so the crew sees about ${Math.round(o.perDay)} sunrises and ${Math.round(o.perDay)} sunsets every 24 hours, with ${Math.round(o.dark)} minutes of night each time.`
+  :`With the Sun ${st.beta}° above the orbit, the station never enters Earth's shadow: it stays in sunshine all day. This really happens to the ISS a few times a year, when the Sun angle goes past about ${Math.round(Math.acos(Math.sqrt(1-(RE/o.r)**2))*180/Math.PI)}°.`);
+ updDay();updDrag()}
+hIn.addEventListener("input",updOrbit);bIn.addEventListener("input",updOrbit);
+
+/* ---------- drag ---------- */
+const SUN=[["Quiet Sun",0.8e-12],["Average Sun",2e-12],["Stormy Sun",6e-12]];let sunI=1;
+const MASS=420000,CD=2.2,AREA=1500,HS=60,TOPUP=2;
+function drag(h,rho420){const rho=rho420*Math.exp(-(h-420)/HS),r=(RE+h)*1000,v=Math.sqrt(MU*1e9/r);
+ const acc=0.5*rho*v*v*CD*AREA/MASS;/* m/s² */ const dadt=-rho*CD*AREA/MASS*Math.sqrt(MU*1e9*r);/* m/s */
+ return {rho,acc,mPerDay:-dadt*86400,dvYear:acc*86400*365.25}}
+const sb=$("#sun");SUN.forEach(([n],i)=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.onclick=()=>{sunI=i;updDrag()};sb.appendChild(b)});
+const dc=$("#decay"),dg=dc.getContext("2d");
+function updDrag(){sb.querySelectorAll("button").forEach((b,i)=>b.setAttribute("aria-pressed",i===sunI));
+ const d=drag(st.h,SUN[sunI][1]),kmMonth=d.mPerDay*30.44/1000,every=TOPUP*1000/d.mPerDay;
+ $("#rstats").innerHTML=`<div class="stat r"><span>Height lost per day</span><b>${fmt(d.mPerDay)} m</b></div>
+  <div class="stat a"><span>Height lost per month</span><b>${kmMonth.toFixed(1)} km</b></div>
+  <div class="stat g"><span>Reboost every</span><b>${every>999?"3+ years":fmt(every)+" days"}</b></div>
+  <div class="stat b"><span>Push needed per year</span><b>${d.dvYear.toFixed(1)} m/s</b></div>`;
+ $("#rverd").innerHTML=`The air pushes back with a force of about <b>${(d.acc*MASS).toFixed(2)} newtons</b>, less than the weight of a ${Math.max(1,Math.round(d.acc*MASS/9.81*1000))}-gram chocolate bar on Earth. But it never stops, and on a station this heavy it adds up to <b>${kmMonth.toFixed(1)} km lower every month</b>. If mission control tops it up each time it sinks ${TOPUP} km, that is a reboost about every <b>${every>999?"few years":fmt(every)+" days"}</b>. Without reboosts the station would sink ever faster into thicker air and burn up. That is exactly how it will end, on purpose, around 2030.`;
+ const dpr=devicePixelRatio||1,W=dc.clientWidth,H=dc.clientHeight;dc.width=W*dpr;dc.height=H*dpr;dg.setTransform(dpr,0,0,dpr,0,0);dg.clearRect(0,0,W,H);
+ const L=46,R=10,T=12,B=24,D=180,top=st.h+0.5,bot=st.h-TOPUP-1.5,X=t=>L+t/D*(W-L-R),Y=a=>T+(top-a)/(top-bot)*(H-T-B);
+ dg.font="11px IBM Plex Sans, sans-serif";dg.strokeStyle="#1f2a38";dg.fillStyle="#8a97a8";
+ for(let a=Math.ceil(bot);a<=top;a++){dg.beginPath();dg.moveTo(L,Y(a));dg.lineTo(W-R,Y(a));dg.stroke();dg.fillText(a+" km",2,Y(a)+4)}
+ for(let t=0;t<=D;t+=30){dg.fillText(t===0?"day 0":String(t),Math.min(X(t)-8,W-26),H-6)}
+ dg.strokeStyle="#ff9933";dg.lineWidth=2;dg.beginPath();let a=st.h;dg.moveTo(X(0),Y(a));let n=0;
+ for(let t=0.25;t<=D;t+=0.25){a-=d.mPerDay/1000*0.25;if(a<=st.h-TOPUP){dg.lineTo(X(t),Y(a));a=st.h;n++}dg.lineTo(X(t),Y(a))}dg.stroke();
+ dg.fillStyle="#e8c46a";dg.fillText(n+" reboosts in 6 months",L+6,T+12)}
+
+/* ---------- water and food ---------- */
+const REC=[["No recycling",0],["Before 2023: 93.5%",0.935],["Today: 98%",0.98]];let recI=2;
+const WATER=2.5,FOOD=1.8,O2=0.82;
+const rb=$("#rec");REC.forEach(([n],i)=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.onclick=()=>{recI=i;updWater()};rb.appendChild(b)});
+const crew=$("#crew"),days=$("#days");
+function updWater(){rb.querySelectorAll("button").forEach((b,i)=>b.setAttribute("aria-pressed",i===recI));
+ const c=+crew.value,d=+days.value,r=REC[recI][1];$("#crewO").textContent=c+(c===1?" person":" people");$("#daysO").textContent=d+" days";
+ const used=c*d*WATER,send=used*(1-r),food=c*d*FOOD,o2=c*d*O2,saved=used-send;
+ $("#wstats").innerHTML=`<div class="stat b"><span>Water drunk</span><b>${fmt(used)} L</b></div>
+  <div class="stat a"><span>New water to send up</span><b>${fmt(send)} L</b></div>
+  <div class="stat o"><span>Food to send up</span><b>${fmt(food)} kg</b></div>
+  <div class="stat g"><span>Oxygen breathed</span><b>${fmt(o2)} kg</b></div>`;
+ $("#wverd").innerHTML=r===0?`With no recycling, all ${fmt(used)} litres would have to be launched: about ${fmt(used/1000,1)} tonnes, the weight of ${Math.max(1,Math.round(used/1000/1.2))} small car${used>=1800?"s":""}.`
+  :`Recycling ${(r*100).toFixed(1)}% means only <b>${fmt(send)} litres</b> of new water is needed instead of ${fmt(used)}. That saves about <b>${fmt(saved/1000,1)} tonnes</b> of launch weight. ${recI===2?`Going from 93.5% to 98% may sound small, but it cuts the water you must send by about ${Math.round((1-0.02/0.065)*100)}%.`:"Press <b>Today: 98%</b> to see what the 2023 upgrade changed."} Food cannot be recycled yet: ${fmt(food)} kg of it must come up on cargo ships.`}
+crew.addEventListener("input",updWater);days.addEventListener("input",updWater);
+
+/* ---------- body ---------- */
+const STAY=[["Axiom-4: 18 days",18],["6 months",182],["1 year",365]];
+const BONE=[1,1.5],DOSE=[0.2,0.5],EARTH=2.4,LIMIT=600;
+const yb=$("#stay");STAY.forEach(([n,v])=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.onclick=()=>{$("#sd").value=v;updBody()};yb.appendChild(b)});
+function updBody(){const d=+$("#sd").value,mo=d/30.44;$("#sdO").textContent=d+(d===1?" day":" days")+" ("+mo.toFixed(1)+" months)";
+ yb.querySelectorAll("button").forEach((b,i)=>b.setAttribute("aria-pressed",STAY[i][1]===d));
+ const b0=BONE[0]*mo,b1=BONE[1]*mo,yd=b1<3?1:0,r0=DOSE[0]*d,r1=DOSE[1]*d,rm=(r0+r1)/2;
+ $("#bstats").innerHTML=`<div class="stat r"><span>Bone lost, little exercise</span><b>${b0.toFixed(1)}–${b1.toFixed(1)}%</b></div>
+  <div class="stat a"><span>Like ageing on Earth</span><b>${b0.toFixed(yd)}–${b1.toFixed(yd)} years</b></div>
+  <div class="stat g"><span>Radiation dose</span><b>${fmt(r0)}–${fmt(r1)} mSv</b></div>
+  <div class="stat b"><span>Same as on Earth for</span><b>${fmt(r0/EARTH,1)}–${fmt(r1/EARTH,1)} years</b></div>`;
+ $("#bverd").innerHTML=`After ${d} days, an astronaut who did not exercise enough could lose ${b0.toFixed(1)} to ${b1.toFixed(1)}% of the bone in the hips and spine. An adult over 50 loses about 1% a year, so that is like ageing <b>${b0.toFixed(yd)} to ${b1.toFixed(yd)} years</b> in bone. Muscles can shrink even faster: up to 20% on flights of just 5 to 11 days. Radiation: one day on the ISS gives about as much as <b>${Math.round(DOSE[0]/EARTH*365)} to ${Math.round(DOSE[1]/EARTH*365)} days</b> on Earth. This stay adds up to about ${fmt(rm)} mSv, which is <b>${Math.round(rm/LIMIT*100)}%</b> of NASA's lifetime limit of ${LIMIT} mSv. (People on parts of the Kerala coast get about 12.5 mSv a year from the sand around them.)`}
+$("#sd").addEventListener("input",updBody);
+
+/* ---------- history ---------- */
+const TL=[
+ ["","19 Apr 1971","Salyut 1","The Soviet Union launches the first space station. Its first crew lived aboard for 23 days, but died on the way home when their capsule lost its air."],
+ ["in","3 Apr 1984","Rakesh Sharma on Salyut 7","The first Indian in space spends about 8 days on a Soviet station, doing experiments in medicine and in photographing India from orbit."],
+ ["","Feb 1986","Mir","The Soviet Union starts Mir, built from modules added one at a time over ten years. Crews lived on it until 2000; it was brought down on 23 March 2001."],
+ ["","20 Nov 1998","First ISS piece: Zarya","A Russian-built, US-paid module goes up. The US, Russia, Europe, Japan and Canada bolt on more over the next 13 years."],
+ ["","2 Nov 2000","People move in for good","Expedition 1 arrives. There have been people in space every single day since then."],
+ ["","2011","ISS mostly complete","About the size of a football field and about 420 tonnes, with as much living space as a six-bedroom house."],
+ ["","29 Apr 2021","China's Tiangong begins","The Tianhe core module launches; with two lab modules the station is complete in November 2022. It is about one-fifth the mass of the ISS."],
+ ["in","25 Jun 2025","Shubhanshu Shukla reaches the ISS","On Axiom-4, the ISRO astronaut becomes the first Indian aboard the ISS (docked 26 June), 41 years after Rakesh Sharma. About 18 days on the station, back on 15 July 2025."],
+ ["","2 Nov 2025","25 years of non-stop living in space","The ISS marks a quarter of a century with a crew always aboard."],
+ ["","24 May 2026","A year-long stay on Tiangong","China's Shenzhou-23 crew arrives, with one member planned to stay about a year."],
+ ["in","Late 2026 (target)","Gaganyaan G1","India's first uncrewed test of its crew capsule, carrying the robot Vyommitra. Still a target date when this page was checked."],
+ ["in","2027 (plan)","Gaganyaan with a crew","India's first crewed flight on its own rocket, after more uncrewed tests."],
+ ["in","2028 (plan)","BAS-1, first module of India's station","The Bharatiya Antariksh Station starts with one module launched on an LVM3 rocket."],
+ ["p","About 2030 (plan)","The ISS comes down","A SpaceX-built pusher craft will steer the station into a remote part of the Pacific Ocean. Private stations are planned to take over."],
+ ["in","2035 (plan)","Bharatiya Antariksh Station complete","The full plan has five modules, for crews to visit and work in."]];
+$("#tl").innerHTML=TL.map(([k,d,t,x])=>`<li class="${k||""}${d.includes("plan")||d.includes("target")?" p":""}"><b>${d} · ${t}</b><span>${x}</span></li>`).join("");
+
+/* ---------- checks ---------- */
+(function(){const o=orbit(420,0),d=drag(420,SUN[1][1]);
+ const rows=[["Orbital speed",`${o.v.toFixed(2)} km/s (${fmt(o.v*3600)} km/h)`,"About 7.66 km/s; NASA rounds it to about 28,000 km/h (17,500 mph)","Matches. NASA's round number is about 1.5% high."],
+ ["Time for one lap",`${o.T.toFixed(1)} min`,"About 92–93 min (our Satellite Watch shows 92.9 min from live tracking data)","Matches."],
+ ["Laps and sunrises a day",`${o.perDay.toFixed(1)}`,"NASA: about 16","Matches: it is really 15½, so some days have 15 and some 16."],
+ ["Longest night per lap",`${Math.round(o.dark)} min`,"Often loosely quoted as \"45 minutes of day and 45 of night\"","Our value is for the Sun in the orbit's plane, the longest shadow possible. Day is always longer than night at this height."],
+ ["Height lost to drag",`${kmFmt(d.mPerDay)} a month (average Sun)`,"1 to 2 km a month; NASA's average about 2 km","Close, but our air density is a rough guess. Real decay changes by 2 to 5 times with the Sun."],
+ ["Size of one reboost","2 km (the page's assumption)","Progress 93P, 19 Feb 2026: about 1.6 km","Similar size."],
+ ["Water recovered","98% (input, not computed)","NASA, June 2023: 98%, up from 93–94%","Taken from NASA."],
+ ["Radiation per day","0.2–0.5 mSv","NASA ASCEND paper: 0.2–0.5 mSv/day; 72 mSv average over 19 six-month missions (≈0.4/day); older NASA figure 80–160 mSv per six months","Sources vary with the Sun's cycle and shielding; the range covers most of them."],
+ ["Bone loss","1–1.5% a month","Canadian Space Agency: up to 1.5% a month; a 2020 review: about 0.8% a month in leg bones","Upper range; with today's exercise many astronauts lose less."]];
+ function kmFmt(m){return (m*30.44/1000).toFixed(1)+" km"}
+ $("#checks").innerHTML=`<tr><th>Number</th><th>This page</th><th>Published</th><th>Verdict</th></tr>`+rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")})();
+
+updOrbit();updWater();updBody();
+addEventListener("resize",()=>{updDay();updDrag()});
+})();
+</script>

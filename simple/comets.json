@@ -1,0 +1,9 @@
+{
+ "lead": "A comet is a lump of ice and dust a few kilometres wide. When its long path brings it near the Sun, the ice turns to gas and a glowing tail grows. This page plots seven famous comets on their real paths.",
+ "try": "In the <b>Orbit player</b>, tap <b>Halley</b> and press <b>Play</b>. Then tap <b>3I/ATLAS</b>, a comet from another star, and drag the time slider.",
+ "points": [
+  "A comet's tail always points <b>away</b> from the Sun, even when the comet is moving away from the Sun.",
+  "Comets usually wake up inside about 3 au (three times the Earth–Sun distance). Closer in, the ice turns to gas much faster and the tail grows.",
+  "In 1705 Edmond Halley predicted his comet would return in 1758. It did, and it will be back again on 28 July 2061."
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "lead": "No telescope on Earth is big enough to see a black hole on its own. So astronomers linked radio dishes across the planet into one giant telescope almost as wide as the Earth, and in 2019 and 2022 they took the first pictures of two black holes.",
+ "try": "Under <b>Make it sharper</b>, press <b>Your eye</b>, then <b>EHT (10,700 km)</b> and <b>Radio (1.3 mm)</b>, and watch the smudge turn into a ring. Then press <b>Sgr A*</b> under <b>How big is the shadow?</b>",
+ "points": [
+  "The black hole rings look tiny from Earth: about as big as an orange or a doughnut on the Moon would look to us.",
+  "Einstein's gravity predicts the size of the dark middle from the black hole's mass and distance, and the pictures match.",
+  "The 2017 recordings filled about a thousand hard drives, which were flown to two supercomputers because the internet was far too slow."
+ ]
+}

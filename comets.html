@@ -1,0 +1,344 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Comets</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: orbit player (pick a comet, move through time), why the tail grows (distance slider), history from ancient records to 2061, then expert folds (checks, trust, what the page leaves out). Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--acc:#5fd0e8;--blue:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--acc)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h3{font-family:var(--display);font-weight:700;font-size:20px;margin:0 0 6px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--blue)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px}@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.seg button{background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 10px;font:inherit;font-size:13.5px;cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc)}
+.seg.small button{font-size:12.5px;padding:4px 8px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.det{background:var(--panel2);border-radius:6px;padding:14px;border-left:4px solid var(--acc)}
+.det .kid{font-size:15.5px;color:#f1f5f9;margin-bottom:8px}
+.det ul{margin:4px 0 0;padding-left:18px}.det li{margin:3px 0;color:#d6dde5;font-size:14px}
+.tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-right:6px;background:#1a2433;color:var(--dim)}
+.tag.ok{background:#0f2a20;color:var(--ok)}.tag.wait{background:#2a230f;color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line);min-width:0}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}.stat small{display:block;font-size:11.5px;color:var(--dim)}
+.stat.a{border-top-color:var(--acc)}.stat.g{border-top-color:var(--gold)}.stat.o{border-top-color:var(--ok)}.stat.b{border-top-color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--acc)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:10px}label.f output{font-family:var(--display);font-size:20px;color:var(--ink)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}#orb{aspect-ratio:1/1}#act{aspect-ratio:16/9}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.play{background:var(--acc);color:#04060b;border:0;border-radius:4px;padding:7px 14px;font:600 14px var(--body);cursor:pointer}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14.5px}
+.tl{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 12px 16px}.tl li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--ok)}
+.tl li.in::before{background:var(--acc)}.tl li.p::before{background:var(--gold)}.tl li.u::before{background:#0b1017;border:2px dashed var(--gold)}
+.tl b{font-family:var(--display);font-size:17px;color:var(--ink)}.tl span{display:block;font-size:13.5px;color:#c3ccd6}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.pass{color:var(--ok);font-weight:600}.warn{color:var(--gold);font-weight:600}
+.key{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--dim);margin-top:6px}.key i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Dirty snowballs · real orbits · 240 BC to 2061</div>
+    <h1>Comets</h1>
+    <p>A comet is a lump of ice, dust and rock a few kilometres wide. Most of the time it is far from the Sun, frozen and dark. When its long, stretched path brings it close to the Sun, the ice warms up and turns straight into gas. The gas and dust puff out into a huge glowing cloud and a tail that can be longer than the distance from the Earth to the Sun. This page plots seven famous comets on their real paths, shows why the tail grows, and tells how people went from fearing comets to predicting them. For shooting stars made by comet dust, see <a href="meteor-showers.html">Meteor Showers</a>; for space rocks that might hit Earth, see <a href="asteroid-watch.html">Asteroid Watch</a>.</p>
+  </header>
+
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">A comet is a lump of ice and dust a few kilometres wide. When its long path brings it near the Sun, the ice turns to gas and a glowing tail grows. This page plots seven famous comets on their real paths.</p><p class="gs-try"><b>Try this first:</b> In the <b>Orbit player</b>, tap <b>Halley</b> and press <b>Play</b>. Then tap <b>3I/ATLAS</b>, a comet from another star, and drag the time slider.</p><ul><li>A comet's tail always points <b>away</b> from the Sun, even when the comet is moving away from the Sun.</li><li>Comets usually wake up inside about 3 au (three times the Earth–Sun distance). Closer in, the ice turns to gas much faster and the tail grows.</li><li>In 1705 Edmond Halley predicted his comet would return in 1758. It did, and it will be back again on 28 July 2061.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
+  <section class="card">
+    <h2>Orbit player</h2>
+    <p>Pick a comet, then press <b>Play</b> or drag the time slider. The coloured rings are the planets' paths. Watch the comet speed up near the Sun and its tail swing so that it always points <b>away</b> from the Sun.</p>
+    <div class="seg" id="picks" role="group" aria-label="Choose a comet"></div>
+    <div class="two">
+      <div>
+        <canvas id="orb" role="img" aria-label="Map of the chosen comet's orbit around the Sun with the planets' orbits for scale; the comet's tail points away from the Sun"></canvas>
+        <div class="key"><span><i style="background:#ffd36a"></i>Sun</span><span><i style="background:#74c7ff"></i>Earth (rough position)</span><span><i style="background:#5fd0e8"></i>Comet and its path</span><span><i style="background:#3a4a5e"></i>Planet paths</span></div>
+      </div>
+      <div>
+        <div class="row"><button type="button" class="play" id="playB">Play</button>
+          <div class="seg small" id="zooms" role="group" aria-label="Zoom" style="margin:0"></div></div>
+        <div class="seg small" id="views" role="group" aria-label="View"></div>
+        <label class="f">Time from closest approach to the Sun <output id="tO"></output><input type="range" id="tS" min="-1" max="1" step="0.001" value="-0.3"></label>
+        <div class="stats" id="ostats"></div>
+        <div class="det" id="cdet" aria-live="polite" style="margin-top:10px"></div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:10px">au = astronomical unit, the average Earth–Sun distance, about 150 million km. Orbits are drawn from JPL's published elements for the time each comet was closest to the Sun. Earth's position uses a simple formula and is only rough.</p>
+  </section>
+
+  <section class="card">
+    <h2>Why the tail grows</h2>
+    <p>Far from the Sun a comet is a frozen, dark lump, too cold for its ice to change. Closer in, sunlight warms the surface and the ice turns straight into gas (this is called <b>sublimation</b>, like dry ice "smoking"). The gas drags dust off the comet with it. Sunlight pushes the dust back into a curved, yellowish dust tail, and the solar wind sweeps the gas into a straight, bluish ion tail. Both point away from the Sun.</p>
+    <p>The surprise is how <b>fast</b> things change. Sunlight only gets 9 times weaker between 1 au and 3 au. But water ice turns to gas hundreds of times slower at 3 au, because it is so cold there that most of the sunlight's heat is used just to warm it up. That is why comets "switch on" inside about 3 au. Move the slider.</p>
+    <label class="f">Distance from the Sun <output id="dO"></output><input type="range" id="dS" min="0.25" max="6" step="0.05" value="3"></label>
+    <canvas id="act" role="img" aria-label="Chart comparing how sunlight strength and the rate at which water ice turns to gas change with distance from the Sun"></canvas>
+    <div class="key"><span><i style="background:#e8c46a"></i>Sunlight strength</span><span><i style="background:#5fd0e8"></i>Water ice turning to gas</span></div>
+    <div class="stats" id="astats"></div>
+    <div class="verdict" id="averd"></div>
+    <p class="note">The chart's height uses steps of ten: each line up is ten times more. The ice curve is the standard formula comet scientists use for water-driven comets (Marsden, Sekanina and Yeomans, 1973). Real comets differ: ice of carbon monoxide or carbon dioxide can wake a comet much farther out. Hale-Bopp was already active when it was found at 7.2 au.</p>
+  </section>
+
+  <section class="card">
+    <h2>From omens to predictions</h2>
+    <p>For thousands of years people saw comets appear without warning and thought they were signs of trouble. Then astronomers learned that comets follow the same laws as planets, and can be predicted. Green = observed, blue = a space mission, gold = future, dashed gold = less certain.</p>
+    <ul class="tl" id="tl"></ul>
+  </section>
+
+  <details class="card gx"><summary>For experts: Checks</summary>
+    <p>Is the page's maths right? It uses <b>Kepler's equation</b>: given the time since the comet was closest to the Sun, it works out where along its path the comet must be. Below, the page's own solver (the same one that drives the orbit player) is compared with published dates and with JPL Horizons, NASA's precise calculator that also includes the pull of every planet. The first seven rows are partly a self-test, because the closest-approach time is one of the numbers fed in; the solver still has to find the right distance and date by itself. The Horizons rows on other dates are the real test.</p>
+    <div class="scroll"><table id="chk"></table></div>
+    <div class="verdict" id="chkV"></div>
+  </details>
+
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
+    <p>The orbit shapes and dates come straight from NASA JPL's Small-Body Database and Horizons, so they are as good as published data gets. The weak points are the simplifications:</p>
+    <div class="scroll"><table>
+      <tr><th>Part</th><th>Good to about</th><th>Why</th></tr>
+      <tr><td>Comet near closest approach</td><td>Better than 1%</td><td>See Checks. The elements are fitted to thousands of real sightings for exactly that time.</td></tr>
+      <tr><td>Comet years away from it</td><td>Rough</td><td>The page uses the Sun's pull only. Jupiter and Saturn tug comets, and gas jets push them like tiny rockets. For Halley this shifts the 2061 return by about 200 days.</td></tr>
+      <tr><td>Earth's position</td><td>About 0.01 au</td><td>A short textbook formula, not a full ephemeris; fine for "how far from Earth", not for pointing a telescope.</td></tr>
+      <tr><td>Tail length</td><td>Picture only</td><td>The drawn tail grows with the water-ice formula. Real tails depend on the comet's size, dust, and outbursts, and look different from Earth because of the viewing angle.</td></tr>
+      <tr><td>"3 au" switch-on</td><td>A rule of thumb</td><td>Sources give 2 to 4 au for water. Comets with carbon monoxide ice wake up much farther out.</td></tr>
+      <tr><td>Old records</td><td>Varies</td><td>Some ancient and medieval identifications (marked dashed) rest on one scholar's reading of an old text.</td></tr>
+    </table></div>
+  </details>
+
+  <details class="card gx"><summary>For experts: What the page leaves out</summary>
+    <p>The tugs of the planets (the page's orbits are pure Sun-and-comet ellipses and hyperbolas); the push from gas jets (scientists call these "non-gravitational forces"); the difference between the dust tail and the ion tail directions, which the map draws as one; the comet's brightness as seen from Earth; comets that break apart or fade; the Oort Cloud and Kuiper Belt where comets come from; and the exact time zones of old dates. Dates before 1582 in history lists are usually in the old Julian calendar.</p>
+  </details>
+
+  <!-- golapada-quiz:start -->
+<style>
+.gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
+.gq h2{font-family:"Saira Condensed","Noto Sans Devanagari","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
+.gq .gq-sub{font-size:13px;color:#8a97a8;margin:0 0 12px;max-width:76ch}
+.gq ol{list-style:none;margin:0;padding:0;counter-reset:gq}
+.gq li{counter-increment:gq;border-top:1px solid #1f2a38;padding:12px 0 10px 40px;position:relative}
+.gq li::before{content:counter(gq);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:#121a25;border:1px solid #2c3a4d;color:#e8c46a;font:700 15px/26px "Saira Condensed",sans-serif;text-align:center}
+.gq .gq-q{font-size:15px;color:#e7edf3;margin:0 0 4px}
+.gq .gq-do{font-size:13px;color:#8a97a8;margin:0 0 6px}.gq .gq-do b{color:#c3ccd6;font-weight:500}
+.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
+.gq details summary{cursor:pointer;font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
+.gq details summary:focus-visible,.gq button:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+.gq details p{margin:6px 0 0;padding:8px 10px;background:#121a25;border-left:3px solid #5fd6a0;border-radius:3px;font-size:14px;color:#d5dde6;max-width:76ch}
+.gq .gq-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gq button{font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
+@media print{.gq{background:#fff;border-color:#bbb}.gq h2,.gq .gq-q,.gq details p{color:#000}.gq .gq-sub,.gq .gq-do{color:#333}.gq details p{background:#fff}.gq .gq-bar{display:none}}
+</style>
+<section class="gq" aria-labelledby="gq-title"><h2 id="gq-title">Quiz: five questions</h2><p class="gq-sub">Answer each one by using the lab above, then check. Good for a class: pairs work through them, the teacher reveals the answers.</p><ol><li><p class="gq-q">Which way does a comet's tail point, and does that change when the comet is moving away from the Sun?</p><p class="gq-do"><b>Use the lab:</b> In the <b>Orbit player</b>, pick <b>Halley</b> and press <b>Play</b>. Watch the tail before and after the comet passes the Sun.</p><details><summary>Show answer</summary><p>The tail always points <b>away from the Sun</b>. After the comet goes round the Sun it travels out <b>tail first</b>, because sunlight and the solar wind push the gas and dust outward, whichever way the comet is moving.</p></details></li><li><p class="gq-q">How fast was 3I/ATLAS moving at its closest point to the Sun, and why will it never come back?</p><p class="gq-do"><b>Use the lab:</b> Tap <b>3I/ATLAS</b>, drag the time slider until it says <b>closest to the Sun</b>, and read <b>Speed</b>. Then read the path shape under the comet's facts.</p><details><summary>Show answer</summary><p>About <b>68 km/s</b> (roughly 246,000 km/h). Its path shape number is <b>e = 6.1</b>, far above 1, so its path is an open curve: it came from another star, passes the Sun once and leaves for ever.</p></details></li><li><p class="gq-q">At 3 au from the Sun, sunlight is about 1/9 as strong as at Earth. How much slower does water ice turn to gas there than at 1 au?</p><p class="gq-do"><b>Use the lab:</b> In <b>Why the tail grows</b>, set the slider to <b>3.00 au</b> and read <b>Ice to gas vs 1 au</b>.</p><details><summary>Show answer</summary><p>About <b>1/590</b>, hundreds of times slower, even though the sunlight is only 9 times weaker. That is why comets usually switch on only inside about 3 au.</p></details></li><li><p class="gq-q"><span class="gq-h">History</span>Who first spotted Halley's Comet on its predicted return, and when?</p><p class="gq-do"><b>Use the lab:</b> Read <b>From omens to predictions</b>.</p><details><summary>Show answer</summary><p><b>Johann Palitzsch</b>, a German farmer and amateur astronomer, on <b>25 December 1758</b>. Halley had predicted the return in 1705 but had died in 1742. The comet passed the Sun on 13 March 1759.</p></details></li><li><p class="gq-q">Using only the Sun's pull, when would Halley next come closest to the Sun? How does that compare with JPL's answer?</p><p class="gq-do"><b>Use the lab:</b> Open <b>Checks</b> and read the last row of the table.</p><details><summary>Show answer</summary><p>The page's Sun-only calculation says about <b>11 Feb 2062</b>; JPL, which adds the pull of Jupiter, Saturn and the other planets, says <b>28 July 2061</b>, about 198 days earlier. The planets' tugs matter over a whole orbit.</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">Show all answers</button></div><script>
+(()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
+</script></section>
+<!-- golapada-quiz:end -->
+  <footer>Sources (checked November 2026): orbital elements for all seven comets from NASA JPL Horizons (osculating heliocentric elements at each perihelion; solutions JPL 75 for 1P/Halley, K273/31 for 2P/Encke, 226 for Hale-Bopp, 31 for NEOWISE, 113 for Tsuchinshan-ATLAS, 55 for 3I/ATLAS, K284/1 for 67P) and the JPL Small-Body Database. Check distances from JPL Horizons observer tables; Halley's next perihelion 28 July 2061 at 0.593 au from Horizons. Water sublimation formula (r₀ = 2.808 au, m = 2.15, n = 5.093, k = 4.6142): Marsden, Sekanina &amp; Yeomans (1973), as listed in Horizons. Activity near 3 au: Swinburne COSMOS “Cometary coma”; Meech &amp; Svoreň, Woodward et al. (Spitzer, C/2003 K4) on arXiv. Halley history (240 BC Shiji, 164 BC Babylonian tablets, 1456 records by Śrīvara and the Srisailam copper plate, Synopsis 1705, Palitzsch 25 Dec 1758, perihelion 13 Mar 1759): Wikipedia “Halley's Comet”. Giotto at 596 km, 13–14 March 1986: ESA “Giotto overview”. Shoemaker-Levy 9, 21 fragments, 16–22 July 1994: NASA. Rosetta arrival 6 Aug 2014 and Philae landing 12 Nov 2014: ESA. 2P/Encke period 3.3 years and parent of the Taurid meteors: NASA “2P/Encke”. Hale-Bopp discovery at 7.2 au and 569 days naked-eye: Wikipedia “Comet Hale–Bopp”. NEOWISE discovery 27 Mar 2020 and perihelion 3 July 2020: NASA. Tsuchinshan-ATLAS discovery 9 Jan 2023: Chinese Academy of Sciences; IIA image 17 Nov 2024: Indian Institute of Astrophysics “Comets from our telescopes”. 3I/ATLAS: NASA “Quick Facts about 3I/ATLAS”, Wikipedia “3I/ATLAS”; PRL Mount Abu observations 12–15 Nov 2025: ISRO. Brihat Samhita chapter on comets (Ketu-chāra): Wikipedia “Bṛhat Saṃhitā”, wisdomlib translation (N. Chidambaram Iyer, 1884).</footer>
+</div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const KG=0.01720209895, VK=29.78469, AUKM=149597870.7, D2R=Math.PI/180;
+/* Elements: JPL Horizons osculating heliocentric ecliptic J2000 at the epoch nearest perihelion. tp = Julian date (TDB). */
+const C=[
+ {id:"halley",lab:"Halley",full:"1P/Halley",e:.9672792272,q:.5871034488,i:162.24222427,O:58.85993641,w:111.86554805,tp:2446470.958961,span:13880,zoom:36,
+  kid:"The most famous comet. It comes back about every 76 years, and it goes round the Sun <b>backwards</b> compared with the planets.",
+  facts:["Closest to the Sun: 9 Feb 1986, 0.587 au (inside Venus's path)","Farthest: about 35 au, beyond Neptune","Next closest approach: 28 July 2061","Nucleus about 15 km long, peanut-shaped (seen by Giotto)"]},
+ {id:"encke",lab:"Encke",full:"2P/Encke",e:.8469335771,q:.339598303,i:11.33645792,O:334.01871951,w:187.2883468,tp:2460240.028453,span:604,zoom:6,
+  kid:"A small, faint comet on a short loop: once round the Sun every <b>3.3 years</b>, never going out as far as Jupiter.",
+  facts:["Closest to the Sun: 22 Oct 2023, 0.34 au","Farthest: about 4.1 au","The second comet ever shown to come back, after Halley (that is why it is “2P”)","Its dust makes the Taurid meteor shower"]},
+ {id:"halebopp",lab:"Hale-Bopp",full:"C/1995 O1 (Hale-Bopp)",e:.995131757,q:.9141695070,i:89.43016903,O:282.47060575,w:130.58725584,tp:2450539.633102,span:1500,zoom:6,
+  kid:"A giant. Its nucleus is about <b>60 km</b> wide, so it shone brightly even though it never came very close to the Sun.",
+  facts:["Found 23 July 1995 while still 7.2 au away, between Jupiter and Saturn","Closest to the Sun: 1 Apr 1997, 0.91 au","Seen with bare eyes for about 569 days, a record","Its path is tilted almost upright (89°): try Edge view"]},
+ {id:"neowise",lab:"NEOWISE",full:"C/2020 F3 (NEOWISE)",e:.9991781211,q:.2946512465,i:128.93750347,O:61.01042916,w:37.27865402,tp:2459034.178898,span:700,zoom:2,
+  kid:"Found from space by NASA's NEOWISE telescope on <b>27 March 2020</b>, it was easy to see without a telescope in July 2020.",
+  facts:["Closest to the Sun: 3 July 2020, 0.29 au (closer than Mercury)","Closest to Earth: 23 July 2020, about 0.69 au","Its loop is so long it takes thousands of years to come back"]},
+ {id:"ta",lab:"Tsuchinshan-ATLAS",full:"C/2023 A3 (Tsuchinshan-ATLAS)",e:1.000021225,q:.3914229238,i:139.11054485,O:21.55945974,w:308.49098427,tp:2460581.242030,span:900,zoom:2,
+  kid:"Spotted on <b>9 Jan 2023</b> by Purple Mountain Observatory in China (“Tsuchinshan”) and by the ATLAS survey. In October 2024 it was bright in the evening sky, and was photographed from Hanle in Ladakh.",
+  facts:["Closest to the Sun: 27 Sep 2024, 0.39 au","Closest to Earth: 12 Oct 2024, about 0.47 au","Its path is right on the edge between closed and open (e is just above 1), so it may never return"]},
+ {id:"3i",lab:"3I/ATLAS",full:"3I/ATLAS (C/2025 N1)",e:6.13934201,q:1.3564492959,i:175.11302769,O:322.15564115,w:128.00753513,tp:2460977.982350,span:600,zoom:6,
+  kid:"A visitor from <b>another star</b>. Found on 1 July 2025 by the ATLAS telescope in Chile, it is only the third object ever seen coming from outside our solar system.",
+  facts:["Its path is an open curve (e = 6.1): it passes once and leaves for ever","Closest to the Sun: 29–30 Oct 2025, 1.36 au, just inside Mars's path","Fastest near the Sun: about 68 km/s","Observed from India by PRL's 1.2 m telescope at Mount Abu, Nov 2025"]},
+ {id:"67p",lab:"67P (Rosetta)",full:"67P/Churyumov–Gerasimenko",e:.6408747907,q:1.2432587698,i:7.04032335,O:50.13583024,w:12.79601467,tp:2457247.586205,span:1177,zoom:6,
+  kid:"The comet a spacecraft lived with. ESA's Rosetta arrived on <b>6 Aug 2014</b> and its lander Philae touched down on <b>12 Nov 2014</b>: the first landing on a comet.",
+  facts:["Goes round the Sun every 6.4 years","Closest to the Sun: 13 Aug 2015, 1.24 au, while Rosetta watched","Shaped like a rubber duck, about 4 km long","Philae's harpoons failed and it bounced twice before stopping"]}
+];
+const PL=[["Mercury",.387],["Venus",.723],["Earth",1],["Mars",1.524],["Jupiter",5.203],["Saturn",9.537],["Uranus",19.19],["Neptune",30.07]];
+
+/* Kepler solver: two-body motion around the Sun. Returns distance r (au), true anomaly nu, position (au), speed v (km/s). */
+function solve(c,jd){
+  const e=c.e,q=c.q,a=q/(1-e),dt=jd-c.tp;let r,nu;
+  if(e<1){
+    const n=KG/Math.pow(a,1.5);let M=n*dt;M=M-2*Math.PI*Math.round(M/(2*Math.PI));
+    let lo=-Math.PI,hi=Math.PI,E=e>.8?Math.cbrt(6*M):M;if(E<lo||E>hi)E=M;
+    for(let k=0;k<100;k++){const f=E-e*Math.sin(E)-M;if(f>0)hi=E;else lo=E;let d=f/(1-e*Math.cos(E));let En=E-d;if(!(En>lo&&En<hi))En=(lo+hi)/2;if(Math.abs(En-E)<1e-15){E=En;break}E=En}
+    r=a*(1-e*Math.cos(E));nu=2*Math.atan2(Math.sqrt(1+e)*Math.sin(E/2),Math.sqrt(1-e)*Math.cos(E/2));
+  }else{
+    const n=KG/Math.pow(-a,1.5),M=n*dt;let lo=-60,hi=60,H=Math.sign(M)*Math.min(Math.abs(M)/(e-1),Math.cbrt(6*Math.abs(M)/e),Math.asinh(Math.abs(M)/(e-1)));
+    for(let k=0;k<200;k++){const f=e*Math.sinh(H)-H-M;if(f>0)hi=H;else lo=H;let Hn=H-f/(e*Math.cosh(H)-1);if(!(Hn>lo&&Hn<hi))Hn=(lo+hi)/2;if(Math.abs(Hn-H)<1e-15*Math.max(1,Math.abs(H))){H=Hn;break}H=Hn}
+    r=a*(1-e*Math.cosh(H));nu=2*Math.atan(Math.sqrt((e+1)/(e-1))*Math.tanh(H/2));
+  }
+  return {r,nu,...xyz(c,r,nu),v:VK*Math.sqrt(2/r-1/a)};
+}
+function xyz(c,r,nu){const O=c.O*D2R,i=c.i*D2R,u=c.w*D2R+nu,cu=Math.cos(u),su=Math.sin(u);
+  return {x:r*(Math.cos(O)*cu-Math.sin(O)*su*Math.cos(i)),y:r*(Math.sin(O)*cu+Math.cos(O)*su*Math.cos(i)),z:r*su*Math.sin(i)}}
+/* Earth: low-precision solar formula (Astronomical Almanac), turned round to give Earth from the Sun. */
+function earth(jd){const d=jd-2451545,g=(357.528+.9856003*d)*D2R,L=(280.46+.9856474*d)*D2R+(1.915*Math.sin(g)+.02*Math.sin(2*g))*D2R+Math.PI,R=1.00014-.01671*Math.cos(g)-.00014*Math.cos(2*g);return {x:R*Math.cos(L),y:R*Math.sin(L),z:0}}
+/* Water-ice sublimation rate relative to 1 au (Marsden, Sekanina & Yeomans 1973). */
+const g=r=>.1112620426*Math.pow(r/2.808,-2.15)*Math.pow(1+Math.pow(r/2.808,5.093),-4.6142);
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmt=jd=>{const d=new Date((jd-2440587.5)*864e5);return d.getUTCDate()+" "+MON[d.getUTCMonth()]+" "+d.getUTCFullYear()};
+const nf=(x,p)=>x.toLocaleString("en-US",{maximumFractionDigits:p,minimumFractionDigits:p});
+
+/* ---------- orbit player ---------- */
+let cur=C[0],zoom=cur.zoom,view="top",playing=false;
+const picks=$("#picks");
+C.forEach(c=>{const b=document.createElement("button");b.type="button";b.textContent=c.lab;b.onclick=()=>pick(c);picks.appendChild(b)});
+const ZO=[["Inner 2 au",2],["To Jupiter 6 au",6],["To Neptune 36 au",36]];
+ZO.forEach(([t,z])=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.onclick=()=>{zoom=z;draw()};$("#zooms").appendChild(b)});
+[["Top view","top"],["Edge view","edge"]].forEach(([t,v])=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.onclick=()=>{view=v;draw()};$("#views").appendChild(b)});
+function pick(c){cur=c;zoom=c.zoom;let f0=-.3;for(let f=-1;f<=0;f+=.005){if(solve(c,c.tp+f*c.span).r<zoom*.8){f0=f;break}}$("#tS").value=f0;draw();
+  $("#cdet").innerHTML=`<h3>${c.full}</h3><div class="kid">${c.kid}</div><ul>${c.facts.map(f=>`<li>${f}</li>`).join("")}</ul>
+  <p class="note" style="margin:8px 0 0">Path shape: e = ${c.e<1?nf(c.e,4):nf(c.e,c.e>2?2:5)} (${c.e<1?"a closed loop, it comes back":"an open curve, it does not come back"}) · tilt ${nf(c.i,1)}°${c.i>90?" (more than 90°, so it goes round backwards)":""}.</p>`}
+const cv=$("#orb"),G=cv.getContext("2d");
+function proj(p){return view==="top"?[p.x,p.y]:[p.x,p.z]}
+function draw(){
+  picks.querySelectorAll("button").forEach((b,i)=>b.setAttribute("aria-pressed",C[i]===cur));
+  $("#zooms").querySelectorAll("button").forEach((b,i)=>b.setAttribute("aria-pressed",ZO[i][1]===zoom));
+  $("#views").querySelectorAll("button").forEach((b,i)=>b.setAttribute("aria-pressed",(i?"edge":"top")===view));
+  const c=cur,f=+$("#tS").value,jd=c.tp+f*c.span,s=solve(c,jd),E=earth(jd);
+  const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;G.setTransform(dpr,0,0,dpr,0,0);G.clearRect(0,0,W,H);
+  const cx=W/2,cy=H/2,sc=(Math.min(W,H)/2-14)/zoom,P=p=>{const [u,v]=proj(p);return [cx+u*sc,cy-v*sc]};
+  /* planets */
+  G.lineWidth=1;G.font="11px IBM Plex Sans, sans-serif";
+  PL.forEach(([n,R])=>{if(R>zoom*1.05)return;G.strokeStyle=n==="Earth"?"#2d5a80":"#2a3646";G.beginPath();
+    if(view==="top")G.arc(cx,cy,R*sc,0,7);else{G.moveTo(cx-R*sc,cy);G.lineTo(cx+R*sc,cy)}G.stroke();
+    if(view==="top"&&R*sc>22){G.fillStyle="#56657a";G.fillText(n,cx+R*sc*.71+3,cy-R*sc*.71-3)}});
+  /* comet path */
+  G.strokeStyle="rgba(95,208,232,.55)";G.lineWidth=1.5;G.beginPath();
+  const numax=c.e<1?Math.PI:Math.acos(-1/c.e)-.02;let first=true;
+  for(let k=0;k<=720;k++){const nu=-numax+2*numax*k/720,r=c.q*(1+c.e)/(1+c.e*Math.cos(nu));if(r>zoom*3){first=true;continue}
+    const [X,Y]=P(xyz(c,r,nu));first?G.moveTo(X,Y):G.lineTo(X,Y);first=false}
+  G.stroke();
+  /* perihelion marker */
+  const [PX,PY]=P(xyz(c,c.q,0));G.fillStyle="#e8c46a";G.fillRect(PX-2,PY-2,4,4);
+  /* sun */
+  G.fillStyle="#ffd36a";G.beginPath();G.arc(cx,cy,5,0,7);G.fill();
+  /* earth */
+  const [EX,EY]=P(E);if(zoom<20){G.fillStyle="#74c7ff";G.beginPath();G.arc(EX,EY,3.5,0,7);G.fill()}
+  /* tail: away from the Sun, length from the water-ice formula */
+  const [KX,KY]=P(s);let dx=KX-cx,dy=KY-cy,dl=Math.hypot(dx,dy)||1;dx/=dl;dy/=dl;
+  const act=g(s.r),L=Math.min(W*.3,W*.11*Math.sqrt(act))*(dl<3?0:1);
+  if(L>2){const gr=G.createLinearGradient(KX,KY,KX+dx*L,KY+dy*L);gr.addColorStop(0,"rgba(200,240,255,.85)");gr.addColorStop(1,"rgba(95,208,232,0)");
+    G.fillStyle=gr;const w=Math.max(2,L*.16);G.beginPath();G.moveTo(KX-dy*2,KY+dx*2);G.lineTo(KX+dx*L-dy*w,KY+dy*L+dx*w);G.lineTo(KX+dx*L+dy*w,KY+dy*L-dx*w);G.lineTo(KX+dy*2,KY-dx*2);G.closePath();G.fill();
+    G.strokeStyle="rgba(150,190,255,.6)";G.lineWidth=1;G.beginPath();G.moveTo(KX,KY);G.lineTo(KX+dx*L*1.15,KY+dy*L*1.15);G.stroke()}
+  const coma=2.5+Math.min(6,2*Math.sqrt(act));G.fillStyle="#e9fbff";G.beginPath();G.arc(KX,KY,coma,0,7);G.fill();
+  G.fillStyle="#8a97a8";G.fillText(view==="top"?"Looking down on the planets' plane":"Edge-on: up and down is above and below the planets' plane",8,H-8);
+  if(Math.hypot(KX-cx,KY-cy)>Math.min(W,H)/2){G.fillStyle="#e8c46a";G.fillText("Comet is off the map: zoom out",8,16)}
+  /* readouts */
+  const days=jd-c.tp,ed=Math.hypot(s.x-E.x,s.y-E.y,s.z-E.z);
+  $("#tO").textContent=fmt(jd)+" · "+(Math.abs(days)<1?"closest to the Sun":(Math.round(Math.abs(days))+" days "+(days<0?"before":"after")+" closest approach"));
+  const state=s.r>3.5?"Frozen":s.r>2.5?"Waking up":s.r>1?"Active":"Blazing";
+  $("#ostats").innerHTML=`<div class="stat a"><span>From the Sun</span><b>${nf(s.r,s.r<10?2:1)} au</b><small>${nf(s.r*AUKM/1e6,0)} million km</small></div>
+   <div class="stat g"><span>Speed</span><b>${nf(s.v,1)} km/s</b><small>${nf(s.v*3600,0)} km/h</small></div>
+   <div class="stat b"><span>From Earth (rough)</span><b>${nf(ed,2)} au</b><small>${nf(ed*AUKM/1e6,0)} million km</small></div>
+   <div class="stat o"><span>Tail</span><b>${state}</b><small>ice to gas ${act<.001?"almost none":"×"+nf(act,act<.1?3:act<10?2:0)}</small></div>`;
+}
+function tick(){if(!playing)return;const t=$("#tS");let v=+t.value+.0025*(cur.e<1&&cur.span>5000?.5:1);if(v>1)v=-1;t.value=v;draw();requestAnimationFrame(tick)}
+$("#playB").onclick=()=>{playing=!playing;$("#playB").textContent=playing?"Pause":"Play";if(playing)tick()};
+$("#tS").addEventListener("input",draw);
+
+/* ---------- why the tail grows ---------- */
+const av=$("#act"),A=av.getContext("2d");
+function drawA(){
+  const R=+$("#dS").value,dpr=devicePixelRatio||1,W=av.clientWidth,H=av.clientHeight;av.width=W*dpr;av.height=H*dpr;A.setTransform(dpr,0,0,dpr,0,0);A.clearRect(0,0,W,H);
+  const Lm=46,Rm=10,T=12,B=26,lmin=-4,lmax=1.5,X=r=>Lm+(r-.25)/(6-.25)*(W-Lm-Rm),Y=v=>{const l=Math.max(lmin,Math.min(lmax,Math.log10(v)));return T+(lmax-l)/(lmax-lmin)*(H-T-B)};
+  A.font="11px IBM Plex Sans, sans-serif";A.strokeStyle="#1f2a38";A.fillStyle="#8a97a8";A.lineWidth=1;
+  [[10,"×10"],[1,"×1"],[.1,"1/10"],[.01,"1/100"],[.001,"1/1000"],[1e-4,"1/10000"]].forEach(([v,t])=>{A.beginPath();A.moveTo(Lm,Y(v));A.lineTo(W-Rm,Y(v));A.stroke();A.fillText(t,2,Y(v)+4)});
+  for(let r=1;r<=6;r++){A.fillText(r+" au",X(r)-10,H-8)}
+  A.fillStyle="rgba(232,196,106,.08)";A.fillRect(X(.25),T,X(3)-X(.25),H-T-B);A.fillStyle="#e8c46a";A.fillText("inside 3 au: comets switch on",X(.3),T+12);
+  const curve=(fn,col)=>{A.strokeStyle=col;A.lineWidth=2.5;A.beginPath();for(let r=.25;r<=6.001;r+=.02){const v=fn(r);if(Math.log10(v)<lmin-.5)break;r===.25?A.moveTo(X(r),Y(v)):A.lineTo(X(r),Y(v))}A.stroke()};
+  curve(r=>1/(r*r),"#e8c46a");curve(g,"#5fd0e8");
+  A.strokeStyle="#e7edf3";A.setLineDash([4,4]);A.beginPath();A.moveTo(X(R),T);A.lineTo(X(R),H-B);A.stroke();A.setLineDash([]);
+  /* little comet with tail at the top right */
+  const act=g(R),tl=Math.min(W*.28,W*.08*Math.sqrt(act)),hx=W-Rm-10-W*.28,hy=T+34;
+  if(tl>1){const gr=A.createLinearGradient(hx,hy,hx+tl,hy);gr.addColorStop(0,"rgba(200,240,255,.9)");gr.addColorStop(1,"rgba(95,208,232,0)");A.fillStyle=gr;A.beginPath();A.moveTo(hx,hy-2);A.lineTo(hx+tl,hy-tl*.14);A.lineTo(hx+tl,hy+tl*.14);A.lineTo(hx,hy+2);A.fill()}
+  A.fillStyle="#e9fbff";A.beginPath();A.arc(hx,hy,2.5+Math.min(5,2*Math.sqrt(act)),0,7);A.fill();A.fillStyle="#8a97a8";A.fillText("Sun ←",hx-44,hy+4);
+  $("#dO").textContent=nf(R,2)+" au ("+nf(R*AUKM/1e6,0)+" million km)";
+  const sun=1/(R*R),pct=act*100;
+  $("#astats").innerHTML=`<div class="stat g"><span>Sunlight vs Earth's</span><b>${sun>=1?"×"+nf(sun,1):"1/"+nf(1/sun,0)}</b></div>
+   <div class="stat a"><span>Ice to gas vs 1 au</span><b>${act>=1?"×"+nf(act,1):act>1e-4?"1/"+nf(1/act,0):"almost 0"}</b></div>
+   <div class="stat b"><span>Which planet is near</span><b>${R<.55?"Mercury":R<.85?"Venus":R<1.25?"Earth":R<2?"Mars":R<4?"Asteroids":"Jupiter"}</b></div>
+   <div class="stat o"><span>Comet is</span><b>${R>3.5?"Frozen":R>2.5?"Waking":R>1?"Active":"Blazing"}</b></div>`;
+  $("#averd").innerHTML=R>3.5?`At ${nf(R,1)} au a water-ice comet is a dark frozen lump. Sunlight is still ${nf(sun*100,0)}% of what we get on Earth, but that is not enough to turn much ice into gas. No tail.`
+   :R>2.5?`Around ${nf(R,1)} au the ice is starting to turn into gas, at about ${pct<0.1?"1/"+nf(1/act,0):nf(pct,1)+"%"} of the rate at Earth's distance. A faint fuzzy cloud (the coma) appears; the tail is short.`
+   :R>1?`At ${nf(R,1)} au the comet is properly awake: ice turns to gas at ${nf(pct,0)}% of the 1 au rate and the tail is growing fast.`
+   :`At ${nf(R,2)} au sunlight is ${nf(sun,1)} times Earth's and ice turns to gas ${nf(act,1)} times faster than at 1 au. This is when comets put on their best show, and when small ones sometimes break apart.`;
+}
+$("#dS").addEventListener("input",drawA);
+
+/* ---------- history ---------- */
+const TL=[
+ ["ok","240 BC","Halley in Chinese records","The Shiji (Records of the Grand Historian) describes a comet that astronomers now identify as Halley: the oldest sure sighting."],
+ ["ok","164 BC","Babylonian clay tablets","Two tablets record Halley's Comet seen in late September 164 BC. They were found again in the British Museum in 1984."],
+ ["u","about 6th century AD","Varahamihira's chapter on comets","In the Brihat Samhita, the chapter Ketu-chāra (“the movement of comets”) collects comet lore from older teachers such as Parashara and Garga and sorts comets by colour, shape and direction. It treats them as omens, and says their appearance cannot be worked out by calculation. Numbers and verse order differ between editions."],
+ ["u","1456","Halley seen from Kashmir and Srisailam","The Kashmiri Sanskrit poet Śrīvara described the comet of 1456, and a Vijayanagara-era copper plate at the Mallikarjuna temple, Srisailam, is reported to mention it. These identifications come from historians' readings of the texts."],
+ ["ok","1705","Halley makes a prediction","Edmond Halley used Newton's law of gravity and saw that the comets of 1531, 1607 and 1682 had the same path. In his Synopsis of the Astronomy of Comets he predicted it would return in 1758."],
+ ["ok","25 Dec 1758","It comes back","Johann Palitzsch, a German farmer and amateur astronomer, spotted it on Christmas night. It passed the Sun on 13 March 1759, late because Jupiter and Saturn had tugged it. Halley had died in 1742; the comet was named after him."],
+ ["in","13–14 Mar 1986","Giotto flies past Halley","ESA's Giotto passed just 596 km from the nucleus and photographed it for the first time: dark as coal, about 15 km long. Dust hits sent it spinning for half an hour."],
+ ["ok","16–22 Jul 1994","Shoemaker-Levy 9 hits Jupiter","Jupiter's gravity had torn this comet into about 21 pieces. One by one they smashed into Jupiter, leaving dark scars bigger than Earth."],
+ ["ok","1997","Hale-Bopp","Visible with bare eyes for about 569 days, a record."],
+ ["in","2014","Rosetta and Philae at 67P","Rosetta arrived on 6 Aug 2014 and stayed for two years. Philae landed on 12 Nov 2014: the first landing on a comet."],
+ ["ok","Jul 2020","NEOWISE","Found from space in March, it became a bright evening comet in July."],
+ ["ok","Oct 2024","Tsuchinshan-ATLAS","A bright comet seen from India, including from Hanle in Ladakh; the Indian Institute of Astrophysics also imaged it with the Himalayan Chandra Telescope on 17 Nov 2024."],
+ ["ok","2025","3I/ATLAS from another star","Found on 1 July 2025. In November 2025 India's Physical Research Laboratory observed it with its 1.2 m telescope at Mount Abu and found gases (CN, C₂, C₃) like those of ordinary solar-system comets."],
+ ["p","28 Jul 2061","Halley returns","JPL's calculation puts its next closest approach to the Sun on 28 July 2061, at 0.59 au."]];
+$("#tl").innerHTML=TL.map(([k,d,t,x])=>`<li class="${k}"><b>${d} · ${t}</b><span>${x}</span></li>`).join("");
+
+/* ---------- checks: the same solver against published values ---------- */
+const by=id=>C.find(c=>c.id===id);
+const rows=[];
+/* 1. Perihelion found by scanning the solver for the smallest distance, vs published date and distance */
+const PUB={halley:["9 Feb 1986",.587],encke:["22 Oct 2023",.340],halebopp:["1 Apr 1997",.914],neowise:["3 Jul 2020",.295],ta:["27 Sep 2024",.391],"3i":["29 Oct 2025",1.356],"67p":["13 Aug 2015",1.243]};
+C.forEach(c=>{let best=1e9,bj=0;for(let t=-40;t<=40;t+=.01){const r=solve(c,c.tp+t).r;if(r<best){best=r;bj=c.tp+t}}
+  const [pd,pq]=PUB[c.id],ok=fmt(bj)===pd&&Math.abs(best-pq)<.0015;
+  rows.push([c.lab+": closest to the Sun",pd+", "+pq+" au",fmt(bj)+", "+nf(best,3)+" au",ok])});
+/* 2. Distance from the Sun on other dates vs JPL Horizons (which includes all the planets' pulls) */
+[["halley",2446503.5,.902261,"14 Mar 1986 (Giotto)"],["halebopp",2450528.5,.935694,"21 Mar 1997"],["neowise",2459053.5,.629073,"23 Jul 2020"],["ta",2460595.5,.544940,"12 Oct 2024"],["3i",2460857.5,4.514553,"1 Jul 2025 (found)"],["67p",2456875.5,3.600904,"6 Aug 2014 (Rosetta)"]]
+ .forEach(([id,jd,r,t])=>{const s=solve(by(id),jd),d=Math.abs(s.r-r)/r;rows.push([by(id).lab+": Sun distance on "+t,nf(r,3)+" au",nf(s.r,3)+" au ("+nf(d*100,2)+"% off)",d<.01])});
+/* 3. Distance from Earth vs Horizons (tests the rough Earth formula too) */
+[["neowise",2459053.5,.691853,"23 Jul 2020"],["ta",2460595.5,.473436,"12 Oct 2024"]].forEach(([id,jd,r,t])=>{const s=solve(by(id),jd),E=earth(jd),d=Math.hypot(s.x-E.x,s.y-E.y,s.z-E.z);
+  rows.push([by(id).lab+": Earth distance on "+t,nf(r,3)+" au",nf(d,3)+" au",Math.abs(d-r)<.01])});
+/* 4. Speed at closest approach */
+{const s=solve(by("3i"),by("3i").tp);rows.push(["3I/ATLAS: speed at closest approach","about 68 km/s (246,000 km/h, NASA)",nf(s.v,1)+" km/s",Math.abs(s.v-68.3)<.5])}
+/* 5. Halley 2061: what pure Kepler says vs the full calculation */
+{const h=by("halley"),a=h.q/(1-h.e),P=2*Math.PI/(KG/Math.pow(a,1.5)),nx=h.tp+P,real=2474034.196;
+ rows.push(["Halley: next closest approach","28 Jul 2061 (JPL Horizons)",fmt(nx)+" (Sun only)",null,Math.round(nx-real)])}
+$("#chk").innerHTML=`<tr><th>Test</th><th>Published</th><th>This page</th><th></th></tr>`+rows.map(([t,p,m,ok])=>`<tr><td>${t}</td><td>${p}</td><td>${m}</td><td class="${ok===null?"warn":ok?"pass":"warn"}">${ok===null?"expected miss":ok?"match":"check"}</td></tr>`).join("");
+const pass=rows.filter(r=>r[3]===true).length,tot=rows.filter(r=>r[3]!==null).length,hl=rows[rows.length-1][4];
+$("#chkV").innerHTML=`<b>${pass} of ${tot}</b> tests match. The one expected miss is the lesson: using only the Sun's pull, Halley would next come closest around ${rows[rows.length-1][2].replace(" (Sun only)","")}, about ${hl} days later than JPL's full answer of 28 July 2061. Jupiter and Saturn change its timing, just as they made it late in 1759. That is why the page only trusts its own orbits near each comet's closest approach.`;
+
+pick(cur);drawA();addEventListener("resize",()=>{draw();drawA()});
+})();
+</script>

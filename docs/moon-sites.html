@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Moon Landing Sites · Golapada">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Moon Landing Sites</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: the landing globe (drag, filters, tap-a-dot card), every landing in order, measure the Moon (great-circle distance), why the south pole now, coming next, then expert folds. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--acc:#ff9933;--blue:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--acc)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h3{font-family:var(--display);font-weight:700;font-size:20px;margin:0 0 6px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--blue)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.globe-box{min-width:0}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}
+#moon{aspect-ratio:1/1;max-width:620px;margin:0 auto;touch-action:none;cursor:grab}#moon.drag{cursor:grabbing}
+#moon:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.facing{font-size:13.5px;color:var(--dim);margin:8px 0 0;text-align:center}.facing b{color:var(--ink)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.seg button{background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 10px;font:inherit;font-size:13.5px;cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc)}
+.lbl{font-family:var(--display);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:2px 0 6px}
+.co{display:block;width:100%;text-align:left;margin:0;background:#0b1017;border:1px solid var(--line);border-radius:5px;padding:8px 10px;color:var(--ink);font:inherit;cursor:pointer}
+.co b{font-family:var(--display);font-size:18px;text-transform:uppercase}.co span{display:block;font-size:12.5px;color:#aeb9c6}
+.co[aria-pressed="true"]{border-color:var(--acc);background:#1d1508}
+.co:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.det{background:var(--panel2);border-radius:6px;padding:14px;border-left:4px solid var(--ok);margin-top:12px}
+.det.tip{border-left-color:var(--gold)}.det.crash{border-left-color:var(--bad)}.det.crew{border-left-color:var(--blue)}
+.det h3{margin-bottom:4px}.det .meta{font-size:13px;color:var(--dim);margin-bottom:8px}
+.det p{font-size:14.5px;color:#d6dde5;margin:0 0 6px}
+.tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-right:6px;background:#1a2433;color:var(--dim)}
+.tag.ok{background:#0f2a20;color:var(--ok)}.tag.tip{background:#2a230f;color:var(--gold)}.tag.crash{background:#2a1210;color:var(--bad)}.tag.crew{background:#0f2030;color:var(--blue)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:#c3ccd6;margin:6px 0 4px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:5px;border:2px solid #04060b}
+.legend .l-ok{background:var(--ok)}.legend .l-crew{background:var(--blue);border-color:#fff}.legend .l-tip{background:transparent;border:2px solid var(--gold)}
+.legend .l-x{border:0;border-radius:0;width:12px;height:12px;background:linear-gradient(45deg,transparent 42%,var(--bad) 42% 58%,transparent 58%),linear-gradient(-45deg,transparent 42%,var(--bad) 42% 58%,transparent 58%)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line)}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat.a{border-top-color:var(--acc)}.stat.g{border-top-color:var(--gold)}.stat.o{border-top-color:var(--ok)}.stat.b{border-top-color:var(--blue)}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr));gap:8px}
+.list .co.ok{border-left:4px solid var(--ok)}.list .co.crew{border-left:4px solid var(--blue)}.list .co.tip{border-left:4px solid var(--gold)}.list .co.crash{border-left:4px solid var(--bad)}
+.pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px}@media (max-width:520px){.pick{grid-template-columns:minmax(0,1fr)}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim)}
+select{width:100%;background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:7px 8px;font:inherit;font-size:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#c3ccd6;margin:0 0 10px}.chk input{width:18px;height:18px;accent-color:var(--acc)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14.5px}
+.formula{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:#02030a;border-radius:4px;padding:8px 10px;color:#c3ccd6;overflow-wrap:anywhere}
+.pole{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}@media (max-width:800px){.pole{grid-template-columns:minmax(0,1fr)}}
+svg{display:block;width:100%;height:auto}
+.tl{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 12px 16px}.tl li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--ok)}
+.tl li.p::before{background:var(--gold)}.tl li.b::before{background:var(--blue)}
+.tl b{font-family:var(--display);font-size:17px;color:var(--ink)}.tl span{display:block;font-size:13.5px;color:#c3ccd6}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-bar{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;padding-block:6px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);padding:2px 6px}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible,.sa-nav button:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:2px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+.sa-nav button{flex:none;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #2c3a4d;border-radius:4px;cursor:pointer;padding:5px 10px;line-height:1.2}
+.sa-nav .sa-arr{padding:5px 8px;font-size:16px}.sa-nav .sa-arr[disabled]{opacity:.3;cursor:default}
+.sa-nav .sa-all[aria-expanded="true"]{background:#e8c46a;color:#1b1404;border-color:#e8c46a}
+.sa-nav .sa-panel{max-width:1200px;margin:0 auto;padding:6px max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:4px;max-height:70vh;overflow:auto}
+.sa-nav .sa-panel[hidden]{display:none}
+.sa-nav .sa-panel a{background:#0b1017;border:1px solid #1f2a38}.sa-nav .sa-panel a[aria-current="page"]{background:#e7edf3;color:#0a0d12;border-color:#e7edf3}
+@media (max-width:560px){.sa-nav .sa-arr{display:none}}
+@media print{.sa-nav{display:none}}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-bar"><a href="index.html" class="sa-brand">Golapada</a><button type="button" class="sa-arr" aria-label="Scroll the lab list left">‹</button><div class="sa-in"><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="mars-now.html">Mars Now</a><a href="iss-life.html">ISS life</a><a href="eht-lab.html">EHT image</a><a href="comets.html">Comets</a><a href="moon-sites.html" aria-current="page">Moon sites</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div><button type="button" class="sa-arr" aria-label="Scroll the lab list right">›</button><button type="button" class="sa-all" aria-expanded="false">All labs</button></div><div class="sa-panel" hidden><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="mars-now.html">Mars Now</a><a href="iss-life.html">ISS life</a><a href="eht-lab.html">EHT image</a><a href="comets.html">Comets</a><a href="moon-sites.html" aria-current="page">Moon sites</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<script>
+(()=>{const n=document.currentScript.previousElementSibling,s=n.querySelector('.sa-in'),[l,r]=n.querySelectorAll('.sa-arr'),b=n.querySelector('.sa-all'),p=n.querySelector('.sa-panel');
+const upd=()=>{l.disabled=s.scrollLeft<=2;r.disabled=s.scrollLeft+s.clientWidth>=s.scrollWidth-2};
+l.onclick=()=>{s.scrollLeft-=s.clientWidth*0.7};r.onclick=()=>{s.scrollLeft+=s.clientWidth*0.7};
+s.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);
+s.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&s.scrollWidth>s.clientWidth){s.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+const c=s.querySelector('[aria-current]');if(c)s.scrollLeft=c.offsetLeft-s.clientWidth/2+c.offsetWidth/2;upd();
+const close=()=>{p.hidden=true;b.setAttribute('aria-expanded','false')};
+b.onclick=()=>{const o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));if(o){const a=p.querySelector('a');if(a)a.focus()}};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!p.hidden){close();b.focus()}});
+addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
+</script>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Moon · every landing · 1966 to now</div>
+    <h1>Moon Landing Sites</h1>
+    <p>Since 1966, five countries have landed spacecraft gently on the Moon: the Soviet Union, the USA, China, India and Japan. Twelve astronauts have walked there, robots have driven and drilled there, and lately companies have started trying too. Many attempts also crashed. This page puts every one of them on a single Moon you can turn with your finger, including the far side that never faces Earth. You can see why everyone is now heading south, and measure how far apart the sites are.</p>
+  </header>
+
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Spacecraft have landed gently on the Moon 28 times since 1966, and many more have crashed. This page puts every landing on one Moon you can turn with your finger, including the far side we never see from Earth.</p><p class="gs-try"><b>Try this first:</b> Press <b>Far side</b> and tap the dot for <b>Chang'e 4</b>. Then press <b>South pole</b>, and under <b>Measure the Moon</b> press <b>Chandrayaan-3 → Chang'e 6</b>.</p><ul><li>Only five countries have landed softly on the Moon: the Soviet Union, the USA, China, India and Japan. Twelve astronauts walked there between 1969 and 1972.</li><li>China's Chang'e 4 made the first far-side landing in 2019. In 2024 Chang'e 6 brought the first far-side rocks home.</li><li>Everyone is now heading for the south pole, because deep craters there that never see sunlight hold water ice. India's Chandrayaan-3 landed closer to it in 2023 than anyone before.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
+  <section class="card" aria-labelledby="g-h">
+    <h2 id="g-h">The landing globe</h2>
+    <p>Drag the Moon to turn it, or use the buttons. Tap a dot to read about that landing. Dark patches are the <i>maria</i> ("seas"), old lava plains; their outlines here are approximate.</p>
+    <div class="two">
+      <div class="globe-box">
+        <canvas id="moon" tabindex="0" role="img" aria-label="A Moon globe you can turn by dragging or with arrow keys, with a dot at every landing and crash site"></canvas>
+        <p class="facing" id="facing" aria-live="polite"></p>
+        <div class="legend">
+          <span><i class="l-ok"></i>Robot landed</span><span><i class="l-crew"></i>Astronauts landed</span><span><i class="l-tip"></i>Landed but tipped or damaged</span><span><i class="l-x"></i>Crashed</span>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">Turn to</div>
+        <div class="seg" id="views"></div>
+        <div class="lbl">Country</div>
+        <div class="seg" id="fc"></div>
+        <div class="lbl">Decade</div>
+        <div class="seg" id="fd"></div>
+        <label class="chk"><input type="checkbox" id="showX" checked> Show crashes</label>
+        <div class="det" id="det" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section class="card" aria-labelledby="l-h">
+    <h2 id="l-h">Every landing, in order</h2>
+    <p>The same filters apply here. Tap any one to turn the globe to it.</p>
+    <div class="list" id="list"></div>
+    <p class="note" style="margin-top:10px" id="listnote"></p>
+  </section>
+
+  <section class="card" aria-labelledby="m-h">
+    <h2 id="m-h">Measure the Moon</h2>
+    <p>On a ball, the shortest path between two places is not a straight line on a flat map, it is part of a <b>great circle</b>, like a rubber band stretched tight around the ball. The page works it out with the formula below, using the Moon's average radius, <b>R = 1,737.4 km</b>. The path is drawn in gold on the globe.</p>
+    <div class="seg" id="presets"></div>
+    <div class="pick">
+      <label class="f">From<select id="from"></select></label>
+      <label class="f">To<select id="to"></select></label>
+    </div>
+    <div class="stats" id="mstats"></div>
+    <div class="verdict" id="mverd"></div>
+    <p class="formula" style="margin-top:10px">h = sin²(Δlat/2) + cos(lat₁)·cos(lat₂)·sin²(Δlon/2)<br>distance = 2 · R · asin(√h)</p>
+  </section>
+
+  <section class="card" aria-labelledby="p-h">
+    <h2 id="p-h">Why the south pole now</h2>
+    <div class="pole">
+      <div>
+        <p>The Moon's axis is tilted only about 1.5°, so near the poles the Sun always skims along the horizon. The floors of some deep craters there <b>have not seen sunlight for billions of years</b>. They are among the coldest places measured in the solar system, colder than −200 °C, so they can trap water as ice.</p>
+        <p><b>2009: Chandrayaan-1.</b> NASA's Moon Mineralogy Mapper (M3), flying on India's first Moon mission, found the colour "fingerprint" of water and hydroxyl (a piece of a water molecule) spread thinly across the surface. The results were published in September 2009. A month later NASA's LCROSS probe slammed into the shadowed crater Cabeus near the south pole and found water in the plume it threw up.</p>
+        <p><b>2018: ice, directly.</b> Scientists looked again at M3's data and found the fingerprint of real water <b>ice</b> sitting at the surface inside permanently shadowed craters, most of it near the south pole.</p>
+        <p><b>Why it matters.</b> Ice can be melted for drinking water, and split into oxygen to breathe and hydrogen for rocket fuel. That could make the Moon a filling station instead of a place every drop has to be carried to. Some crater rims near the pole also get sunlight most of the time, which is good for solar power.</p>
+        <p><b>Artemis.</b> NASA's Artemis II flew four astronauts around the Moon and back in April 2026, the first people near the Moon since 1972. NASA's current plan is for the first crewed landing, near the south pole, on Artemis IV, targeted for about 2028. That is why Chandrayaan-3, Luna 25, Odysseus, Athena and Chang'e 7 all aimed south. Press <b>South pole</b> on the globe to see how crowded it is getting.</p>
+      </div>
+      <figure style="margin:0">
+        <svg viewBox="0 0 400 230" role="img" aria-label="Diagram: sunlight skims low across the lunar south pole, lighting a crater rim while the crater floor stays in permanent shadow with ice">
+          <rect width="400" height="230" fill="#02030a" rx="4"/>
+          <circle cx="30" cy="96" r="18" fill="#e8c46a"/>
+          <text x="30" y="132" fill="#8a97a8" font-size="11" text-anchor="middle" font-family="IBM Plex Sans,sans-serif">Sun, low</text>
+          <line x1="52" y1="96" x2="372" y2="112" stroke="#e8c46a" stroke-width="2" stroke-dasharray="6 5"/>
+          <line x1="52" y1="102" x2="196" y2="124" stroke="#e8c46a" stroke-width="2" stroke-dasharray="6 5"/>
+          <path d="M0 150 L110 150 Q140 112 170 122 Q200 200 260 200 Q320 200 330 128 Q350 120 400 150 L400 230 L0 230 Z" fill="#55585e"/>
+          <path d="M172 125 Q200 200 260 200 Q320 200 330 128 Z" fill="#0b1017"/>
+          <ellipse cx="258" cy="194" rx="34" ry="5" fill="#74c7ff" opacity=".85"/>
+          <text x="258" y="176" fill="#74c7ff" font-size="12" text-anchor="middle" font-family="IBM Plex Sans,sans-serif">ice</text>
+          <text x="252" y="148" fill="#c3ccd6" font-size="12" text-anchor="middle" font-family="IBM Plex Sans,sans-serif">never sunlit</text>
+          <text x="252" y="162" fill="#8a97a8" font-size="11" text-anchor="middle" font-family="IBM Plex Sans,sans-serif">colder than −200 °C</text>
+          <text x="150" y="108" fill="#5fd6a0" font-size="11" text-anchor="middle" font-family="IBM Plex Sans,sans-serif">sunlit rim</text>
+          <text x="200" y="222" fill="#8a97a8" font-size="11" text-anchor="middle" font-family="IBM Plex Sans,sans-serif">Not to scale</text>
+        </svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="n-h">
+    <h2 id="n-h">Coming next</h2>
+    <p>Nothing has landed on the Moon since Resilience crashed in June 2025. These are planned; Moon launch dates slip often, so treat every date as a hope.</p>
+    <ul class="tl">
+      <li class="p"><b>2026–27 · Griffin-1, IM-3, Blue Ghost 2</b><span>Three American company landers. Griffin-1 (Astrobotic) is aimed near the south pole, IM-3 (Intuitive Machines) at the odd bright swirl Reiner Gamma, and Blue Ghost 2 (Firefly) at the far side.</span></li>
+      <li class="p"><b>2027 · Chang'e 7</b><span>China's mission to the rim of Shackleton crater, right at the south pole, to hunt for ice. It was due to launch in August 2026 but was postponed to 2027.</span></li>
+      <li class="p"><b>2027 · Blue Moon MK1</b><span>Blue Origin's first, uncrewed, lunar lander; it slipped from 2026.</span></li>
+      <li class="p"><b>About 2028 · Chandrayaan-4</b><span>India's plan to bring Moon soil home from near Chandrayaan-3's landing site, using two LVM3 launches. Read the story of the last one in the <a href="chandrayaan-3.html">Chandrayaan-3 Moon Lab</a>.</span></li>
+      <li class="b"><b>About 2028 · Artemis IV</b><span>NASA's current target for the first crewed landing since 1972, near the south pole.</span></li>
+    </ul>
+  </section>
+
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
+    <p>Coordinates use the Moon's standard map grid: latitude north or south of the equator, and longitude east or west of the point that faces Earth. Here is where each set comes from:</p>
+    <div class="scroll"><table>
+      <tr><th>Sites</th><th>Source</th><th>How precise</th></tr>
+      <tr><td>Apollo 11–17, Surveyors 1, 3, 5, 6, 7, Luna 16, 17, 20, 21, 23, 24, Chang'e 3</td><td>LROC team (Arizona State University), measured from NASA Lunar Reconnaissance Orbiter photos of the hardware itself (2016 table)</td><td>Within a few metres (the table lists 0.3 to 13 m)</td></tr>
+      <tr><td>Chang'e 4, 5, 6, Chandrayaan-3, SLIM, Odysseus, Athena, Blue Ghost, and the crash sites</td><td>LROC image releases and NASA news, as collected in Wikipedia's list of objects on the Moon</td><td>Tens of metres. Chang'e 6 is given as ±30 m. Two published Chandrayaan-3 positions differ by a few hundred metres</td></tr>
+      <tr><td>Luna 9 and Luna 13</td><td>Soviet tracking from 1966</td><td>Neither spacecraft has been clearly found in orbiter photos, so these could be off by several kilometres</td></tr>
+      <tr><td>Maria and basin outlines</td><td>Circles drawn from published centres and sizes; Oceanus Procellarum and Mare Frigoris are hand-drawn rough shapes</td><td>Often wrong by 100 km or more: real maria are irregular, not round. They are there to help you find your way, not as a map</td></tr>
+    </table></div>
+    <p>Even at full screen, one pixel on this globe covers several kilometres of Moon, so every dot is far bigger than the uncertainty in its position. Distances use a perfect ball of radius 1,737.4 km; real paths over hills and craters would be a little longer. Dates are in UTC (world time). In local time, Chandrayaan-2's Vikram crashed on 7 September 2019 in India, SLIM landed on 20 January 2024 in Japan, Chang'e 6 landed on 2 June 2024 in China, and Resilience crashed on 6 June 2025 in Japan.</p>
+    <p>"Landed but tipped" is a judgement call: SLIM, Odysseus and Athena all touched down softly and sent back data, but did not end up standing as planned. Luna 23 landed but was damaged and could not do its job.</p>
+  </details>
+
+  <details class="card gx"><summary>For experts: What the page leaves out</summary>
+    <p>Only landers are shown. The page leaves out spacecraft that were <i>meant</i> to hit the Moon (like the Ranger probes, LCROSS, and India's own Moon Impact Probe, which carried India's flag to the surface on 14 November 2008), the many orbiters, and the separate final positions of the rovers (Lunokhods, Yutus, Pragyan), the Apollo moon buggies and the rocket stages that were crashed on purpose. Early failures are left out too: Luna 5, 7, 8, 15 and 18 and Surveyors 2 and 4 all crashed between 1965 and 1971. Small rovers that rode on these landers (SLIM's LEV-1 and LEV-2, Hakuto-R's and Athena's passengers) are mentioned only in words. The page shows no heights, slopes or real crater shapes, and the globe is lit evenly, not by today's real sunlight. It is not live: it was checked in November 2026.</p>
+  </details>
+
+  <!-- golapada-quiz:start -->
+<style>
+.gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
+.gq h2{font-family:"Saira Condensed","Noto Sans Devanagari","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
+.gq .gq-sub{font-size:13px;color:#8a97a8;margin:0 0 12px;max-width:76ch}
+.gq ol{list-style:none;margin:0;padding:0;counter-reset:gq}
+.gq li{counter-increment:gq;border-top:1px solid #1f2a38;padding:12px 0 10px 40px;position:relative}
+.gq li::before{content:counter(gq);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:#121a25;border:1px solid #2c3a4d;color:#e8c46a;font:700 15px/26px "Saira Condensed",sans-serif;text-align:center}
+.gq .gq-q{font-size:15px;color:#e7edf3;margin:0 0 4px}
+.gq .gq-do{font-size:13px;color:#8a97a8;margin:0 0 6px}.gq .gq-do b{color:#c3ccd6;font-weight:500}
+.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
+.gq details summary{cursor:pointer;font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
+.gq details summary:focus-visible,.gq button:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+.gq details p{margin:6px 0 0;padding:8px 10px;background:#121a25;border-left:3px solid #5fd6a0;border-radius:3px;font-size:14px;color:#d5dde6;max-width:76ch}
+.gq .gq-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gq button{font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
+@media print{.gq{background:#fff;border-color:#bbb}.gq h2,.gq .gq-q,.gq details p{color:#000}.gq .gq-sub,.gq .gq-do{color:#333}.gq details p{background:#fff}.gq .gq-bar{display:none}}
+</style>
+<section class="gq" aria-labelledby="gq-title"><h2 id="gq-title">Quiz: five questions</h2><p class="gq-sub">Answer each one by using the lab above, then check. Good for a class: pairs work through them, the teacher reveals the answers.</p><ol><li><p class="gq-q">Which spacecraft made the first landing on the far side of the Moon, and when?</p><p class="gq-do"><b>Use the lab:</b> Press <b>Far side</b> on <b>The landing globe</b> and tap the green dots, or set <b>Decade</b> to <b>2010s</b>.</p><details><summary>Show answer</summary><p><b>Chang'e 4</b> from China, on <b>3 January 2019</b>, in Von Kármán crater. Because the far side never faces Earth, its messages travel through a relay satellite called Queqiao.</p></details></li><li><p class="gq-q">How far is it across the Moon's surface from Chandrayaan-3 to Chang'e 6, and which way does the shortest path go?</p><p class="gq-do"><b>Use the lab:</b> Under <b>Measure the Moon</b>, press <b>Chandrayaan-3 → Chang'e 6</b>.</p><details><summary>Show answer</summary><p>About <b>2,089 km</b>. The shortest path passes close to the <b>south pole</b> (its furthest point is about 88° S), because the two sites are on opposite sides of the Moon.</p></details></li><li><p class="gq-q">Which landing is the farthest south anyone has landed, and what went wrong?</p><p class="gq-do"><b>Use the lab:</b> Press <b>South pole</b> on the globe and tap the gold rings, or find it in <b>Every landing, in order</b>.</p><details><summary>Show answer</summary><p><b>Athena (IM-2)</b> from Intuitive Machines, at about <b>84.8° S</b> on 6 March 2025. It ended up on its side in a small, cold, dark crater where its solar panels could not charge, and stopped working the next day.</p></details></li><li><p class="gq-q">Why does everyone want to land near the Moon's south pole now?</p><p class="gq-do"><b>Use the lab:</b> Read <b>Why the south pole now</b>.</p><details><summary>Show answer</summary><p>Some crater floors there have <b>never seen sunlight</b> and are colder than −200 °C, so they trap <b>water ice</b>. Chandrayaan-1's M3 instrument found signs of water in 2009, and found surface ice in shadowed craters in 2018. Ice could give drinking water, air to breathe and rocket fuel.</p></details></li><li><p class="gq-q"><span class="gq-h">History</span>Which was the first spacecraft ever to land gently on the Moon, and what did it prove?</p><p class="gq-do"><b>Use the lab:</b> Set <b>Decade</b> to <b>1960s</b> and tap the first entry in <b>Every landing, in order</b>.</p><details><summary>Show answer</summary><p>The Soviet Union's <b>Luna 9</b>, on <b>3 February 1966</b>, in the Ocean of Storms. Its photos showed the ground was firm enough to stand on, not deep dust that would swallow a spacecraft.</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">Show all answers</button></div><script>
+(()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
+</script></section>
+<!-- golapada-quiz:end -->
+  <footer>Sources (checked November 2026): Landing-site coordinates for Apollo 11–17, Surveyor 1, 3, 5, 6, 7, Luna 16, 17, 20, 21, 23, 24 and Chang'e 3: LROC Science Operations Team, Arizona State University, “Coordinates of Lunar Anthropogenic Targets/Features” (28 July 2016; Wagner et al., Icarus 2016). Chang'e 6 (41.6385°S, 153.9852°W, ±30 m): LROC “First Look: Chang'e 6” and NASA “LRO spots China's Chang'e 6 on lunar far side” (June 2024). SLIM (13.3160°S, 25.2510°E): LROC “JAXA SLIM Landing” and NASA (Jan 2024). Odysseus (80.13°S, 1.44°E): NASA LRO release (Feb 2024). Blue Ghost 1 (18.56°N, 61.81°E): LROC “Firefly Blue Ghost Landing Region”, NASA and Firefly (2 March 2025). Athena (84.79°S, 29.20°E): Wikipedia “List of artificial objects on the Moon”, Spaceflight Now (7 March 2025). Chandrayaan-3 (69.373°S, 32.319°E), Chang'e 4, Chang'e 5, Luna 9, Luna 13 and the crash sites of Vikram 2019, Beresheet, Hakuto-R Mission 1, Luna 25 and Resilience: Wikipedia “List of artificial objects on the Moon” (citing LROC and mission agencies), Wikipedia “Statio Shiv Shakti”. Resilience crash 5 June 2025 UTC in Mare Frigoris, imaged 11 June 2025: NASA LRO release. Peregrine: Astrobotic and NASA (January 2024). M3 water (2009) and surface ice in shadowed craters (Li et al., PNAS, 2018): NASA Science “Moon water and ices”, University of Hawaii and Brown University news (August 2018). Artemis II splashdown 10 April 2026 and Artemis IV crewed landing target: NASA news release, ABC News (April 2026). Chang'e 7 postponed to 2027: Wikipedia “Chang'e 7”, Space.com (August 2026). Griffin-1, IM-3, Blue Ghost 2, Blue Moon MK1 dates: Spaceflight Now (June 2026), Wikipedia “IM-3”, NASA CLPS pages. Chandrayaan-4: Space.com and Live Science (target 2028). Maria centres and sizes: IAU Gazetteer of Planetary Nomenclature values as given in Wikipedia, simplified to circles. Mission facts (sample masses, rover distances, crews): NASA and agency mission pages via Wikipedia. Great-circle distances computed on this page with R = 1,737.4 km.</footer>
+</div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const D=Math.PI/180,RM=1737.4;
+const CN={US:"USA",SU:"USSR / Russia",CN:"China",IN:"India",JP:"Japan",IL:"Israel"};
+// o: ok = landed, tip = landed but tipped or damaged, crash = crashed. lat/lon in degrees, east and north positive.
+const S=[
+ {n:"Luna 9",c:"SU",d:"3 Feb 1966",y:1966,lat:7.08,lon:-64.37,o:"ok",place:"Oceanus Procellarum (Ocean of Storms)",who:"Soviet Union · robot",f:"The first spacecraft ever to land gently on another world. Its photos showed the ground was firm enough to stand on, not deep dust that would swallow a spacecraft.",ap:1},
+ {n:"Surveyor 1",c:"US",d:"2 Jun 1966",y:1966,lat:-2.4745,lon:-43.3398,o:"ok",place:"Oceanus Procellarum, near Flamsteed crater",who:"NASA · robot",f:"America's first soft landing. It sent back more than 11,000 pictures and showed the ground could hold up an Apollo lander."},
+ {n:"Luna 13",c:"SU",d:"24 Dec 1966",y:1966,lat:18.87,lon:-62.05,o:"ok",place:"Oceanus Procellarum",who:"Soviet Union · robot",f:"Pushed a small rod into the soil to test how hard it was, and measured how dense it was.",ap:1},
+ {n:"Surveyor 3",c:"US",d:"20 Apr 1967",y:1967,lat:-3.0162,lon:-23.418,o:"ok",place:"Oceanus Procellarum",who:"NASA · robot",f:"Dug little trenches with a scoop. Two and a half years later the Apollo 12 astronauts walked over to it and brought its camera home."},
+ {n:"Surveyor 5",c:"US",d:"11 Sep 1967",y:1967,lat:1.4551,lon:23.1943,o:"ok",place:"Mare Tranquillitatis",who:"NASA · robot",f:"First to measure what the soil is made of: it was like basalt, the dark volcanic rock also found on Earth."},
+ {n:"Surveyor 6",c:"US",d:"10 Nov 1967",y:1967,lat:0.4742,lon:-1.4275,o:"ok",place:"Sinus Medii (the Bay in the Middle)",who:"NASA · robot",f:"Fired its engines and hopped about 3 metres sideways: the first take-off from the Moon."},
+ {n:"Surveyor 7",c:"US",d:"10 Jan 1968",y:1968,lat:-40.9812,lon:-11.5127,o:"ok",place:"Highlands near Tycho crater",who:"NASA · robot",f:"The only Surveyor sent to the bright, rough highlands, beside the young crater Tycho."},
+ {n:"Apollo 11",c:"US",d:"20 Jul 1969",y:1969,lat:0.67416,lon:23.47314,o:"ok",crew:1,place:"Mare Tranquillitatis",who:"Neil Armstrong and Buzz Aldrin (Michael Collins stayed in orbit)",f:"The first people on the Moon. They brought home 21.5 kg of rock and soil and left a mirror that scientists still bounce lasers off to measure the Moon's distance."},
+ {n:"Apollo 12",c:"US",d:"19 Nov 1969",y:1969,lat:-3.0128,lon:-23.4219,o:"ok",crew:1,place:"Oceanus Procellarum",who:"Pete Conrad and Alan Bean",f:"A pinpoint landing within walking distance of Surveyor 3. They cut parts off it to see how 31 months on the Moon had changed it."},
+ {n:"Luna 16",c:"SU",d:"20 Sep 1970",y:1970,lat:-0.5137,lon:56.3638,o:"ok",place:"Mare Fecunditatis",who:"Soviet Union · robot",f:"The first robot to bring Moon soil back to Earth: 101 grams."},
+ {n:"Luna 17",c:"SU",d:"17 Nov 1970",y:1970,lat:38.23764,lon:-35.00163,o:"ok",place:"Mare Imbrium",who:"Soviet Union · robot with the Lunokhod 1 rover",f:"Carried Lunokhod 1, the first rover on another world. Drivers on Earth steered it by remote control for about 10.5 km."},
+ {n:"Apollo 14",c:"US",d:"5 Feb 1971",y:1971,lat:-3.64589,lon:-17.47194,o:"ok",crew:1,place:"Fra Mauro highlands",who:"Alan Shepard and Edgar Mitchell",f:"Collected 42 kg of rocks, many thrown out by the giant impact that made Mare Imbrium. Shepard hit two golf balls."},
+ {n:"Apollo 15",c:"US",d:"30 Jul 1971",y:1971,lat:26.13239,lon:3.6333,o:"ok",crew:1,place:"Hadley–Apennine, at the edge of Mare Imbrium",who:"David Scott and James Irwin",f:"The first crew to drive a rover. They found the 'Genesis Rock', a piece of the Moon's early crust more than 4 billion years old."},
+ {n:"Luna 20",c:"SU",d:"21 Feb 1972",y:1972,lat:3.7863,lon:56.6242,o:"ok",place:"Highlands near Apollonius crater",who:"Soviet Union · robot",f:"Brought back 55 grams of soil from the bright highlands between two maria."},
+ {n:"Apollo 16",c:"US",d:"21 Apr 1972",y:1972,lat:-8.9734,lon:15.5011,o:"ok",crew:1,place:"Descartes highlands",who:"John Young and Charles Duke",f:"Scientists expected volcanic rock here, but the crew found mostly rocks smashed together by impacts. Even experts get surprised."},
+ {n:"Apollo 17",c:"US",d:"11 Dec 1972",y:1972,lat:20.1911,lon:30.7723,o:"ok",crew:1,place:"Taurus–Littrow valley",who:"Eugene Cernan and Harrison Schmitt, a geologist",f:"The last people on the Moon so far. Schmitt found orange soil made of tiny glass beads from ancient volcanic fountains. They brought home 110 kg."},
+ {n:"Luna 21",c:"SU",d:"15 Jan 1973",y:1973,lat:25.9994,lon:30.4076,o:"ok",place:"Le Monnier crater, edge of Mare Serenitatis",who:"Soviet Union · robot with the Lunokhod 2 rover",f:"Carried Lunokhod 2, which drove about 39 km, the record for driving on another world until 2014."},
+ {n:"Luna 23",c:"SU",d:"6 Nov 1974",y:1974,lat:12.6667,lon:62.1511,o:"tip",place:"Mare Crisium",who:"Soviet Union · robot",f:"Landed on rough ground and was damaged, so its drill could not work and it could not bring soil home."},
+ {n:"Luna 24",c:"SU",d:"18 Aug 1976",y:1976,lat:12.7142,lon:62.2129,o:"ok",place:"Mare Crisium, a few km from Luna 23",who:"Soviet Union · robot",f:"Did Luna 23's job: drilled about 2 m down and brought back 170 grams. It was the last Moon landing for 37 years."},
+ {n:"Chang'e 3",c:"CN",d:"14 Dec 2013",y:2013,lat:44.1214,lon:-19.5117,o:"ok",place:"Mare Imbrium",who:"China (CNSA) · robot with the Yutu rover",f:"China's first landing, and the first by anyone since 1976. Yutu's radar saw layers of old lava flows under the ground."},
+ {n:"Chang'e 4",c:"CN",d:"3 Jan 2019",y:2019,lat:-45.4446,lon:177.5991,o:"ok",far:1,place:"Von Kármán crater, inside the South Pole–Aitken basin (far side)",who:"China (CNSA) · robot with the Yutu-2 rover",f:"The first landing ever on the far side. The far side never faces Earth, so its messages bounce off a relay satellite, Queqiao. Yutu-2 found rock that may come from deep inside the Moon."},
+ {n:"Beresheet",c:"IL",d:"11 Apr 2019",y:2019,lat:32.5956,lon:19.3496,o:"crash",place:"Mare Serenitatis",who:"SpaceIL (a non-profit) and Israel Aerospace Industries",f:"The first privately built Moon lander. Its main engine shut down during the descent and it crashed."},
+ {n:"Vikram (Chandrayaan-2)",c:"IN",d:"6 Sep 2019",y:2019,lat:-70.881,lon:22.784,o:"crash",place:"Near the south pole",who:"ISRO",f:"Lost control in the last few kilometres of braking and crashed. An Indian engineer, Shanmuga Subramanian, helped NASA find the pieces in orbiter photos. The Chandrayaan-2 orbiter is still working."},
+ {n:"Chang'e 5",c:"CN",d:"1 Dec 2020",y:2020,lat:43.0576,lon:-51.9161,o:"ok",place:"Oceanus Procellarum, near Mons Rümker",who:"China (CNSA) · robot",f:"Brought home 1,731 grams. The rocks are about 2 billion years old, so the Moon still had volcanoes much later than scientists thought."},
+ {n:"Hakuto-R Mission 1",c:"JP",d:"25 Apr 2023",y:2023,lat:47.581,lon:44.094,o:"crash",place:"Atlas crater",who:"ispace, a Japanese company",f:"After passing over a crater rim, its software thought the ground was nearer than it was. It hovered until it ran out of fuel and fell."},
+ {n:"Luna 25",c:"SU",d:"19 Aug 2023",y:2023,lat:-57.865,lon:61.36,o:"crash",place:"Near the south pole (it was heading for Boguslawsky crater)",who:"Roscosmos, Russia",f:"Russia's first Moon landing try in 47 years. An engine burn went on too long and it crashed, four days before Chandrayaan-3 landed."},
+ {n:"Chandrayaan-3",c:"IN",d:"23 Aug 2023",y:2023,lat:-69.373,lon:32.319,o:"ok",place:"Shiv Shakti point, between Manzinus C and Simpelius N craters",who:"ISRO · Vikram lander with the Pragyan rover",f:"India became the fourth country to land softly, and the first near the south pole. Pragyan's laser confirmed sulphur in the soil, and a probe found the top of the soil at about 70 °C in sunlight but below freezing just 8 cm down.",link:1},
+ {n:"Peregrine",c:"US",d:"8 Jan 2024",y:2024,o:"crash",nomap:1,place:"Never reached the Moon",who:"Astrobotic, a company",f:"A fuel leak started hours after launch. It never got to the Moon and burned up in Earth's air over the South Pacific on 18 January 2024."},
+ {n:"SLIM",c:"JP",d:"19 Jan 2024",y:2024,lat:-13.316,lon:25.251,o:"tip",place:"On the slope of the small crater Shioli",who:"JAXA, Japan's space agency",f:"Landed only about 55 m from its target, a true 'pinpoint' landing. But an engine failed just before touchdown, so it ended up nose-down. Japan became the fifth country to land softly."},
+ {n:"Odysseus (IM-1)",c:"US",d:"22 Feb 2024",y:2024,lat:-80.13,lon:1.44,o:"tip",place:"Near Malapert A crater, south pole region",who:"Intuitive Machines, a company, carrying NASA instruments",f:"The first landing by a company and the first American landing since 1972. It came down too fast sideways, caught a leg and tipped onto its side, but still sent data for about a week."},
+ {n:"Chang'e 6",c:"CN",d:"1 Jun 2024",y:2024,lat:-41.6385,lon:-153.9852,o:"ok",far:1,place:"Apollo basin, inside the South Pole–Aitken basin (far side)",who:"China (CNSA) · robot",f:"Brought back 1,935 grams, the first rock ever collected from the far side. It showed volcanoes erupted on the far side about 2.8 billion years ago."},
+ {n:"Blue Ghost 1",c:"US",d:"2 Mar 2025",y:2025,lat:18.5622,lon:61.8103,o:"ok",place:"Mare Crisium, beside Mons Latreille",who:"Firefly Aerospace, a company, carrying NASA instruments",f:"The first company lander to land upright and work fully. It ran for about 14 days, drilled a heat probe into the soil and filmed a sunset from the Moon."},
+ {n:"Athena (IM-2)",c:"US",d:"6 Mar 2025",y:2025,lat:-84.7906,lon:29.1958,o:"tip",place:"Near Mons Mouton, south pole region",who:"Intuitive Machines, a company",f:"The farthest south anyone has landed. It ended up on its side in a small, cold, dark crater where its solar panels could not charge, and stopped working the next day."},
+ {n:"Resilience (Hakuto-R Mission 2)",c:"JP",d:"5 Jun 2025",y:2025,lat:60.4444,lon:-4.5881,o:"crash",place:"Mare Frigoris",who:"ispace, a Japanese company",f:"Its laser for measuring height was slow to give readings, so it did not slow down in time and crashed."}
+];
+S.forEach((s,i)=>{s.i=i;s.dec=Math.floor(s.y/10)*10;});
+// Maria and basins: [name, lat, lon, diameter km, kind]  (approximate; drawn as circles)
+const MARIA=[["Imbrium",32.8,-15.6,1146],["Serenitatis",28,17.5,674],["Tranquillitatis",8.5,31.4,873],["Crisium",17,59.1,556],["Fecunditatis",-7.8,51.3,909],["Nubium",-21.3,-16.6,715],["Nectaris",-15.2,35.5,333],["Humorum",-24.4,-38.6,389],["Vaporum",13.3,3.6,242],["Orientale",-19.4,-92.8,294],["Smythii",1.3,87.5,373],["Marginis",13.3,86.1,358],["Australe",-38.9,93,603],["Moscoviense",27.3,147.9,277],["Ingenii",-33.7,163.5,318]];
+const RINGS=[["South Pole–Aitken basin",-53,-169,2500],["Apollo basin",-36.1,-151.7,492],["Von Kármán",-44.8,175.9,186]];
+const POLYS=[["Oceanus Procellarum",[[57,-60],[50,-45],[40,-40],[28,-36],[18,-28],[8,-22],[0,-18],[-8,-22],[-12,-32],[-8,-45],[-2,-58],[8,-70],[20,-78],[35,-78],[48,-72]],[18,-58]],
+ ["Frigoris",[[50,-40],[57,-32],[61,-12],[63,8],[61,30],[57,45],[52,40],[54,20],[55,0],[52,-15],[47,-30]],[57,8]]];
+function dens(pts){const o=[];for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];for(let k=0;k<6;k++){const t=k/6;o.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);}}o.push(o[0]);return o;}
+function ring(lat,lon,km){const f=lat*D,l=lon*D,a=km/2/RM,o=[];for(let i=0;i<=96;i++){const t=i/96*2*Math.PI;const f2=Math.asin(Math.sin(f)*Math.cos(a)+Math.cos(f)*Math.sin(a)*Math.cos(t));const l2=l+Math.atan2(Math.sin(t)*Math.sin(a)*Math.cos(f),Math.cos(a)-Math.sin(f)*Math.sin(f2));o.push([f2/D,l2/D]);}return o;}
+const MSH=MARIA.map(m=>({n:"Mare "+m[0],c:[m[1],m[2]],pts:ring(m[1],m[2],m[3])}));
+MSH.push(...POLYS.map(p=>({n:p[0].startsWith("Oceanus")?p[0]:"Mare "+p[0],c:p[2],pts:dens(p[1])})));
+const RSH=RINGS.map(r=>({n:r[0],c:[r[1],r[2]],pts:ring(r[1],r[2],r[3])}));
+
+// ---- state
+let lon0=15*D,lat0=5*D,tgt=null,sel=S.findIndex(s=>s.n==="Chandrayaan-3"),fC="all",fD="all",showX=true,dirty=true,spin=false;
+let mA=S.findIndex(s=>s.n==="Chandrayaan-3"),mB=S.findIndex(s=>s.n==="Chang'e 6");
+const cv=$("#moon"),ctx=cv.getContext("2d");let W=0,dpr=1,cx=0,cy=0,r=0,hits=[];
+function pass(s){return (fC==="all"||s.c===fC)&&(fD==="all"||s.dec===+fD)&&(showX||s.o!=="crash");}
+function P(lat,lon){const f=lat*D,l=lon*D-lon0,cf=Math.cos(f);return{x:cf*Math.sin(l),y:Math.cos(lat0)*Math.sin(f)-Math.sin(lat0)*cf*Math.cos(l),z:Math.sin(lat0)*Math.sin(f)+Math.cos(lat0)*cf*Math.cos(l)};}
+const SX=p=>cx+p.x*r,SY=p=>cy-p.y*r;
+function strokePts(pts){ctx.beginPath();let pen=false;for(const [a,b] of pts){const p=P(a,b);if(p.z>0){pen?ctx.lineTo(SX(p),SY(p)):ctx.moveTo(SX(p),SY(p));pen=true;}else pen=false;}ctx.stroke();}
+function fillPts(pts){let any=false;ctx.beginPath();pts.forEach(([a,b],i)=>{const p=P(a,b);let x=p.x,y=p.y;if(p.z>0)any=true;else{const m=Math.hypot(x,y)||1;x/=m;y/=m;}const X=cx+x*r,Y=cy-y*r;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});ctx.closePath();if(any)ctx.fill();}
+function resize(){const w=cv.clientWidth;dpr=window.devicePixelRatio||1;W=Math.round(w*dpr);cv.width=W;cv.height=W;cx=W/2;cy=W/2;r=W/2-10*dpr;dirty=true;}
+function vec(lat,lon){const f=lat*D,l=lon*D;return[Math.cos(f)*Math.cos(l),Math.cos(f)*Math.sin(l),Math.sin(f)];}
+function gc(a,b,n=120){const A=vec(a.lat,a.lon),B=vec(b.lat,b.lon);const w=Math.acos(Math.max(-1,Math.min(1,A[0]*B[0]+A[1]*B[1]+A[2]*B[2])));const o=[];for(let i=0;i<=n;i++){const t=i/n;let s1=1-t,s2=t;if(w>1e-9){s1=Math.sin((1-t)*w)/Math.sin(w);s2=Math.sin(t*w)/Math.sin(w);}const v=[A[0]*s1+B[0]*s2,A[1]*s1+B[1]*s2,A[2]*s1+B[2]*s2];const m=Math.hypot(v[0],v[1],v[2])||1;o.push([Math.asin(v[2]/m)/D,Math.atan2(v[1],v[0])/D]);}return o;}
+function hav(a,b){const f1=a.lat*D,f2=b.lat*D,dl=(b.lon-a.lon)*D;const h=Math.sin((f2-f1)/2)**2+Math.cos(f1)*Math.cos(f2)*Math.sin(dl/2)**2;return 2*RM*Math.asin(Math.sqrt(h));}
+
+function draw(){
+ ctx.clearRect(0,0,W,W);
+ const g=ctx.createRadialGradient(cx-r*.35,cy-r*.35,r*.1,cx,cy,r);g.addColorStop(0,"#b4b6ba");g.addColorStop(1,"#5b5e64");
+ ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.fill();
+ ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.clip();
+ ctx.fillStyle="rgba(38,42,52,.62)";MSH.forEach(m=>fillPts(m.pts));
+ ctx.strokeStyle="rgba(20,24,32,.55)";ctx.lineWidth=1*dpr;MSH.forEach(m=>strokePts(m.pts));
+ ctx.setLineDash([5*dpr,4*dpr]);ctx.strokeStyle="rgba(232,196,106,.55)";ctx.lineWidth=1.3*dpr;RSH.forEach(m=>strokePts(m.pts));ctx.setLineDash([]);
+ ctx.strokeStyle="rgba(4,6,11,.18)";ctx.lineWidth=1*dpr;
+ for(let la=-60;la<=60;la+=30){const pts=[];for(let lo=-180;lo<=180;lo+=3)pts.push([la,lo]);if(la===0){ctx.strokeStyle="rgba(4,6,11,.3)";}strokePts(pts);ctx.strokeStyle="rgba(4,6,11,.18)";}
+ for(let lo=-180;lo<180;lo+=30){const pts=[];for(let la=-90;la<=90;la+=3)pts.push([la,lo]);strokePts(pts);}
+ ctx.restore();
+ // labels
+ ctx.textAlign="center";ctx.textBaseline="middle";
+ ctx.font=`italic ${11*dpr}px "IBM Plex Sans",sans-serif`;ctx.fillStyle="rgba(235,240,246,.72)";
+ MSH.forEach(m=>{const p=P(m.c[0],m.c[1]);if(p.z>.35)ctx.fillText(m.n.replace("Mare ",""),SX(p),SY(p));});
+ ctx.fillStyle="rgba(232,196,106,.9)";RSH.forEach(m=>{if(m.n==="Von Kármán")return;const p=P(m.c[0],m.c[1]);if(p.z>.3)ctx.fillText(m.n,SX(p),SY(p)+(m.n==="Apollo basin"?-14*dpr:0));});
+ ctx.font=`600 ${12*dpr}px "IBM Plex Sans",sans-serif`;ctx.fillStyle="#04060b";
+ [[90,"N pole"],[-90,"S pole"]].forEach(([la,t])=>{const p=P(la,0);if(p.z>0.02){ctx.beginPath();ctx.arc(SX(p),SY(p),2.5*dpr,0,7);ctx.fill();ctx.fillText(t,SX(p),SY(p)+(la>0?-11:11)*dpr);}});
+ // great-circle path
+ const a=S[mA],b=S[mB];
+ if(a&&b){ctx.strokeStyle="#e8c46a";ctx.lineWidth=2.5*dpr;strokePts(gc(a,b));}
+ // dots
+ hits=[];const rd=5.5*dpr;
+ const order=S.filter(s=>!s.nomap&&pass(s));order.sort((x,y)=>(x.i===sel)-(y.i===sel));
+ order.forEach(s=>{const p=P(s.lat,s.lon);if(p.z<=0)return;const X=SX(p),Y=SY(p);hits.push({i:s.i,X,Y});
+  if(s.o==="crash"){ctx.strokeStyle="#04060b";ctx.lineWidth=4.5*dpr;xm(X,Y,rd);ctx.strokeStyle="#ff6b5e";ctx.lineWidth=2.4*dpr;xm(X,Y,rd);}
+  else if(s.o==="tip"){ctx.lineWidth=4.5*dpr;ctx.strokeStyle="#04060b";circ(X,Y,rd);ctx.stroke();ctx.lineWidth=2.6*dpr;ctx.strokeStyle="#e8c46a";circ(X,Y,rd);ctx.stroke();}
+  else{ctx.fillStyle=s.crew?"#74c7ff":"#5fd6a0";circ(X,Y,rd);ctx.fill();ctx.lineWidth=1.6*dpr;ctx.strokeStyle=s.crew?"#ffffff":"#04060b";ctx.stroke();}
+  if(s.i===sel){ctx.lineWidth=2*dpr;ctx.strokeStyle="#ff9933";circ(X,Y,rd+5*dpr);ctx.stroke();
+   ctx.font=`600 ${12.5*dpr}px "IBM Plex Sans",sans-serif`;const t=s.n;const tw=ctx.measureText(t).width;let lx=X+rd+8*dpr,al="left";if(lx+tw>W-4*dpr){lx=X-rd-8*dpr;al="right";}
+   ctx.textAlign=al;ctx.lineWidth=4*dpr;ctx.strokeStyle="#04060b";ctx.strokeText(t,lx,Y);ctx.fillStyle="#ffffff";ctx.fillText(t,lx,Y);ctx.textAlign="center";}
+ });
+ facing();
+}
+function circ(X,Y,rr){ctx.beginPath();ctx.arc(X,Y,rr,0,2*Math.PI);}
+function xm(X,Y,q){ctx.beginPath();ctx.moveTo(X-q,Y-q);ctx.lineTo(X+q,Y+q);ctx.moveTo(X+q,Y-q);ctx.lineTo(X-q,Y+q);ctx.stroke();}
+function facing(){
+ const la=lat0/D;let lo=((lon0/D+540)%360)-180;const v=Math.cos(lat0)*Math.cos(lon0);
+ let t;if(la<-55)t="the <b>south pole</b>";else if(la>55)t="the <b>north pole</b>";else if(v>.5)t="the <b>near side</b>, the face we always see from Earth";else if(v<-.5)t="the <b>far side</b>, which never faces Earth";else t="the <b>edge</b> between near side and far side";
+ const n=hits.length,tot=S.filter(s=>!s.nomap&&pass(s)).length;
+ $("#facing").innerHTML=`Looking at ${t} (centre ${Math.abs(la).toFixed(0)}° ${la<0?"S":"N"}, ${Math.abs(lo).toFixed(0)}° ${lo<0?"W":"E"}). ${n} of ${tot} sites in view.`;
+}
+function loop(){
+ if(tgt){let dl=((tgt[1]-lon0)%(2*Math.PI)+3*Math.PI)%(2*Math.PI)-Math.PI;const dp=tgt[0]-lat0;lon0+=dl*.16;lat0+=dp*.16;if(Math.abs(dl)<.002&&Math.abs(dp)<.002){lon0=tgt[1];lat0=tgt[0];tgt=null;}dirty=true;}
+ if(spin){lon0+=.006;dirty=true;}
+ if(dirty){dirty=false;draw();}
+ requestAnimationFrame(loop);
+}
+function goTo(lat,lon){tgt=[Math.max(-90,Math.min(90,lat))*D,lon*D];}
+
+// ---- dragging (pointer events: mouse, pen and touch)
+let drag=null;
+cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId);drag={x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY,moved:false};tgt=null;setSpin(false);cv.classList.add("drag");});
+cv.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;
+ if(Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)>5)drag.moved=true;const k=dpr/r;lon0-=dx*k;lat0=Math.max(-Math.PI/2,Math.min(Math.PI/2,lat0+dy*k));dirty=true;});
+function end(e){if(!drag)return;cv.classList.remove("drag");if(!drag.moved){const b=cv.getBoundingClientRect();const X=(e.clientX-b.left)*dpr,Y=(e.clientY-b.top)*dpr;let best=null,bd=18*dpr;hits.forEach(h=>{const d=Math.hypot(h.X-X,h.Y-Y);if(d<bd){bd=d;best=h;}});if(best)select(best.i,false);}drag=null;}
+cv.addEventListener("pointerup",end);cv.addEventListener("pointercancel",()=>{drag=null;cv.classList.remove("drag");});
+cv.addEventListener("keydown",e=>{const st=8*D;const m={ArrowLeft:[0,-st],ArrowRight:[0,st],ArrowUp:[st,0],ArrowDown:[-st,0]}[e.key];if(!m)return;e.preventDefault();tgt=null;lon0+=m[1];lat0=Math.max(-Math.PI/2,Math.min(Math.PI/2,lat0+m[0]));dirty=true;});
+
+// ---- controls
+function segs(el,items,get,set){el.innerHTML="";items.forEach(([v,t])=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.dataset.v=v;b.setAttribute("aria-pressed",String(get()===v));b.onclick=()=>{set(v);[...el.children].forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.v===get())));};el.appendChild(b);});}
+const VIEWS=[["near","Near side",0,0],["far","Far side",0,180],["south","South pole",-90,0],["north","North pole",90,0]];
+const vEl=$("#views");
+VIEWS.forEach(([k,t,la,lo])=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.onclick=()=>{setSpin(false);goTo(la,lo);};vEl.appendChild(b);});
+const sb=document.createElement("button");sb.type="button";sb.textContent="Spin";sb.setAttribute("aria-pressed","false");sb.onclick=()=>setSpin(!spin);vEl.appendChild(sb);
+function setSpin(v){spin=v;sb.setAttribute("aria-pressed",String(v));}
+segs($("#fc"),[["all","All"],...Object.entries(CN)],()=>fC,v=>{fC=v;refresh();});
+segs($("#fd"),[["all","All"],["1960","1960s"],["1970","1970s"],["2010","2010s"],["2020","2020s"]],()=>fD,v=>{fD=v;refresh();});
+$("#showX").onchange=e=>{showX=e.target.checked;refresh();};
+
+function outcome(s){return s.o==="crash"?'<span class="tag crash">Crashed</span>':s.o==="tip"?'<span class="tag tip">Landed, not upright</span>':s.crew?'<span class="tag crew">Astronauts landed</span>':'<span class="tag ok">Landed</span>';}
+function coord(s){if(s.nomap)return"No landing site";return`${Math.abs(s.lat).toFixed(2)}° ${s.lat<0?"S":"N"}, ${Math.abs(s.lon).toFixed(2)}° ${s.lon<0?"W":"E"}${s.ap?" (approximate)":""}`;}
+function select(i,turn){sel=i;const s=S[i];const det=$("#det");det.className="det "+(s.o==="crash"?"crash":s.o==="tip"?"tip":s.crew?"crew":"");
+ det.innerHTML=`<h3>${s.n}</h3><div class="meta">${outcome(s)}<span class="tag">${CN[s.c]}</span>${s.d}</div><p><b>Who:</b> ${s.who}</p><p><b>Where:</b> ${s.place} · ${coord(s)}</p><p>${s.f}</p>${s.link?'<p>Fly the whole mission in the <a href="chandrayaan-3.html">Chandrayaan-3 Moon Lab</a>.</p>':""}`;
+ if(turn&&!s.nomap){setSpin(false);goTo(s.lat,s.lon);}
+ [...$("#list").children].forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.i===i)));dirty=true;}
+function refresh(){
+ const L=$("#list");L.innerHTML="";const shown=S.filter(pass);
+ shown.forEach(s=>{const b=document.createElement("button");b.type="button";b.className="co "+(s.o==="crash"?"crash":s.o==="tip"?"tip":s.crew?"crew":"ok");b.dataset.i=s.i;b.setAttribute("aria-pressed",String(s.i===sel));
+  b.innerHTML=`<b>${s.n}</b><span>${s.d} · ${CN[s.c]} · ${s.o==="crash"?"crashed":s.o==="tip"?"landed, not upright":s.crew?"astronauts":"landed"}</span>`;b.onclick=()=>select(s.i,true);L.appendChild(b);});
+ $("#listnote").textContent=`Showing ${shown.length} of ${S.length}. Peregrine (2024) is listed but has no dot: it never reached the Moon.`;
+ const land=shown.filter(s=>s.o!=="crash"),crew=shown.filter(s=>s.crew).length,cr=shown.filter(s=>s.o==="crash").length;
+ const far=land.filter(s=>s.far).length;
+ $("#stats").innerHTML=[["o","Landings shown",land.length],["b","With astronauts",crew],["a","Crashes shown",cr],["g","On the far side",far]].map(([c,t,v])=>`<div class="stat ${c}"><span>${t}</span><b>${v}</b></div>`).join("");
+ dirty=true;
+}
+
+// ---- measure
+const MS=S.filter(s=>!s.nomap);
+["#from","#to"].forEach(id=>{$(id).innerHTML=MS.map(s=>`<option value="${s.i}">${s.n} (${s.y})</option>`).join("");});
+const PRE=[["Chandrayaan-3 → Chang'e 6","Chandrayaan-3","Chang'e 6"],["Apollo 11 → Chandrayaan-3","Apollo 11","Chandrayaan-3"],["Chandrayaan-3 → Vikram 2019","Chandrayaan-3","Vikram (Chandrayaan-2)"],["Apollo 11 → Apollo 17","Apollo 11","Apollo 17"]];
+const pEl=$("#presets");PRE.forEach(([t,a,b])=>{const btn=document.createElement("button");btn.type="button";btn.textContent=t;btn.onclick=()=>{mA=S.findIndex(s=>s.n===a);mB=S.findIndex(s=>s.n===b);measure(true);};pEl.appendChild(btn);});
+$("#from").onchange=e=>{mA=+e.target.value;measure(true);};$("#to").onchange=e=>{mB=+e.target.value;measure(true);};
+function measure(turn){
+ $("#from").value=mA;$("#to").value=mB;const a=S[mA],b=S[mB];const d=hav(a,b);const half=Math.PI*RM;
+ const pts=gc(a,b);let mn=90,mx=-90;pts.forEach(p=>{mn=Math.min(mn,p[0]);mx=Math.max(mx,p[0]);});
+ const days=d/5/24;
+ $("#mstats").innerHTML=[["a","Distance",`${Math.round(d).toLocaleString("en-IN")} km`],["g","Share of the way around",`${(d/(2*half)*100).toFixed(1)}%`],["o","Walking at 5 km/h",days<1?`${(d/5).toFixed(1)} hours`:`${days.toFixed(1)} days`],["b","Furthest point south",`${Math.abs(mn).toFixed(0)}° ${mn<0?"S":"N"}`]].map(([c,t,v])=>`<div class="stat ${c}"><span>${t}</span><b>${v}</b></div>`).join("");
+ let v=`From <b>${a.n}</b> to <b>${b.n}</b> is about <b>${Math.round(d).toLocaleString("en-IN")} km</b> across the Moon's surface. Going all the way round the Moon is ${Math.round(2*half).toLocaleString("en-IN")} km, so the farthest any two places can be is ${Math.round(half).toLocaleString("en-IN")} km.`;
+ if(mn<-80)v+=` The shortest path runs close to the <b>south pole</b>: on a ball, the quickest way between two southern places on opposite sides goes over the bottom, not around the middle.`;
+ else if(mx>80)v+=` The shortest path runs close to the <b>north pole</b>.`;
+ if(d<200)v+=` That is close enough that both would fit in one photo from a high-flying orbiter.`;
+ $("#mverd").innerHTML=v;
+ if(turn){const m=pts[Math.floor(pts.length/2)];setSpin(false);goTo(mn<-80?Math.max(-90,mn-5):m[0],m[1]);}
+ dirty=true;
+}
+
+new ResizeObserver(resize).observe(cv);resize();
+refresh();select(sel,false);measure(false);goTo(-20,30);
+requestAnimationFrame(loop);
+})();
+</script>
+
+<style>.ga-install{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:80;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;background:#e8c46a;color:#1b1404;border:0;border-radius:999px;padding:10px 16px;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer}.ga-install[hidden]{display:none}.ga-install:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}@media print{.ga-install{display:none}}</style>
+<button type="button" class="ga-install" id="gaInstall" hidden>Install Golapada</button>
+<script>
+(()=>{if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+let ev=null;const b=document.getElementById('gaInstall');addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;b.hidden=false});
+b.addEventListener('click',async()=>{if(!ev)return;b.hidden=true;ev.prompt();try{await ev.userChoice}catch(e){}ev=null});addEventListener('appinstalled',()=>{b.hidden=true})})();
+</script>
+</html>
