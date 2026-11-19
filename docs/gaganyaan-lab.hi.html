@@ -88,6 +88,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>गगनयान (संस्कृत में “आकाश का यान”) वह कैप्सूल है जिसे इसरो भारतीय अंतरिक्ष यात्रियों को भारतीय रॉकेट पर उड़ाने के लिए बना रहा है। किसी के इसमें बैठने से पहले इसरो को तीन बातें साबित करनी हैं: रॉकेट विफल हो तो दल बच निकल सके, यान कक्षा में टिक सके, और कैप्सूल आग से गुज़रकर घर लौटे और समुद्र में धीरे से उतरे। इस प्रयोगशाला में आप तीनों उड़ानें ख़ुद चला सकते हैं, एक ऐसे मॉडल के साथ जिसे इसरो की असली परीक्षण उड़ानों से जाँचा गया है।</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" lang="hi" aria-label="आसान शब्दों में"><div class="gs-k">आसान शब्दों में</div><p class="gs-lead">गगनयान वह यान है जो भारत अपने अंतरिक्ष यात्रियों को अंतरिक्ष में भेजने के लिए बना रहा है। यहाँ आप इसके बचाव तंत्र, इसकी कक्षा और इसकी घर वापसी को परख सकते हैं।</p><p class="gs-try"><b>पहले यह करके देखें:</b> इसरो के असली परीक्षण को फिर से देखने के लिए <b>TV-D1, 2023</b> दबाएँ, जिसमें बचाव रॉकेटों ने कैप्सूल को रॉकेट से दूर खींच लिया।</p><ul><li>अगर रॉकेट ख़राब हो जाए, तो ऊपर लगे छोटे पर ताक़तवर रॉकेट कुछ ही सेकंड में यात्रियों वाले कैप्सूल को दूर खींच लेते हैं।</li><li>कक्षा में कैप्सूल लगभग 400 किलोमीटर ऊपर, हर 90 मिनट में पृथ्वी का एक चक्कर लगाता है।</li><li>वापसी में हवा इसकी बहुत तेज़ रफ़्तार कम करती है, फिर पैराशूट इसे धीरे से समुद्र में उतारते हैं।</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card" lang="hi" aria-label="आँकड़ों में गगनयान">
     <div class="facts">
       <div class="fact"><b>3</b><span>दल (2 या 3)</span></div>
@@ -155,16 +171,14 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p class="note" style="margin-top:8px">नियोजित तिथियाँ इसरो के वे लक्ष्य हैं जो 2026 के अंत में बताए गए थे, और ये पहले भी आगे खिसक चुकी हैं। नवीनतम जानकारी के लिए इसरो की वेबसाइट देखें।</p>
   </section>
 
-  <section class="card" lang="hi">
-    <h2>इस पर कितना भरोसा करें</h2>
+  <details class="card gx" lang="hi"><summary>विशेषज्ञों के लिए: इस पर कितना भरोसा करें</summary>
     <p class="note">बचाव मोटर का धक्का और पैराशूटों के आकार प्रकाशित नहीं हैं। इन्हें एक बार इस तरह तय किया गया कि मॉडल 2018 के पैड एबॉर्ट की ऊँचाई और दूरी से मेल खाए और 11 m/s से कम गति पर उतरे। इसके बाद नीचे TV-D1 के बारे में सब कुछ एक असली भविष्यवाणी है, जिसे यह पृष्ठ हर बार खुलने पर ख़ुद गणना करके निकालता है।</p>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card" lang="hi">
-    <h2>मॉडल किन बातों को छोड़ देता है</h2>
+  <details class="card gx" lang="hi"><summary>विशेषज्ञों के लिए: मॉडल किन बातों को छोड़ देता है</summary>
     <p class="note">उड़ानों की गणना एक ही ऊर्ध्वाधर तल में, बिना हवा चले, US Standard Atmosphere 1976 के वायुमंडल में की गई है। बचाव को 12.6 t के स्टैक पर 5.98 s तक 975 kN के एक स्थिर धक्के के रूप में लिया गया है, जिसे एक स्थिर झुकाव (पिच-ओवर) से मोड़ा जाता है। असली प्रणाली में पाँच तरह की मोटरें, ग्रिड फ़िन और उसका अपना क्रम होता है। बचाव वाले चार्ट में रॉकेट को बस बंद करके अपने आप आगे बढ़ने के लिए छोड़ दिया जाता है, जैसा TV-D1 में हुआ था। वापसी में पुनःप्रवेश प्रयोगशाला (Re-entry Lab) का मॉडल इस्तेमाल होता है: स्थिर कर्षण (ड्रैग) और लिफ्ट, Sutton–Graves का तापन अनुमान, और एक गोल पृथ्वी जो घूमती नहीं। पैराशूट एक तय नियम से खुलते हैं: कैप्सूल की गति 216 m/s से कम होते ही ड्रोग, और 2 km पर मुख्य पैराशूट। रीफ़िंग हर मुख्य पैराशूट को पहले 7 s तक उसके क्षेत्रफल के 15% पर रोके रखती है, जैसा 2022 के ड्रॉप परीक्षण में हुआ था। द्रव्यमान: बचाव स्टैक के लिए 12.6 t और क्रू मॉड्यूल के लिए 4.5 t, दोनों परीक्षणों से। सर्विस मॉड्यूल के इंजन की दक्षता (315 s) मान ली गई है।</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

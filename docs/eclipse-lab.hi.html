@@ -86,6 +86,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <div class="count" id="count"></div>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" lang="hi" aria-label="आसान शब्दों में"><div class="gs-k">आसान शब्दों में</div><p class="gs-lead">सूर्य ग्रहण तब होता है जब चंद्रमा सूर्य के सामने से गुज़रता है। यह पृष्ठ दिखाता है कि ग्रहण कब होगा और आपके शहर से सूर्य का कितना हिस्सा ढकेगा।</p><p class="gs-try"><b>पहले यह करके देखें:</b> <b>ग्रहण</b> चुनें और <b>आप कहाँ से देख रहे हैं</b> चुनें, फिर चंद्रमा को सूर्य के सामने से गुज़रते देखें।</p><ul><li>सिर्फ़ एक पतली पट्टी में ही चंद्रमा पूरे सूर्य को ढकता है: यही पूर्ण ग्रहण है। बाकी जगहों पर सूर्य का बस एक टुकड़ा कटता है।</li><li>ग्रहण परिवारों में आते हैं, जो हर 18 साल 11 दिन बाद दोहराते हैं।</li><li>सही ग्रहण-चश्मे के बिना सूर्य को कभी न देखें। सिर्फ़ उन कुछ मिनटों में देख सकते हैं जब सूर्य पूरी तरह ढका हो।</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card" lang="hi">
       <h2>आपका ग्रहण</h2>
@@ -126,16 +142,14 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>जब 99% भाग ढका हो, तब भी बची हुई पतली हँसिया बिना किसी दर्द के आपके रेटिना को जला सकती है। प्रमाणित सौर दर्शन चश्मे या पिनहोल प्रोजेक्टर का उपयोग करें। केवल पूर्णता के दौरान ही, यानी उन मिनटों में जब सूर्य पूरी तरह ढका हो, नंगी आँखों से देखना सुरक्षित है। सूर्य के प्रकाश का पहला मनका लौटते ही चश्मा फिर से पहन लें। अग्नि-वलय (वलयाकार) ग्रहण को सीधे देखना कभी सुरक्षित नहीं है।</p>
   </section>
 
-  <section class="card" lang="hi">
-    <h2>इस पर कितना भरोसा करें</h2>
+  <details class="card gx" lang="hi"><summary>विशेषज्ञों के लिए: इस पर कितना भरोसा करें</summary>
     <p class="note">यह पृष्ठ नीचे दिया हर समय स्वयं नासा के बेसेलियन तत्वों से निकालता है। प्रकाशित ग्रहण-सारणियाँ भी इन्हीं संख्याओं से बनती हैं। सारणी इस पृष्ठ के समयों की तुलना हर शहर के लिए प्रकाशित समयों से करती है।</p>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card" lang="hi">
-    <h2>मॉडल क्या छोड़ देता है</h2>
+  <details class="card gx" lang="hi"><summary>विशेषज्ञों के लिए: मॉडल क्या छोड़ देता है</summary>
     <p class="note">स्पर्श-समय मानक बेसेलियन विधि (Explanatory Supplement; Meeus, <i>Elements of Solar Eclipses</i>) से समुद्र तल पर खड़े प्रेक्षक के लिए निकाले गए हैं, और हर ग्रहण के लिए ΔT का नासा वाला मान लिया गया है, जो पृथ्वी की घड़ी का धीमा खिसकाव है। हर ग्रहण के तत्व उसके मध्य से लगभग तीन घंटे पहले और बाद तक के समय को समेटते हैं, जो पूरे ग्रहण के लिए पर्याप्त है। चंद्रमा के किनारे के पहाड़, जिनके कारण पूर्णता एक-दो सेकंड पहले शुरू या समाप्त होती है, छोड़ दिए गए हैं। क्षितिज के पास का अपवर्तन भी छोड़ दिया गया है। मानचित्र 2° के ग्रिड पर अधिकतम आच्छादन दिखाता है, इसलिए पूर्णता का संकरा पथ सफ़ेद केंद्र रेखा के आसपास कुछ चमकीले वर्गों के रूप में दिखता है। शहरों के समय उस शहर की अपनी घड़ी के समय में हैं, जो ब्राउज़र के समय-क्षेत्र डेटाबेस से लिए गए हैं।</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

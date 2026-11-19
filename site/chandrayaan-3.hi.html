@@ -78,6 +78,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>23 अगस्त 2023 को भारत चंद्रमा पर सॉफ्ट लैंडिंग करने वाला चौथा देश बना, और उसके दक्षिणी ध्रुव के पास उतरने वाला पहला देश। अपोलो 11 वहाँ तीन दिन में पहुँचा था; चंद्रयान-3 को चालीस दिन लगे। यहाँ पूरा मार्ग फिर से उड़ाया गया है, उन कक्षाओं के आधार पर जो इसरो ने हर इंजन दहन के बाद प्रकाशित कीं, और पूरे रास्ते चंद्रमा अंतरिक्ष यान को अपनी ओर खींचता रहता है। फिर अंतिम 30 km का अवतरण आप स्वयं करते हैं, उन्हीं चार 800-न्यूटन इंजनों के साथ जो विक्रम लैंडर में थे।</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" lang="hi" aria-label="आसान शब्दों में"><div class="gs-k">आसान शब्दों में</div><p class="gs-lead">भारत का चंद्रयान-3 चंद्रमा तक कैसे पहुँचा और अगस्त 2023 में चंद्रमा के दक्षिणी ध्रुव के पास कैसे उतरा।</p><p class="gs-try"><b>पहले यह करके देखें:</b> पूरी यात्रा देखने के लिए <b>प्रक्षेपण से</b> दबाएँ, फिर उतरने की कोशिश के लिए <b>अवतरण शुरू करें</b> दबाएँ।</p><ul><li>यह सीधा चंद्रमा तक नहीं गया। ईंधन बचाने के लिए इसने पृथ्वी के चारों ओर अपना चक्कर कदम-दर-कदम बड़ा किया।</li><li>चंद्रमा के पास पहुँचकर इसने ब्रेक लगाए ताकि चंद्रमा इसे पकड़ ले, फिर धीरे-धीरे नीचे के चक्कर में आया।</li><li>आख़िरी लैंडिंग में इंजनों से सावधानी से ब्रेक लगाने में लगभग 20 मिनट लगे।</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card" lang="hi">
       <h2>लंबा घुमावदार रास्ता</h2>
@@ -128,10 +144,9 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p class="note" style="margin-top:10px">इस सिम्युलेटर में सफलता की शर्त: उतरते समय नीचे की गति 3 m/s से कम और आड़ी गति 1 m/s से कम हो। 0° का प्रणोद कोण गति के ठीक विपरीत पीछे की ओर धकेलता है, 90° सीधे ऊपर की ओर।</p>
   </section>
 
-  <section class="card" lang="hi">
-    <h2>यह मॉडल क्या छोड़ देता है</h2>
+  <details class="card gx" lang="hi"><summary>विशेषज्ञों के लिए: यह मॉडल क्या छोड़ देता है</summary>
     <p class="note">मार्ग एक ही समतल तल में उड़ाया गया है; वास्तविक कक्षाएँ झुकी हुई थीं और चंद्र कक्षा ध्रुवों के ऊपर से गुज़रती थी। सूर्य का खिंचाव छोड़ दिया गया है, और हर दहन एक ही क्षण में होता है। मॉडल में चंद्रमा दो सप्ताह में कक्षा के निचले बिंदु को धीरे-धीरे लगभग 50 km नीचे खींच लेता है; जबकि इसरो के प्रकाशित निचले बिंदु ऊपर की ओर खिसके, 170 से 288 km तक, क्योंकि वे कक्षा को सुधारते रहे। लैंडर के लिए इसरो कुल द्रव्यमान और इंजनों की जानकारी प्रकाशित करता है, पर प्रणोदक की मात्रा या इंजनों की दक्षता नहीं। हम 950 kg प्रणोदक और 310 s का विशिष्ट आवेग मानते हैं, जो इस प्रकार के इंजन के लिए सामान्य है। चंद्रयान-2 का हल्का लैंडर 845 kg प्रणोदक ले गया था।</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

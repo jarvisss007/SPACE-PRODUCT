@@ -41,6 +41,22 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     <p>4 अक्टूबर 1957 को स्पुतनिक के बाद से मानवता हज़ारों रॉकेट कक्षा की ओर भेज चुकी है। 2026 में धरती पर कहीं न कहीं लगभग हर दिन एक प्रक्षेपण होता है: फ़्लोरिडा और कैलिफ़ोर्निया से, चीन के चार प्रक्षेपण केंद्रों से, न्यूज़ीलैंड, कज़ाख़स्तान, फ़्रेंच गयाना और जापान से, और भारत के पूर्वी तट पर श्रीहरिकोटा से। यहाँ देखिए कि आगे क्या उड़ेगा, अभी-अभी क्या उड़ा, और दुनिया के प्रक्षेपण केंद्र वहीं क्यों हैं जहाँ वे हैं।</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" lang="hi" aria-label="आसान शब्दों में"><div class="gs-k">आसान शब्दों में</div><p class="gs-lead">धरती पर होने वाला हर रॉकेट प्रक्षेपण: अगला कब है, अभी-अभी क्या उड़ा, और कौन से देश सबसे ज़्यादा रॉकेट भेजते हैं।</p><p class="gs-try"><b>पहले यह करके देखें:</b> अगले प्रक्षेपण के लिए <b>आने वाले प्रक्षेपण</b> सूची देखें, फिर पिछले कुछ दिनों में क्या उड़ा, यह <b>अभी-अभी उड़े</b> में देखें।</p><ul><li>आजकल दुनिया में कहीं न कहीं लगभग हर दिन या उससे भी ज़्यादा बार एक रॉकेट उड़ता है।</li><li>अमेरिका और चीन सबसे ज़्यादा रॉकेट भेजते हैं। भारत अपने पूर्वी तट पर श्रीहरिकोटा से रॉकेट भेजता है।</li><li>रॉकेट अक्सर पूर्व की ओर उड़ते हैं ताकि पृथ्वी के घूमने से मुफ़्त धक्का मिले, जिससे ईंधन बचता है।</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section lang="hi" class="card hero">
     <div>
       <div class="tminus" id="tm"><small>अगला प्रक्षेपण</small>…</div>
@@ -50,18 +66,18 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
   </section>
 
   <div class="two">
-    <section lang="hi" class="card">
+    <section class="card" lang="hi">
       <h2>आने वाले प्रक्षेपण</h2>
       <div class="scroll" id="list"><table id="upT"><tr><td class="note">प्रक्षेपण कार्यक्रम लोड हो रहा है…</td></tr></table></div>
       <p class="note" style="margin-top:6px" id="upN"></p>
     </section>
-    <section lang="hi" class="card">
+    <section class="card" lang="hi">
       <h2>अभी-अभी उड़े</h2>
       <div class="scroll"><table id="pastT"></table></div>
     </section>
   </div>
 
-  <section lang="hi" class="card">
+  <section class="card" lang="hi">
     <h2 id="yrH">इस वर्ष</h2>
     <div class="stats" id="yrS"></div>
     <div class="two" style="margin-top:12px">
@@ -70,35 +86,33 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     </div>
   </section>
 
-  <section lang="hi" class="card">
+  <section class="card" lang="hi">
     <h2>दुनिया के प्रक्षेपण केंद्र</h2>
     <canvas id="map" aria-label="प्रक्षेपण स्थलों का विश्व मानचित्र, इस वर्ष के प्रक्षेपणों की संख्या के अनुसार आकार"></canvas>
     <p class="note" style="margin-top:6px">वृत्त का आकार: उस स्थल से इस वर्ष हुए प्रक्षेपण। नारंगी छल्ले: वे स्थल जहाँ से आने वाली सूची में कोई प्रक्षेपण है। ध्यान दीजिए कि कितने स्थल किसी पूर्वी तट पर हैं, या उनके पूर्व में खुला समुद्र है: रॉकेट पृथ्वी के घूर्णन का लाभ लेने के लिए पूर्व की ओर उड़ते हैं, और इस्तेमाल हो चुके चरणों को वहाँ गिरना चाहिए जहाँ कोई नहीं रहता।</p>
   </section>
 
   <div class="two">
-    <section lang="hi" class="card">
+    <section class="card" lang="hi">
       <h2>भूमध्य रेखा के पास क्यों?</h2>
       <p>पृथ्वी पूर्व की ओर घूमती है, इसलिए पूर्व की ओर प्रक्षेपित रॉकेट को शुरुआत में ही एक मुफ़्त धक्का मिल जाता है। भूमध्य रेखा पर ज़मीन 465 m/s की चाल से चलती है, और ध्रुवों की ओर जाने पर यह धक्का घटता जाता है। भूस्थिर कक्षा में जाने वाले उपग्रहों के लिए अक्षांश और भी ज़्यादा मायने रखता है, क्योंकि उन्हें अंत में ठीक भूमध्य रेखा के ऊपर पहुँचना होता है: कोई रॉकेट आसानी से ऐसी कक्षा तक नहीं पहुँच सकता जिसका झुकाव उसके प्रक्षेपण स्थल के अक्षांश से कम हो, और बाद में वह झुकाव हटाने में ईंधन खर्च होता है।</p>
       <div class="seg" id="site"></div>
       <div class="stats" id="eqS" style="grid-template-columns:repeat(2,minmax(0,1fr))"></div>
     </section>
-    <section lang="hi" class="card">
+    <section class="card" lang="hi">
       <h2>अक्षांश की कीमत</h2>
       <canvas id="eq" aria-label="पृथ्वी के घूर्णन से मिलने वाला मुफ़्त धक्का और भूस्थिर कक्षा तक पहुँचने के लिए ज़रूरी अतिरिक्त धक्का, प्रक्षेपण स्थल के अक्षांश के अनुसार"></canvas>
       <p class="note" style="margin-top:6px">ठोस रेखा: अगर कक्षा स्थल के अक्षांश जितनी झुकी हुई शुरू हो, तो भूमध्य रेखा के ऊपर चक्कर लगाने के लिए एक मानक स्थानांतरण कक्षा के सबसे ऊँचे बिंदु पर ज़रूरी अतिरिक्त धक्का। टूटी (डैश) रेखा: पृथ्वी के घूर्णन से मिलने वाला मुफ़्त धक्का।</p>
     </section>
   </div>
 
-  <section lang="hi" class="card">
-    <h2>इस पर कितना भरोसा करें</h2>
+  <details class="card gx" lang="hi"><summary>विशेषज्ञों के लिए: इस पर कितना भरोसा करें</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section lang="hi" class="card">
-    <h2>यह पृष्ठ क्या छोड़ देता है</h2>
+  <details class="card gx" lang="hi"><summary>विशेषज्ञों के लिए: यह पृष्ठ क्या छोड़ देता है</summary>
     <p class="note">प्रक्षेपण के समय “इससे पहले नहीं” वाले लक्ष्य होते हैं और अक्सर आगे खिसक जाते हैं। आने वाले और हाल के प्रक्षेपण Launch Library 2 से सीधे लोड होते हैं, और आपका ब्राउज़र 30 मिनट तक उनकी एक प्रति रखता है, क्योंकि यह मुफ़्त सेवा एक घंटे में केवल 15 अनुरोधों की अनुमति देती है। वर्ष के कुल आँकड़े एक ऐसी प्रति से आते हैं जो दिन में एक बार ताज़ा होती है। यहाँ देश का अर्थ है कि प्रक्षेपण स्थल कहाँ है, न कि रॉकेट या उपग्रह किसने बनाया। अक्षांश वाला चार्ट मानता है कि प्रक्षेपण ठीक पूर्व की ओर है, कक्षा एक मानक स्थानांतरण कक्षा है जिसका सबसे ऊँचा बिंदु भूस्थिर ऊँचाई पर और सबसे निचला बिंदु लगभग 200 km पर है, और पूरा झुकाव सबसे ऊँचे बिंदु पर एक ही दहन (बर्न) में हटाया जाता है। असली प्रक्षेपण सुरक्षा के लिए अक्सर दूसरे रास्तों से उड़ते हैं, इसलिए उनकी कक्षाएँ स्थल के अक्षांश से ज़्यादा झुकी हुई शुरू हो सकती हैं।</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>
