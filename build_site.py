@@ -123,7 +123,7 @@ def nav_html(current: str) -> str:
 
 # Hindi versions: <page>.hi.html, built when present, reached from a switch on the English page
 # (not in the navigation bar). Machine-assisted translations; each says so at the top.
-HINDI = ["gaganyaan-lab", "chandrayaan-3", "launch-watch", "eclipse-lab"]
+HINDI = ["gaganyaan-lab", "chandrayaan-3", "launch-watch", "eclipse-lab", "tonight"]
 LANG_SWITCH = ('<p style="max-width:1200px;margin:10px auto 0;padding:0 max(16px,env(safe-area-inset-left,0px));'
                'font:500 14px/1.4 \'IBM Plex Sans\',system-ui,sans-serif;text-align:right">'
                '<a href="{href}" lang="hi" style="color:#74c7ff">हिन्दी में पढ़ें</a></p>')
