@@ -7,6 +7,7 @@ themselves are left untouched, so each can still be published on its own.
 Run:  py build_site.py
 """
 from pathlib import Path
+import json
 import re
 
 HERE = Path(__file__).resolve().parent
@@ -237,7 +238,8 @@ def build() -> None:
         if fname != "index.html" and not src.lstrip().lower().startswith("<!doctype"):
             # extra pages are served without the artifact skeleton, so they need their own doctype
             src = "<!doctype html>\n" + src
-        (OUT / fname).write_text(src, encoding="utf-8")
+        # claude.ai copies cannot fetch side files, so their data goes back inside the page
+        (OUT / fname).write_text(inline_data(src), encoding="utf-8")
         WEB.mkdir(exist_ok=True)
         (WEB / fname).write_text(web_page(src, fname), encoding="utf-8")
         print(f"built {fname}")
@@ -248,8 +250,49 @@ def build() -> None:
         '.wrap{max-width:640px;margin:15vh auto;padding:0 16px}a{color:#74c7ff}</style>'
         '<div class="wrap"><h1>Lost in orbit</h1><p>That page is not here. <a href="./">Go to the Golapada home page</a>.</p></div>',
         "404.html"), encoding="utf-8")
+    copy_data()
     write_offline_zip()
     write_app()
+
+
+# ---- big catalogues live in data/ and load after the page appears ----
+# A page marks where its data goes with /*golapada-data:NAME*/null (NAME = data/NAME.json).
+# The website (docs/) fetches data/NAME.json; claude.ai copies (site/) and the offline zip,
+# which cannot fetch side files, get the data written straight into the page.
+DATA = HERE / "data"
+DATA_MARK = re.compile(r"/\*golapada-data:([a-z0-9-]+)\*/null")
+
+
+def inline_data(src: str) -> str:
+    import base64
+
+    def fill(m):
+        d = json.loads((DATA / f"{m.group(1)}.json").read_text(encoding="utf-8"))
+        if isinstance(d, dict):  # image lists point at files in data/; embed them
+            for v in d.values():
+                if isinstance(v, dict) and str(v.get("src", "")).startswith("data/"):
+                    f = HERE / v["src"]
+                    mime = "image/jpeg" if f.suffix.lower() in (".jpg", ".jpeg") else f"image/{f.suffix[1:].lower()}"
+                    v["src"] = f"data:{mime};base64," + base64.b64encode(f.read_bytes()).decode()
+        return json.dumps(d, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    return DATA_MARK.sub(fill, src)
+
+
+def copy_data() -> None:
+    """Mirror data/ into docs/data/ (removing files that are gone from data/)."""
+    import shutil
+    dst = WEB / "data"
+    if dst.exists():
+        shutil.rmtree(dst)
+    if DATA.exists():
+        shutil.copytree(DATA, dst)
+        n = sum(1 for p in dst.rglob("*") if p.is_file())
+        print(f"copied data/ ({n} files)")
+
+
+def data_files() -> list:
+    d = WEB / "data"
+    return sorted(p.relative_to(WEB).as_posix() for p in d.rglob("*") if p.is_file()) if d.exists() else []
 
 
 def write_offline_zip() -> None:
@@ -270,7 +313,8 @@ def write_offline_zip() -> None:
         for p in pages:
             info = zipfile.ZipInfo("golapada/" + p.name, (2026, 1, 1, 0, 0, 0))
             info.compress_type = zipfile.ZIP_DEFLATED
-            z.writestr(info, p.read_bytes())
+            # opened from a folder, a page cannot fetch data/; give it its data inline
+            z.writestr(info, inline_data(p.read_text(encoding="utf-8")).encode("utf-8"))
     print(f"built golapada-offline.zip ({len(pages)} pages)")
 
 
@@ -373,9 +417,10 @@ def write_app() -> None:
     (WEB / "manifest.webmanifest").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
     pages = sorted(p.name for p in WEB.glob("*.html") if p.name != "404.html")
     h = hashlib.sha256()
-    for name in pages:
+    data = data_files()
+    for name in pages + data:
         h.update((WEB / name).read_bytes())
-    files = ["./"] + pages + ["manifest.webmanifest", "icon-192.png", "icon-512.png"]
+    files = ["./"] + pages + ["manifest.webmanifest", "icon-192.png", "icon-512.png"] + data
     (WEB / "sw.js").write_text(SW.replace("__V__", "golapada-" + h.hexdigest()[:12]).replace("__PAGES__", json.dumps(files)), encoding="utf-8")
     print(f"built app: manifest, 3 icons, sw.js caching {len(files)} files")
 

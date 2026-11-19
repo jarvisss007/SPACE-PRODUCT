@@ -20,11 +20,9 @@ const KB = 1024;
 const BUDGET = 250 * KB; // per page HTML
 // Pages allowed over budget for now, each with a reason and the size it must not grow past.
 const EXEMPT = {
-  "spacecraft-archive.html": [960 * KB, "carries its whole mission catalogue inline; to be split into a data file"],
-  "exoplanet-explorer.html": [720 * KB, "carries the planet catalogue inline; to be split into a data file"],
 };
 const SLOW4G = { offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 };
-const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".json": "application/json", ".png": "image/png",
+const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".jpg": "image/jpeg",
   ".webmanifest": "application/manifest+json", ".zip": "application/zip", ".css": "text/css", ".svg": "image/svg+xml" };
 
 const server = createServer((req, res) => {
