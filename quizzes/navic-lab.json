@@ -1,7 +1,34 @@
-{"questions":[
-{"q":"What is the smallest number of working satellites a receiver needs to find its position? Why that many?","do":"Read the introduction at the top of the page. Then click <b>March 2026: 3</b> and read the message under the map.","a":"<b>4 satellites</b>. The receiver has 4 unknowns: east, north, height, and the error in its own clock. Each satellite gives one equation, so 3 satellites give no fix at all.","history":false},
-{"q":"How good is a position in Delhi with all 7 satellites working as designed?","do":"Click <b>As designed: 7</b>. In the table <b>What a receiver in each city gets</b>, read the Delhi row.","a":"Delhi sees <b>7</b> satellites. PDOP stays between about <b>3.1 and 3.4</b> all day, so the error is about <b>15–17 m</b> at 5 m per range. Below 4 counts as good.","history":false},
-{"q":"With the full 7-satellite design, compare Delhi with Perth in Australia. Why is Perth so much worse?","do":"Keep <b>As designed: 7</b> selected. In the city table, compare the <b>Worst PDOP</b> for Delhi and Perth. Then click <b>Show the worst moment of the day</b> and look at the map.","a":"Delhi’s worst PDOP is about <b>3.4</b>; Perth’s is about <b>31</b>, with only 4–6 satellites in view. NavIC’s satellites hang over the Indian Ocean to serve India. Perth is far from them, so they sit low and bunched in its sky, and the geometry is poor.","history":false},
-{"q":"If NVS-03 joins, NavIC has 4 working satellites. Is that enough for a safe service? Why or why not?","do":"Click <b>If NVS-03 joins: 4</b>. Read the message under the map and the Delhi row of the city table.","a":"It gives a fix, but a weak one. In this model Delhi’s PDOP ranges from about <b>6.5</b> to <b>over 300</b> during the day. With exactly four, losing any one satellite, or one dipping behind a hill, ends the fix. There is no spare.","history":false},
-{"q":"Why did India build NavIC, and what had happened to it by March 2026?","do":"Read the introduction, then the satellite list on the right (the coloured status tags).","a":"India built NavIC so it would not depend on America’s GPS. After a string of <b>atomic-clock failures</b>, by March 2026 only <b>3</b> satellites could still give positions: IRNSS-1B, IRNSS-1I and NVS-01 (which replaced IRNSS-1G).","history":true}
-]}
+{
+"questions": [
+{
+"q": "What is the smallest number of working satellites a receiver needs to find its position? Why that many?",
+"do": "Read the introduction at the top of the page. Then click <b>March 2026: 3</b> and read the message under the map.",
+"a": "<b>4 satellites</b>. The receiver has 4 unknowns: east, north, height, and the error in its own clock. Each satellite gives one equation, so 3 satellites give no fix at all.",
+"history": false
+},
+{
+"q": "How good is a position in Delhi with all 7 satellites working as designed?",
+"do": "Click <b>As designed: 7</b>. In the table <b>What a receiver in each city gets</b>, read the Delhi row.",
+"a": "Delhi sees <b>7</b> satellites. PDOP stays between about <b>3.1 and 3.4</b> all day, so the error is about <b>15–17 m</b> at 5 m per range. Below 4 counts as good.",
+"history": false
+},
+{
+"q": "With the full 7-satellite design, compare Delhi with Perth in Australia. Why is Perth so much worse?",
+"do": "Keep <b>As designed: 7</b> selected. In the city table, compare the <b>Worst PDOP</b> for Delhi and Perth. Then click <b>Show the worst moment of the day</b> and look at the map.",
+"a": "Delhi’s worst PDOP is about <b>3.4</b>; Perth’s is about <b>31</b>, with only 4–6 satellites in view. NavIC’s satellites hang over the Indian Ocean to serve India. Perth is far from them, so they sit low and bunched in its sky, and the geometry is poor.",
+"history": false
+},
+{
+"q": "Since NVS-03 arrived in November 2026, NavIC has 4 working satellites. Is that enough for a safe service? Why or why not?",
+"do": "Click <b>Now, since Nov 2026: 4</b>. Read the message under the map and the Delhi row of the city table.",
+"a": "It gives a fix, but a weak one. In this model Delhi’s PDOP ranges from about <b>6.5</b> to <b>over 1,000</b> during the day. With exactly four, losing any one satellite, or one dipping behind a hill, ends the fix. There is no spare until NVS-04 and NVS-05 are launched.",
+"history": false
+},
+{
+"q": "Why did India build NavIC, and what happened to it in 2026?",
+"do": "Read the introduction, then the satellite list on the right (the coloured status tags).",
+"a": "India built NavIC so it would not depend on America’s GPS. After a string of <b>atomic-clock failures</b>, by March 2026 only <b>3</b> satellites could still give positions: IRNSS-1B, IRNSS-1I and NVS-01, which replaced IRNSS-1G. NVS-03, launched on <b>30 October 2026</b>, brought it back to the minimum of <b>4</b>.",
+"history": true
+}
+]
+}
