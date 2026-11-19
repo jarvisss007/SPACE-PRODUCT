@@ -1,0 +1,34 @@
+{
+  "questions": [
+    {
+      "q": "By how much did DART shorten Dimorphos's lap around Didymos?",
+      "do": "Read <b>Lap shortened by</b> in the <b>Re-measuring the push</b> card.",
+      "a": "About <b>33.2 minutes</b>: from 11 h 55 min 17 s to 11 h 22 min 3 s.",
+      "history": false
+    },
+    {
+      "q": "With the starting settings, how many DART-class impactors are needed to save Earth?",
+      "do": "In <b>Defend Earth</b>, keep diameter 151 m, 10 years, β 3.6 and density 2,400 kg/m³. Raise <b>Number of DART-class impactors</b> one step at a time and watch the verdict.",
+      "a": "<b>4</b>. With 1 it <b>Still hits</b> (shift 2,986 km, 34% of what is needed). With 3 it is only <b>Grazing</b> (8,958 km against 8,710 km needed). With <b>4</b> it is <b>Deflected</b> (11,944 km).",
+      "history": false
+    },
+    {
+      "q": "With one impactor, what does extra warning time do?",
+      "do": "Keep 1 impactor. Set <b>Warning time before impact</b> to <b>1 year</b> and read <b>Shift by impact day</b>. Then slide it to <b>30 years</b>.",
+      "a": "1 year: about <b>299 km</b>, only 3% of what is needed. 30 years: about <b>8,958 km</b>, and the verdict becomes <b>Grazing</b>. The shift is 3 × push × time, so 30 times the warning gives 30 times the shift.",
+      "history": false
+    },
+    {
+      "q": "Why did Dimorphos lose more momentum than DART brought to it?",
+      "do": "Compare <b>Momentum DART brought</b> with <b>Momentum Dimorphos lost</b> in <b>Re-measuring the push</b>, and read the note below.",
+      "a": "DART brought about <b>3,818 kN·s</b>, but Dimorphos lost about <b>11,758 kN·s</b>, so β is about <b>3.1</b>. The extra came from the <b>recoil of rock blasted into space</b> by the impact, like the kick of a gun.",
+      "history": false
+    },
+    {
+      "q": "When did DART hit Dimorphos, and why was it a first in history?",
+      "do": "Read the introduction at the top of the page.",
+      "a": "On <b>26 September 2022</b> a 610 kg spacecraft hit the 151 m moonlet Dimorphos at 22,530 km/h. It was the <b>first time people deliberately moved a natural object in space</b>. Nothing was threatening Earth; it was a test.",
+      "history": true
+    }
+  ]
+}

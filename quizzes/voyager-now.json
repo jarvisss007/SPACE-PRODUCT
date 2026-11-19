@@ -1,0 +1,34 @@
+{
+ "questions": [
+  {
+   "q": "How many AU is one light-day?",
+   "do": "Look at the dashed red line on the <b>One light-day</b> chart and read its label.",
+   "a": "<b>173.14 AU.</b> Light travels about 173 times the Earth–Sun distance in one day.",
+   "history": false
+  },
+  {
+   "q": "When Voyager 1 is exactly one light-day away, how long after you send a message could its reply reach you? Does the page’s <i>now</i> answer match?",
+   "do": "Press <b>Send Voyager 1 a message now</b> and compare the two times it shows: when the message arrives and when the reply could reach you.",
+   "a": "<b>2 days</b>: one day for the message to get there and one day for the reply to come back (signal time = distance ÷ speed of light). The page uses Voyager’s distance today, so its answer is close to 2 days around late 2026 and grows by about 3.6 AU of travel (about half an hour more each way) every year.",
+   "history": false
+  },
+  {
+   "q": "How long would Voyager 2 take to cover the distance to the star Ross 248, and why is the published figure much shorter?",
+   "do": "Read the last line of the <b>To the stars</b> box.",
+   "a": "At 15.341 km/s, covering Ross 248's present 10.3 light-years takes about <b>201,000 years</b>. The published figure is about <b>42,000 years</b> because the star is moving towards us.",
+   "history": false
+  },
+  {
+   "q": "Voyager 1 flies steadily away from the Sun. So why does its distance from Earth cross the one-light-day line, slip back under it, and cross again?",
+   "do": "Study the gold curve on the <b>One light-day</b> chart and read the note and the message below it.",
+   "a": "Voyager moves away at a steady <b>3.6 AU a year</b>, but Earth circles the Sun, sometimes towards Voyager and sometimes away. That adds a wobble of up to <b>2 AU a year</b>, so the distance rises in waves and crosses the line more than once.",
+   "history": false
+  },
+  {
+   "q": "Both Voyagers were launched in 1977. When and at what distance from the Sun did each one cross into interstellar space?",
+   "do": "Read the footer at the bottom of the page (the sources list).",
+   "a": "Voyager 1: <b>25 August 2012 at 121 AU</b>. Voyager 2: <b>5 November 2018 at 119.7 AU</b>. Voyager 1 crossed about six years earlier, at nearly the same distance.",
+   "history": true
+  }
+ ]
+}

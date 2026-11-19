@@ -1,0 +1,34 @@
+{
+  "questions": [
+    {
+      "q": "Which star is closest to the Sun, and how far away is it?",
+      "do": "Scroll to the table <b>The 25 nearest stars</b> and read row 1.",
+      "a": "<b>Proxima Centauri</b>, at <b>4.2465 light-years</b>. Its class is M5.5Ve, a red dwarf.",
+      "history": false
+    },
+    {
+      "q": "How long would different ships take to reach Proxima Centauri?",
+      "do": "In <b>How long to get there</b>, pick <b>Proxima Centauri</b> from the menu. Compare the <b>Time at home</b> column for each ship.",
+      "a": "Voyager 1 at 17 km/s: about <b>74,886 years</b>. The Starshot sail at 20% of light speed: <b>21.2 years</b>. The 1 g ship: <b>5.9 years</b> at home but only <b>3.5 years</b> for the crew, because of relativity.",
+      "history": false
+    },
+    {
+      "q": "How wide is the view when you jump from the Milky Way button to the Local Group button?",
+      "do": "Click the zoom button <b>Milky Way</b> and read the big line <b>Across this view</b>. Then click <b>Local Group</b> and read it again.",
+      "a": "<b>Milky Way</b>: about <b>135,453 light-years</b> across. <b>Local Group</b>: about <b>8.40 million light-years</b>, roughly 60 times wider. Our galaxy is about 100,000 light-years across, and Andromeda is about 2.5 million light-years away.",
+      "history": false
+    },
+    {
+      "q": "Most of our nearest stars cannot be seen without a telescope. Why?",
+      "do": "Look at the <b>Class</b> column of <b>The 25 nearest stars</b> and count the classes that start with M. Then click <b>Nearest stars</b> and read the note under the scale.",
+      "a": "<b>14 of the 25</b> are class M <b>red dwarfs</b>. The note says most nearby stars are faint red dwarfs. They are small, cool and dim, so they are too faint to see with the naked eye even though they are close.",
+      "history": false
+    },
+    {
+      "q": "Which spacecraft has crossed the heliopause, and when?",
+      "do": "Click <b>Planets</b>, then drag the zoom slider slowly towards <b>Oort cloud</b> until a dashed circle with a label appears. The footer gives its distance.",
+      "a": "The label reads <b>Voyager 1 crossed it in 2012</b>. The footer says this was at <b>121.6 AU</b>. Out there the solar wind gives way to interstellar space. No spacecraft has yet reached the Oort cloud.",
+      "history": true
+    }
+  ]
+}

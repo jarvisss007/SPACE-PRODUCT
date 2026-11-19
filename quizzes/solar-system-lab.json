@@ -1,0 +1,34 @@
+{
+  "questions": [
+    {
+      "q": "How strong is gravity on the surface of Mars?",
+      "do": "Mars is picked when the page opens. Look at the <b>NASA fact sheet</b> table and read the row <b>Surface gravity</b>.",
+      "a": "<b>3.7 m/s²</b>, which is <b>0.38 × Earth</b>. A person would weigh a bit more than a third of their Earth weight.",
+      "history": false
+    },
+    {
+      "q": "Which needs a bigger total change in speed from Earth orbit: landing on the Moon or landing on Mars?",
+      "do": "Under <b>Pick a world</b>, click <b>Moon</b> and read <b>Total from Earth orbit</b> in the <b>Sending a Starship</b> table. Then click <b>Mars</b> and read the same row.",
+      "a": "The Moon needs <b>6.25 km/s</b>; Mars needs only <b>4.34 km/s</b>. Mars is much farther away, but its air does most of the braking (the landing step is just 0.75 km/s). On the airless Moon, the ship must burn 3.10 km/s to stop and land.",
+      "history": false
+    },
+    {
+      "q": "What is the heaviest payload one refilled Starship could land on Titan?",
+      "do": "Click <b>Titan</b>. Read the last row, <b>Most payload a refilled Starship could carry</b>. Then move the <b>Payload to the surface</b> slider from 50 t to 100 t and watch the verdict.",
+      "a": "About <b>81 t</b>. At 50 t the verdict says <b>Possible</b> (about 1,318 t of propellant). At 100 t it says <b>Not in one ship</b>, because the propellant needed is more than the 1,550 t tank holds.",
+      "history": false
+    },
+    {
+      "q": "Mercury is much closer to us than Mars. Why does the lab say a Starship could not land on Mercury in one go?",
+      "do": "Click <b>Mercury</b>. Compare <b>Arrival speed relative to the target</b> and the row <b>Braking burn all the way down, no air</b> with the same rows for Mars.",
+      "a": "Mercury needs <b>16.61 km/s</b> in total, so the verdict is <b>Not in one ship</b>. Falling in towards the Sun, the ship arrives very fast (9.61 km/s relative to Mercury), and Mercury has no air. So the engines must cancel all of it: 11.06 km/s of braking.",
+      "history": false
+    },
+    {
+      "q": "The lab can show the sky of Aryabhata's time. How far apart were Earth and Mars on that date, and how does it compare with the day of Apollo 11?",
+      "do": "In the orrery, click the <b>Aryabhata, 499 CE</b> button and read the line <b>Earth to Mars on this date</b>. Then click <b>Apollo 11</b> and read it again.",
+      "a": "About <b>335 million km</b> in 499 CE, but only about <b>88 million km</b> on the Apollo 11 date (1969). Both planets go round the Sun at different speeds, so the gap between them keeps changing.",
+      "history": true
+    }
+  ]
+}

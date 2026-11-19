@@ -1,0 +1,34 @@
+{
+  "questions": [
+    {
+      "q": "How fast does Dawn's ion engine throw out its xenon?",
+      "do": "Read the first row of the <b>Dawn, re-derived</b> card, <b>Exhaust speed (3,100 s × g)</b>.",
+      "a": "<b>30.4 km/s</b>. That is about ten times faster than the hot gas from a chemical rocket (about 3 km/s).",
+      "history": false
+    },
+    {
+      "q": "For a change in speed of 5 km/s, how much propellant does each engine need?",
+      "do": "Drag the <b>Change in speed wanted</b> slider to <b>5.00 km/s</b>. Read the <b>ION</b> and <b>CHEMICAL</b> labels on the chart.",
+      "a": "<b>Ion: about 134 kg. Chemical: about 2,929 kg</b>, for the same 747 kg spacecraft. The chemical engine needs about 22 times more.",
+      "history": false
+    },
+    {
+      "q": "How long does a spiral out of Earth orbit take, and what changes if the push is gentler?",
+      "do": "In <b>Spiral out of Earth orbit</b>, keep the push at <b>1.0 mm/s²</b> and press <b>Fly the spiral</b>. Then drag the push slider fully left (<b>100 µm/s²</b>) and press <b>Fly the spiral</b> again.",
+      "a": "At 1.0 mm/s²: about <b>81 days</b>, 345 laps and <b>7.03 km/s</b> of speed change. At 100 µm/s²: about <b>2.3 years</b>, 3,452 laps and <b>7.31 km/s</b>. One quick chemical burn would need only <b>3.18 km/s</b>.",
+      "history": false
+    },
+    {
+      "q": "Why could Dawn stop and orbit two worlds when a chemical spacecraft could only fly past?",
+      "do": "Read the verdict box in the <b>Dawn, re-derived</b> card.",
+      "a": "A chemical spacecraft as heavy as Dawn would need about <b>28,300 kg</b> of propellant for the same 11.49 km/s. That is <b>67 times</b> the 425 kg of xenon Dawn carried. Each kilogram of xenon gives about ten times the push, so Dawn had enough to stop at Vesta and then Ceres.",
+      "history": false
+    },
+    {
+      "q": "Who worked out the limit for a slow spiral escape, and when? What does the limit say?",
+      "do": "Read the verdict under the spiral and the third row of the <b>Checks</b> table.",
+      "a": "<b>T. N. Edelbaum</b>, in <b>1961</b>. The gentler the push, the closer the speed change gets to the <b>whole starting orbital speed</b>. From a 400 km orbit that is <b>7.67 km/s</b>; the lab gets 7.03 km/s at 1 mm/s².",
+      "history": true
+    }
+  ]
+}

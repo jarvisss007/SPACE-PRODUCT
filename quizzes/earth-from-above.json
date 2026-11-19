@@ -1,0 +1,34 @@
+{
+ "questions": [
+  {
+   "q": "About how far from Earth is the EPIC camera?",
+   "do": "Read the first row, <b>Camera's distance from Earth</b>, in the <b>Checks</b> table.",
+   "a": "About <b>1.5 million km</b>, near the L1 balance point between Earth and the Sun. DSCOVR loops around L1 rather than sitting exactly on it.",
+   "history": false
+  },
+  {
+   "q": "How far does the centre of the picture move each hour, and in which direction? If one picture is centred at 80°E, where is a picture taken 2 hours later centred?",
+   "do": "Press <b>Spin the day</b> and watch <b>Directly under the camera</b> change. Read the <b>How fast the view turns</b> row in the <b>Checks</b> table and the text in <b>How to read the pictures</b>.",
+   "a": "About <b>15° west every hour</b>, because Earth turns once in 24 hours (360° ÷ 24 = 15°). Two hours later the centre is about 80° − 30° = <b>50°E</b>.",
+   "history": false
+  },
+  {
+   "q": "How long does light take to travel from Earth to the camera?",
+   "do": "Read <b>Camera's distance from Earth</b> and <b>Light from Earth to camera</b> in the details box. Check the rule with the numbers.",
+   "a": "About <b>5 seconds</b>. Time = distance ÷ speed of light. For 1,500,000 km: 1,500,000 ÷ 299,792 km/s ≈ <b>5.0 s</b>.",
+   "history": false
+  },
+  {
+   "q": "Why does every EPIC photograph show a fully lit Earth, never a half-lit one?",
+   "do": "Read <b>Angle between camera and Sun, seen from Earth</b> in the details box and look at the <b>Where the camera is</b> map.",
+   "a": "DSCOVR sits almost on the <b>line from Earth to the Sun</b>, so the angle is small. The camera looks at Earth from nearly the Sun's direction, so it sees the whole <b>sunlit</b> face.",
+   "history": false
+  },
+  {
+   "q": "The first photograph of the whole round Earth was taken in 1972. Who took it, and how is today’s picture different?",
+   "do": "Read the introduction at the top of the page, then press <b>Spin the day</b>.",
+   "a": "The <b>Apollo 17</b> crew took the “Blue Marble” on <b>7 December 1972</b>, on their way to the Moon: a single snapshot. Since 2015 the EPIC camera on DSCOVR has photographed the whole sunlit Earth about a dozen times every day, so you can watch a full day turn.",
+   "history": true
+  }
+ ]
+}
