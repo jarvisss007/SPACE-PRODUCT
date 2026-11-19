@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="India's Space Startups · Golapada">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>India's Space Startups</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: who does what (tap a company), the road to $44 billion (growth slider), the money going in, what changed since 2020 (wins and setbacks), what it means for people, then expert folds. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--acc:#ff9933;--blue:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--acc)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h3{font-family:var(--display);font-weight:700;font-size:20px;margin:0 0 6px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--blue)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.chain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}@media (max-width:700px){.chain{grid-template-columns:minmax(0,1fr)}}
+.step{background:var(--panel2);border-radius:6px;padding:10px;border-top:3px solid var(--line)}
+.step .k{font-family:var(--display);font-size:17px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:6px}
+.step.s1{border-top-color:var(--gold)}.step.s2{border-top-color:var(--acc)}.step.s3{border-top-color:var(--blue)}
+.co{display:block;width:100%;text-align:left;margin:0 0 6px;background:#0b1017;border:1px solid var(--line);border-radius:5px;padding:8px 10px;color:var(--ink);font:inherit;cursor:pointer}
+.co b{font-family:var(--display);font-size:19px;text-transform:uppercase}.co span{display:block;font-size:12.5px;color:#aeb9c6}
+.co[aria-pressed="true"]{border-color:var(--acc);background:#1d1508}
+.co:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.det{background:var(--panel2);border-radius:6px;padding:14px;border-left:4px solid var(--acc)}
+.det .kid{font-size:16px;color:#f1f5f9;margin-bottom:10px}
+.det ul{margin:4px 0 10px;padding-left:18px}.det li{margin:3px 0;color:#d6dde5;font-size:14px}
+.tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-right:6px;background:#1a2433;color:var(--dim)}
+.tag.ok{background:#0f2a20;color:var(--ok)}.tag.wait{background:#2a230f;color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line)}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat.a{border-top-color:var(--acc)}.stat.g{border-top-color:var(--gold)}.stat.o{border-top-color:var(--ok)}.stat.b{border-top-color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--acc)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:10px}label.f output{font-family:var(--display);font-size:20px;color:var(--ink)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.seg button{background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 10px;font:inherit;font-size:13.5px;cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}#grow{aspect-ratio:16/9}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14.5px}
+.bars{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.bar{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;align-items:center;font-size:13px}@media (max-width:480px){.bar{grid-template-columns:86px minmax(0,1fr)}}
+.bar .t{height:22px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:12.5px;font-weight:600;color:#04060b;white-space:nowrap}
+.tl{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.tl li{position:relative;padding:0 0 12px 16px}.tl li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--ok)}
+.tl li.x::before{background:var(--bad)}.tl li.p::before{background:var(--gold)}
+.tl b{font-family:var(--display);font-size:17px;color:var(--ink)}.tl span{display:block;font-size:13.5px;color:#c3ccd6}
+.uses{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.use{background:var(--panel2);border-radius:6px;padding:12px}.use b{font-family:var(--display);font-size:19px;text-transform:uppercase;color:var(--gold)}.use p{font-size:14px;margin:4px 0 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-bar{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;padding-block:6px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);padding:2px 6px}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible,.sa-nav button:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:2px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+.sa-nav button{flex:none;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #2c3a4d;border-radius:4px;cursor:pointer;padding:5px 10px;line-height:1.2}
+.sa-nav .sa-arr{padding:5px 8px;font-size:16px}.sa-nav .sa-arr[disabled]{opacity:.3;cursor:default}
+.sa-nav .sa-all[aria-expanded="true"]{background:#e8c46a;color:#1b1404;border-color:#e8c46a}
+.sa-nav .sa-panel{max-width:1200px;margin:0 auto;padding:6px max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:4px;max-height:70vh;overflow:auto}
+.sa-nav .sa-panel[hidden]{display:none}
+.sa-nav .sa-panel a{background:#0b1017;border:1px solid #1f2a38}.sa-nav .sa-panel a[aria-current="page"]{background:#e7edf3;color:#0a0d12;border-color:#e7edf3}
+@media (max-width:560px){.sa-nav .sa-arr{display:none}}
+@media print{.sa-nav{display:none}}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-bar"><a href="index.html" class="sa-brand">Golapada</a><button type="button" class="sa-arr" aria-label="Scroll the lab list left">‹</button><div class="sa-in"><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html" aria-current="page">Startups</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div><button type="button" class="sa-arr" aria-label="Scroll the lab list right">›</button><button type="button" class="sa-all" aria-expanded="false">All labs</button></div><div class="sa-panel" hidden><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html" aria-current="page">Startups</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<script>
+(()=>{const n=document.currentScript.previousElementSibling,s=n.querySelector('.sa-in'),[l,r]=n.querySelectorAll('.sa-arr'),b=n.querySelector('.sa-all'),p=n.querySelector('.sa-panel');
+const upd=()=>{l.disabled=s.scrollLeft<=2;r.disabled=s.scrollLeft+s.clientWidth>=s.scrollWidth-2};
+l.onclick=()=>{s.scrollLeft-=s.clientWidth*0.7};r.onclick=()=>{s.scrollLeft+=s.clientWidth*0.7};
+s.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);
+s.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&s.scrollWidth>s.clientWidth){s.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+const c=s.querySelector('[aria-current]');if(c)s.scrollLeft=c.offsetLeft-s.clientWidth/2+c.offsetWidth/2;upd();
+const close=()=>{p.hidden=true;b.setAttribute('aria-expanded','false')};
+b.onclick=()=>{const o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));if(o){const a=p.querySelector('a');if(a)a.focus()}};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!p.hidden){close();b.focus()}});
+addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
+</script>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">India · private space · 2020 to now</div>
+    <h1>India's Space Startups</h1>
+    <p>Until 2020, almost everything India sent to space was built and launched by ISRO. That year the government opened space to private companies. Six years later, more than 300 Indian space startups are registered, one of them has put its own rocket into orbit, and others fly cameras that see crop health, radar that sees through monsoon clouds, and satellites that watch space junk. This page tracks the main ones, what they have actually done, what is still a plan, and what it could mean for India, with the numbers and where they come from.</p>
+  </header>
+
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Since 2020, private Indian companies have been allowed to build rockets and satellites. This page shows who they are, what they have really done, and how much India's space business could grow.</p><p class="gs-try"><b>Try this first:</b> Under <b>Who does what</b>, tap <b>Skyroot Aerospace</b>, then <b>Pixxel</b>. Then press <b>Goal pace</b> on the growth chart.</p><ul><li>In July 2026, Skyroot's Vikram-1 became the first rocket built by a private Indian company to reach orbit.</li><li>Startup satellites already in space can spot sick crops, see through monsoon clouds and track space junk.</li><li>India's goal is to grow its space business about five times, from $8.4 billion in 2022 to $44 billion by 2033. That needs about 16% growth every single year.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
+  <section class="card">
+    <h2>Who does what</h2>
+    <p>Getting something useful out of space takes three jobs: make the hardware, launch it, and use it to watch Earth and space. Tap a company.</p>
+    <div class="two">
+      <div class="chain" id="chain"></div>
+      <div class="det" id="det" aria-live="polite"></div>
+    </div>
+    <p class="note" style="margin-top:10px">Green = already done in space. Gold = still a plan or a test on the ground. Money figures are what the company or reliable reports say it has raised; different trackers count debt and grants differently.</p>
+  </section>
+
+  <section class="card">
+    <h2>The road to $44 billion</h2>
+    <p>India's space economy was about <b>$8.4 billion</b> in 2022, roughly <b>2%</b> of the world's. IN-SPACe, the government body that authorises private space activity, has set a goal of about <b>$44 billion by 2033</b>, about 8% of the world's. How fast does it have to grow? Move the slider.</p>
+    <div class="seg" id="presets"></div>
+    <label class="f">Growth every year <output id="rateO"></output><input type="range" id="rate" min="4" max="25" step="0.1" value="10"></label>
+    <canvas id="grow" role="img" aria-label="Chart of India's space economy growing from 2022 to 2033 at the chosen yearly rate, compared with the 44 billion dollar goal"></canvas>
+    <div class="stats" id="gstats"></div>
+    <div class="verdict" id="gverd"></div>
+  </section>
+
+  <section class="card">
+    <h2>The money going in</h2>
+    <p>Startups need investors because rockets and satellites cost a lot before they earn anything. Here is how much money Indian space startups raised in a year, set against what the government gives the whole Department of Space (ISRO and friends).</p>
+    <div class="bars" id="bars"></div>
+    <div class="verdict" id="mverd"></div>
+    <p class="note">Rupee figures for dollar amounts use about ₹87 to the dollar, the rough 2025–26 rate.</p>
+  </section>
+
+  <section class="card">
+    <h2>What changed since 2020</h2>
+    <p>Wins in green, setbacks in red, plans in gold. Space is hard: even ISRO's most reliable rocket had two failures in a row.</p>
+    <ul class="tl" id="tl"></ul>
+  </section>
+
+  <section class="card">
+    <h2>What it means for people</h2>
+    <div class="uses">
+      <div class="use"><b>Farmers</b><p>Hyperspectral cameras (like Pixxel's) see hundreds of colours, not three, so they can spot stressed or diseased crops and dry soil before the eye can.</p></div>
+      <div class="use"><b>Floods and cyclones</b><p>Radar (like GalaxEye's) sees through clouds and at night, exactly when monsoon floods and cyclones hide the ground from ordinary cameras.</p></div>
+      <div class="use"><b>Safer space</b><p>Satellites that track junk (like Digantara's) warn operators before a crash, protecting the satellites that give us weather, TV and navigation.</p></div>
+      <div class="use"><b>Cheaper, more launches</b><p>With private rockets, India is no longer limited to the number of rockets ISRO can build in a year, and small satellites need not wait for a ride.</p></div>
+      <div class="use"><b>Jobs and skills</b><p>Engineers who once had to go abroad or join ISRO can now build rockets in Hyderabad and Chennai. Skyroot alone reports more than 1,000 staff.</p></div>
+      <div class="use"><b>ISRO freed up</b><p>When industry builds the everyday rockets (HAL and L&amp;T now make PSLVs and HAL owns SSLV), ISRO can focus on Gaganyaan, the Moon and new science.</p></div>
+    </div>
+  </section>
+
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
+    <p>Every number on this page is from a news report, a company statement or a government document, listed in the sources below. Where sources disagree, the page says so:</p>
+    <div class="scroll"><table>
+      <tr><th>Number</th><th>Used here</th><th>Why it is uncertain</th></tr>
+      <tr><td>Space economy size</td><td>$8.4 billion (2022)</td><td>This is IN-SPACe's baseline. An Arkam Ventures 2026 report puts it near $13 billion, counting more activities. Both are estimates; nobody measures it directly.</td></tr>
+      <tr><td>Share of world</td><td>2% now, 8% goal</td><td>IN-SPACe's own figures. The Space Foundation puts the world space economy at $686 billion for 2025; 8% of that would be about $55 billion, so the "8%" assumes a narrower definition of the world total. Treat shares as rough.</td></tr>
+      <tr><td>Number of startups</td><td>300+</td><td>IN-SPACe portal registrations in 2026. Other counts say 266 or "over 400"; registered is not the same as active.</td></tr>
+      <tr><td>Startup funding</td><td>$43M (2021), $200M (2025)</td><td>From one tracker (BW Businessworld). Cumulative totals quoted elsewhere range from $618 million to $871 million, depending on what is counted.</td></tr>
+      <tr><td>Company totals</td><td>As shown on each card</td><td>Trackers such as Tracxn and company statements differ by 10–30%, mostly because of debt and grants.</td></tr>
+      <tr><td>Future launches</td><td>"Planned"</td><td>Start-up launch dates slip often. Agnikul's own site still listed 2026 windows that reports now put in 2027.</td></tr>
+    </table></div>
+  </details>
+
+  <details class="card gx"><summary>For experts: What the page leaves out</summary>
+    <p>Only a dozen of the 300+ companies appear here, chosen because they have flown hardware or are building rockets. Many others make ground stations, software, parts and data products (for example SatSure, Ananth Technologies, Kawa Space and others); leaving them out does not mean they matter less. The page does not judge whether any company is a good investment, and does not give live updates: check the date in the sources. Defence space work, and large established firms such as L&amp;T, Godrej and HAL, are mentioned only where they join the startup story.</p>
+  </details>
+
+  <!-- golapada-quiz:start -->
+<style>
+.gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
+.gq h2{font-family:"Saira Condensed","Noto Sans Devanagari","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
+.gq .gq-sub{font-size:13px;color:#8a97a8;margin:0 0 12px;max-width:76ch}
+.gq ol{list-style:none;margin:0;padding:0;counter-reset:gq}
+.gq li{counter-increment:gq;border-top:1px solid #1f2a38;padding:12px 0 10px 40px;position:relative}
+.gq li::before{content:counter(gq);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:#121a25;border:1px solid #2c3a4d;color:#e8c46a;font:700 15px/26px "Saira Condensed",sans-serif;text-align:center}
+.gq .gq-q{font-size:15px;color:#e7edf3;margin:0 0 4px}
+.gq .gq-do{font-size:13px;color:#8a97a8;margin:0 0 6px}.gq .gq-do b{color:#c3ccd6;font-weight:500}
+.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
+.gq details summary{cursor:pointer;font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
+.gq details summary:focus-visible,.gq button:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+.gq details p{margin:6px 0 0;padding:8px 10px;background:#121a25;border-left:3px solid #5fd6a0;border-radius:3px;font-size:14px;color:#d5dde6;max-width:76ch}
+.gq .gq-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gq button{font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
+@media print{.gq{background:#fff;border-color:#bbb}.gq h2,.gq .gq-q,.gq details p{color:#000}.gq .gq-sub,.gq .gq-do{color:#333}.gq details p{background:#fff}.gq .gq-bar{display:none}}
+</style>
+<section class="gq" aria-labelledby="gq-title"><h2 id="gq-title">Quiz: five questions</h2><p class="gq-sub">Answer each one by using the lab above, then check. Good for a class: pairs work through them, the teacher reveals the answers.</p><ol><li><p class="gq-q">Which Indian private company was first to put a rocket into orbit, and when?</p><p class="gq-do"><b>Use the lab:</b> Tap <b>Skyroot Aerospace</b> under <b>Who does what</b>, or read the timeline in <b>What changed since 2020</b>.</p><details><summary>Show answer</summary><p><b>Skyroot Aerospace</b>: its <b>Vikram-1</b> reached a 450 km orbit on <b>18 July 2026</b>, on its first try. That made India the third country, after the USA and China, where a private company has launched to orbit.</p></details></li><li><p class="gq-q">How fast must India's space economy grow every year to go from $8.4 billion in 2022 to $44 billion in 2033?</p><p class="gq-do"><b>Use the lab:</b> Press <b>Goal pace</b> on <b>The road to $44 billion</b> chart and read <b>Pace the goal needs</b>.</p><details><summary>Show answer</summary><p>About <b>16.2% a year</b>, every year for eleven years. At that pace the industry doubles roughly every <b>4.6 years</b>.</p></details></li><li><p class="gq-q">Which startup satellite can see through monsoon clouds and at night, and why?</p><p class="gq-do"><b>Use the lab:</b> Tap <b>GalaxEye</b> and read <b>What it means for people</b>.</p><details><summary>Show answer</summary><p><b>GalaxEye's Drishti</b> (launched 3 May 2026) carries a <b>radar</b>. Radar sends its own radio waves and times the echoes, so it does not need sunlight and passes through clouds. It also carries an ordinary camera.</p></details></li><li><p class="gq-q">Startups raised about $200 million in 2025. Roughly what share is that of the Department of Space's yearly budget?</p><p class="gq-do"><b>Use the lab:</b> Look at the bars in <b>The money going in</b>.</p><details><summary>Show answer</summary><p>About <b>₹1,740 crore</b> against <b>₹13,706 crore</b> for the Department of Space in 2026–27: roughly <b>13%</b>. Startup money is growing fast (it was $43 million in 2021) but the government is still by far the biggest spender.</p></details></li><li><p class="gq-q"><span class="gq-h">History</span>What did the government change in June 2020 that started this whole story?</p><p class="gq-do"><b>Use the lab:</b> Read the first entry in <b>What changed since 2020</b>.</p><details><summary>Show answer</summary><p>It set up <b>IN-SPACe</b>, which gives private companies permission to build and launch. Before that, almost everything India sent to space was built and launched by ISRO.</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">Show all answers</button></div><script>
+(()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
+</script></section>
+<!-- golapada-quiz:end -->
+  <footer>Sources (checked November 2026): IN-SPACe Decadal Vision ($8.4 billion in 2022, about 2% of the world, goal $44 billion and about 8% by 2033), reported by DD News, The Print and Inc42. Startups registered: New Space Economy (April 2026) citing IN-SPACe. Funding by year: BW Businessworld, “India Spacetech Funding Hits $200 Mn In 2025”. Department of Space budget 2026–27 ₹13,705.63 crore: Business Today, 1 Feb 2026. World space economy $686 billion (2025): Space Foundation, July 2026. Skyroot: Space.com, Via Satellite and IEEE Spectrum on Vikram-1 (18 July 2026); Wikipedia “Skyroot Aerospace” and “Vikram-S”; Series C $60 million, $1.1 billion valuation, 7 May 2026. Agnikul: Wikipedia “Agnibaan SOrTeD” (30 May 2024), TechCrunch, reports on the 2027 orbital target and the ₹200 crore TDB support. Pixxel: SatNews (14 Jan 2025), Pixxel news (26 Aug 2025), Wikipedia “Pixxel” (Series C, Sept 2026). Digantara: SatNews and YourStory (SCOT, 14 Jan 2025; $50 million Series B, Dec 2025). GalaxEye: SatNews (Drishti, 3 May 2026), eoPortal. Dhruva Space: NewsX (LEAP-1, Aug 2025), Wikipedia “PSLV-C58”. Bellatrix: Wikipedia “PSLV-C58”, “Bellatrix Aerospace”. HAL–L&amp;T PSLV and SSLV transfer to HAL: Communications Today, GKToday and others (2025). PSLV-C61 and PSLV-C62 failures: Spaceflight Now, Onmanorama (12 Jan 2026). FDI rules (Feb 2024) and ₹1,000 crore venture fund (Oct 2024): Inc42, PIB. An independent page; not investment advice.</footer>
+</div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const CO=[
+ {s:1,n:"Bellatrix Aerospace",c:"Bengaluru",w:"Thrusters that steer satellites",kid:"Satellites need tiny engines to stay in the right place. Bellatrix makes them, including electric ones.",
+  done:["1 Jan 2024: its thrusters flew on ISRO's PSLV-C58, on the rocket's spare top stage used as a mini space lab"],next:"Its own demonstration satellite, Harbinger, to test the full system in orbit",money:"About $34–40 million raised (reports differ)",st:"ok"},
+ {s:1,n:"Dhruva Space",c:"Hyderabad",w:"Satellite bodies, deployers, ground stations",kid:"Dhruva builds the 'body' of a satellite (power, radio, computer) so others only need to add their camera or experiment.",
+  done:["1 Jan 2024: LEAP-TD test on PSLV-C58","Aug 2025: LEAP-1, its first commercial satellite, launched on a SpaceX Falcon 9"],next:"More satellites for customers; a satellite it supported was lost in the PSLV-C62 failure",money:"Roughly $28–31 million raised",st:"ok"},
+ {s:1,n:"HAL + L&T",c:"Bengaluru · Mumbai",w:"Industry-built PSLV; HAL now owns SSLV",kid:"Not startups, but a big change: for the first time, companies, not ISRO, build India's workhorse rocket.",
+  done:["2022: contract for five PSLV-XL rockets","2025: first industry-built PSLV rolled out; ISRO handed the whole SSLV rocket design to HAL"],next:"First flight of the industry-built PSLV",money:"Contract and technology transfer, not venture money",st:"wait"},
+ {s:2,n:"Skyroot Aerospace",c:"Hyderabad",w:"Vikram rockets",kid:"The first Indian private company to put a rocket into orbit, on its very first try.",
+  done:["18 Nov 2022: Vikram-S, India's first private rocket, flies to space and back (suborbital)","18 Jul 2026: Vikram-1 reaches a 450 km orbit and releases its satellites"],next:"Second Vikram-1 flight; Vikram-2 (up to about 1,000 kg) targeted for 2027",money:"About $145–160 million raised; valued at $1.1 billion in May 2026, India's first space unicorn",st:"ok"},
+ {s:2,n:"Agnikul Cosmos",c:"Chennai",w:"Agnibaan rocket with 3D-printed engines",kid:"Agnikul prints each rocket engine as one single piece of metal, so engines can be made in days, not months.",
+  done:["30 May 2024: Agnibaan SOrTeD, a test flight from its own launch pad at Sriharikota, India's first private launch pad","May 2026: four engines fired together on the ground"],next:"First flight to orbit, now expected in 2027 (up to about 100 kg)",money:"₹200 crore (about $23 million) agreed by the government's Technology Development Board for a reusable Agnibaan, plus earlier private rounds",st:"wait"},
+ {s:2,n:"HAL (SSLV)",c:"Bengaluru",w:"The Small Satellite Launch Vehicle",kid:"ISRO's small rocket is now a business run by HAL, which can sell launches to anyone.",
+  done:["2025: full SSLV design handed over by ISRO, NSIL and IN-SPACe"],next:"HAL-built SSLV launches",money:"Technology transfer agreement",st:"wait"},
+ {s:3,n:"Pixxel",c:"Bengaluru",w:"Hyperspectral Earth cameras",kid:"Pixxel's cameras see over 150 colours of light instead of 3, so they can tell healthy crops from sick ones and spot pollution.",
+  done:["14 Jan 2025: first three Firefly satellites launched","26 Aug 2025: three more, making six in orbit, each seeing details 5 m across"],next:"Honeybee satellites, paid for by a new funding round",money:"$100 million Series C in Sept 2026; around $195 million in total",st:"ok"},
+ {s:3,n:"Digantara",c:"Bengaluru",w:"Watching space junk",kid:"Digantara puts satellites up to watch other objects in space, even pieces as small as 5 cm, to help avoid crashes.",
+  done:["14 Jan 2025: SCOT, a commercial space-surveillance satellite, launched"],next:"Plans for 15 surveillance and 2 missile-warning satellites through 2026–27",money:"$50 million Series B in Dec 2025; over $60 million in total",st:"ok"},
+ {s:3,n:"GalaxEye",c:"Bengaluru",w:"Radar plus camera on one satellite",kid:"GalaxEye's satellite carries both a radar, which sees through clouds and darkness, and a normal camera, on one spacecraft.",
+  done:["3 May 2026: Drishti, a 190 kg satellite, launched on a SpaceX rocket"],next:"A constellation of about 8–12 satellites over the next few years",money:"Over $24 million raised",st:"ok"},
+];
+const STEPS=["Make the hardware","Launch it","Watch Earth & space"];
+const chain=$("#chain");let cur=3;
+STEPS.forEach((t,i)=>{const d=document.createElement("div");d.className="step s"+(i+1);d.innerHTML=`<div class="k">${i+1}. ${t}</div>`;
+ CO.forEach((c,j)=>{if(c.s!==i+1)return;const b=document.createElement("button");b.type="button";b.className="co";b.dataset.i=j;b.innerHTML=`<b>${c.n}</b><span>${c.w}</span>`;b.onclick=()=>show(j);d.appendChild(b)});chain.appendChild(d)});
+function show(j){cur=j;const c=CO[j];document.querySelectorAll(".co").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.i===j));
+ $("#det").innerHTML=`<h3>${c.n}</h3><div class="note" style="margin-bottom:8px">${c.c} · ${c.w}</div><div class="kid">${c.kid}</div>
+  <span class="tag ok">Done</span><ul>${c.done.map(x=>`<li>${x}</li>`).join("")}</ul>
+  <span class="tag wait">Next</span><ul><li>${c.next}</li></ul>
+  <span class="tag">Money</span><ul><li>${c.money}</li></ul>`}
+show(cur);
+
+/* growth */
+const BASE=8.4,Y0=2022,Y1=2033,GOAL=44;
+const need=(Math.pow(GOAL/BASE,1/(Y1-Y0))-1)*100;
+const PRE=[["Slow, 8%",8],["Goal pace",+need.toFixed(1)],["Fast, 20%",20]];
+const pre=$("#presets");PRE.forEach(([t,v])=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.onclick=()=>{$("#rate").value=v;draw()};pre.appendChild(b)});
+const cv=$("#grow"),g=cv.getContext("2d");
+function draw(){
+ const r=+$("#rate").value;$("#rateO").textContent=r.toFixed(1)+"% a year";
+ pre.querySelectorAll("button").forEach((b,i)=>b.setAttribute("aria-pressed",Math.abs(PRE[i][1]-r)<0.06));
+ const dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+ const L=44,R=12,T=14,B=26,max=70;const X=y=>L+(y-Y0)/(Y1-Y0)*(W-L-R),Yp=v=>H-B-v/max*(H-T-B);
+ g.font="12px IBM Plex Sans, sans-serif";g.fillStyle="#8a97a8";g.strokeStyle="#1f2a38";g.lineWidth=1;
+ for(let v=0;v<=max;v+=10){g.beginPath();g.moveTo(L,Yp(v));g.lineTo(W-R,Yp(v));g.stroke();g.fillText("$"+v+"B",4,Yp(v)+4)}
+ for(let y=Y0;y<=Y1;y+=(W<500?3:1)){g.fillText(String(y).slice(W<500?0:2).replace(/^(\d\d)$/,"'$1"),X(y)-10,H-8)}
+ g.setLineDash([5,5]);g.strokeStyle="#e8c46a";g.beginPath();g.moveTo(L,Yp(GOAL));g.lineTo(W-R,Yp(GOAL));g.stroke();g.setLineDash([]);
+ g.fillStyle="#e8c46a";g.fillText("Goal: $44B",L+6,Yp(GOAL)-6);
+ const path=(rate,col,wd)=>{g.strokeStyle=col;g.lineWidth=wd;g.beginPath();for(let y=Y0;y<=Y1;y+=0.25){const v=BASE*Math.pow(1+rate/100,y-Y0);y===Y0?g.moveTo(X(y),Yp(Math.min(v,max))):g.lineTo(X(y),Yp(Math.min(v,max)))}g.stroke()};
+ path(need,"#3a4a5e",1.5);path(r,"#ff9933",3);
+ g.fillStyle="#5fd6a0";g.beginPath();g.arc(X(Y0),Yp(BASE),5,0,7);g.fill();g.fillText("$8.4B in 2022",X(Y0)+8,Yp(BASE)+16);
+ const end=BASE*Math.pow(1+r/100,Y1-Y0),reach=r>0?Y0+Math.log(GOAL/BASE)/Math.log(1+r/100):Infinity;
+ $("#gstats").innerHTML=`<div class="stat a"><span>2033 at this pace</span><b>$${end.toFixed(0)}B</b></div>
+  <div class="stat g"><span>Pace the goal needs</span><b>${need.toFixed(1)}%</b></div>
+  <div class="stat b"><span>Size multiplies by</span><b>×${(end/BASE).toFixed(1)}</b></div>
+  <div class="stat o"><span>$44B reached in</span><b>${reach>2100?"after 2100":Math.ceil(reach)}</b></div>`;
+ $("#gverd").innerHTML=r+0.05>=need?`At ${r.toFixed(1)}% a year India would reach the goal${reach<Y1-0.5?" early, in "+Math.ceil(reach):" on time"}. Growing about 16% every year for eleven years in a row is hard: it means the industry doubles roughly every ${(Math.log(2)/Math.log(1+need/100)).toFixed(1)} years.`
+  :`At ${r.toFixed(1)}% a year India would have about $${end.toFixed(0)} billion in 2033, short of the goal. The grey line shows the ${need.toFixed(1)}% a year needed.`;
+}
+$("#rate").addEventListener("input",draw);addEventListener("resize",draw);draw();
+
+/* money */
+const RATE=87,DOS=13705.63;
+const M=[["Startups, 2021",43*RATE/1e1,"#5fd6a0","$43 million · 12 deals"],["Startups, 2025",200*RATE/1e1,"#ff9933","$200 million · 53 deals"],["Dept of Space, 2026–27",DOS,"#74c7ff","₹13,706 crore"]];
+$("#bars").innerHTML=M.map(([t,v,c,l])=>`<div class="bar"><span>${t}</span><div class="t" style="width:${Math.max(v/DOS*100,26)}%;background:${c}">${l}</div></div>`).join("");
+const s25=200*RATE/10;
+$("#mverd").innerHTML=`Startup money grew almost five times in four years (from $43 million to $200 million a year). Even so, $200 million is about ₹${Math.round(s25).toLocaleString("en-IN")} crore, roughly <b>${Math.round(s25/DOS*100)}%</b> of what the Department of Space gets in one year. The government also set up a <b>₹1,000 crore</b> venture fund for space startups (approved October 2024, spent over five years from 2025–26), and since February 2024 foreign companies may invest more: up to 100% in parts and components, 74% in satellites and 49% in rockets without special approval.`;
+
+/* timeline */
+const TL=[
+ ["ok","June 2020","IN-SPACe set up","Private companies can now get permission to build and launch."],
+ ["ok","18 Nov 2022","Vikram-S flies","Skyroot launches India's first private rocket, a short flight to space and back."],
+ ["ok","April 2023","Indian Space Policy 2023","Sets out what ISRO, NSIL, IN-SPACe and private firms each do."],
+ ["ok","1 Jan 2024","Startups fly on PSLV-C58","Bellatrix and Dhruva test hardware on the rocket's spare top stage."],
+ ["ok","Feb 2024","Foreign investment opened","Up to 100% for parts, 74% for satellites, 49% for rockets, automatically."],
+ ["ok","30 May 2024","Agnibaan SOrTeD","Agnikul flies its 3D-printed engine rocket from its own pad."],
+ ["ok","Oct 2024","₹1,000 crore space fund","A government venture fund for space startups is approved."],
+ ["ok","14 Jan 2025","Pixxel and Digantara in orbit","Three Fireflies and SCOT launch on one SpaceX flight."],
+ ["x","May 2025","PSLV-C61 fails","A third-stage problem; the satellite is lost."],
+ ["ok","Aug 2025","More satellites","Pixxel's next three Fireflies; Dhruva's LEAP-1."],
+ ["ok","2025","SSLV handed to HAL","ISRO gives its small rocket's full design to industry."],
+ ["x","12 Jan 2026","PSLV-C62 fails","Another third-stage problem; 16 satellites lost, including startup payloads."],
+ ["ok","3 May 2026","GalaxEye's Drishti","A radar-plus-camera satellite launches."],
+ ["ok","7 May 2026","First space unicorn","Skyroot valued at $1.1 billion."],
+ ["ok","18 Jul 2026","Vikram-1 reaches orbit","India becomes the third country, after the USA and China, where a private company has launched to orbit."],
+ ["ok","Sept 2026","Pixxel raises $100 million","A Series C round to pay for its next satellites, Honeybee."],
+ ["p","2027","Next up","Agnibaan to orbit, Vikram-2, Digantara's 15-satellite fleet, industry-built PSLVs."]];
+$("#tl").innerHTML=TL.map(([k,d,t,x])=>`<li class="${k}"><b>${d} · ${t}</b><span>${x}</span></li>`).join("");
+})();
+</script>
+
+<style>.ga-install{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:80;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;background:#e8c46a;color:#1b1404;border:0;border-radius:999px;padding:10px 16px;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer}.ga-install[hidden]{display:none}.ga-install:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}@media print{.ga-install{display:none}}</style>
+<button type="button" class="ga-install" id="gaInstall" hidden>Install Golapada</button>
+<script>
+(()=>{if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+let ev=null;const b=document.getElementById('gaInstall');addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;b.hidden=false});
+b.addEventListener('click',async()=>{if(!ev)return;b.hidden=true;ev.prompt();try{await ev.userChoice}catch(e){}ev=null});addEventListener('appinstalled',()=>{b.hidden=true})})();
+</script>
+</html>

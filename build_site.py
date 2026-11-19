@@ -46,6 +46,7 @@ PAGES = [
     ("spacecraft-archive.html", "Missions", "RDxM4WQDNdVSRngpy9R218"),
     ("reentry-lab.html", "Re-entry", "NjXosYNX9sCeCWVThB7VhT"),
     ("one-sky-lab.html", "One Sky", "8wnKFX4tTwV3Sbd2jBAzWD"),
+    ("space-startups.html", "Startups", "HhFgwUCGEZ5j2hX9fxbfUw"),
     ("planetary-defense-lab.html", "Defense", "UtRh4Wahi2S7pytfcBcXBc"),
     ("schools.html", "For schools", "7nffqBM7LHBTznHTZ5fA5M"),
     ("space-day.html", "Space Day", "XFqC8strPfM51DbXvPesFT"),
