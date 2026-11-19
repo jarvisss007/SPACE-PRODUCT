@@ -82,6 +82,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>The image below is not a painting. Every pixel is a ray of light traced backwards through the curved space around a black hole, the same physics behind the Event Horizon Telescope’s pictures of M87* and Sagittarius A*. Then: the real black holes we know of, what would happen to a Starship falling into each, and the wormholes that general relativity allows on paper but nature has never shown us.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">See how a black hole bends light around itself, meet the real black holes we know, and find out what would happen to a spaceship that falls in. It ends with wormholes, which are allowed on paper but have never been seen.</p><p class="gs-try"><b>Try this first:</b> Drag the <b>Viewing angle from the disk’s axis</b> slider to see the glowing disk bend around the black hole. Then click a row in <b>The black holes we know</b> to send the Starship toward it.</p><ul><li>The dark middle, called the shadow, is where light falls in and never gets out. It looks about two and a half times wider than the black hole's point of no return, the <i>event horizon</i>.</li><li>Near a small black hole, gravity pulls your feet so much harder than your head that you are stretched apart before you reach the edge. At a giant one, like the huge black hole in the middle of the galaxy M87, you would cross the edge without feeling anything.</li><li>A wormhole you could travel through would need strange <i>negative energy</i> to hold it open. No wormhole has ever been seen.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card hero">
     <div><canvas class="view" id="bh" aria-label="Ray-traced image of a black hole with an accretion disk and background stars"></canvas>
       <p class="note" style="margin-top:8px">Rendering: light paths from the Schwarzschild orbit equation d²u/dφ² + u = (3/2)·r<sub>s</sub>·u², integrated per impact parameter; a thin disk from the innermost stable orbit (3 r<sub>s</sub>) to 15 r<sub>s</sub>; brightness from the disk’s temperature profile, Doppler beaming and gravitational redshift.</p></div>

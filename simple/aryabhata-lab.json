@@ -1,0 +1,9 @@
+{
+ "lead": "Aryabhata was an Indian astronomer who wrote his famous book in the year 499. This page takes four of his ideas and tests each one on a real space-travel problem, to see where he still holds up.",
+ "try": "In the first section, “The Earth turns, the stars stand still”, press <b>View from the boat</b> to see his idea as he described it. Then click a launch site such as <b>Sriharikota</b> or <b>Kourou</b> to see how much free speed the spinning Earth gives a rocket heading east.",
+ "points": [
+  "Aryabhata said the Earth spins while the stars stay still. His time for one spin is only about a hundredth of a second away from today’s atomic clocks.",
+  "His four-step recipe for pi (the number you get when you divide the distance around a circle by the distance across it) gives 3.1416, and he honestly called it close, not exact.",
+  "He said the Moon shines with sunlight and that eclipses are shadows, not a demon swallowing the Sun or Moon. He was right."
+ ]
+}

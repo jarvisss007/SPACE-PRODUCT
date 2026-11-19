@@ -1,0 +1,9 @@
+{
+ "lead": "One map that zooms out from the Sun's planets, past the nearest stars and across our whole galaxy, to the group of galaxies we live in. Every distance is drawn to true scale.",
+ "try": "Press the <b>Planets</b> button, then step through <b>Oort cloud</b>, <b>Nearest stars</b>, <b>Milky Way</b> and <b>Local Group</b> to watch the view grow. Then pick a star in <b>How long to get there</b>.",
+ "points": [
+  "Most of our nearest stars are small, dim red stars. They are close, but too faint to see without a telescope.",
+  "Our galaxy, the Milky Way, is about 100,000 light-years across. A light-year is the distance light travels in a year.",
+  "Voyager 1, one of our fastest probes, would need tens of thousands of years to reach the nearest star. A ship that kept speeding up could get there in a few years."
+ ]
+}

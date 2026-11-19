@@ -109,6 +109,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>The planets are where JPL's own orbital elements put them on the date you choose, back to Aryabhata's sky in 499 CE. Pick a world to see NASA's figures for it, the cost of sending a Starship there, and then try to land on it yourself. Every attempt is logged, so you can learn each world by trial and error.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">A map of every planet, placed where NASA’s numbers say it is on any date you choose, even back to Aryabhata’s sky in the year 499. Pick a world to see its facts, find out what it would take to send a Starship there, and then try landing on it yourself.</p><p class="gs-try"><b>Try this first:</b> Under <b>Pick a world</b>, choose a world such as Mars or the Moon. Then go to <b>Landing trials</b>, press <b>Start descent</b>, and hold <b>Hold to fire</b> to slow down before you hit the ground.</p><ul><li>Mars’s pull is weaker than Earth’s: a person there would weigh a bit more than a third of what they weigh at home.</li><li>Landing on Mars takes less rocket effort than landing on the Moon, even though Mars is much farther away, because Mars’s air does most of the braking.</li><li>Earth and Mars both circle the Sun at different speeds, so the distance between them keeps changing: very far apart in 499, much closer on the day of Apollo 11.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card orrery">
     <canvas id="orr" aria-label="Orbits of the planets to scale on a log-distance view, with their positions on the chosen date"></canvas>
     <div class="ctl">

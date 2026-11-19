@@ -1,0 +1,9 @@
+{
+ "lead": "A map of every planet, placed where NASA’s numbers say it is on any date you choose, even back to Aryabhata’s sky in the year 499. Pick a world to see its facts, find out what it would take to send a Starship there, and then try landing on it yourself.",
+ "try": "Under <b>Pick a world</b>, choose a world such as Mars or the Moon. Then go to <b>Landing trials</b>, press <b>Start descent</b>, and hold <b>Hold to fire</b> to slow down before you hit the ground.",
+ "points": [
+  "Mars’s pull is weaker than Earth’s: a person there would weigh a bit more than a third of what they weigh at home.",
+  "Landing on Mars takes less rocket effort than landing on the Moon, even though Mars is much farther away, because Mars’s air does most of the braking.",
+  "Earth and Mars both circle the Sun at different speeds, so the distance between them keeps changing: very far apart in 499, much closer on the day of Apollo 11."
+ ]
+}

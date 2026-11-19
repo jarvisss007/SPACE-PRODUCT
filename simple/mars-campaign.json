@@ -1,0 +1,9 @@
+{
+ "lead": "Plan a trip to Mars or the Moon in a giant Starship. A fleet of tanker rockets fills it up in orbit around Earth, and on Mars it makes its own fuel to fly home.",
+ "try": "In the <b>Mission planner</b>, keep <b>Mars</b> picked and press <b>Fly this plan</b>. Then click <b>Moon</b>, or drag the <b>Trip time</b> slider, and watch how many tanker flights you need.",
+ "points": [
+  "The ship cannot lift enough fuel from the ground, so tanker rockets fly up one after another to fill it in space. Smaller tankers mean more trips.",
+  "Rushing costs a lot. On the fastest trip the ship hits Mars too fast for its heat shield, so it must burn extra fuel to slow down and needs many times more fuel.",
+  "Landing on the Moon takes more rocket power than landing on Mars. Mars has air that does most of the braking, but the Moon has none, so every slowdown is a rocket burn."
+ ]
+}

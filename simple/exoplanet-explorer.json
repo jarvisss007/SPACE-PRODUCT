@@ -1,0 +1,9 @@
+{
+ "lead": "Every planet ever confirmed around another star, on one chart. Click a dot to meet that world, watch it pass in front of its star, and see how long a trip there would take.",
+ "try": "Type <b>TRAPPIST-1</b> in the search box at the top and click one of its planets. Then scroll to <b>Watch it transit</b> to see it cross in front of its star.",
+ "points": [
+  "Telescopes find most of these planets by spotting the tiny dip in starlight when a planet passes in front of its star.",
+  "A small planet around a tiny star blocks much more light than Earth blocks of the Sun.",
+  "A planet that is Earth-sized and gets Earth-like sunlight is only a first guess. It does not mean the planet has life, or even water."
+ ]
+}

@@ -134,6 +134,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>The step after <a href="starship-catch.html">catching rockets</a>: refill a ship in Earth orbit with a fleet of tankers, then send it to the Moon or to Mars, and on Mars make the propellant to fly home. Set the mission below; the mission computer works out the propellant, the tanker flights, the launch windows and the trip home.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Plan a trip to Mars or the Moon in a giant Starship. A fleet of tanker rockets fills it up in orbit around Earth, and on Mars it makes its own fuel to fly home.</p><p class="gs-try"><b>Try this first:</b> In the <b>Mission planner</b>, keep <b>Mars</b> picked and press <b>Fly this plan</b>. Then click <b>Moon</b>, or drag the <b>Trip time</b> slider, and watch how many tanker flights you need.</p><ul><li>The ship cannot lift enough fuel from the ground, so tanker rockets fly up one after another to fill it in space. Smaller tankers mean more trips.</li><li>Rushing costs a lot. On the fastest trip the ship hits Mars too fast for its heat shield, so it must burn extra fuel to slow down and needs many times more fuel.</li><li>Landing on the Moon takes more rocket power than landing on Mars. Mars has air that does most of the braking, but the Moon has none, so every slowdown is a rocket burn.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="stage">
     <canvas id="view" aria-label="Animated Starship Mars campaign"></canvas>
     <div class="hud"><div class="camtag" id="camtag">Low Earth orbit</div><div class="banner" id="banner"></div></div>

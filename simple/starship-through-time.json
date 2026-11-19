@@ -1,0 +1,9 @@
+{
+ "lead": "What if India’s ancient astronomers had a modern Starship rocket? This page flies it to Mars using only their own numbers to pick the launch day and aim the ship, and works out how close they would really get.",
+ "try": "Click one of the four era cards, starting with <b>Aryabhata</b> (499 CE), and watch the flight. Then press <b>Navigator sights Mars mid-cruise</b> to let the crew look at Mars halfway and fix their aim.",
+ "points": [
+  "Aryabhata’s numbers picked a launch day less than a week away from the best day a modern model finds, more than 1,500 years ago.",
+  "Even so, every ancient ship arrives millions of kilometres from Mars, because Mars really moves on a slightly squashed, oval path, not a perfect circle.",
+  "A navigator who spots Mars halfway there can fire the engines to correct the aim, at the cost of extra fuel."
+ ]
+}

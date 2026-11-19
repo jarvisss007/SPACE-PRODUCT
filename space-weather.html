@@ -44,6 +44,22 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     <p>The Sun is never quiet. It flings out X-ray flashes that reach Earth in eight minutes, a steady wind of charged particles, and now and then a billion-tonne cloud of magnetised gas. When that cloud hits Earth it can light up auroras, knock out radio and GPS, and strain power grids. This page shows what the Sun is doing right now, from the same spacecraft forecasters use.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">See what the Sun is doing right now, using live readings from the same spacecraft that forecasters use. The tiles at the top show the latest readings, and the charts below show the last day and week.</p><p class="gs-try"><b>Try this first:</b> Scroll to <b>Launch a solar storm</b> and press <b>Fastest measured</b>. Read how long the cloud of hot gas takes to reach Earth. Then press <b>Light cloud</b> and compare.</p><ul><li>Sudden flashes on the Sun, called flares, are graded with the letters A, B, C, M and X. Each letter is ten times brighter than the one before.</li><li>The Sun blows a steady wind of tiny charged bits past Earth. Storms grow when the magnetism in that wind points south, because then it links up with Earth's own magnetism and pours energy in.</li><li>Spacecraft parked between the Sun and Earth feel a storm first, but the warning is short. In the big storm of May 2024 it was only about half an hour, and faster wind means less warning.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="offline" id="offline"></div>
 
   <section class="card" aria-label="Right now">
@@ -119,15 +135,13 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     <p>Aditya-L1, launched on 2 September 2023, reached its orbit around the L1 balance point on 6 January 2024. It circles that empty point once every 177.86 days, about 1.5 million km from Earth, with an unbroken view of the Sun. Two of its seven instruments, ASPEX and PAPA, sample the solar wind itself, the same wind charted above, before it reaches Earth. VELC and SUIT photograph the Sun’s outer atmosphere, where these storm clouds are born. The live readings on this page come from NOAA’s spacecraft at L1. Aditya-L1’s data is released through ISRO’s own archive, not as a live feed. See its orbit in the <a href="https://claude.ai/artifact/21WDJwTNzvBc2rM3Ajv5aH">Lagrange Point Lab</a>.</p>
   </section>
 
-  <section class="card">
-    <h2>How far to trust it</h2>
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What this page leaves out</h2>
+  <details class="card gx"><summary>For experts: What this page leaves out</summary>
     <p class="note">All the readings are NOAA’s and NASA’s, shown as they arrive. This page does not forecast anything itself; the Kp forecast is NOAA’s. The storm launcher is the drag-based model of Vršnak and others (2013), with typical drag values of 0.1 and 0.2 × 10⁻⁷ per km. It is aimed straight at Earth and starts at 20 solar radii, where coronagraphs first measure a cloud’s speed. Real clouds expand, twist, hit slower clouds and arrive off-centre, so forecasts made this way are typically off by about half a day. The warning time at L1 assumes the cloud keeps its arrival speed over the last 1.5 million km.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

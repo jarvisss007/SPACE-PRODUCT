@@ -1,0 +1,9 @@
+{
+ "lead": "Watch a whole Starship flight in about two and a half minutes: the launch, the booster splitting off, and a giant tower catching the booster as it comes home. Your settings decide whether the ship makes it to orbit, a steady loop around the Earth.",
+ "try": "In <b>Mission setup</b>, move the <b>Payload</b> slider to load more cargo. Then press <b>Apply and relaunch</b> and watch whether the ship still reaches orbit.",
+ "points": [
+  "Max-Q is the moment in the climb when the air pushes hardest on the rocket, because it is already going fast while the air is still thick.",
+  "Fuel the booster saves for its trip home is fuel that cannot push the ship upward, so the ship has less to spare.",
+  "If a few booster engines fail at liftoff, the rocket climbs with less push and separates later, but it can still reach orbit."
+ ]
+}

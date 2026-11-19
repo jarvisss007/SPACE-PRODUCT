@@ -1,0 +1,9 @@
+{
+ "lead": "See what the Sun is doing right now, using live readings from the same spacecraft that forecasters use. The tiles at the top show the latest readings, and the charts below show the last day and week.",
+ "try": "Scroll to <b>Launch a solar storm</b> and press <b>Fastest measured</b>. Read how long the cloud of hot gas takes to reach Earth. Then press <b>Light cloud</b> and compare.",
+ "points": [
+  "Sudden flashes on the Sun, called flares, are graded with the letters A, B, C, M and X. Each letter is ten times brighter than the one before.",
+  "The Sun blows a steady wind of tiny charged bits past Earth. Storms grow when the magnetism in that wind points south, because then it links up with Earth's own magnetism and pours energy in.",
+  "Spacecraft parked between the Sun and Earth feel a storm first, but the warning is short. In the big storm of May 2024 it was only about half an hour, and faster wind means less warning."
+ ]
+}
