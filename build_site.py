@@ -23,6 +23,7 @@ PAGES = [
     ("asteroid-watch.html", "Asteroids", "GWeaBcDHjRt3WGzY3vBMwH"),
     ("eclipse-lab.html", "Eclipses", "LvmyiUbgkuDqYbgSpd2UcW"),
     ("isro-launches.html", "ISRO launches", "1JsMBgZn6sVaugdKpqyuWz"),
+    ("launch-watch.html", "Launches now", "DXjz74y1pXCSzx7CQ1DmWy"),
     ("starship-catch.html", "Catch", "D2UgmPBXpzcKUxY7qnzQdB"),
     ("rocket-lab.html", "Rockets", "4ZaBFQRVW2jUmBzCpVSHiU"),
     ("navic-lab.html", "NavIC", "DTgnmQzwPso42LJYg5ZR7w"),

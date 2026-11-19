@@ -1,0 +1,34 @@
+{
+"questions": [
+{
+"q": "How much free push does a rocket get from Earth’s spin when it launches due east from Sriharikota, and from the equator?",
+"do": "Click <b>Sriharikota</b> under <b>Why near the equator?</b> and read <b>Free push from Earth’s spin</b>. Then click <b>Kourou</b>.",
+"a": "About <b>452 m/s</b> from Sriharikota (13.7° N) and <b>463 m/s</b> from Kourou (5° N). At the equator itself it is <b>465 m/s</b>, the speed the ground moves as Earth spins.",
+"history": false
+},
+{
+"q": "Why does a satellite launched from Baikonur need a bigger push to reach geostationary orbit than one launched from Kourou?",
+"do": "Compare <b>Extra over a launch from the equator</b> for <b>Baikonur</b> and <b>Kourou</b>, and look at the orange curve.",
+"a": "A rocket cannot easily reach an orbit tilted less than its site’s latitude. From Baikonur (46°) the orbit starts tilted 46°, and untilting it at the top of the transfer orbit costs several hundred m/s more than from Kourou (5°).",
+"history": false
+},
+{
+"q": "Which country launched the most rockets this year, and how many launches were there in all?",
+"do": "Read <b>This year so far</b> and the country chart.",
+"a": "The <b>United States</b>, then <b>China</b>. The totals are refreshed daily, so read the current numbers on the page (274 launches by 18 November 2026, about one every 28 hours).",
+"history": false
+},
+{
+"q": "Which Indian rocket that is not ISRO’s flew from Sriharikota in 2026?",
+"do": "Read the <b>India this year</b> table.",
+"a": "<b>Vikram-I</b>, built by the private company <b>Skyroot Aerospace</b>, on a successful demonstration flight in July 2026.",
+"history": false
+},
+{
+"q": "When did the first satellite reach orbit, and what was it?",
+"do": "Read the introduction at the top of the page.",
+"a": "<b>Sputnik 1</b>, launched by the Soviet Union on <b>4 October 1957</b>.",
+"history": true
+}
+]
+}
