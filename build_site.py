@@ -257,8 +257,18 @@ def draw_icon(size: int, maskable: bool = False):
 def write_app() -> None:
     """Make docs/ an installable app that keeps working offline."""
     import hashlib, json
-    for n, m in [(192, False), (512, False), (512, True)]:
-        draw_icon(n, m).convert("RGB").save(WEB / (f"icon-maskable-{n}.png" if m else f"icon-{n}.png"), optimize=True)
+    icons = [(192, False), (512, False), (512, True)]
+    try:
+        import PIL  # noqa: F401  (drawing the icons needs Pillow)
+        for n, m in icons:
+            draw_icon(n, m).convert("RGB").save(WEB / (f"icon-maskable-{n}.png" if m else f"icon-{n}.png"), optimize=True)
+    except ImportError:
+        # The daily GitHub Action has no Pillow. The icons never change, so the committed ones are kept.
+        missing = [f"icon-maskable-{n}.png" if m else f"icon-{n}.png" for n, m in icons
+                   if not (WEB / (f"icon-maskable-{n}.png" if m else f"icon-{n}.png")).exists()]
+        if missing:
+            raise SystemExit(f"Pillow is needed to draw the missing app icons: {', '.join(missing)}")
+        print("Pillow not installed: keeping the existing app icons")
     manifest = {
         "name": "Golapada: space science you can play with", "short_name": "Golapada",
         "description": "Interactive space-science labs built on real mission data.",
