@@ -125,6 +125,38 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     </div>
   </section>
 
+  <style>
+  .tn .tn-l{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid var(--line)}
+  .tn .tn-l>li{position:relative;padding:2px 0;min-width:0}
+  .tn .tn-l>li::before{content:"";position:absolute;left:-25px;top:11px;width:8px;height:8px;border-radius:50%;background:var(--panel2);border:2px solid var(--gold)}
+  .tn .tn-l>li.in::before{border-color:var(--flame);background:var(--flame)}
+  .tn summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px;padding:5px 0}
+  .tn summary::-webkit-details-marker{display:none}
+  .tn summary::after{content:"+";margin-left:auto;padding-left:8px;color:var(--lox);font-family:var(--display);font-weight:700}
+  .tn details[open]>summary::after{content:"\2212"}
+  .tn summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+  .tn .tn-y{font-family:var(--display);font-weight:700;letter-spacing:.06em;color:var(--gold);min-width:5.6em}
+  .tn summary b{font-weight:600;color:var(--ink);flex:1 1 12em;min-width:0}
+  .tn .tn-i{font-family:var(--display);font-weight:600;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--flame);margin-left:6px}
+  .tn details p{margin:0 0 10px;font-size:14px}
+  </style>
+  <section class="card tn"><h2>Then and now</h2>
+    <p class="note">From a maths puzzle to a busy neighbourhood of spacecraft. Tap a year to open it. The orange dot marks India’s part.</p>
+    <ol class="tn-l">
+      <li><details><summary><span class="tn-y">1760s</span><b>Euler finds three balance points</b></summary><p>Leonhard Euler showed that three bodies lined up in a row can keep their pattern as they move. That gives the three points on the Sun–Earth line, now called L1, L2 and L3; his paper was printed in 1767.</p></details></li>
+      <li><details><summary><span class="tn-y">1772</span><b>Lagrange finds all five</b></summary><p>Joseph-Louis Lagrange, in his essay on the three-body problem, found Euler’s three points again plus two more, L4 and L5. Each sits at the tip of an equal-sided triangle with the two big bodies.</p></details></li>
+      <li><details><summary><span class="tn-y">1906</span><b>Nature got there first</b></summary><p>Max Wolf in Germany discovered the asteroid 588 Achilles, sharing Jupiter’s orbit at one of its triangle points. It was the first “Trojan”; thousands are known today.</p></details></li>
+      <li><details><summary><span class="tn-y">1978</span><b>ISEE-3, the first spacecraft at L1</b></summary><p>NASA’s ISEE-3 reached a halo orbit around L1 on 20 November 1978, the first spacecraft ever to fly one. In 1985 it left and flew through the tail of comet Giacobini-Zinner.</p></details></li>
+      <li><details><summary><span class="tn-y">1995</span><b>SOHO moves in at L1</b></summary><p>Europe and NASA’s SOHO launched in December 1995 to watch the Sun from L1. Planned for two years, it is still working after 30.</p></details></li>
+      <li><details><summary><span class="tn-y">2001</span><b>WMAP goes to L2</b></summary><p>NASA’s WMAP reached L2, on the far side of Earth, on 1 October 2001. Mapping the faint heat left from the Big Bang, it worked out the universe is about 13.8 billion years old.</p></details></li>
+      <li><details><summary><span class="tn-y">2013–2025</span><b>Gaia maps the Milky Way</b></summary><p>Europe’s Gaia launched on 19 December 2013 and measured about 2 billion stars from L2. It was switched off and sent away from L2 on 27 March 2025.</p></details></li>
+      <li><details><summary><span class="tn-y">2021–2022</span><b>James Webb arrives at L2</b></summary><p>The James Webb Space Telescope launched on 25 December 2021 and reached its halo orbit around L2 on 24 January 2022. L2 keeps the Sun, Earth and Moon all on one side, behind its sunshield, so it stays cold.</p></details></li>
+      <li class="in"><details><summary><span class="tn-y">6 Jan 2024</span><b>Aditya-L1 reaches L1 <span class="tn-i">India</span></b></summary><p>ISRO’s Aditya-L1, launched on 2 September 2023, was placed in its halo orbit around L1 on 6 January 2024. It finished its first lap, about 178 days, on 2 July 2024. It is India’s first mission at a Lagrange point.</p></details></li>
+      <li><details><summary><span class="tn-y">2025–2026</span><b>More company at L1</b></summary><p>NASA’s IMAP and NOAA’s space-weather satellite SWFO-L1 launched together on 24 September 2025. IMAP reached L1 on 10 January 2026, and SWFO-L1 followed later that month.</p></details></li>
+      <li><details><summary><span class="tn-y">Now, 2026</span><b>Roman heads for L2</b></summary><p>NASA’s Nancy Grace Roman Space Telescope launched on 30 August 2026 on a three-month trip to L2. It is due to arrive around the end of 2026.</p></details></li>
+    </ol>
+  </section>
+
   <details class="card gx"><summary>For experts: Checks against the real mission</summary>
     <div class="scroll"><table id="check"></table></div>
   </details>
@@ -155,7 +187,8 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 (()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
 </script></section>
 <!-- golapada-quiz:end -->
-  <footer>Sources: Aditya-L1 figures (launch 2 September 2023, arrival 6 January 2024, about 1.5 million km from Earth, halo period 177.86 days, about 178 days per lap, station-keeping 0.2–4 m/s per year) from the Wikipedia article “Aditya-L1”, citing ISRO. Mass ratios from the JPL GM values for the Sun, Earth and Moon. Method: Lagrange (1772); halo orbits after R. W. Farquhar (1968) and K. C. Howell (1984), found here by differential correction with the state transition matrix. An independent model, not affiliated with ISRO.</footer>
+  <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="touch-the-sun.html" style="--k:#ffb347"><b>Touch the Sun</b><span>Why the Sun is the hardest place to reach, and Parker Solar Probe&#x27;s seven Venus flybys down to 191 km/s.</span></a><a href="telescope-lab.html" style="--k:#d8b4ff"><b>Telescope Lab</b><span>How sharp Hubble, Webb, AstroSat and your eye can see, what each can make out on the Moon and Mars, and why Webb is kept so cold.</span></a><a href="space-weather.html" style="--k:#ffb347"><b>Space Weather Now</b><span>Live from NOAA and NASA: the Sun right now, solar flares, the solar wind and storm levels, plus a storm launcher that predicts when a solar cloud hits Earth.</span></a></div></section>
+<footer>Sources: Aditya-L1 figures (launch 2 September 2023, arrival 6 January 2024, about 1.5 million km from Earth, halo period 177.86 days, about 178 days per lap, station-keeping 0.2–4 m/s per year) from the Wikipedia article “Aditya-L1”, citing ISRO. Mass ratios from the JPL GM values for the Sun, Earth and Moon. Method: Lagrange (1772); halo orbits after R. W. Farquhar (1968) and K. C. Howell (1984), found here by differential correction with the state transition matrix. Then and now: Euler’s collinear solution (Novi Commentarii 11, 1767) from the English translation on arXiv (2104.13373); Lagrange (1772) and the L1/L2 mission list from the Wikipedia article “Lagrange point”; 588 Achilles (22 February 1906, Max Wolf), ISEE-3 (L1 halo orbit 20 November 1978, comet Giacobini-Zinner 1985), SOHO, WMAP (L2 on 1 October 2001, age 13.77 billion years) and James Webb from their Wikipedia articles; Gaia’s end on 27 March 2025 from ESA; Aditya-L1’s first halo lap (2 July 2024) from the Wikipedia article citing ISRO; IMAP and SWFO-L1 from NASA’s IMAP blog and NOAA NESDIS; Roman’s 30 August 2026 launch from NASA. An independent model, not affiliated with ISRO.</footer>
 </div>
 
 <script>

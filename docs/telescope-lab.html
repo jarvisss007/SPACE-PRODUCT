@@ -119,6 +119,42 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     <label class="f">Temperature of the glowing object <output id="oT"></output><input type="range" id="iT" min="20" max="400" step="1" value="300"></label>
   </section>
 
+  <section class="card"><h2>Then and now</h2>
+<style>
+.tn-sub{font-size:13px;color:var(--dim);margin:0 0 10px}
+.tn{list-style:none;margin:0;padding:0 0 0 16px;border-left:2px solid var(--line)}
+.tn li{position:relative;margin:0 0 4px}
+.tn li::before{content:"";position:absolute;left:-24px;top:11px;width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--gold)}
+.tn li.in::before{border-color:var(--ok);background:var(--ok)}
+.tn summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;padding:6px 8px;border-radius:4px;min-width:0}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary:hover,.tn details[open]>summary{background:var(--panel2)}
+.tn summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.tn .y{flex:none;width:4.6em;font-family:var(--display);font-weight:700;font-size:16px;color:var(--gold);font-variant-numeric:tabular-nums}
+.tn summary b{flex:1;min-width:0;font-weight:600;color:var(--ink)}
+.tn summary::after{content:"+";flex:none;color:var(--dim);font-family:var(--display);font-size:18px;line-height:1}
+.tn details[open]>summary::after{content:"\2212"}
+.tn details p{margin:6px 0 10px;padding:0 8px;font-size:14.5px}
+.tn .tag{display:inline-block;margin-left:6px;font:600 10.5px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#04160d;background:var(--ok);border-radius:3px;padding:3px 5px;vertical-align:2px}
+</style>
+    <p class="tn-sub">Four hundred years of bigger mirrors, from a spectacle maker’s shop to a 39-metre giant. Tap a year to open it; green dots mark India’s part.</p>
+    <ol class="tn">
+      <li><details><summary><span class="y">1608–09</span><b>The first telescopes</b></summary><p>In 1608 Hans Lipperhey, a Dutch spectacle maker, asked for a patent on a tube with two lenses that made far things look near. In 1609 Galileo built his own, pointed it at the sky and saw mountains on the Moon and four moons circling Jupiter.</p></details></li>
+      <li><details><summary><span class="y">1668</span><b>Newton swaps the lens for a mirror</b></summary><p>Lenses bend each colour a little differently, so bright stars got rainbow edges. Isaac Newton used a curved mirror instead, and nearly every big research telescope since has been a mirror telescope.</p></details></li>
+      <li><details><summary><span class="y">1781</span><b>Herschel finds a new planet</b></summary><p>William Herschel ground his own mirrors and, while mapping stars, found Uranus. It was the first planet ever discovered with a telescope.</p></details></li>
+      <li><details><summary><span class="y">1917–29</span><b>Mount Wilson’s 100-inch and Edwin Hubble</b></summary><p>The 2.5 m Hooker telescope in California was the biggest in the world until 1948. With it Edwin Hubble showed that the Andromeda “nebula” is a whole separate galaxy (1923–24), and then that galaxies are rushing apart: the universe is expanding.</p></details></li>
+      <li><details><summary><span class="y">1948</span><b>Palomar’s 200-inch</b></summary><p>The 5 m Hale telescope, twice as wide as Mount Wilson’s, was dedicated in June 1948. It led the hunt for faraway galaxies and quasars for decades.</p></details></li>
+      <li class="in"><details><summary><span class="y">1986</span><b>The Vainu Bappu Telescope</b><span class="tag">India</span></summary><p>A 2.3 m telescope at Kavalur in Tamil Nadu, built in India, was unveiled on 6 January 1986. It is named after astronomer Vainu Bappu, who started the project but died in 1982 before it was finished.</p></details></li>
+      <li><details><summary><span class="y">1990–93</span><b>Hubble goes up, then gets glasses</b></summary><p>Hubble’s 2.4 m mirror was launched above the blurring air in April 1990, but it had been polished to slightly the wrong shape. In December 1993 astronauts fitted correcting optics, and its pictures became razor sharp.</p></details></li>
+      <li><details><summary><span class="y">1993</span><b>Keck: a mirror made of tiles</b></summary><p>One 10 m mirror would sag under its own weight, so Keck in Hawaii uses 36 six-sided pieces that act as one. Almost every giant telescope since copies the idea.</p></details></li>
+      <li class="in"><details><summary><span class="y">2015</span><b>AstroSat, India’s space observatory</b><span class="tag">India</span></summary><p>Launched by ISRO’s PSLV on 28 September 2015, AstroSat watches the sky in ultraviolet light and X-rays at once. Its ultraviolet telescope is one of the telescopes in this lab.</p></details></li>
+      <li class="in"><details><summary><span class="y">2016–22</span><b>Devasthal: a 3.6 m mirror and a liquid one</b><span class="tag">India</span></summary><p>The 3.6 m Devasthal Optical Telescope near Nainital, built with Belgium, was switched on on 30 March 2016, India’s biggest steerable telescope. Next to it, the 4 m International Liquid Mirror Telescope, a spinning pool of mercury that stares straight up, saw first light in about April 2022.</p></details></li>
+      <li><details><summary><span class="y">2021</span><b>Webb launches</b></summary><p>The James Webb Space Telescope left Earth on 25 December 2021. Its 6.5 m gold mirror unfolded in space and is kept colder than 50 K so it can see faint infrared light from the first galaxies.</p></details></li>
+      <li><details><summary><span class="y">2025</span><b>Rubin’s first look</b></summary><p>On 23 June 2025 the Vera C. Rubin Observatory in Chile showed its first images, taken with the largest digital camera ever built (3.2 gigapixels). It will photograph the whole southern sky every few nights for ten years.</p></details></li>
+      <li><details><summary><span class="y">Now</span><b>The next giants</b></summary><p>Europe’s Extremely Large Telescope in Chile, with a 39 m mirror made of 798 pieces, is being built and plans first light in 2029. The Thirty Meter Telescope, an India partner project whose mirror pieces are partly made in India, is still stuck: building in Hawaii has stalled for years, and in 2025 the US science agency NSF left it out of its budget plans.</p></details></li>
+    </ol>
+  </section>
+
   <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
   </details>
@@ -149,7 +185,8 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 (()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
 </script></section>
 <!-- golapada-quiz:end -->
-  <footer>Sources: Wikipedia articles “Hubble Space Telescope” (2.4 m mirror, 4.0 m² collecting area, ultraviolet to near-infrared, theoretical resolution of about 0.05 arcsec for a 2.5 m optical telescope, ground-based seeing of 0.5–1.0 arcsec), “James Webb Space Telescope” (6.5 m, 25.4 m², 0.6–28.5 µm, about six times Hubble’s collecting area, comparable resolution because it works in the infrared, kept below 50 K) and “AstroSat” (Ultraviolet Imaging Telescope). Diffraction limit 1.22 λ/D; Wien’s displacement constant 2,898 µm·K. An independent model, not affiliated with NASA, ESA or ISRO.</footer>
+  <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="eht-lab.html" style="--k:#ff9933"><b>Photographing a Black Hole</b><span>How eight radio dishes became one Earth-sized telescope to image M87* and Sgr A*: work out the sharpness, check the ring size with Einstein&#x27;s formula, and see why the data flew on hard drives.</span></a><a href="exoplanet-explorer.html" style="--k:#5fd6c4"><b>Exoplanet Explorer</b><span>All of the confirmed planets around other stars, a transit you can watch, and the rocky worlds with Earth-like light.</span></a><a href="lagrange-lab.html" style="--k:#ffc24a"><b>Lagrange Point Lab</b><span>The five balance points of the Sun and Earth, which ones hold a spacecraft, and Aditya-L1&#x27;s halo orbit computed to its real period.</span></a></div></section>
+<footer>Sources: Wikipedia articles “Hubble Space Telescope” (2.4 m mirror, 4.0 m² collecting area, ultraviolet to near-infrared, theoretical resolution of about 0.05 arcsec for a 2.5 m optical telescope, ground-based seeing of 0.5–1.0 arcsec), “James Webb Space Telescope” (6.5 m, 25.4 m², 0.6–28.5 µm, about six times Hubble’s collecting area, comparable resolution because it works in the infrared, kept below 50 K) and “AstroSat” (Ultraviolet Imaging Telescope). Diffraction limit 1.22 λ/D; Wien’s displacement constant 2,898 µm·K. An independent model, not affiliated with NASA, ESA or ISRO. Then and now: Wikipedia articles “History of the telescope”, “Hooker Telescope”, “Hale Telescope”, “W. M. Keck Observatory”, “Vainu Bappu Observatory” and “AstroSat”; Indian Institute of Astrophysics archives (Vainu Bappu Telescope unveiled 6 January 1986); ARIES and the Royal Observatory of Belgium (Devasthal 3.6 m activated 30 March 2016; ILMT first light reported as 29 April 2022, with some sources saying May 2022); NASA (Hubble, 1990 and the 1993 servicing mission; Webb, 25 December 2021); Rubin Observatory “First Look” (23 June 2025); ESO’s ELT timeline (telescope first light planned for 2029); NSF and press reports on the Thirty Meter Telescope (2025).</footer>
 </div>
 
 <script>

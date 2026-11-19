@@ -106,6 +106,40 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     </div>
   </section>
 
+  <section class="card"><h2>Then and now</h2>
+<style>
+.tn-sub{font-size:13px;color:var(--dim);margin:0 0 10px}
+.tn{list-style:none;margin:0;padding:0 0 0 16px;border-left:2px solid var(--line)}
+.tn li{position:relative;margin:0 0 4px}
+.tn li::before{content:"";position:absolute;left:-24px;top:11px;width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--gold)}
+.tn li.in::before{border-color:var(--ok);background:var(--ok)}
+.tn summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;padding:6px 8px;border-radius:4px;min-width:0}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary:hover,.tn details[open]>summary{background:var(--panel2)}
+.tn summary:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tn .y{flex:none;width:4.6em;font-family:var(--display);font-weight:700;font-size:16px;color:var(--gold);font-variant-numeric:tabular-nums}
+.tn summary b{flex:1;min-width:0;font-weight:600;color:var(--ink)}
+.tn summary::after{content:"+";flex:none;color:var(--dim);font-family:var(--display);font-size:18px;line-height:1}
+.tn details[open]>summary::after{content:"\2212"}
+.tn details p{margin:6px 0 10px;padding:0 8px;font-size:14.5px}
+.tn .tag{display:inline-block;margin-left:6px;font:600 10.5px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#04160d;background:var(--ok);border-radius:3px;padding:3px 5px;vertical-align:2px}
+</style>
+    <p class="tn-sub">From a grainy rocket snapshot to a camera that photographs the whole planet every day. Tap a year to open it; green dots mark India’s part.</p>
+    <ol class="tn">
+      <li><details><summary><span class="y">1946</span><b>The first photo from space</b></summary><p>On 24 October 1946 a film camera rode a captured German V-2 rocket up from New Mexico to about 105 km. The film survived the crash in a steel box, and showed Earth’s curve in black and white.</p></details></li>
+      <li><details><summary><span class="y">1959</span><b>Explorer 6: the first picture from orbit</b></summary><p>On 14 August 1959 the US satellite Explorer 6 sent back a fuzzy image of sunlit clouds over the Pacific. It was crude, but it was the first view of Earth from a satellite going round it.</p></details></li>
+      <li><details><summary><span class="y">1968</span><b>Earthrise</b></summary><p>On 24 December 1968 the Apollo 8 astronauts, circling the Moon, saw Earth rise over its grey horizon. Bill Anders’s photo made many people realise how small and alone our planet is.</p></details></li>
+      <li><details><summary><span class="y">1972</span><b>The Blue Marble</b></summary><p>On 7 December 1972 the Apollo 17 crew photographed the whole sunlit Earth from about 29,000 km away. For decades it was the picture of our planet; the camera on this page now takes one like it every day.</p></details></li>
+      <li><details><summary><span class="y">1972</span><b>Landsat starts mapping the land</b></summary><p>Landsat 1, launched on 23 July 1972, was the first satellite built to photograph land for farmers, foresters and map-makers. Landsat satellites are still at work today, giving the longest unbroken record of Earth’s surface from space.</p></details></li>
+      <li class="in"><details><summary><span class="y">1979</span><b>Bhaskara-I</b><span class="tag">India</span></summary><p>India’s first Earth-observation satellite went up on 7 June 1979 on a Soviet rocket. Its TV cameras tested how India could watch its own land, water and forests from space.</p></details></li>
+      <li class="in"><details><summary><span class="y">1988</span><b>IRS-1A</b><span class="tag">India</span></summary><p>Launched on 17 March 1988, IRS-1A was the first of India’s Indian Remote Sensing satellites. It began the work ISRO still does: mapping crops, droughts, floods and cities.</p></details></li>
+      <li><details><summary><span class="y">1990</span><b>The Pale Blue Dot</b></summary><p>On 14 February 1990 Voyager 1, about 6 billion km away, turned round and photographed Earth. Our whole world showed up as a speck smaller than one pixel.</p></details></li>
+      <li class="in"><details><summary><span class="y">2005</span><b>Cartosat-1</b><span class="tag">India</span></summary><p>Launched by PSLV on 5 May 2005, Cartosat-1 took pairs of pictures from two angles at once, so maps could be made in 3D. Later Cartosats can see objects less than a metre across.</p></details></li>
+      <li><details><summary><span class="y">2015</span><b>DSCOVR and EPIC: this page’s camera</b></summary><p>DSCOVR launched in February 2015 to a spot 1.5 million km away where it always sees the sunlit side, and EPIC began sending daily full-Earth photos that year. It went quiet for about eight months in 2019–20 while engineers fixed a fault, but it is still working: when this was written in November 2026, its newest picture was from 16 November 2026.</p></details></li>
+      <li class="in"><details><summary><span class="y">2025–26</span><b>NISAR: radar that sees through clouds</b><span class="tag">India</span></summary><p>NASA and ISRO’s NISAR, launched on India’s GSLV on 30 July 2025, uses radar to spot the ground rising or sinking by about a centimetre, through clouds and in the dark. It began its science work in late 2025, its first data opened to everyone in July 2026, and it marked one year in orbit in August 2026.</p></details></li>
+    </ol>
+  </section>
+
   <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
   </details>
@@ -137,7 +171,8 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 (()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
 </script></section>
 <!-- golapada-quiz:end -->
-  <footer>Blue Marble: Wikipedia articles “The Blue Marble” (Apollo 17, 7 December 1972) and “Deep Space Climate Observatory” (launched February 2015). Images and positions: NASA EPIC team, Earth Polychromatic Imaging Camera on NOAA’s DSCOVR spacecraft (epic.gsfc.nasa.gov), loaded live through its public API. NASA images are public domain. Distances and angles on this page are computed from the positions NASA publishes with each image. An independent page, not affiliated with NASA or NOAA.</footer>
+  <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="satellite-watch.html" style="--k:#7ee0c8"><b>Satellite Watch</b><span>The space stations, Hubble, NavIC and the brightest satellites live on a world map, and when each one passes over your city.</span></a><a href="space-weather.html" style="--k:#ffb347"><b>Space Weather Now</b><span>Live from NOAA and NASA: the Sun right now, solar flares, the solar wind and storm levels, plus a storm launcher that predicts when a solar cloud hits Earth.</span></a><a href="iss-life.html" style="--k:#74c7ff"><b>Life on the ISS</b><span>Live through one day on the space station: 16 sunrises, 2½ hours of exercise, 98% recycled water, and the physics that keeps it up.</span></a></div></section>
+<footer>Blue Marble: Wikipedia articles “The Blue Marble” (Apollo 17, 7 December 1972) and “Deep Space Climate Observatory” (launched February 2015). Images and positions: NASA EPIC team, Earth Polychromatic Imaging Camera on NOAA’s DSCOVR spacecraft (epic.gsfc.nasa.gov), loaded live through its public API. NASA images are public domain. Distances and angles on this page are computed from the positions NASA publishes with each image. An independent page, not affiliated with NASA or NOAA. Then and now: Wikipedia articles “First images of Earth from space”, “Explorer 6”, “Earthrise”, “Landsat 1”, “Bhaskara (satellite)”, “IRS-1A”, “Pale Blue Dot” and “Cartosat-1”; NOAA NESDIS and Spaceflight Now (DSCOVR safe hold from June 2019, back in operation March 2020); the EPIC public API (newest natural-colour image dated 16 November 2026 when checked on 19 November 2026); ISRO (NISAR launched 30 July 2025 on GSLV-F16; science phase announced November 2025; one year of operations marked 4 August 2026) and NASA Earthdata (first public NISAR L-band data released 20 July 2026).</footer>
 </div>
 
 <script>

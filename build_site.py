@@ -129,7 +129,90 @@ LANG_SWITCH = ('<p style="max-width:1200px;margin:10px auto 0;padding:0 max(16px
                '<a href="{href}" lang="hi" style="color:#74c7ff">हिन्दी में पढ़ें</a></p>')
 
 
+# "Keep exploring": three related labs at the foot of every lab, so no page is a dead end.
+# Titles and one-line descriptions come from the home page's list in tools/make_index.py.
+RELATED = {
+    "tonight.html": ["satellite-watch.html", "meteor-showers.html", "kundli.html"],
+    "earth-from-above.html": ["satellite-watch.html", "space-weather.html", "iss-life.html"],
+    "satellite-watch.html": ["iss-life.html", "navic-lab.html", "space-debris-lab.html"],
+    "space-weather.html": ["touch-the-sun.html", "lagrange-lab.html", "earth-from-above.html"],
+    "meteor-showers.html": ["comets.html", "tonight.html", "asteroid-watch.html"],
+    "asteroid-watch.html": ["planetary-defense-lab.html", "comets.html", "meteor-showers.html"],
+    "eclipse-lab.html": ["tonight.html", "indian-astronomy.html", "clues-in-old-books.html"],
+    "isro-launches.html": ["launch-watch.html", "rocket-lab.html", "space-startups.html"],
+    "launch-watch.html": ["isro-launches.html", "space-startups.html", "rocket-lab.html"],
+    "starship-catch.html": ["rocket-lab.html", "reentry-lab.html", "mars-campaign.html"],
+    "rocket-lab.html": ["isro-launches.html", "starship-catch.html", "ion-engine-lab.html"],
+    "navic-lab.html": ["satellite-watch.html", "space-startups.html", "isro-launches.html"],
+    "space-debris-lab.html": ["satellite-watch.html", "reentry-lab.html", "space-startups.html"],
+    "gaganyaan-lab.html": ["iss-life.html", "reentry-lab.html", "isro-launches.html"],
+    "chandrayaan-3.html": ["moon-sites.html", "mangalyaan.html", "gaganyaan-lab.html"],
+    "mangalyaan.html": ["mars-now.html", "gravity-assist-lab.html", "chandrayaan-3.html"],
+    "mars-landing-lab.html": ["mars-now.html", "reentry-lab.html", "mars-campaign.html"],
+    "mars-campaign.html": ["mars-now.html", "mars-landing-lab.html", "starship-catch.html"],
+    "solar-system-lab.html": ["gravity-assist-lab.html", "comets.html", "exoplanet-explorer.html"],
+    "gravity-assist-lab.html": ["voyager-now.html", "touch-the-sun.html", "solar-system-lab.html"],
+    "ion-engine-lab.html": ["rocket-lab.html", "gravity-assist-lab.html", "space-startups.html"],
+    "touch-the-sun.html": ["space-weather.html", "lagrange-lab.html", "gravity-assist-lab.html"],
+    "lagrange-lab.html": ["touch-the-sun.html", "telescope-lab.html", "space-weather.html"],
+    "voyager-now.html": ["gravity-assist-lab.html", "spacecraft-archive.html", "milky-way-atlas.html"],
+    "milky-way-atlas.html": ["exoplanet-explorer.html", "black-hole-lab.html", "telescope-lab.html"],
+    "telescope-lab.html": ["eht-lab.html", "exoplanet-explorer.html", "lagrange-lab.html"],
+    "exoplanet-explorer.html": ["telescope-lab.html", "milky-way-atlas.html", "solar-system-lab.html"],
+    "black-hole-lab.html": ["eht-lab.html", "milky-way-atlas.html", "telescope-lab.html"],
+    "spacecraft-archive.html": ["voyager-now.html", "isro-launches.html", "moon-sites.html"],
+    "reentry-lab.html": ["gaganyaan-lab.html", "mars-landing-lab.html", "space-debris-lab.html"],
+    "one-sky-lab.html": ["space-startups.html", "moon-sites.html", "navic-lab.html"],
+    "space-startups.html": ["launch-watch.html", "isro-launches.html", "one-sky-lab.html"],
+    "mars-now.html": ["mars-landing-lab.html", "mangalyaan.html", "mars-campaign.html"],
+    "iss-life.html": ["gaganyaan-lab.html", "satellite-watch.html", "reentry-lab.html"],
+    "eht-lab.html": ["black-hole-lab.html", "telescope-lab.html", "milky-way-atlas.html"],
+    "comets.html": ["meteor-showers.html", "asteroid-watch.html", "solar-system-lab.html"],
+    "moon-sites.html": ["chandrayaan-3.html", "one-sky-lab.html", "eclipse-lab.html"],
+    "planetary-defense-lab.html": ["asteroid-watch.html", "comets.html", "space-debris-lab.html"],
+    "kundli.html": ["tonight.html", "reading-test.html", "indian-astronomy.html"],
+    "know-yourself.html": ["reading-test.html", "kundli.html", "tonight.html"],
+    "reading-test.html": ["know-yourself.html", "kundli.html", "clues-in-old-books.html"],
+    "aryabhata-lab.html": ["indian-astronomy.html", "starship-through-time.html", "nalanda.html"],
+    "indian-astronomy.html": ["aryabhata-lab.html", "clues-in-old-books.html", "eclipse-lab.html"],
+    "nalanda.html": ["aryabhata-lab.html", "indian-astronomy.html", "clues-in-old-books.html"],
+    "starship-through-time.html": ["aryabhata-lab.html", "mars-campaign.html", "indian-astronomy.html"],
+    "clues-in-old-books.html": ["indian-astronomy.html", "eclipse-lab.html", "comets.html"],
+}
+EXPLORE_CSS = ("<style>.gk{min-width:0;margin-top:8px}"
+               ".gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}"
+               ".gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}"
+               ".gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}"
+               ".gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}"
+               ".gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}"
+               ".gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}"
+               "@media print{.gk{display:none}}</style>")
+
+
+def lab_cards() -> dict:
+    """Title, description and colour of every lab, read from the home page's list."""
+    src = (HERE / "tools" / "make_index.py").read_text(encoding="utf-8")
+    out = {}
+    for m in re.finditer(r'\(\s*"([a-z0-9\-]+\.html)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*,\s*"[^"]*"\s*,\s*"[^"]*"\s*,\s*\'(#[0-9a-fA-F]{3,6})\'\s*\)', src):
+        out[m.group(1)] = (m.group(2).replace('\\"', '"'), m.group(3).replace('\\"', '"'), m.group(4))
+    return out
+
+
+def explore_html(fname: str, cards: dict) -> str:
+    import html as h
+    picks = [p for p in RELATED.get(fname, []) if p in cards and (HERE / p).exists()]
+    if not picks:
+        return ""
+    items = "".join(f'<a href="{p}" style="--k:{cards[p][2]}"><b>{h.escape(cards[p][0])}</b><span>{h.escape(cards[p][1])}</span></a>'
+                    for p in picks)
+    return f'{EXPLORE_CSS}<section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g">{items}</div></section>\n'
+
+
 def build() -> None:
+    cards = lab_cards()
+    missing = [f for f in RELATED if f not in cards] + [p for v in RELATED.values() for p in v if p not in cards]
+    if missing:
+        print(f"note: no home-page card for {sorted(set(missing))}")
     OUT.mkdir(exist_ok=True)
     id_to_file = {aid: fname for fname, _, aid in PAGES}
     hindi = [f"{p}.hi.html" for p in HINDI if (HERE / f"{p}.hi.html").exists()]
@@ -146,6 +229,11 @@ def build() -> None:
         if marker not in src:
             raise SystemExit(f"{fname}: no {marker} to place the navigation before")
         src = src.replace(marker, NAV_CSS + nav_html(fname) + marker, 1)
+        if fname in RELATED:  # English labs only; the Hindi pages keep their own endings
+            k = src.rfind("<footer")
+            block = explore_html(fname, cards)
+            if k > 0 and block:
+                src = src[:k] + block + src[k:]  # inside the page's own column, just above its sources
         if fname != "index.html" and not src.lstrip().lower().startswith("<!doctype"):
             # extra pages are served without the artifact skeleton, so they need their own doctype
             src = "<!doctype html>\n" + src

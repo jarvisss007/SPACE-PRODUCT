@@ -128,6 +128,37 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     <div class="kv" id="aKv" style="max-width:640px"></div>
   </section>
 
+  <section class="card"><h2>Then and now</h2>
+    <style>
+    .tn{list-style:none;margin:0;padding:0 0 0 2px;border-left:2px solid var(--line);margin-left:6px}
+    .tn li{position:relative;padding-left:16px;min-width:0}
+    .tn li::before{content:"";position:absolute;left:-7px;top:13px;width:10px;height:10px;border-radius:50%;background:var(--panel2);border:2px solid var(--gold)}
+    .tn summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;padding:7px 0;min-width:0}
+    .tn summary::-webkit-details-marker{display:none}
+    .tn summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+    .tn .y{font-family:var(--display);font-weight:700;font-size:17px;color:var(--gold);flex:0 0 4.3em;font-variant-numeric:tabular-nums}
+    .tn .t{flex:1 1 auto;min-width:0;color:var(--ink);font-weight:600}
+    .tn summary::after{content:"+";flex:0 0 auto;color:var(--dim);font-family:var(--display);font-size:18px;line-height:1}
+    .tn details[open]>summary::after{content:"\2013"}
+    .tn details p{margin:0 0 10px;font-size:14px;max-width:70ch}
+    .tn .in{display:inline-block;font:600 11px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#1c0802;background:var(--flame);border-radius:3px;padding:3px 5px;margin-left:6px;vertical-align:2px}
+    </style>
+    <p class="note">Tap a year to open it.</p>
+    <ol class="tn">
+      <li><details><summary><span class="y">1908</span><b class="t">Tunguska</b></summary><p>On 30 June 1908 a space rock tens of metres across exploded in the air over Siberia. It flattened about 80 million trees across roughly 2,000 km², and nobody saw it coming.</p></details></li>
+      <li><details><summary><span class="y">1980</span><b class="t">What killed the dinosaurs</b></summary><p>Luis and Walter Alvarez, father and son, with Frank Asaro and Helen Michel, found too much iridium, a metal rare on Earth but common in asteroids, in rocks from the dinosaurs’ last days. They proposed that an asteroid about 10 km wide caused the mass extinction.</p></details></li>
+      <li><details><summary><span class="y">1994</span><b class="t">A comet hits Jupiter</b></summary><p>Between 16 and 22 July 1994, more than 20 pieces of comet Shoemaker–Levy 9 smashed into Jupiter, leaving dark scars in its clouds. People watched a real impact happen for the first time, and took the danger more seriously.</p></details></li>
+      <li><details><summary><span class="y">1998</span><b class="t">Spaceguard: the big search</b></summary><p>NASA was given the goal of finding 90% of near-Earth asteroids bigger than 1 km. Telescopes swept the sky, and the goal was reached at about the end of 2010.</p></details></li>
+      <li><details><summary><span class="y">2013</span><b class="t">Chelyabinsk</b></summary><p>On 15 February 2013 a rock about 20 m across exploded high above Chelyabinsk, Russia. The blast broke windows across the city and about 1,500 people needed medical help, mostly from flying glass.</p></details></li>
+      <li><details><summary><span class="y">2022</span><b class="t">DART moves an asteroid</b></summary><p>On 26 September 2022 NASA’s DART crashed into Dimorphos. Its lap around Didymos got about 33 minutes shorter, the first time people changed the path of a natural object in space.</p></details></li>
+      <li><details><summary><span class="y">2024</span><b class="t">India looks at Apophis</b><span class="in">India</span></summary><p>In mid-2024 ISRO chairman S. Somanath said India wants to join planetary defence and study Apophis during its 2029 close pass, either with its own spacecraft or with NASA, ESA and JAXA. How India takes part was still to be decided.</p></details></li>
+      <li><details><summary><span class="y">2024–25</span><b class="t">2024 YR4’s scare</b></summary><p>Found in December 2024, this asteroid briefly had a 3.1% chance of hitting Earth in December 2032, the highest NASA had ever recorded for an object its size. New observations brought the risk close to zero by late February 2025.</p></details></li>
+      <li><details><summary><span class="y">2026</span><b class="t">Hera reaches Didymos</b></summary><p>Launched by ESA in October 2024, Hera arrived at Didymos in early November 2026, about a month earlier than first planned. It will measure DART’s crater and weigh Dimorphos, so the push can be turned into a recipe for the future.</p></details></li>
+      <li><details><summary><span class="y">2027</span><b class="t">NEO Surveyor</b></summary><p>NASA plans to launch this asteroid-hunting telescope no earlier than September 2027. Dark asteroids are hard to see in ordinary light but glow in infrared, which is what it looks for.</p></details></li>
+      <li><details><summary><span class="y">2029</span><b class="t">Apophis flies by</b></summary><p>On 13 April 2029 Apophis, about 340 m across, will pass about 32,000 km from Earth. It will not hit, but it is a rare chance to see a big asteroid up close.</p></details></li>
+    </ol>
+  </section>
+
   <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
   </details>
@@ -158,7 +189,8 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 (()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
 </script></section>
 <!-- golapada-quiz:end -->
-  <footer>Sources: Wikipedia articles “Double Asteroid Redirection Test”, “Dimorphos”, “65803 Didymos” and “99942 Apophis”, citing NASA, JHU APL, Thomas et al. (Nature, 2023) and Cheng et al. (Nature, 2023). Figures used: DART 610 kg at 22,530 km/h; Dimorphos period 11.921473 h before and 11.3676 h after, orbit 1.206 km, mean speed 0.177 m/s, 151 m across, about 4.3 × 10⁹ kg at Didymos’s density; slowdown of about 2.7 mm/s; momentum factor 2.2 to 4.9; Apophis 31,600 km above the surface, 6.0 km/s far out and 7.4 km/s at closest. Earth GM from JPL. An independent model.</footer>
+  <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="asteroid-watch.html" style="--k:#c9a27e"><b>Asteroid Watch</b><span>Asteroids passing Earth this month, fireballs over the planet and NASA&#x27;s impact-risk list, refreshed daily from JPL, with Apophis 2029 and India&#x27;s Lonar crater.</span></a><a href="comets.html" style="--k:#5fd0e8"><b>Comets</b><span>Play seven famous comets along their real orbits, from Halley to the interstellar 3I/ATLAS, and see why the tail grows near the Sun.</span></a><a href="space-debris-lab.html" style="--k:#ff8f6b"><b>Space Debris Lab</b><span>Break up a satellite and watch the pieces fall: Mission Shakti at 283 km against a collision at 789 km, where junk stays for decades.</span></a></div></section>
+<footer>Sources: Wikipedia articles “Double Asteroid Redirection Test”, “Dimorphos”, “65803 Didymos” and “99942 Apophis”, citing NASA, JHU APL, Thomas et al. (Nature, 2023) and Cheng et al. (Nature, 2023). Figures used: DART 610 kg at 22,530 km/h; Dimorphos period 11.921473 h before and 11.3676 h after, orbit 1.206 km, mean speed 0.177 m/s, 151 m across, about 4.3 × 10⁹ kg at Didymos’s density; slowdown of about 2.7 mm/s; momentum factor 2.2 to 4.9; Apophis 31,600 km above the surface, 6.0 km/s far out and 7.4 km/s at closest. Earth GM from JPL. An independent model. Then and now: Tunguska from EarthSky (about 80 million trees, 2,150 km²); Alvarez et al., Science, 6 June 1980 (asteroid 10 ± 4 km); Shoemaker–Levy 9 and the 1998 Spaceguard goal from Space.com and Wikipedia “Spaceguard”; Chelyabinsk from NASA and EarthSky; 2024 YR4 from NASA’s Planetary Defense blog (3.1% on 18 February 2025) and IAWN’s final notification of 24 February 2025; ISRO’s Apophis interest from Deccan Herald and TASS (July 2024); Hera’s arrival from ESA, Space.com and Sky at Night (November 2026); NEO Surveyor’s launch date from NASA JPL.</footer>
 </div>
 
 <script>

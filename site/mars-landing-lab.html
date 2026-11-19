@@ -114,6 +114,41 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     <div class="verdict" id="cv">Press the button and keep the falling speed in check. Below 20 m, come down slower than 1 m/s; that is this page’s pass mark for setting the rover down on its wheels.</div>
   </section>
 
+  <section class="card"><h2>Then and now</h2>
+    <style>
+    .tn{--tn-acc:var(--mars);list-style:none;margin:4px 0 0;padding:0 0 0 14px;border-left:2px solid var(--line)}
+    .tn>li{position:relative;margin:0 0 6px;min-width:0}
+    .tn>li::before{content:"";position:absolute;left:-21px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--panel);border:2px solid var(--tn-acc)}
+    .tn>li.tn-plan::before{border-style:dashed;border-color:var(--gold)}
+    .tn details{background:var(--panel2);border-radius:4px}
+    .tn summary{cursor:pointer;list-style:none;padding:8px 10px;display:flex;gap:4px 10px;align-items:baseline;flex-wrap:wrap}
+    .tn summary::-webkit-details-marker{display:none}
+    .tn summary::after{content:"+";margin-left:auto;font-family:var(--display);font-weight:700;color:var(--dim)}
+    .tn details[open]>summary::after{content:"\2212"}
+    .tn summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+    .tn-y{font-family:var(--display);font-weight:700;font-size:17px;color:var(--tn-acc);min-width:4.5ch;font-variant-numeric:tabular-nums}
+    .tn-plan .tn-y{color:var(--gold)}
+    .tn summary b{font-weight:600;color:var(--ink);min-width:0}
+    .tn-tag{font-family:var(--display);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:3px;padding:0 5px}
+    .tn details p{margin:0;padding:0 10px 10px;font-size:14px}
+    </style>
+    <p>Fifty-five years of trying to land on Mars, from the first crash to the sky crane. Tap a year to open it.</p>
+    <ol class="tn">
+      <li><details><summary><span class="tn-y">1971</span><b>Mars 2 and Mars 3</b></summary><p>Two Soviet landers arrived days apart. Mars 2 crashed on 27 November, the first human-made object to reach the surface; Mars 3 landed softly on 2 December but went silent after about 20 seconds.</p></details></li>
+      <li><details><summary><span class="tn-y">1976</span><b>Viking 1 works</b></summary><p>On 20 July 1976 NASA’s Viking 1 became the first lander to work properly on Mars, sending back pictures and weather reports. It used the same three tricks as today: heat shield, parachute, rocket engines.</p></details></li>
+      <li><details><summary><span class="tn-y">1997</span><b>Pathfinder bounces in</b></summary><p>On 4 July 1997 Mars Pathfinder wrapped itself in giant airbags and hit the ground at about 14 m/s. Its first bounce was about 16 m high, and it bounced at least 15 more times before rolling to a stop and letting out the little Sojourner rover.</p></details></li>
+      <li><details><summary><span class="tn-y">2003</span><b>Beagle 2 goes quiet</b></summary><p>Britain’s Beagle 2 landed on Christmas Day 2003 and was never heard from. In 2015 a NASA orbiter’s camera finally spotted it: one solar panel had not opened and was covering its radio antenna.</p></details></li>
+      <li><details><summary><span class="tn-y">2004</span><b>Spirit and Opportunity</b></summary><p>Two rovers bounced down on airbags in January 2004. They were meant to last about three months; Opportunity kept driving until a dust storm silenced it in June 2018, more than 14 years later.</p></details></li>
+      <li><details><summary><span class="tn-y">2008</span><b>Phoenix lands on legs</b></summary><p>On 25 May 2008 Phoenix came down near Mars’s north pole on rocket engines and three legs, like Viking. Its scoop dug up soil and its oven confirmed there is water ice just under the surface.</p></details></li>
+      <li><details><summary><span class="tn-y">2012</span><b>Curiosity’s sky crane</b></summary><p>Curiosity, a car-sized rover of about 900 kg, was too heavy for airbags. On 6 August 2012 a rocket-powered “sky crane” hovered above the ground and lowered it on cables, then flew off to crash a safe distance away. This is the trick you fly in this lab.</p></details></li>
+      <li><details><summary><span class="tn-y">2016</span><b>Schiaparelli crashes</b></summary><p>Europe and Russia’s test lander fell on 19 October 2016. A sensor was swamped for about one second, the computer worked out it was below the ground, so it dropped its parachute and stopped its rockets about 3.7 km up. It hit at about 300 km/h.</p></details></li>
+      <li><details><summary><span class="tn-y">2018</span><b>InSight listens</b></summary><p>On 26 November 2018 InSight landed on legs, the Phoenix way, and set a seismometer on the ground to feel marsquakes and learn what Mars is like inside.</p></details></li>
+      <li><details><summary><span class="tn-y">2021</span><b>Perseverance and Ingenuity</b></summary><p>On 18 February 2021 another sky crane set Perseverance down in Jezero crater. Tucked under it was Ingenuity, which on 19 April 2021 made the first powered flight on another planet and went on to fly 72 times.</p></details></li>
+      <li><details><summary><span class="tn-y">2021</span><b>China’s Zhurong</b></summary><p>On 14 May 2021 China’s Tianwen-1 lander used a heat shield, parachute and rockets to land in Utopia Planitia. China became the third country to land softly on Mars and the second to drive a rover there.</p></details></li>
+      <li class="tn-plan"><details><summary><span class="tn-y">~2030</span><b>India’s first Mars landing</b><span class="tn-tag">Plan</span></summary><p>India reached Mars orbit with Mangalyaan in 2014, on its first try. ISRO now plans a second mission (Mangalyaan-2) with a lander, aiming to launch in about 2030; reports describe parachutes and a rocket-powered lander, maybe with a small rover. These are plans, not yet built or flown.</p></details></li>
+    </ol>
+  </section>
+
   <details class="card gx"><summary>For experts: Checks against the real landings</summary>
     <div class="scroll"><table id="check"></table></div>
   </details>
@@ -144,7 +179,8 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 (()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
 </script></section>
 <!-- golapada-quiz:end -->
-  <footer>Sources: Wikipedia articles “Mars Science Laboratory” (entry at about 5.8 km/s slowed to about 470 m/s for the parachute about four minutes later, peak heating 1 min 15 s after entry, parachute rated to Mach 2.2, separation at about 1.8 km and 100 m/s, eight Mars Lander Engines of 400 to 3,100 N, EDL in seven minutes, 4.5 m heat shield) and “Mars 2020” (masses: 575 kg backshell, 440 kg heat shield, 1,070 kg fuelled descent stage with 400 kg of propellant, 1,025 kg rover; 21.5 m parachute; under 320 km/h at 1.9 km). Mars atmosphere: NASA Mars Fact Sheet (surface density about 0.020 kg/m³, scale height 11.1 km). An independent model, not affiliated with NASA or JPL.</footer>
+  <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="mars-now.html" style="--k:#e2683c"><b>Mars Now</b><span>The time, season and sol at the Perseverance and Curiosity rover sites right now, plus how far away Mars is and how long a radio signal takes to get there.</span></a><a href="reentry-lab.html" style="--k:#ff7a3c"><b>Re-entry Lab</b><span>Bring Apollo, Orion, Gaganyaan, Soyuz or Stardust home through the air without skipping off or burning up.</span></a><a href="mars-campaign.html" style="--k:#e0774a"><b>Mars Campaign</b><span>Refuel a ship in orbit with tanker flights, pick a real launch window and fly to the Moon or Mars and home again.</span></a></div></section>
+<footer>Sources: Wikipedia articles “Mars Science Laboratory” (entry at about 5.8 km/s slowed to about 470 m/s for the parachute about four minutes later, peak heating 1 min 15 s after entry, parachute rated to Mach 2.2, separation at about 1.8 km and 100 m/s, eight Mars Lander Engines of 400 to 3,100 N, EDL in seven minutes, 4.5 m heat shield) and “Mars 2020” (masses: 575 kg backshell, 440 kg heat shield, 1,070 kg fuelled descent stage with 400 kg of propellant, 1,025 kg rover; 21.5 m parachute; under 320 km/h at 1.9 km). Mars atmosphere: NASA Mars Fact Sheet (surface density about 0.020 kg/m³, scale height 11.1 km). An independent model, not affiliated with NASA or JPL. Then and now: landing dates from the Wikipedia “List of landings on extraterrestrial bodies”; details from the Wikipedia articles “Mars 3”, “Mars Pathfinder” (impact about 14 m/s, first bounce 15.7 m), “Beagle 2”, “Opportunity (rover)” (90-sol plan, last contact 10 June 2018), “Phoenix (spacecraft)” (water ice confirmed 31 July 2008), “Schiaparelli EDM”, “Ingenuity (helicopter)” (72 flights) and “Zhurong (rover)”; ISRO’s Mars lander plan from the Wikipedia article “Mars Lander Mission” and Business Today and India TV reports of 6 November 2025 quoting ISRO chairman V. Narayanan on a launch in about 2030.</footer>
 </div>
 
 <script>
