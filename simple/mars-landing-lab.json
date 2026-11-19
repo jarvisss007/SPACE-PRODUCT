@@ -1,0 +1,9 @@
+{
+ "lead": "Landing on Mars takes about seven minutes from the top of the air to the ground, and the lander must do it all by itself.",
+ "try": "Press <b>Let the autopilot fly it</b> to watch a full landing.",
+ "points": [
+  "Mars's air is thin: it slows a lander, but not nearly enough to land safely.",
+  "So a heat shield, a parachute and rocket engines all have to work, one after another.",
+  "Radio signals take minutes to reach Earth, so nobody can steer it live."
+ ]
+}

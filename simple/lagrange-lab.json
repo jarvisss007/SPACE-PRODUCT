@@ -1,0 +1,9 @@
+{
+ "lead": "There are five special places in space where a spacecraft can stay in step with Earth as both go round the Sun.",
+ "try": "Press <b>L1 (Aditya-L1, SOHO)</b> to see where India's Sun observatory sits, then <b>L2 (James Webb)</b>.",
+ "points": [
+  "At these places the pull of the Sun and Earth together keeps a spacecraft moving in step with Earth.",
+  "L1 sits between Earth and the Sun, so it can watch the Sun all the time.",
+  "L2 sits on the far side of Earth from the Sun, which helps the James Webb telescope stay cold."
+ ]
+}

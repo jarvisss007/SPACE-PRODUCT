@@ -43,6 +43,22 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     <div class="count" id="count"></div>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">A solar eclipse happens when the Moon passes in front of the Sun. This page shows when, and how much of the Sun is covered, from your city.</p><p class="gs-try"><b>Try this first:</b> Choose an <b>Eclipse</b> and <b>Where you watch</b>, then watch the Moon cross the Sun.</p><ul><li>Only along a narrow path does the Moon cover the whole Sun: that is a total eclipse. Everywhere else it takes only a bite.</li><li>Eclipses come in families that repeat every 18 years and 11 days.</li><li>Never look at the Sun without proper eclipse glasses, except during the few minutes when it is fully covered.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card">
       <h2>Your eclipse</h2>
@@ -83,16 +99,14 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     <p>Even when 99% is covered, the thin crescent left can burn your retina without any pain. Use certified solar viewing glasses or a pinhole projector. Only during totality itself, the minutes when the Sun is completely covered, is it safe to look with bare eyes. Put the glasses back on the moment the first bead of sunlight returns. A ring of fire (annular) eclipse is never safe to look at directly.</p>
   </section>
 
-  <section class="card">
-    <h2>How far to trust it</h2>
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
     <p class="note">The page works out every time below itself from NASA’s Besselian elements. These are the same numbers published eclipse tables are made from. The table compares the page’s times with times published for each city.</p>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">Contact times use the standard Besselian method (Explanatory Supplement; Meeus, <i>Elements of Solar Eclipses</i>) for an observer at sea level, with NASA’s value of ΔT, the slow drift of Earth’s clock, for each eclipse. Each eclipse’s elements cover about three hours either side of its middle, enough for the whole eclipse. Mountains along the Moon’s edge, which make totality start or end a second or two early, are left out. So is refraction near the horizon. The map shows the maximum coverage on a 2° grid, so the narrow path of totality appears as a few bright squares around the white centre line. City times are in the city’s own clock time, from the browser’s time-zone database.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

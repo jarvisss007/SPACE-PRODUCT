@@ -79,6 +79,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>On 26 September 2022 NASA flew a 610 kg spacecraft into Dimorphos, a 151-metre moonlet circling the asteroid Didymos, at 22,530 km/h. It was the first time people deliberately moved a natural object in space. Nothing was threatening Earth; it was a test. Here the measurement is redone from the published orbit periods, and then you plan the defence against an asteroid that is.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">In 2022 NASA crashed a spacecraft called DART into a small asteroid and changed its path. This page shows how we could protect Earth.</p><p class="gs-try"><b>Try this first:</b> Press <b>Replay the impact</b>, then move the sliders to change the asteroid and the warning time.</p><ul><li>A small push given many years early is enough to make an asteroid miss Earth.</li><li>With little warning, you need a much bigger push.</li><li>Finding dangerous asteroids early is the most important part of protecting Earth.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card">
       <h2>The hit, seen from above</h2>
@@ -119,15 +135,13 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <div class="kv" id="aKv" style="max-width:640px"></div>
   </section>
 
-  <section class="card">
-    <h2>Checks</h2>
+  <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">Dimorphos’s orbit is treated as a circle and the push as pointing straight along its path. The published β of 2.2 to 4.9 also accounts for DART hitting at an angle, which is why the simple estimate here sits inside that range rather than on its centre. The defence planner uses the “three times the push times the time” rule, which holds for a push along the asteroid’s path on an orbit like Earth’s. A real campaign would also aim the push, use gravity assists, and watch for keyholes, the small regions near a planet that bend an orbit into a later hit.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

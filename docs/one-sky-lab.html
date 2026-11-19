@@ -86,6 +86,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>Every space agency has something the others want. NASA flew people to the Moon. China brought rock back from its far side. Japan returned dust from asteroids. Europe landed on Titan. India put an orbiter around Mars for US$73 million. What if they stopped duplicating each other and worked as one? This page adds up what is real today and lets you assemble missions from everyone’s strengths. Part two works out, with physics, what shared research would unlock: dishes that never lose a spacecraft, a sky full of navigation satellites, a crewed trip to Mars nearly five times lighter, and one shared Moon base instead of two.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">What if every space agency in the world worked as one team? This page shows how much faster and cheaper space could be.</p><p class="gs-try"><b>Try this first:</b> Press <b>Voyager 2</b> and switch on more agencies one by one. Watch the hours when nobody can hear the spacecraft disappear.</p><ul><li>One country's radio dishes lose a far-away spacecraft for part of every day as Earth turns. Dishes from many countries together never lose it.</li><li>A phone that listens to every country's navigation satellites sees many more of them, so it finds you faster and more accurately.</li><li>Today two separate Moon bases are being planned, and much of their hardware is being built twice. Sharing it would save years.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card">
       <h2>The money, side by side</h2>
@@ -226,11 +242,10 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
   </div>
   <p class="note card">How the base model works. Getting to the Moon’s surface from low Earth orbit takes 5.93 km/s (Wikipedia “Delta-v budget”). Blue Moon burns hydrogen (450 s, tanks 13% of the fuel) and Starship burns methane (380 s, tanks 10%), both assumed. A person uses about 5 kg of food, water and oxygen a day (Wikipedia “Life-support system”). With recycling this page assumes 2 kg; with ice, only about 1 kg of food is shipped. Each reactor gives 40 kW and weighs 6 t, NASA’s target. Assumed sizing: power of 20 kW plus 5 kW per person, a 20 t habitat per four people, 15 t of landing pad, radio and lab plus a 10 t rover per base, 1 t of spares and science per person per year, and an 8 t ice plant. The bill counts launches only, not building the hardware.</p>
 
-  <section class="card">
-    <h2>How far to trust Part two</h2>
+  <details class="card gx"><summary>For experts: How far to trust Part two</summary>
     <div class="scroll"><table id="chk2"></table></div>
     <p class="note" style="margin-top:8px">The Mars model is a sketch. The mission stays the same throughout: a cargo lander and a crew ship, each pushed from low Earth orbit to Mars (3.6 km/s). Into orbit there costs 1.2 km/s, or a heat shield of 15% of the mass. Home costs 1.5 km/s. Landing is 0.9 km/s plus a 15% heat shield, and the ascent is 5 km/s on methane–oxygen (360 s). The surface cargo (55 t) and crew ship (55 t) were set once so the chemical case matches NASA’s 657 t. Fuel tanks weigh 8–20% of the fuel they hold. A nuclear stage carries one 18.1 t NERVA engine the whole way. Hydrogen slowly boiling away, crew radiation and launch failures are left out. The dish chart ignores mountains and assumes a 10° minimum height above the horizon. The navigation table counts every satellite in CelesTrak’s list, including a few spares and retired ones. Its “DOP” solves for one clock per system, as real receivers do.</p>
-  </section>
+  </details>
 
   <section class="card">
     <h2>Why it doesn’t happen more</h2>

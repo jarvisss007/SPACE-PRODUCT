@@ -80,6 +80,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>A rover reaching Mars is going about 5.8 km/s, and seven minutes later it has to be sitting still on the ground. Radio signals take longer than that to reach Earth, so nobody can help: the spacecraft does it alone. Mars has air, but only about 1% as much as Earth. That is enough to burn up a spacecraft, but not enough to stop it. So it takes three tricks in a row: a heat shield, the biggest supersonic parachute ever flown on another planet, and a rocket-powered “sky crane” that lowers the rover on cables.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Landing on Mars takes about seven minutes from the top of the air to the ground, and the lander must do it all by itself.</p><p class="gs-try"><b>Try this first:</b> Press <b>Let the autopilot fly it</b> to watch a full landing.</p><ul><li>Mars's air is thin: it slows a lander, but not nearly enough to land safely.</li><li>So a heat shield, a parachute and rocket engines all have to work, one after another.</li><li>Radio signals take minutes to reach Earth, so nobody can steer it live.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card">
       <h2>Set up the entry</h2>
@@ -105,15 +121,13 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <div class="verdict" id="cv">Press the button and keep the falling speed in check. Below 20 m, come down slower than 1 m/s; that is this page’s pass mark for setting the rover down on its wheels.</div>
   </section>
 
-  <section class="card">
-    <h2>Checks against the real landings</h2>
+  <details class="card gx"><summary>For experts: Checks against the real landings</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">Mars’s air is modelled as a simple exponential with the NASA fact-sheet surface density and scale height, and the ground is put at the reference level; Jezero and Gale craters both lie a few kilometres below it, which gives real landers a little more air to work with. The heat shield’s drag and lift are held constant and the steering is a single fixed roll, where the real guidance rolled back and forth to hit a 20 km target. The parachute’s drag coefficient and the descent engines’ efficiency (specific impulse 220 s) are assumed values, not published figures.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

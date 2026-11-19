@@ -1,0 +1,9 @@
+{
+ "lead": "NavIC is India's own version of GPS. A phone needs signals from at least four satellites to work out exactly where it is.",
+ "try": "Press <b>March 2026: 3</b>, then <b>Now, since Nov 2026: 4</b>, and watch what changes.",
+ "points": [
+  "With only three working satellites, NavIC could not give anyone their position on its own.",
+  "A new satellite, NVS-03, brought it back to four: just enough.",
+  "More satellites, spread across the sky, give a more accurate position."
+ ]
+}

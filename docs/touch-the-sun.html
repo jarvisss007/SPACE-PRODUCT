@@ -78,6 +78,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>The Sun is the hardest place in the solar system to reach. Earth carries everything launched from it around the Sun at 29.8 km/s, and to fall inward a spacecraft has to cancel almost all of that sideways speed. Leaving the solar system altogether takes less. NASA’s Parker Solar Probe got there by passing Venus seven times, each pass shedding a little more speed. On 24 December 2024 it skimmed 6.16 million km above the Sun’s surface at 191 km/s, the fastest anything people have built has ever gone.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Reaching the Sun is surprisingly hard: you have to cancel Earth's sideways speed, not just fly towards it.</p><p class="gs-try"><b>Try this first:</b> Press <b>Play the seven years</b> to watch the Parker Solar Probe get closer and closer.</p><ul><li>Earth races around the Sun at about 30 km every second. To fall towards the Sun, a spacecraft must lose most of that speed.</li><li>Parker used Venus's gravity seven times to slow down and fall closer.</li><li>At its closest, Parker is the fastest object people have ever made.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card">
     <h2>Why the Sun is so hard to reach</h2>
     <p>The push a spacecraft needs after leaving Earth, for different destinations, counting only the Sun’s gravity.</p>
@@ -105,10 +121,9 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p class="note" style="margin-top:8px">The flyby altitudes were planned in 2014, before launch, and the real flybys were adjusted afterwards, so the comparison there is looser. In every case the speed relative to Venus stays the same before and after, about 23.3 km/s, as a flyby with no engine firing requires.</p>
   </section>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">All orbits are drawn with their closest points lined up and in one plane; in reality each flyby also turned the orbit a little. Venus’s orbit is a circle. The first flyby is left out of the test because it depends on the launch orbit, which our sources do not give. The sunlight figure is for a surface facing the Sun squarely; how hot the shield gets also depends on its coating and how it sheds heat.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

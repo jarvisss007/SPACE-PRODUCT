@@ -82,6 +82,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>A million and a half kilometres away, near the balance point between Earth and the Sun, a NASA camera called EPIC photographs the whole sunlit face of our planet about a dozen times a day. These are those photographs, loaded straight from NASA as you open the page. Play the day and watch Earth turn. The first photograph of the whole round Earth, the “Blue Marble”, was a single snapshot taken by the Apollo 17 crew on 7 December 1972; DSCOVR, launched in February 2015, now takes one every couple of hours.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Real photos of the whole Earth, taken by a NASA camera 1.5 million km away.</p><p class="gs-try"><b>Try this first:</b> Press <b>Spin the day</b> to watch Earth turn, then <b>Show me India</b>.</p><ul><li>The camera always faces the sunny side of Earth, so every photo shows a fully lit Earth.</li><li>Earth turns 15 degrees every hour, so each photo shows a different part of the world.</li><li>The white swirls are clouds. Deserts are brown, oceans blue and forests dark green.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card view">
     <div>
       <div class="earth"><img id="big" alt="The whole sunlit Earth photographed by NASA's EPIC camera"><div class="msg" id="msg">Loading today’s Earth from NASA…</div></div>
@@ -97,10 +113,9 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     </div>
   </section>
 
-  <section class="card">
-    <h2>Checks</h2>
+  <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
   <section class="card">
     <h2>How to read the pictures</h2>

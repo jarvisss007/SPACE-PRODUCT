@@ -1,0 +1,9 @@
+{
+ "lead": "See where the space stations, the Hubble telescope and the brightest satellites are right now, and when they pass over you.",
+ "try": "Press <b>Use my location</b>, then pick <b>Space stations</b> to find a pass you can see with your own eyes.",
+ "points": [
+  "The International Space Station goes round Earth about every 90 minutes.",
+  "You can see it as a bright, steady, moving star just after sunset or before sunrise, while it is still lit by the Sun.",
+  "The orbit data refreshes every day from public tracking data."
+ ]
+}

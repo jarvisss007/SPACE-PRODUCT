@@ -79,6 +79,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>No telescope can show a point of light as a perfect point. Light is a wave, and passing through a round mirror spreads each star into a tiny disc with faint rings, the “Airy pattern”. The bigger the mirror, the smaller the disc; the longer the wavelength, the bigger it gets. Two stars closer together than about one disc width merge into one blob. That single rule decides what every telescope can and cannot see.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Why bigger telescopes see sharper: the bigger the mirror, the finer the detail it can make out.</p><p class="gs-try"><b>Try this first:</b> Move the sliders for colour and separation, and watch two stars blur together or split apart.</p><ul><li>Light spreads out a little as it enters a telescope. A bigger mirror spreads it less, so the picture is sharper.</li><li>Hubble sees far finer detail than your eye, but even it cannot see the flags left on the Moon.</li><li>Webb sees heat light (infrared), so it must be kept very cold, or its own warmth would blind it.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card">
       <h2>Two stars, one telescope</h2>
@@ -103,15 +119,13 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <label class="f">Temperature of the glowing object <output id="oT"></output><input type="range" id="iT" min="20" max="400" step="1" value="300"></label>
   </section>
 
-  <section class="card">
-    <h2>Checks</h2>
+  <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">The images assume a perfect, unobstructed round mirror. Real telescopes have a secondary mirror and its supports in the way, which add spikes, and Webb’s hexagonal segments give its famous six-pointed stars. Distances to Mars and Pluto are typical close-approach values. AstroSat’s ultraviolet telescope is shown at its 38 cm aperture; detector pixels can limit real images before diffraction does. Peak glow wavelengths come from Wien’s law for an ideal black body.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

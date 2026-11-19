@@ -80,6 +80,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>Both Voyagers are still sending data home, nearly half a century after launch, from beyond the bubble the Sun’s wind blows around the planets. This page works out where they are as you read it, from their speed and the day each crossed into interstellar space. Around 18 November 2026, Voyager 1 passes one light-day from Earth: a radio message sent today arrives tomorrow.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Voyager 1 and 2, launched in 1977, are the farthest objects people have ever made. This shows where they are right now.</p><p class="gs-try"><b>Try this first:</b> Press <b>Send Voyager 1 a message now</b> to see when it would arrive.</p><ul><li>Voyager 1 is so far away that a radio message takes almost a whole day to reach it.</li><li>Both have left the Sun's bubble and are now in the space between the stars.</li><li>Their power is slowly running out, so instruments are switched off one by one.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card">
     <h2>Right now</h2>
     <div class="live">
@@ -108,15 +124,13 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <div class="kv" id="stars" style="max-width:720px"></div>
   </section>
 
-  <section class="card">
-    <h2>Checks</h2>
+  <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">Each Voyager is assumed to coast in a straight line at the speed published when it crossed into interstellar space; the Sun’s pull slows it by only a few metres per second each year by now. Voyager 1’s direction comes from its published position in the sky. Voyager 2’s direction is not in our sources, so its distance from Earth is given from the Sun, and is uncertain by up to 1 AU each way. Earth’s position comes from JPL’s approximate planetary elements.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

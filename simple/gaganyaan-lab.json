@@ -1,0 +1,9 @@
+{
+ "lead": "Gaganyaan is the capsule India is building to fly its own astronauts. Here you can test its escape system, its orbit and its return home.",
+ "try": "Press <b>TV-D1, 2023</b> to replay ISRO's real test where the escape rockets pulled the capsule away from a rocket.",
+ "points": [
+  "If the rocket fails, small powerful rockets on top yank the crew capsule away in seconds.",
+  "In orbit, the capsule circles Earth about every 90 minutes, 400 km up.",
+  "Coming home, the air slows it down from very fast, then parachutes bring it gently into the sea."
+ ]
+}

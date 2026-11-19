@@ -73,6 +73,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>Coming home is the most violent part of a space flight. A capsule from the Moon hits the top of the air at 11 km/s, and the air has to take away almost all of that speed in a few minutes. Come in too shallow and the capsule skips back out to space. Come in too steep and the braking crushes the crew and the heat burns through the shield. Pick a capsule and try to thread the gap.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Coming home from space is one of the most dangerous parts. A capsule must hit the air at just the right angle.</p><p class="gs-try"><b>Try this first:</b> Press <b>The Moon</b>, then change the entry angle and watch what happens.</p><ul><li>Too shallow, and the capsule skips off the top of the air and back out.</li><li>Too steep, and the braking crushes the crew and the heat shield gets far too hot.</li><li>The air slows the capsule from many kilometres a second to almost nothing in a few minutes, turning that speed into heat.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card">
       <h2>Set up the entry</h2>
@@ -99,10 +115,9 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p class="note" id="corTxt" style="margin-top:8px"></p>
   </section>
 
-  <section class="card">
-    <h2>How far to trust it</h2>
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
   <section class="card">
     <h2>The capsules</h2>
@@ -110,10 +125,9 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p class="note" style="margin-top:8px">Mass and diameter set how much air a capsule needs to slow down (its “ballistic coefficient”). Lift lets it steer: by rolling, the crew points the lift up, down or sideways, which is how Apollo, Soyuz and Orion keep the g-load low and land near the ships. Numbers marked “assumed” are typical values for that kind of capsule, not published figures.</p>
   </section>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">The flight is computed in one plane over a round Earth that does not spin, through the US Standard Atmosphere 1976. The drag coefficient and lift are held constant at their hypersonic values, so the last few kilometres before the parachutes are only rough. Heating is the Sutton–Graves estimate at the stagnation point from the air flowing straight onto the shield. It leaves out the glowing gas’s own radiation, which matters above about 10 km/s, so the fastest entries are hotter than shown. The autopilot is a simple rule, not Apollo’s actual guidance.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

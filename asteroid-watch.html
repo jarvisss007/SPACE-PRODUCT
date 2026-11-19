@@ -43,6 +43,22 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     <p class="age" id="age"></p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Every week small asteroids fly past Earth, some closer than the Moon. This page shows NASA's real list, updated every day.</p><p class="gs-try"><b>Try this first:</b> Tap any circle on the first chart to see that asteroid's size, speed and how close it came. Then try <b>Chelyabinsk 2013</b>.</p><ul><li>Most asteroids that pass close are small, from a car to a building, and many are found only days before or after.</li><li>Small ones burn up in the air as bright fireballs. That happens somewhere on Earth every few weeks.</li><li>No known large asteroid is going to hit Earth in the next 100 years. <b>Apophis</b> passes very close in 2029, safely.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card">
     <h2>Passing Earth</h2>
     <div class="stats" id="passS"></div>
@@ -104,15 +120,13 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     <ul class="road" id="road"></ul>
   </section>
 
-  <section class="card">
-    <h2>How far to trust it</h2>
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">Widths are estimated from each asteroid’s brightness (its absolute magnitude H) with the standard formula D = 1329 km ÷ √p × 10<sup>−H/5</sup>. The reflectivity p is unknown for most, so the page shows the range for p from 0.25 (shiny) to 0.05 (dark), with 0.14 in the middle. Real widths can fall outside it. Impact energy is the energy of motion only: it does not model how deep a rock gets before it breaks up, the crater or the blast. Close-approach distances are from Earth’s centre. The data is a daily snapshot: newly found asteroids appear only at the next refresh.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

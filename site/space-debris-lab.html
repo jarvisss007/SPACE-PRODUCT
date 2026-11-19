@@ -72,6 +72,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>About 40,000 objects are tracked circling Earth, and only about 11,000 of them are working satellites. The rest is junk: dead satellites, spent rocket stages, and the fragments of explosions and collisions, all moving at around 7 km/s. The only thing that cleans orbit is the very thin top of the atmosphere, which drags everything down slowly. How slowly depends almost entirely on height. India chose 283 km for its 2019 anti-satellite test so the debris would fall quickly. The 2009 collision of two satellites happened at 789 km, where it does not.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">When a satellite breaks apart, its pieces stay in orbit. How long they stay depends on how high they are.</p><p class="gs-try"><b>Try this first:</b> Press <b>Mission Shakti, 2019</b>, then <b>Break it and watch</b>.</p><ul><li>Low down, a thin trace of air slowly drags pieces down until they burn up.</li><li>Higher up, the air is far thinner, and junk can stay for decades or centuries.</li><li>Space junk moves so fast that even a small piece can badly damage a spacecraft.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card">
       <h2>Break something</h2>
@@ -101,15 +117,13 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <canvas id="count" aria-label="Number of tracked objects in orbit over the years"></canvas>
   </section>
 
-  <section class="card">
-    <h2>Checks</h2>
+  <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">Air density follows the US Standard Atmosphere 1976, which matches roughly average solar activity. When the Sun is active the upper air swells and debris falls several times faster; when it is quiet, slower. Fragments are thrown in random directions with speeds spread around a typical value, with a long tail of a few much faster pieces, as hypervelocity impacts produce, and each is given a random ratio of mass to drag area between 5 and 60 kg/m². Orbits are averaged over each lap rather than flown point by point, and Earth’s bulge and the Moon are ignored. Real breakups also make many pieces too small to track, which stay up just as long and are just as dangerous.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

@@ -1,0 +1,9 @@
+{
+ "lead": "Coming home from space is one of the most dangerous parts. A capsule must hit the air at just the right angle.",
+ "try": "Press <b>The Moon</b>, then change the entry angle and watch what happens.",
+ "points": [
+  "Too shallow, and the capsule skips off the top of the air and back out.",
+  "Too steep, and the braking crushes the crew and the heat shield gets far too hot.",
+  "The air slows the capsule from many kilometres a second to almost nothing in a few minutes, turning that speed into heat."
+ ]
+}

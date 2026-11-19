@@ -37,6 +37,22 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     <p>India’s solar observatory Aditya-L1 sits 1.5 million km from Earth, towards the Sun, where it never passes into Earth’s shadow and watches the Sun all day, every day. It is not orbiting Earth, and it is not quite orbiting the Sun the way Earth does. It holds station at one of the five points Joseph-Louis Lagrange found in 1772, where the pulls of the Sun and Earth and the swing of the orbit balance out. This page finds those points and computes the orbit Aditya-L1 flies around one of them.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">There are five special places in space where a spacecraft can stay in step with Earth as both go round the Sun.</p><p class="gs-try"><b>Try this first:</b> Press <b>L1 (Aditya-L1, SOHO)</b> to see where India's Sun observatory sits, then <b>L2 (James Webb)</b>.</p><ul><li>At these places the pull of the Sun and Earth together keeps a spacecraft moving in step with Earth.</li><li>L1 sits between Earth and the Sun, so it can watch the Sun all the time.</li><li>L2 sits on the far side of Earth from the Sun, which helps the James Webb telescope stay cold.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card">
       <h2>The five balance points</h2>
@@ -74,15 +90,13 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch}
     </div>
   </section>
 
-  <section class="card">
-    <h2>Checks against the real mission</h2>
+  <details class="card gx"><summary>For experts: Checks against the real mission</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">This is the circular restricted three-body problem: the Sun and the Earth–Moon pair move in perfect circles, and the spacecraft is too small to pull on them. Earth’s orbit is really slightly oval, the Moon tugs the spacecraft each month, and sunlight presses on it. Those are the pushes Aditya-L1’s station-keeping burns correct. In the nudge test L1 and L2 start 300 km off; L4 starts 100,000 km off and is flown for 500 years, because its loop takes centuries.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

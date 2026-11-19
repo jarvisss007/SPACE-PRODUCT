@@ -81,6 +81,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>In 1963 India launched its first rocket, a small American-built Nike-Apache, from Thumba near Thiruvananthapuram, where a church gave its prayer hall and bishop’s room to the new space station. Sixteen years later India tried to reach orbit with its own rocket and failed. This page lays every orbital launch since then on one chart: the failures, the comebacks, and what flies next.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Every rocket India has sent towards space, on one chart: the failures, the comebacks and what flies next.</p><p class="gs-try"><b>Try this first:</b> Tap any dot on the big chart to read the story of that launch.</p><ul><li>India's first rocket to reach orbit failed in 1979, then succeeded in 1980.</li><li>New rockets often fail at first and get better with every flight.</li><li>Coming up next: Gaganyaan test flights, then Indian astronauts on an Indian rocket.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card">
     <h2>Flying next</h2>
     <div class="next" id="next"></div>
@@ -126,11 +142,10 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <div class="scroll" id="log"><table id="logT"></table></div>
   </section>
 
-  <section class="card">
-    <h2>How far to trust it</h2>
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
     <div class="scroll"><table id="check"></table></div>
     <p class="note" style="margin-top:8px">Planned dates are targets as listed in late 2026. Launch dates slip often, and a month with no day means no exact date has been announced. Payload masses are as listed; where several satellites flew together they are added up.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

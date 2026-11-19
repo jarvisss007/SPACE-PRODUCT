@@ -1,0 +1,9 @@
+{
+ "lead": "Why bigger telescopes see sharper: the bigger the mirror, the finer the detail it can make out.",
+ "try": "Move the sliders for colour and separation, and watch two stars blur together or split apart.",
+ "points": [
+  "Light spreads out a little as it enters a telescope. A bigger mirror spreads it less, so the picture is sharper.",
+  "Hubble sees far finer detail than your eye, but even it cannot see the flags left on the Moon.",
+  "Webb sees heat light (infrared), so it must be kept very cold, or its own warmth would blind it."
+ ]
+}

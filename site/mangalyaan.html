@@ -71,6 +71,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>On 24 September 2014 India’s Mars Orbiter Mission fired its engine for 23 minutes and was captured by Mars, making India the first Asian nation to reach Mars orbit. It cost about ₹450 crore (US$73 million), the cheapest Mars mission to date. ISRO published every burn: when, how long, and the orbit that resulted. This page rebuilds the whole voyage from those numbers and checks it against what really happened.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">How India's Mangalyaan reached Mars in 2014, on its very first try and on a small budget.</p><p class="gs-try"><b>Try this first:</b> The journey plays by itself. Press <b>Pause</b> at any moment to stop and read where the spacecraft is.</p><ul><li>It raised its orbit around Earth several times before leaving for Mars.</li><li>The trip took about 300 days, along a path that saves fuel.</li><li>Near Mars, one long engine burn slowed it so Mars could capture it.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <div class="two">
     <section class="card">
       <h2>298 days across the Sun</h2>
@@ -92,10 +108,9 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p class="note" style="margin-top:8px">One number is fitted: the engine’s efficiency (specific impulse). It is chosen so the propellant used across all the burns leaves the 40 kg ISRO reported in the tank after arriving at Mars. It comes out at <b id="ispOut"></b>, a little below the usual figure for this class of engine, because the model leaves out the small course corrections and the losses from firing for many minutes rather than in an instant. Every burn time is then a prediction.</p>
   </section>
 
-  <section class="card">
-    <h2>Checks against the real mission</h2>
+  <details class="card gx"><summary>For experts: Checks against the real mission</summary>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
   <section class="card">
     <h2>Could they have left on another day?</h2>
@@ -104,10 +119,9 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <div class="verdict" id="porkTxt"></div>
   </section>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">Every burn is treated as instantaneous. Long burns lose some push to gravity, which is why the real departure burn ran longer than predicted. The Earth orbit is assumed to keep a 252 km low point after the first burn, the figure ISRO gave then. The three small course corrections on the way (40.5 s, 16 s and 4 s on the small thrusters) are left out. The interplanetary path ignores the planets’ pull while the spacecraft is between them. The Mars arrival is worked out in a plane, while the real orbit was tilted about 150°, so the braking burn is an estimate.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

@@ -80,6 +80,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>Gaganyaan (“sky craft” in Sanskrit) is the capsule ISRO is building to fly Indian astronauts on an Indian rocket. Before anyone rides it, ISRO has to prove three things: the crew can escape if the rocket fails, the ship can live in orbit, and the capsule can come home through the fire and land softly in the sea. This lab lets you fly all three, with a model checked against ISRO’s real test flights.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Gaganyaan is the capsule India is building to fly its own astronauts. Here you can test its escape system, its orbit and its return home.</p><p class="gs-try"><b>Try this first:</b> Press <b>TV-D1, 2023</b> to replay ISRO's real test where the escape rockets pulled the capsule away from a rocket.</p><ul><li>If the rocket fails, small powerful rockets on top yank the crew capsule away in seconds.</li><li>In orbit, the capsule circles Earth about every 90 minutes, 400 km up.</li><li>Coming home, the air slows it down from very fast, then parachutes bring it gently into the sea.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card" aria-label="Gaganyaan in numbers">
     <div class="facts">
       <div class="fact"><b>3</b><span>crew (2 or 3)</span></div>
@@ -147,16 +163,14 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p class="note" style="margin-top:8px">Planned dates are ISRO’s targets as reported in late 2026 and have slipped before. Check ISRO for the latest.</p>
   </section>
 
-  <section class="card">
-    <h2>How far to trust it</h2>
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
     <p class="note">The escape motor’s push and the parachute sizes are not published. They were set once so the model matches the height and distance of the 2018 pad abort and lands under 11 m/s. Everything about TV-D1 below is then a real prediction, worked out by the page each time it loads.</p>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">Flights are worked out in one vertical plane with no wind, through the US Standard Atmosphere 1976. The escape is a single steady thrust of 975 kN for 5.98 s on a 12.6 t stack, steered by a steady pitch-over. The real system has five kinds of motor, grid fins and its own sequence. The rocket in the escape chart is simply shut down and left to coast, as TV-D1’s was. The return uses the Re-entry Lab model: constant drag and lift, the Sutton–Graves heating estimate, a round Earth that does not spin. Parachutes open on a fixed rule: drogues once the capsule has slowed below 216 m/s, mains at 2 km. Reefing holds each main at 15% of its area for the first 7 s, as in the 2022 drop test. Masses: 12.6 t for the escape stack and 4.5 t for the crew module, from the two tests. The service module’s engine efficiency (315 s) is assumed.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>

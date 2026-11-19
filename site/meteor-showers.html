@@ -76,6 +76,22 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p>A shooting star is a grain of dust, often smaller than a grain of sand, hitting the air at up to 70 km/s and burning up 100 km above you. Most of that dust was shed by comets. Their crumbs spread along the comet’s path, and every year Earth ploughs through the same streams on the same dates. Pick a shower to see when and where to look from your city, how the Moon will interfere, and why it happens on that date at all.</p>
   </header>
 
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Shooting stars are tiny bits of comet dust burning up in the air. On the same nights every year, Earth passes through the same dust.</p><p class="gs-try"><b>Try this first:</b> Choose your <b>City</b> and how dark <b>Your sky</b> is. The page shows the best hour to watch.</p><ul><li>The best showers give up to about 100 shooting stars an hour from a really dark place, far fewer in a city.</li><li>Watch after midnight, lie back and look at the whole sky. A bright Moon hides the faint ones.</li><li>Each shower comes from one comet, which left its dust along its path.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
   <section class="card">
     <h2>The next showers</h2>
     <div class="showers" id="list"></div>
@@ -119,16 +135,14 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
     <p class="note" style="margin-top:8px" id="nrgT"></p>
   </section>
 
-  <section class="card">
-    <h2>How far to trust it</h2>
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
     <p class="note">Every predicted date below comes only from the parent’s published orbit: the page finds where it passes closest to Earth’s orbit and when Earth reaches that spot. No shower dates are fed in.</p>
     <div class="scroll"><table id="check"></table></div>
-  </section>
+  </details>
 
-  <section class="card">
-    <h2>What the model leaves out</h2>
+  <details class="card gx"><summary>For experts: What the model leaves out</summary>
     <p class="note">Rates use the standard zenithal hourly rate formula: the number seen equals ZHR × sin(radiant height) ÷ r<sup>6.5 − limiting magnitude</sup>. The page assumes r = 2 for every shower; real values run about 2 to 3. The Moon is assumed to brighten the sky by up to 1.5 magnitudes when full and above the horizon. Hours count only once the Sun is 12° below the horizon. Real showers rise and fall over several nights around the peak, and a ZHR is an ideal that few observers reach. Parent orbits are today’s. Dust released centuries ago has drifted, so a few showers peak a few days from the predicted point, and Halley’s two showers come from dust far from its present path. Sun and Moon positions use the same low-precision formulas as <a href="tonight.html">Tonight’s Sky</a>.</p>
-  </section>
+  </details>
 
   <!-- golapada-quiz:start -->
 <style>
