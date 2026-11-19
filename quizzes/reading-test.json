@@ -1,0 +1,34 @@
+{
+"questions": [
+{
+"q": "In Forer’s 1948 experiment, how did 39 students rate a reading that was the same for all of them?",
+"do": "Take the test, then read <b>Now the truth</b>.",
+"a": "<b>4.30 out of 5</b> on average. The text came from a newsstand astrology book.",
+"history": true
+},
+{
+"q": "Why do statements beginning “At times you…” feel accurate?",
+"do": "Read <b>Why it works</b>.",
+"a": "They cover both sides of a trait, so they are true of almost everyone.",
+"history": false
+},
+{
+"q": "Name one thing a reader can do to seem to know you without any special power.",
+"do": "Read <b>If a person seemed to know you</b>.",
+"a": "Any of: watching your reactions, asking questions that sound like statements, guessing broadly and letting you fill in details, or remembering hits and forgetting misses (cold reading).",
+"history": false
+},
+{
+"q": "Did the page use your name, birthday or colour to make your reading?",
+"do": "Take the test with two different names and compare.",
+"a": "<b>No.</b> Everyone gets the same twelve statements.",
+"history": false
+},
+{
+"q": "What three questions protect you from a convincing reading?",
+"do": "Read the list at the end of <b>If a person seemed to know you</b>.",
+"a": "Could it be said of almost anyone? Did I give the answer away? How many guesses were wrong?",
+"history": false
+}
+]
+}

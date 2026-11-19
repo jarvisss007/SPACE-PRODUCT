@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="The Reading Test · Golapada">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Reading Test</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: three steps. Ask a few personal-feeling questions, show a "personal reading" and ask for a rating, then reveal that everyone gets the same words, with Forer's 1948 result and how readings work. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--violet:#b6a4ff;--gold:#e8c46a;--lox:#74c7ff;--ok:#5fd6a0;--bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}*{box-sizing:border-box}
+.wrap{max-width:860px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--violet)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,56px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px;min-width:0}
+.card[hidden]{display:none}
+.form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}@media (max-width:640px){.form{grid-template-columns:minmax(0,1fr)}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim)}
+input,select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:8px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+button{font:inherit;color:#130b26;background:var(--violet);border:0;border-radius:4px;padding:10px 16px;cursor:pointer;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:15px;margin-top:12px}
+.reading{font-size:16.5px;line-height:1.7;color:#e7edf3;background:var(--panel2);border-radius:6px;padding:16px 18px}
+.reading li{margin:4px 0}
+.rate{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.rate button{margin:0;background:var(--panel2);color:var(--ink);border:1px solid var(--line);min-width:52px}.rate button[aria-pressed="true"]{background:var(--violet);color:#130b26;border-color:var(--violet)}
+.big{font-family:var(--display);font-size:clamp(28px,5vw,44px);line-height:1.1;color:var(--gold)}
+.compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.compare div{background:var(--panel2);border-radius:6px;padding:12px}.compare b{font-family:var(--display);font-size:34px;display:block}.compare span{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+ul.tips{padding-left:20px}ul.tips li{margin:6px 0;color:#c3ccd6}
+.help{border-left:4px solid var(--ok);background:#0b1a14;padding:12px 14px;border-radius:4px;color:#d6efe4}
+.note{font-size:12.5px;color:var(--dim)}
+footer{color:var(--dim);font-size:12.5px}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-bar{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;padding-block:6px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);padding:2px 6px}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible,.sa-nav button:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:2px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+.sa-nav button{flex:none;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #2c3a4d;border-radius:4px;cursor:pointer;padding:5px 10px;line-height:1.2}
+.sa-nav .sa-arr{padding:5px 8px;font-size:16px}.sa-nav .sa-arr[disabled]{opacity:.3;cursor:default}
+.sa-nav .sa-all[aria-expanded="true"]{background:#e8c46a;color:#1b1404;border-color:#e8c46a}
+.sa-nav .sa-panel{max-width:1200px;margin:0 auto;padding:6px max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:4px;max-height:70vh;overflow:auto}
+.sa-nav .sa-panel[hidden]{display:none}
+.sa-nav .sa-panel a{background:#0b1017;border:1px solid #1f2a38}.sa-nav .sa-panel a[aria-current="page"]{background:#e7edf3;color:#0a0d12;border-color:#e7edf3}
+@media (max-width:560px){.sa-nav .sa-arr{display:none}}
+@media print{.sa-nav{display:none}}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-bar"><a href="index.html" class="sa-brand">Golapada</a><button type="button" class="sa-arr" aria-label="Scroll the lab list left">‹</button><div class="sa-in"><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html" aria-current="page">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div><button type="button" class="sa-arr" aria-label="Scroll the lab list right">›</button><button type="button" class="sa-all" aria-expanded="false">All labs</button></div><div class="sa-panel" hidden><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html" aria-current="page">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<script>
+(()=>{const n=document.currentScript.previousElementSibling,s=n.querySelector('.sa-in'),[l,r]=n.querySelectorAll('.sa-arr'),b=n.querySelector('.sa-all'),p=n.querySelector('.sa-panel');
+const upd=()=>{l.disabled=s.scrollLeft<=2;r.disabled=s.scrollLeft+s.clientWidth>=s.scrollWidth-2};
+l.onclick=()=>{s.scrollLeft-=s.clientWidth*0.7};r.onclick=()=>{s.scrollLeft+=s.clientWidth*0.7};
+s.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);
+s.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&s.scrollWidth>s.clientWidth){s.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+const c=s.querySelector('[aria-current]');if(c)s.scrollLeft=c.offsetLeft-s.clientWidth/2+c.offsetWidth/2;upd();
+const close=()=>{p.hidden=true;b.setAttribute('aria-expanded','false')};
+b.onclick=()=>{const o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));if(o){const a=p.querySelector('a');if(a)a.focus()}};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!p.hidden){close();b.focus()}});
+addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
+</script>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">A famous psychology experiment you can take yourself</div>
+    <h1>The Reading Test</h1>
+    <p>Fortune-tellers, astrology apps and “personality readers” can feel uncannily accurate. This page gives you a personal reading in two minutes. Rate how well it describes you, and then see what is really going on.</p>
+  </header>
+
+  <section class="card" id="s1">
+    <h2>Step 1: tell us a little about you</h2>
+    <div class="form">
+      <label class="f">First name<input id="nm" autocomplete="off" placeholder="Your first name"></label>
+      <label class="f">Date of birth<input type="date" id="dob"></label>
+      <label class="f">Favourite colour<select id="col"><option>Blue</option><option>Red</option><option>Green</option><option>Yellow</option><option>Black</option><option>White</option><option>Orange</option><option>Purple</option></select></label>
+    </div>
+    <button type="button" id="go">Read my personality</button>
+    <p class="note" style="margin-top:8px">Nothing you type is sent anywhere or saved.</p>
+  </section>
+
+  <section class="card" id="s2" hidden>
+    <h2 id="hi">Your reading</h2>
+    <div class="reading"><ol id="rd"></ol></div>
+    <p style="margin-top:14px"><b>How well does this describe you?</b> 0 means not at all, 5 means perfectly.</p>
+    <div class="rate" id="rate"></div>
+  </section>
+
+  <section class="card" id="s3" hidden>
+    <h2>Now the truth</h2>
+    <p class="big">Everyone who takes this test gets exactly the same reading.</p>
+    <p>Your name, birthday and colour were never used. The statements were written in 1948. That year the psychologist Bertram Forer gave 39 of his students a personality test, then a week later handed each of them a “personal” description. Every student actually got the same text, which Forer had put together from a horoscope book bought at a newsstand. The students rated it, on average, <b>4.30 out of 5</b>.</p>
+    <div class="compare"><div><span>Your rating</span><b id="mine">–</b></div><div><span>Forer’s students, 1948</span><b>4.30</b></div></div>
+    <p class="note">One of Forer’s thirteen statements, about sexual adjustment, is left out here. The other twelve are his exact words.</p>
+    <h2 style="margin-top:16px">Why it works</h2>
+    <ul class="tips">
+      <li><b>The statements fit nearly everyone.</b> Who doesn’t want to be liked, or sometimes doubt a decision?</li>
+      <li><b>“At times you are…, at other times…”</b> covers both sides, so it is always true.</li>
+      <li><b>Mostly flattering.</b> People accept praise as accurate more readily than criticism.</li>
+      <li><b>It feels made for you.</b> Once you believe it was written about you, you fill in your own meaning.</li>
+      <li><b>Authority helps.</b> People accept a reading more easily from someone who seems expert, and those who badly want approval are the easiest to convince.</li>
+    </ul>
+    <h2 style="margin-top:16px">If a person seemed to know you</h2>
+    <p>Readers can also pick up a great deal in conversation without seeming to. Psychologists call this <i>cold reading</i>: watching your reactions, asking small questions that sound like statements, guessing broadly and letting you fill in the details, and remembering the hits while you forget the misses. In India newborns are traditionally named from their birth chart, so even a name can hint at the sky on the day someone was born.</p>
+    <p>Three questions protect you:</p>
+    <ul class="tips">
+      <li>Could this sentence be said about almost anyone?</li>
+      <li>Did I give away the answer, by a word, a nod or my face?</li>
+      <li>How many guesses were wrong, and did I forget them?</li>
+    </ul>
+    <p>Want to understand yourself instead? Try <a href="know-yourself.html">Know Yourself</a>, a questionnaire built by psychologists and tested on thousands of people. Curious about the sky on your birthday? The <a href="kundli.html">Kundli Lab</a> works it out precisely.</p>
+    <div class="help" style="margin-top:12px">If you are feeling lost, low or taken advantage of, talking to someone helps far more than any reading. In India, <b>Tele-MANAS</b> is free and open around the clock on <b>14416</b> (or 1-800-891-4416), in many Indian languages.</div>
+    <button type="button" id="again">Take it again</button>
+  </section>
+
+  <!-- golapada-quiz:start -->
+<style>
+.gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
+.gq h2{font-family:"Saira Condensed","Noto Sans Devanagari","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
+.gq .gq-sub{font-size:13px;color:#8a97a8;margin:0 0 12px;max-width:76ch}
+.gq ol{list-style:none;margin:0;padding:0;counter-reset:gq}
+.gq li{counter-increment:gq;border-top:1px solid #1f2a38;padding:12px 0 10px 40px;position:relative}
+.gq li::before{content:counter(gq);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:#121a25;border:1px solid #2c3a4d;color:#e8c46a;font:700 15px/26px "Saira Condensed",sans-serif;text-align:center}
+.gq .gq-q{font-size:15px;color:#e7edf3;margin:0 0 4px}
+.gq .gq-do{font-size:13px;color:#8a97a8;margin:0 0 6px}.gq .gq-do b{color:#c3ccd6;font-weight:500}
+.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
+.gq details summary{cursor:pointer;font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
+.gq details summary:focus-visible,.gq button:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+.gq details p{margin:6px 0 0;padding:8px 10px;background:#121a25;border-left:3px solid #5fd6a0;border-radius:3px;font-size:14px;color:#d5dde6;max-width:76ch}
+.gq .gq-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gq button{font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
+@media print{.gq{background:#fff;border-color:#bbb}.gq h2,.gq .gq-q,.gq details p{color:#000}.gq .gq-sub,.gq .gq-do{color:#333}.gq details p{background:#fff}.gq .gq-bar{display:none}}
+</style>
+<section class="gq" aria-labelledby="gq-title"><h2 id="gq-title">Quiz: five questions</h2><p class="gq-sub">Answer each one by using the lab above, then check. Good for a class: pairs work through them, the teacher reveals the answers.</p><ol><li><p class="gq-q"><span class="gq-h">History</span>In Forer’s 1948 experiment, how did 39 students rate a reading that was the same for all of them?</p><p class="gq-do"><b>Use the lab:</b> Take the test, then read <b>Now the truth</b>.</p><details><summary>Show answer</summary><p><b>4.30 out of 5</b> on average. The text came from a newsstand astrology book.</p></details></li><li><p class="gq-q">Why do statements beginning “At times you…” feel accurate?</p><p class="gq-do"><b>Use the lab:</b> Read <b>Why it works</b>.</p><details><summary>Show answer</summary><p>They cover both sides of a trait, so they are true of almost everyone.</p></details></li><li><p class="gq-q">Name one thing a reader can do to seem to know you without any special power.</p><p class="gq-do"><b>Use the lab:</b> Read <b>If a person seemed to know you</b>.</p><details><summary>Show answer</summary><p>Any of: watching your reactions, asking questions that sound like statements, guessing broadly and letting you fill in details, or remembering hits and forgetting misses (cold reading).</p></details></li><li><p class="gq-q">Did the page use your name, birthday or colour to make your reading?</p><p class="gq-do"><b>Use the lab:</b> Take the test with two different names and compare.</p><details><summary>Show answer</summary><p><b>No.</b> Everyone gets the same twelve statements.</p></details></li><li><p class="gq-q">What three questions protect you from a convincing reading?</p><p class="gq-do"><b>Use the lab:</b> Read the list at the end of <b>If a person seemed to know you</b>.</p><details><summary>Show answer</summary><p>Could it be said of almost anyone? Did I give the answer away? How many guesses were wrong?</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">Show all answers</button></div><script>
+(()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
+</script></section>
+<!-- golapada-quiz:end -->
+  <footer>Sources: Wikipedia “Barnum effect” (Forer’s 1948 experiment: 39 students, the thirteen statements, an average rating of 4.30 out of 5, the text taken from a newsstand astrology book; vague “at times” statements; the role of authority and need for approval; cold reading); “Hindu astrology” (newborns traditionally named from their kundali). Tele-MANAS: Ministry of Health and Family Welfare, launched October 2022; numbers 14416 and 1-800-891-4416. An independent page.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const FORER=['You have a great need for other people to like and admire you.','You have a tendency to be critical of yourself.','You have a great deal of unused capacity which you have not turned to your advantage.','While you have some personality weaknesses, you are generally able to compensate for them.','Disciplined and self-controlled outside, you tend to be worrisome and insecure inside.','At times you have serious doubts as to whether you have made the right decision or done the right thing.','You prefer a certain amount of change and variety and become dissatisfied when hemmed in by restrictions and limitations.','You pride yourself as an independent thinker and do not accept others’ statements without satisfactory proof.','You have found it unwise to be too frank in revealing yourself to others.','At times you are extroverted, affable, sociable, while at other times you are introverted, wary, reserved.','Some of your aspirations tend to be pretty unrealistic.','Security is one of your major goals in life.'];
+$('rate').innerHTML=[0,1,2,3,4,5].map(n=>`<button type="button" data-r="${n}" aria-pressed="false">${n}</button>`).join('');
+$('go').onclick=()=>{const n=($('nm').value||'').trim().slice(0,40);$('hi').textContent=n?`${n}, your reading`:'Your reading';
+  $('rd').innerHTML=FORER.map(s=>`<li>${s}</li>`).join('');$('s1').hidden=true;$('s2').hidden=false;$('s2').scrollIntoView({behavior:'smooth'})};
+document.querySelectorAll('#rate [data-r]').forEach(b=>b.onclick=()=>{document.querySelectorAll('#rate [data-r]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));$('mine').textContent=b.dataset.r;setTimeout(()=>{$('s3').hidden=false;$('s3').scrollIntoView({behavior:'smooth'})},400)});
+$('again').onclick=()=>{$('s2').hidden=true;$('s3').hidden=true;$('s1').hidden=false;$('nm').value='';$('dob').value='';document.querySelectorAll('#rate [data-r]').forEach(x=>x.setAttribute('aria-pressed','false'));scrollTo({top:0,behavior:'smooth'})};
+})();
+</script>
+
+<style>.ga-install{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:80;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;background:#e8c46a;color:#1b1404;border:0;border-radius:999px;padding:10px 16px;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer}.ga-install[hidden]{display:none}.ga-install:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}@media print{.ga-install{display:none}}</style>
+<button type="button" class="ga-install" id="gaInstall" hidden>Install Golapada</button>
+<script>
+(()=>{if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+let ev=null;const b=document.getElementById('gaInstall');addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;b.hidden=false});
+b.addEventListener('click',async()=>{if(!ev)return;b.hidden=true;ev.prompt();try{await ev.userChoice}catch(e){}ev=null});addEventListener('appinstalled',()=>{b.hidden=true})})();
+</script>
+</html>

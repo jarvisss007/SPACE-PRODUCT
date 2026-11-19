@@ -1,0 +1,34 @@
+{
+"questions": [
+{
+"q": "What is a lagna, astronomically?",
+"do": "Read the introduction, then <b>The real sky that night</b> after making any kundli.",
+"a": "The rashi that was <b>rising on the eastern horizon</b> at the moment and place of birth. It changes about every two hours, which is why the birth time and place matter so much.",
+"history": false
+},
+{
+"q": "Why can two people born on the same day in different cities have different lagnas but the same Moon sign?",
+"do": "Make a kundli, then change only the <b>Place of birth</b> and compare the lagna and Moon sign.",
+"a": "The Moon’s position in the sky is the same for everyone at one moment, but which part of the sky is <b>rising</b> depends on where you stand on the turning Earth.",
+"history": false
+},
+{
+"q": "How wide is one nakshatra, and how many are there?",
+"do": "Read the positions table and the sources.",
+"a": "<b>27</b> nakshatras, each <b>13°20′</b> of the sky (360° ÷ 27).",
+"history": true
+},
+{
+"q": "What does the page check its Sun calculation against?",
+"do": "Read <b>How far to trust it</b>.",
+"a": "The dates of <b>Makar Sankranti</b> (14 January) and <b>Mesha Sankranti</b> (13 or 14 April), when the Sun enters sidereal Makara and Mesha.",
+"history": false
+},
+{
+"q": "Why does the page warn when a placement is close to a border?",
+"do": "Make a kundli and read the line under the four key cards.",
+"a": "Birth times are often rounded to 5 or 10 minutes. If the lagna or a graha is within a few minutes of changing rashi or nakshatra, the recorded time cannot settle it.",
+"history": false
+}
+]
+}

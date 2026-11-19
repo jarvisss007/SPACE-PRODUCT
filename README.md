@@ -14,6 +14,7 @@ Each `*.html` file at the top level is one self-contained lab: one file with no 
 | For teachers | Worksheets (`worksheets.html`): printable, one per school topic, with an answer key |
 | Rockets and Earth orbit | Starship Catch, Rocket Lab, Gaganyaan Lab, NavIC Lab, Space Debris Lab, Re-entry Lab, Planetary Defense Lab |
 | Moon, Mars and planets | Chandrayaan-3 Moon Lab, Mangalyaan Mars Lab, Mars Landing Lab, Mars Campaign, Solar System Lab, Gravity Assist Lab, Ion Engine Lab, Touch the Sun, Lagrange Point Lab |
+| Know yourself | Kundli Lab (`kundli.html`, NASA-checked janma kundli, no predictions), Know Yourself (`know-yourself.html`, IPIP Big Five), The Reading Test (`reading-test.html`, Forer 1948) |
 | What if | One Sky Lab: every space agency working as one |
 | Deep space | Voyager Now, Telescope Lab, Milky Way Atlas, Exoplanet Explorer, Black Hole and Wormhole Lab, Spacecraft Archive |
 | Ancient astronomy | Aryabhata Lab, Nalanda, Starship Through Time, Clues in Old Books |
