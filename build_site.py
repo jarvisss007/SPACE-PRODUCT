@@ -20,6 +20,7 @@ PAGES = [
     ("satellite-watch.html", "Live satellites", "HRrym68cV7YcEbuycixy2p"),
     ("space-weather.html", "Space weather", "JPono7cjiSTiPThfrCKzXm"),
     ("meteor-showers.html", "Meteors", "B9gJ3NAKrKPaDJoWTrXMDj"),
+    ("eclipse-lab.html", "Eclipses", "LvmyiUbgkuDqYbgSpd2UcW"),
     ("starship-catch.html", "Catch", "D2UgmPBXpzcKUxY7qnzQdB"),
     ("rocket-lab.html", "Rockets", "4ZaBFQRVW2jUmBzCpVSHiU"),
     ("navic-lab.html", "NavIC", "DTgnmQzwPso42LJYg5ZR7w"),

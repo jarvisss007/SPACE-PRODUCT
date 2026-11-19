@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304060b'/%3E%3Cellipse cx='32' cy='32' rx='26' ry='11' fill='none' stroke='%2374c7ff' stroke-width='3' transform='rotate(-25 32 32)'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E">
+<meta name="description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta property="og:title" content="Eclipse Lab · Golapada">
+<meta property="og:description" content="Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, the Sun and the stars, each checked against what really happened.">
+<meta name="theme-color" content="#04060b">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Eclipse Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: countdown to 2 August 2027, then your eclipse from your city (times, the Sun and Moon at any moment), the shadow on the map, the Saros 136 family, the history from Rahu to Aditya-L1, safety, checks and limits. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--cor:#ffe3a3;--sun:#ffc24a;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--cor)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}@media (max-width:620px){.row{grid-template-columns:minmax(0,1fr)}}
+.count{display:flex;flex-wrap:wrap;gap:18px;align-items:baseline}.count b{font-family:var(--display);font-size:clamp(36px,7vw,64px);line-height:1;color:var(--cor)}.count span{color:var(--dim);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line)}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:21px;font-variant-numeric:tabular-nums}
+.stat.ok{border-top-color:var(--ok)}.stat.warn{border-top-color:var(--gold)}.stat.bad{border-top-color:var(--bad)}.stat.cor{border-top-color:var(--cor)}
+select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px;width:100%}select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--sun)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:12px}label.f output{font-family:var(--display);font-size:17px;color:var(--ink)}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}#disc{aspect-ratio:1/1;max-width:420px;margin:0 auto}#map{aspect-ratio:2/1;cursor:crosshair}#saros{aspect-ratio:16/7}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--dim);margin-top:6px}.legend i{display:inline-block;width:14px;height:8px;vertical-align:middle;margin-right:5px}
+.tl{list-style:none;margin:0;padding:0}.tl li{display:grid;grid-template-columns:130px minmax(0,1fr);gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}.tl b{font-family:var(--display);font-size:19px;color:var(--cor)}.tl h3{margin:0 0 4px;font-family:var(--display);font-size:19px;text-transform:uppercase}.tl p{margin:0;font-size:14px}
+.tl li.now b{color:var(--ok)}@media (max-width:560px){.tl li{grid-template-columns:minmax(0,1fr);gap:2px}}
+.warn-box{border:1px solid #6b4a12;background:#1c1406;border-radius:6px;padding:14px 16px}.warn-box h2{color:var(--gold)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:8px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-in"><a href="index.html" class="sa-brand">Golapada</a><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="eclipse-lab.html" aria-current="page">Eclipses</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="worksheets.html">Worksheets</a><a href="aryabhata-lab.html">Aryabhata</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">From Rahu to relativity · NASA’s eclipse elements · your city</div>
+    <h1>Eclipse Lab</h1>
+    <p>For 2,500 years people have tried to predict the moment the Moon swallows the Sun. In India the story was Rahu, a severed head chasing the Sun. In 499 CE Aryabhata wrote, in the chapter of his book called the <i>Golapada</i>, the chapter this website is named after, that eclipses are shadows: the Moon covering the Sun, and Earth’s shadow falling on the Moon. Today the same idea, worked out with NASA’s numbers, tells you to the second when the sky will go dark over your city.</p>
+    <div class="count" id="count"></div>
+  </header>
+
+  <div class="two">
+    <section class="card">
+      <h2>Your eclipse</h2>
+      <label class="f">Eclipse<select id="ecl"></select></label>
+      <label class="f">Where you watch<select id="city"></select></label>
+      <div class="verdict" id="youV"></div>
+      <div class="stats" id="youS"></div>
+    </section>
+    <section class="card">
+      <h2>The Sun and Moon from there</h2>
+      <canvas id="disc" aria-label="The Sun and Moon as seen from the chosen place at the chosen moment"></canvas>
+      <label class="f" style="margin-top:10px">Moment <output id="oT"></output><input type="range" id="iT" min="0" max="1000" value="500"></label>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Where the shadow falls</h2>
+    <p>Every square on the map is coloured by how much of the Sun the Moon covers there at the best moment. The white line is the centre of the Moon’s shadow: stand on it and you see totality (or a ring of fire). Tap anywhere on the map to watch from there.</p>
+    <canvas id="map" aria-label="World map of how much of the Sun is covered, with the path of the central shadow"></canvas>
+    <div class="legend"><span><i style="background:#3a2a10"></i>a small bite</span><span><i style="background:#a86b18"></i>half covered</span><span><i style="background:#ffd27a"></i>nearly all</span><span><i style="background:#fff"></i>centre line</span><span><i style="background:#74c7ff;border-radius:50%;width:8px"></i>cities</span></div>
+    <p class="note" style="margin-top:6px" id="mapT"></p>
+  </section>
+
+  <section class="card">
+    <h2>The family of 2027: Saros 136</h2>
+    <p>Every 18 years, 11 days and 8 hours (one saros, 223 lunar months), the Sun, Moon and the Moon’s orbit line up almost exactly as before, and the eclipse repeats. The extra 8 hours mean Earth has turned a third of the way round, so each repeat lands about 120° further west. Babylonian astronomers knew this cycle centuries before the common era. The eclipse of 2 August 2027 is a member of Saros series 136, and so is the 1919 eclipse that proved Einstein right and the 2009 eclipse that darkened India.</p>
+    <canvas id="saros" aria-label="Members of Saros 136 with their duration of totality and where the longest totality fell"></canvas>
+    <div class="scroll"><table id="sarosT" style="margin-top:8px"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>From Rahu to helium to Aditya-L1</h2>
+    <ul class="tl" id="hist"></ul>
+  </section>
+
+  <section class="warn-box">
+    <h2>Never look at the Sun without eclipse glasses</h2>
+    <p>Even when 99% is covered, the thin crescent left can burn your retina without any pain. Use certified solar viewing glasses or a pinhole projector. Only during totality itself, the minutes when the Sun is completely covered, is it safe to look with bare eyes. Put the glasses back on the moment the first bead of sunlight returns. A ring of fire (annular) eclipse is never safe to look at directly.</p>
+  </section>
+
+  <section class="card">
+    <h2>How far to trust it</h2>
+    <p class="note">The page works out every time below itself from NASA’s Besselian elements. These are the same numbers published eclipse tables are made from. The table compares the page’s times with times published for each city.</p>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>What the model leaves out</h2>
+    <p class="note">Contact times use the standard Besselian method (Explanatory Supplement; Meeus, <i>Elements of Solar Eclipses</i>) for an observer at sea level, with NASA’s value of ΔT, the slow drift of Earth’s clock, for each eclipse. Each eclipse’s elements cover about three hours either side of its middle, enough for the whole eclipse. Mountains along the Moon’s edge, which make totality start or end a second or two early, are left out. So is refraction near the horizon. The map shows the maximum coverage on a 2° grid, so the narrow path of totality appears as a few bright squares around the white centre line. City times are in the city’s own clock time, from the browser’s time-zone database.</p>
+  </section>
+
+  <footer>Eclipse elements: Fred Espenak, NASA Goddard (eclipse.gsfc.nasa.gov), Besselian elements for each eclipse listed, from VSOP87/ELP2000-85 ephemerides. Coastlines: Natural Earth 1:110m land via the world-atlas package (public domain). Published city times for the checks: the Wikipedia articles on the solar eclipses of 22 July 2009, 15 January 2010, 26 December 2019, 2 August 2027 and 21 May 2031. History: Wikipedia “Helium” (isolated on Earth in 1895), “Aryabhatiya” (Aryabhata correctly explained eclipses of the Sun and Moon), “Rahu”, “Saros (astronomy)” (223 synodic months, 6,585.32 days; known to Chaldean astronomers), “Eclipse of Thales” (28 May 585 BCE), “Solar eclipse of August 18, 1868” (Janssen at Guntur; helium), “Solar eclipse of January 22, 1898” (expeditions to India including K. D. Naegamvala’s), “Solar eclipse of May 29, 1919” (the Eddington experiment; 6 min 50.75 s), “Solar eclipse of June 20, 1955” (7 min 7.74 s, longest of Saros 136; across Ceylon), “Solar eclipse of July 11, 1991” (6 min 53.08 s), “Solar eclipse of October 24, 1995” (an Indian Air Force MiG-25 imaged it from 25 km), “Solar eclipse of July 22, 2009” (longest totality of the 21st century, 6 min 38.86 s), “PROBA-3” (launched on PSLV-C59 on 5 December 2024), “Aditya-L1” (the VELC coronagraph). An independent page.</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id),D=Math.PI/180,nf=new Intl.NumberFormat('en-US');
+const EL={"1919May29T":{"t0":13.0,"dT":21.0,"x":[-0.06583,0.57964,7.1e-06,-9.7e-06],"y":[-0.300704,0.0398473,-0.0001357,-6e-07],"d":[21.50414,0.006556,-5e-06,0.0],"l1":[0.53214,4.88e-05,-1.27e-05,0.0],"l2":[-0.013928,4.85e-05,-1.26e-05,0.0],"mu":[15.72997,15.000199,0.0,0.0],"tf1":0.0046119,"tf2":0.0045889,"gamma":-0.2955,"mag":1.0719,"saros":136},"1955Jun20T":{"t0":4.0,"dT":31.2,"x":[-0.116367,0.580546,-1.31e-05,-9.8e-06],"y":[-0.143521,-0.0488596,-0.0001604,1e-06],"d":[23.43098,0.000697,-6e-06,0.0],"l1":[0.530927,3.84e-05,-1.27e-05,0.0],"l2":[-0.015134,3.82e-05,-1.27e-05,0.0],"mu":[239.70013,14.999238,0.0,0.0],"tf1":0.0046004,"tf2":0.0045775,"gamma":-0.1528,"mag":1.0776,"saros":136},"1980Feb16T":{"t0":9.0,"dT":50.6,"x":[0.001024,0.5604169,-1.24e-05,-9.3e-06],"y":[0.229788,0.1425469,7.35e-05,-2.3e-06],"d":[-12.56628,0.014007,3e-06,0.0],"l1":[0.539326,-6.22e-05,-1.29e-05,0.0],"l2":[-0.006778,-6.19e-05,-1.28e-05,0.0],"mu":[311.45929,15.001949,0.0,0.0],"tf1":0.0047326,"tf2":0.0047091,"gamma":0.2224,"mag":1.0434,"saros":130},"1991Jul11T":{"t0":19.0,"dT":57.9,"x":[-0.067259,0.5671376,-3.69e-05,-9.6e-06],"y":[0.012127,-0.1379772,-0.0001529,2.5e-06],"d":[22.09743,-0.00522,-5e-06,0.0],"l1":[0.530414,2.52e-05,-1.28e-05,0.0],"l2":[-0.015645,2.51e-05,-1.27e-05,0.0],"mu":[103.63978,15.000058,0.0,0.0],"tf1":0.0045986,"tf2":0.0045757,"gamma":-0.0041,"mag":1.08,"saros":136},"1995Oct24T":{"t0":5.0,"dT":61.4,"x":[0.330028,0.5430518,1.82e-05,-8.3e-06],"y":[0.276349,-0.14411,5.25e-05,2.1e-06],"d":[-11.58057,-0.014196,2e-06,0.0],"l1":[0.544753,-0.0001149,-1.21e-05,0.0],"l2":[-0.001378,-0.0001143,-1.2e-05,0.0],"mu":[258.92838,15.00274,0.0,0.0],"tf1":0.0047003,"tf2":0.0046769,"gamma":0.3518,"mag":1.0213,"saros":143},"2009Jul22T":{"t0":3.0,"dT":65.9,"x":[0.240059,0.5563975,-5.83e-05,-1e-05],"y":[-0.003283,-0.1774571,-0.0001346,3.2e-06],"d":[20.26424,-0.007873,-4e-06,0.0],"l1":[0.530426,6.3e-06,-1.28e-05,0.0],"l2":[-0.015633,6.3e-06,-1.27e-05,0.0],"mu":[223.38823,15.001007,0.0,0.0],"tf1":0.0046013,"tf2":0.0045784,"gamma":0.0698,"mag":1.0799,"saros":136,"ge":["02:35:18.1",24.222,144.118],"dur":398.9},"2010Jan15A":{"t0":7.0,"dT":66.0,"x":[-0.173224,0.4845168,-4e-05,-4.7e-06],"y":[0.366408,0.1404924,0.0001171,-1.8e-06],"d":[-21.12929,0.007308,5e-06,0.0],"l1":[0.574675,3.72e-05,-9.9e-06,0.0],"l2":[0.028395,3.7e-05,-9.9e-06,0.0],"mu":[282.67114,14.997584,0.0,0.0],"tf1":0.0047545,"tf2":0.0047308,"gamma":0.4002,"mag":0.919,"saros":141,"ge":["07:06:32.8",1.623,69.29],"dur":667.8},"2019Dec26A":{"t0":5.0,"dT":69.2,"x":[-0.140415,0.5356086,-1.4e-06,-7.1e-06],"y":[0.424074,-0.0366552,0.0001458,6e-07],"d":[-23.37347,0.001407,6e-06,0.0],"l1":[0.558906,0.0001284,-1.12e-05,0.0],"l2":[0.012685,0.0001278,-1.11e-05,0.0],"mu":[254.93678,14.996271,0.0,0.0],"tf1":0.0047548,"tf2":0.0047311,"gamma":0.4135,"mag":0.9701,"saros":132,"ge":["05:17:43.9",1.008,102.247],"dur":219.5},"2020Jun21A":{"t0":7.0,"dT":69.4,"x":[0.15426,0.5311528,2.58e-05,-6.9e-06],"y":[0.136404,0.0513871,-0.0001609,-8e-07],"d":[23.43567,-0.000233,-6e-06,0.0],"l1":[0.552336,-0.0001223,-1.07e-05,0.0],"l2":[0.006148,-0.0001217,-1.07e-05,0.0],"mu":[284.53555,14.999111,0.0,0.0],"tf1":0.0046009,"tf2":0.004578,"gamma":0.1209,"mag":0.994,"saros":137,"ge":["06:40:06.0",30.52,79.665],"dur":38.2},"2024Apr08T":{"t0":18.0,"dT":70.6,"x":[-0.318157,0.5117105,3.26e-05,-8.5e-06],"y":[0.219747,0.2709586,-5.94e-05,-4.7e-06],"d":[7.5862,0.014844,-2e-06,0.0],"l1":[0.535813,6.18e-05,-1.28e-05,0.0],"l2":[-0.010274,6.15e-05,-1.27e-05,0.0],"mu":[89.59122,15.004084,0.0,0.0],"tf1":0.0046683,"tf2":0.004645,"gamma":0.3431,"mag":1.0566,"saros":139,"ge":["18:17:18.3",25.287,-104.138],"dur":268.1},"2026Aug12T":{"t0":18.0,"dT":71.4,"x":[0.475593,0.5189288,-7.73e-05,-8.8e-06],"y":[0.771161,-0.2301664,-0.0001245,3.7e-06],"d":[14.79667,-0.012065,-3e-06,0.0],"l1":[0.537954,9.4e-05,-1.21e-05,0.0],"l2":[-0.008142,9.35e-05,-1.21e-05,0.0],"mu":[88.74776,15.003093,0.0,0.0],"tf1":0.0046141,"tf2":0.0045911,"gamma":0.8978,"mag":1.0386,"saros":126,"ge":["17:45:53.8",65.225,-25.228],"dur":138.2},"2027Aug02T":{"t0":10.0,"dT":71.7,"x":[-0.019645,0.5447105,-4.44e-05,-9.1e-06],"y":[0.160063,-0.2111569,-0.0001217,3.7e-06],"d":[17.76247,-0.010181,-4e-06,0.0],"l1":[0.530596,1.38e-05,-1.28e-05,0.0],"l2":[-0.015464,1.37e-05,-1.28e-05,0.0],"mu":[328.42249,15.002093,0.0,0.0],"tf1":0.0046064,"tf2":0.0045834,"gamma":0.1421,"mag":1.079,"saros":136,"ge":["10:06:37.7",25.505,33.183],"dur":382.6},"2028Jul22T":{"t0":3.0,"dT":72.1,"x":[-0.1543,0.5449941,-2.26e-05,-9.5e-06],"y":[-0.58638,-0.1746077,-0.0001022,2.9e-06],"d":[20.18231,-0.007974,-5e-06,0.0],"l1":[0.535236,-8.59e-05,-1.23e-05,0.0],"l2":[-0.010847,-8.54e-05,-1.22e-05,0.0],"mu":[223.37866,15.001018,0.0,0.0],"tf1":0.0046016,"tf2":0.0045786,"gamma":-0.6055,"mag":1.056,"saros":146,"ge":["02:55:26.9",-15.573,126.707],"dur":309.7},"2031May21A":{"t0":7.0,"dT":77.6,"x":[-0.114762,0.5112374,7.4e-06,-5.9e-06],"y":[-0.211215,0.0579329,-0.0001182,-6e-07],"d":[20.15915,0.008339,-5e-06,0.0],"l1":[0.562404,8.07e-05,-1e-05,0.0],"l2":[0.016185,8.02e-05,-1e-05,0.0],"mu":[285.85107,15.000616,0.0,0.0],"tf1":0.0046208,"tf2":0.0045978,"gamma":-0.197,"mag":0.9589,"saros":138,"ge":["07:14:46.5",8.928,71.74],"dur":325.5},"2034Mar20T":{"t0":10.0,"dT":79.5,"x":[-0.259593,0.5481665,2.3e-05,-9.4e-06],"y":[0.220828,0.1755788,-8e-06,-2.8e-06],"d":[-0.05513,0.016042,-0.0,0.0],"l1":[0.53863,-6.65e-05,-1.27e-05,0.0],"l2":[-0.00747,-6.62e-05,-1.26e-05,0.0],"mu":[328.13922,15.004398,0.0,0.0],"tf1":0.0046951,"tf2":0.0046718,"gamma":0.2895,"mag":1.0458,"saros":130,"ge":["10:17:25.4",16.06,22.233],"dur":249.3}};
+const INFO={'1919May29T':'29 May 1919 · total · Brazil and Africa (Eddington)','1955Jun20T':'20 June 1955 · total · Sri Lanka, Andamans, Southeast Asia','1980Feb16T':'16 February 1980 · total · Africa and southern India','1991Jul11T':'11 July 1991 · total · Hawaii and Mexico','1995Oct24T':'24 October 1995 · total · India and Southeast Asia','2009Jul22T':'22 July 2009 · total · India and China','2010Jan15A':'15 January 2010 · ring of fire · Africa and southern India','2019Dec26A':'26 December 2019 · ring of fire · southern India','2020Jun21A':'21 June 2020 · ring of fire · northern India','2024Apr08T':'8 April 2024 · total · Mexico, USA, Canada','2026Aug12T':'12 August 2026 · total · Greenland, Iceland, Spain','2027Aug02T':'2 August 2027 · total · Spain, North Africa, Arabia','2028Jul22T':'22 July 2028 · total · Australia','2031May21A':'21 May 2031 · ring of fire · southern India','2034Mar20T':'20 March 2034 · total · Africa and Asia'};
+const KEYS=Object.keys(EL).sort();
+const dateOf=k=>{const y=+k.slice(0,4),mo='JanFebMarAprMayJunJulAugSepOctNovDec'.indexOf(k.slice(4,7))/3,d=+k.slice(7,9);return Date.UTC(y,mo,d)};
+const IN='Asia/Kolkata';
+const CITIES=[['Delhi',28.614,77.209,IN],['Mumbai',19.076,72.878,IN],['Bengaluru',12.972,77.594,IN],['Chennai',13.083,80.270,IN],['Kolkata',22.573,88.364,IN],['Hyderabad',17.385,78.487,IN],['Kochi',9.931,76.267,IN],['Thiruvananthapuram',8.524,76.936,IN],['Madurai',9.925,78.120,IN],['Coimbatore',11.017,76.956,IN],['Varanasi',25.318,82.987,IN],['Patna',25.594,85.137,IN],['Guwahati',26.144,91.736,IN],['Srinagar',34.084,74.797,IN],['Leh',34.153,77.577,IN],['Kathmandu',27.717,85.324,'Asia/Kathmandu'],['Dhaka',23.810,90.413,'Asia/Dhaka'],['Colombo',6.927,79.861,'Asia/Colombo'],['Karachi',24.861,67.010,'Asia/Karachi'],['Dubai',25.205,55.271,'Asia/Dubai'],['Jeddah',21.543,39.173,'Asia/Riyadh'],['Luxor',25.687,32.639,'Africa/Cairo'],['Cairo',30.044,31.236,'Africa/Cairo'],['Benghazi',32.117,20.067,'Africa/Tripoli'],['Tunis',36.806,10.181,'Africa/Tunis'],['Tangier',35.759,-5.834,'Africa/Casablanca'],['Cádiz',36.527,-6.288,'Europe/Madrid'],['Madrid',40.417,-3.704,'Europe/Madrid'],['London',51.507,-0.128,'Europe/London'],['Reykjavík',64.147,-21.943,'Atlantic/Reykjavik'],['Nairobi',-1.292,36.822,'Africa/Nairobi'],['Singapore',1.352,103.820,'Asia/Singapore'],['Shanghai',31.230,121.474,'Asia/Shanghai'],['Tokyo',35.676,139.650,'Asia/Tokyo'],['Sydney',-33.869,151.209,'Australia/Sydney'],['Mazatlán',23.249,-106.411,'America/Mazatlan'],['Dallas',32.777,-96.797,'America/Chicago'],['New York',40.713,-74.006,'America/New_York'],['Sobral, Brazil',-3.689,-40.349,'America/Fortaleza'],['Honolulu',21.307,-157.858,'Pacific/Honolulu']];
+// ---------- Besselian engine ----------
+const P=(c,t)=>c[0]+t*(c[1]+t*(c[2]+t*(c[3]||0)));
+function state(e,rs,rc,lon,t){const x=P(e.x,t),y=P(e.y,t),d=P(e.d,t)*D,l1=P(e.l1,t),l2=P(e.l2,t),H=(P(e.mu,t)+lon-0.00417807*e.dT)*D;
+  const xi=rc*Math.sin(H),eta=rs*Math.cos(d)-rc*Math.cos(H)*Math.sin(d),zeta=rs*Math.sin(d)+rc*Math.cos(H)*Math.cos(d);
+  const L1=l1-zeta*e.tf1,L2=l2-zeta*e.tf2,u=x-xi,v=y-eta;return {u,v,del:Math.hypot(u,v),L1,L2,zeta}}
+function geo(lat){const u=Math.atan(0.99664719*Math.tan(lat*D));return [0.99664719*Math.sin(u),Math.cos(u)]}
+function local(e,lat,lon){const [rs,rc]=geo(lat),st=t=>state(e,rs,rc,lon,t);const f1=t=>{const s=st(t);return s.del-s.L1},f2=t=>{const s=st(t);return s.del-Math.abs(s.L2)};
+  const root=(f,a,b)=>{let fa=f(a);for(let i=0;i<50;i++){const m=(a+b)/2,fm=f(m);if((fm<0)===(fa<0)){a=m;fa=fm}else b=m}return (a+b)/2};
+  const step=1/120;let c1=null,c4=null,c2=null,c3=null,tm=0,best=1e9;
+  for(let t=-3;t<3;t+=step){const a=f1(t),b=f1(t+step);if(a>0&&b<=0)c1=root(f1,t,t+step);if(a<=0&&b>0)c4=root(f1,t,t+step);const a2=f2(t),b2=f2(t+step);if(a2>0&&b2<=0)c2=root(f2,t,t+step);if(a2<=0&&b2>0)c3=root(f2,t,t+step);const s=st(t);if(s.del<best){best=s.del;tm=t}}
+  let a=tm-step,b=tm+step;for(let i=0;i<50;i++){const m1=a+(b-a)/3,m2=b-(b-a)/3;st(m1).del<st(m2).del?b=m2:a=m1}tm=(a+b)/2;const s=st(tm);
+  const mag=(s.L1-s.del)/(s.L1+s.L2);const ut=t=>t==null?null:dateOf(e.k)+(e.t0+t-e.dT/3600)*3600e3;
+  return {c1:ut(c1),c2:ut(c2),c3:ut(c3),c4:ut(c4),max:ut(tm),tmax:tm,t1:c1,t4:c4,mag,obs:obsc(s),alt:Math.asin(Math.max(-1,Math.min(1,s.zeta)))/D,dur:(c2!=null&&c3!=null)?(c3-c2)*3600:0,kind:s.L2<0?'total':'annular',st}}
+function obsc(s){const R=(s.L1+s.L2)/2,r=(s.L1-s.L2)/2,d=s.del;if(d>=R+Math.abs(r))return 0;const rr=Math.abs(r);if(d<=Math.abs(R-rr))return Math.min(1,rr*rr/(R*R));const a1=Math.acos((d*d+R*R-rr*rr)/(2*d*R)),a2=Math.acos((d*d+rr*rr-R*R)/(2*d*rr));return (R*R*(a1-Math.sin(2*a1)/2)+rr*rr*(a2-Math.sin(2*a2)/2))/(Math.PI*R*R)}
+function maxMag(e,lat,lon){const [rs,rc]=geo(lat);let best=-1,bt=0;for(let t=-3;t<=3;t+=0.1){const s=state(e,rs,rc,lon,t);if(s.zeta<0)continue;const m=(s.L1-s.del)/(s.L1+s.L2);if(m>best){best=m;bt=t}}
+  if(best<0)return 0;let a=bt-0.1,b=bt+0.1;for(let i=0;i<14;i++){const m1=a+(b-a)/3,m2=b-(b-a)/3,s1=state(e,rs,rc,lon,m1),s2=state(e,rs,rc,lon,m2);((s1.L1-s1.del)/(s1.L1+s1.L2)>(s2.L1-s2.del)/(s2.L1+s2.L2))?b=m2:a=m1}const s=state(e,rs,rc,lon,(a+b)/2);return s.zeta>0?Math.max(0,(s.L1-s.del)/(s.L1+s.L2)):0}
+function centralAt(e,t){const x=P(e.x,t),y=P(e.y,t),d=P(e.d,t)*D,e2=0.00669438,r1=Math.sqrt(1-e2*Math.cos(d)**2),y1=y/r1,sd1=Math.sin(d)/r1,cd1=Math.sqrt(1-e2)*Math.cos(d)/r1,B=1-x*x-y1*y1;if(B<0)return null;const z1=Math.sqrt(B),p1=Math.asin(y1*cd1+z1*sd1),th=Math.atan2(x,-y1*sd1+z1*cd1)/D;
+  const lat=Math.atan(1.0033640*Math.tan(p1))/D;let lon=th-P(e.mu,t)+0.00417807*e.dT;lon=((lon+540)%360+360)%360-180;return [lat,lon]}
+for(const k of KEYS)EL[k].k=k;
+// ---------- UI ----------
+$('ecl').innerHTML=KEYS.map(k=>`<option value="${k}">${INFO[k]||k}</option>`).join('');$('ecl').value='2027Aug02T';
+$('city').innerHTML=CITIES.map((c,i)=>`<option value="${i}">${c[0]}</option>`).join('')+'<option value="custom">The spot I tapped on the map</option>';$('city').value='0';
+let custom=null,R=null,E=null,C=null;
+const fmtT=(ms,tz)=>ms==null?'—':new Date(ms).toLocaleTimeString('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+const fmtD=s=>Math.floor(s/60)+' min '+String(Math.round(s%60)).padStart(2,'0')+' s';
+function count(){const t=Date.UTC(2027,7,2,10,6),d=(t-Date.now())/864e5;$('count').innerHTML=d>0?`<b>${Math.floor(d)}</b><span>days until the total eclipse of 2 August 2027: up to 6 min 23 s of darkness over Luxor in Egypt, the longest totality over land in this page’s list. India sees part of it in the afternoon.</span>`:'<b>2 Aug 2027</b><span>has passed.</span>'}
+function you(){E=EL[$('ecl').value];const cv=$('city').value;C=cv==='custom'&&custom?['Your tapped spot',custom[0],custom[1],'UTC']:CITIES[+cv]||CITIES[0];R=local(E,C[1],C[2]);const tz=C[3];
+  const seen=R.c1!=null||R.mag>0;const above=R.alt>0;
+  const cells=[['Starts',fmtT(R.c1,tz),''],['Greatest',fmtT(R.max,tz),'cor'],['Ends',fmtT(R.c4,tz),''],['Sun covered',seen&&above?(R.obs*100).toFixed(1)+'%':'—',R.obs>0.999?'ok':R.obs>0.5?'warn':'']];
+  if(R.dur>0)cells.push([R.kind==='total'?'Totality lasts':'Ring of fire lasts',fmtD(R.dur),'ok'],[R.kind==='total'?'Totality begins':'Ring begins',fmtT(R.c2,tz),''],['Sun’s height',R.alt.toFixed(0)+'°',''],['Magnitude',R.mag.toFixed(3),'']);
+  else cells.push(['Sun’s height then',R.alt.toFixed(0)+'°',R.alt<5?'warn':''],['Magnitude',Math.max(0,R.mag).toFixed(3),'']);
+  $('youS').innerHTML=cells.map(c=>`<div class="stat ${c[2]}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  const when=new Date(R.max||dateOf(E.k)).toLocaleDateString('en-GB',{timeZone:tz,day:'numeric',month:'long',year:'numeric'});
+  $('youV').innerHTML=!seen||R.mag<=0?`<b class="mid">Not seen from ${C[0]}.</b> The Moon’s shadow misses this place entirely. Try another city, or tap the map.`
+   :!above?`<b class="mid">Below the horizon.</b> The eclipse happens while the Sun is down at ${C[0]}.`
+   :R.dur>0?`<b class="ok">${R.kind==='total'?'Totality':'A ring of fire'} at ${C[0]}!</b> On ${when}, the Moon ${R.kind==='total'?'covers the Sun completely':'sits inside the Sun, leaving a ring'} for ${fmtD(R.dur)}, starting at ${fmtT(R.c2,tz)} local time, with the Sun ${R.alt.toFixed(0)}° up.`
+   :`<b>A partial eclipse at ${C[0]}.</b> On ${when} the Moon covers ${(R.obs*100).toFixed(0)}% of the Sun at ${fmtT(R.max,tz)} local time. ${R.obs>0.9?'The light will dim strangely, but it is not totality.':''}`;
+  disc()}
+function disc(){const cv=$('disc'),g=size(cv),w=cv.clientWidth,h=cv.clientHeight;g.clearRect(0,0,w,h);if(!R||R.t1==null){g.fillStyle='#8a97a8';g.font='13px "IBM Plex Sans",sans-serif';g.textAlign='center';g.fillText('No eclipse from here',w/2,h/2);$('oT').textContent='';return}
+  const f=+$('iT').value/1000,t=R.t1+(R.t4-R.t1)*f,s=R.st(t),tz=C[3];$('oT').textContent=fmtT(dateOf(E.k)+(E.t0+t-E.dT/3600)*3600e3,tz)+' local time';
+  const Rs=(s.L1+s.L2)/2,Rm=Math.abs(s.L1-s.L2)/2,sc=w*0.24/Rs,cx=w/2,cy=h/2,ob=obsc(s),tot=s.del<=Math.abs(s.L2)&&s.L2<0;
+  const sky=Math.max(0,1-ob*1.0);g.fillStyle=`rgb(${Math.round(8+40*sky)},${Math.round(12+70*sky)},${Math.round(28+120*sky)})`;g.fillRect(0,0,w,h);
+  if(tot){const cg=g.createRadialGradient(cx,cy,Rs*sc,cx,cy,Rs*sc*2.6);cg.addColorStop(0,'rgba(255,240,210,.9)');cg.addColorStop(.35,'rgba(255,230,190,.35)');cg.addColorStop(1,'rgba(255,230,190,0)');g.fillStyle=cg;g.beginPath();g.arc(cx,cy,Rs*sc*2.6,0,7);g.fill()}
+  const sg=g.createRadialGradient(cx,cy,0,cx,cy,Rs*sc);sg.addColorStop(0,'#fffbe8');sg.addColorStop(1,'#ffcf5c');g.fillStyle=sg;g.beginPath();g.arc(cx,cy,Rs*sc,0,7);g.fill();
+  g.fillStyle='#0a0d14';g.beginPath();g.arc(cx-s.u*sc,cy+s.v*sc,Rm*sc,0,7);g.fill();
+  g.fillStyle='#e7edf3';g.font='12px "IBM Plex Sans",sans-serif';g.textAlign='left';g.fillText(tot?'TOTALITY: corona visible':(ob*100).toFixed(1)+'% covered',10,h-10);g.textAlign='right';g.fillText('north up (roughly)',w-10,18)}
+$('iT').addEventListener('input',disc);['ecl','city'].forEach(id=>$(id).addEventListener('change',()=>{you();if(id==='ecl')mapDraw(true)}));
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);const g=c.getContext('2d');g.setTransform(r,0,0,r,0,0);return g}
+// ---------- map ----------
+let GRID=null,GK=null,LAND=null;
+(async()=>{try{if(typeof topojson==='undefined')return;const t=await (await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/land-110m.json')).json();LAND=topojson.feature(t,t.objects.land);mapDraw()}catch(e){}})();
+function landPath(g,X,Y){if(!LAND)return false;g.beginPath();for(const f of LAND.features){const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;for(const poly of polys)for(const ring of poly){let pl=null;ring.forEach(([lo,la],i)=>{(i&&Math.abs(lo-pl)<180)?g.lineTo(X(lo),Y(la)):g.moveTo(X(lo),Y(la));pl=lo})}}return true}
+function mapDraw(force){const e=EL[$('ecl').value];if(force||GK!==e.k){GK=e.k;GRID=[];for(let la=-70;la<=78;la+=2){const row=[];for(let lo=-180;lo<180;lo+=2)row.push(maxMag(e,la+1,lo+1));GRID.push(row)}}
+  const cv=$('map'),g=size(cv),w=cv.clientWidth,h=cv.clientHeight,X=lo=>(lo+180)/360*w,Y=la=>(80-la)/152*h;g.fillStyle='#02030a';g.fillRect(0,0,w,h);if(landPath(g,X,Y)){g.fillStyle='#141c28';g.fill()}
+  GRID.forEach((row,i)=>{const la=-70+i*2;row.forEach((m,j)=>{if(m<=0.001)return;const lo=-180+j*2;const c=m>=1?[255,255,255]:m>0.9?[255,210,122]:m>0.5?[168+87*(m-0.5)/0.4,107+103*(m-0.5)/0.4,24+98*(m-0.5)/0.4]:[58+110*m/0.5,42+65*m/0.5,16+8*m/0.5];g.fillStyle=`rgba(${c.map(Math.round).join(',')},${m>=1?1:0.82})`;g.fillRect(X(lo),Y(la+2),w/180+0.6,h/76+0.6)})});
+  if(landPath(g,X,Y)){g.strokeStyle='rgba(200,215,230,.55)';g.lineWidth=0.8;g.stroke()}
+  g.strokeStyle='rgba(31,42,56,.9)';g.lineWidth=1;for(let lo=-180;lo<=180;lo+=30){g.beginPath();g.moveTo(X(lo),0);g.lineTo(X(lo),h);g.stroke()}for(let la=-60;la<=75;la+=30){g.beginPath();g.moveTo(0,Y(la));g.lineTo(w,Y(la));g.stroke()}
+  g.strokeStyle='#fff';g.lineWidth=2;g.beginPath();let on=false,prev=null;for(let t=-3;t<=3;t+=0.01){const p=centralAt(e,t);if(!p){on=false;continue}if(prev&&Math.abs(p[1]-prev[1])>180)on=false;on?g.lineTo(X(p[1]),Y(p[0])):g.moveTo(X(p[1]),Y(p[0]));on=true;prev=p}g.stroke();g.lineWidth=1;
+  g.font='11px "IBM Plex Sans",sans-serif';CITIES.forEach(c=>{g.fillStyle='#74c7ff';g.beginPath();g.arc(X(c[2]),Y(c[1]),2.5,0,7);g.fill()});
+  const sel=C||CITIES[0];g.strokeStyle='#5fd6a0';g.lineWidth=2;g.beginPath();g.arc(X(sel[2]),Y(sel[1]),6,0,7);g.stroke();g.lineWidth=1;g.fillStyle='#e7edf3';g.textAlign=X(sel[2])>w*0.8?'right':'left';g.fillText(sel[0],X(sel[2])+(X(sel[2])>w*0.8?-9:9),Y(sel[1])+4);
+  const under=CITIES.filter(c=>{const r=local(e,c[1],c[2]);return r.dur>0&&r.alt>0}).map(c=>c[0]);
+  $('mapT').textContent=under.length?`Of this page’s cities, ${e.k.endsWith('A')?'the ring of fire':'totality'} reaches: ${under.join(', ')}.`:`None of this page’s cities is on the central path. Tap the white line to stand on it.`}
+$('map').addEventListener('click',ev=>{const r=$('map').getBoundingClientRect(),lo=(ev.clientX-r.left)/r.width*360-180,la=80-(ev.clientY-r.top)/r.height*152;custom=[+la.toFixed(2),+lo.toFixed(2)];$('city').value='custom';you();mapDraw()});
+// ---------- Saros 136 ----------
+function saros(){const fam=KEYS.filter(k=>EL[k].saros===136);const rows=fam.map(k=>{const e=EL[k];let best=null;for(let t=-2.5;t<=2.5;t+=0.05){const p=centralAt(e,t);if(!p)continue;const r=local(e,p[0],p[1]);if(!best||r.dur>best.dur)best={...r,lat:p[0],lon:p[1]}}return {k,e,best}});
+  $('sarosT').innerHTML='<tr><th>Date</th><th class="n">Longest totality (this page)</th><th class="n">Where</th><th>Story</th></tr>'+rows.map(r=>`<tr><td>${INFO[r.k].split(' · ')[0]}</td><td class="n">${fmtD(r.best.dur)}</td><td class="n">${Math.abs(r.best.lat).toFixed(0)}°${r.best.lat>=0?'N':'S'}, ${Math.abs(r.best.lon).toFixed(0)}°${r.best.lon>=0?'E':'W'}</td><td class="note">${{'1919May29T':'Eddington measures starlight bending around the Sun: Einstein was right.','1955Jun20T':'The longest totality of the whole Saros 136 family and the longest since the 11th century, across Sri Lanka, including Colombo, and the Andaman Islands.','1991Jul11T':'Over Hawaii’s big telescopes and Mexico.','2009Jul22T':'Across India at sunrise: the longest totality of the 21st century.','2027Aug02T':'Over Spain, North Africa and Luxor in Egypt.'}[r.k]||''}</td></tr>`).join('')+'<tr><td colspan="4" class="note">1937 and 1973 are members too; this page carries NASA elements only for the five shown. Each repeat comes about 18 years and 11 days later and about 120° further west.</td></tr>';
+  const cv=$('saros'),g=size(cv),w=cv.clientWidth,h=cv.clientHeight,X0=40,pw=w-X0-20,ph=h-40,Y0=h-24,mx=8*60,X=y=>X0+(y-1915)/(2030-1915)*pw,Y=s=>Y0-s/mx*ph;g.clearRect(0,0,w,h);g.font='11px "IBM Plex Sans",sans-serif';
+  for(let m=0;m<=8;m+=2){g.strokeStyle='#1f2a38';g.beginPath();g.moveTo(X0,Y(m*60));g.lineTo(w-20,Y(m*60));g.stroke();g.fillStyle='#8a97a8';g.textAlign='right';g.fillText(m+' min',X0-4,Y(m*60)+4)}
+  g.textAlign='center';for(let y=1919;y<=2027;y+=18)g.fillText(y,X(y),h-6);
+  rows.forEach(r=>{const y=+r.k.slice(0,4),x=X(y);g.fillStyle='#ffe3a3';g.fillRect(x-12,Y(r.best.dur),24,Y0-Y(r.best.dur));g.fillStyle='#e7edf3';g.fillText(fmtD(r.best.dur).replace(' min ','m ').replace(' s','s'),x,Y(r.best.dur)-6)})}
+// ---------- history ----------
+const HIST=[['585 BCE','A battle stops','Herodotus wrote that day turned to night in the middle of a battle between the Lydians and the Medes, and both sides made peace. Only the eclipse of 28 May 585 BCE fits.'],
+ ['Centuries BCE','The saros','Chaldean astronomers in Babylon found the 18-year cycle after which eclipses repeat. It let them warn of eclipses without knowing why they happen.'],
+ ['Ancient India','Rahu','In the old story, the demon Rahu’s severed head chases the Sun and Moon and swallows them for a while. Rahu and Ketu became the two “shadow planets” of Indian astronomy. We now know them as the two points where the Moon’s path crosses the Sun’s, which is exactly where eclipses happen.'],
+ ['499 CE','Aryabhata: it is a shadow','In the Golapada chapter of the Aryabhatiya, Aryabhata explained eclipses of the Sun and the Moon correctly: the Moon blocks the Sun, and Earth’s shadow covers the Moon. He also gave rules to calculate them.'],
+ ['18 Aug 1868','A new element, found at Guntur','The French astronomer Pierre Janssen watched the eclipse from Guntur, in today’s Andhra Pradesh, with a spectroscope. He saw a yellow line in the Sun’s light that matched no known element. Norman Lockyer saw it independently in England. It was helium, found on the Sun 27 years before chemists isolated it on Earth in 1895.'],
+ ['22 Jan 1898','Indian expeditions','Two organised expeditions observed this eclipse in India. One was led by K. D. Naegamvala of the Maharaja Takhtasingji Observatory, one of India’s first modern astronomers.'],
+ ['29 May 1919','Einstein proved right','Teams sent by Arthur Eddington to Brazil and to Príncipe in Africa photographed stars beside the darkened Sun. Their light was bent by the Sun’s gravity by the amount general relativity predicted. This eclipse belongs to Saros 136, the same family as 2027.'],
+ ['24 Oct 1995','Eclipse from 25 km up','An Indian Air Force MiG-25 flew to 25 km to photograph totality above most of the air.'],
+ ['22 Jul 2009','The century’s longest, over India','Totality crossed India at sunrise and lasted up to 6 min 38.86 s at its longest, out at sea. It was the longest of the 21st century. It is the Saros 136 eclipse just before 2027.'],
+ ['2024','Making eclipses on demand','Europe’s PROBA-3, launched on ISRO’s PSLV-C59 from Sriharikota on 5 December 2024, flies two spacecraft in formation, one shading the other, to make artificial eclipses for hours. From L1, India’s Aditya-L1 does the same job with its VELC coronagraph.'],
+ ['2 Aug 2027','Next in the family','Saros 136 returns: totality over Spain, North Africa and Egypt, up to 6 min 23 s. From India it is a partial eclipse in the afternoon, deepest in the west. Pick your city above to see how much.']];
+$('hist').innerHTML=HIST.map(h=>`<li class="${h[0].includes('2027')?'now':''}"><b>${h[0]}</b><div><h3>${h[1]}</h3><p>${h[2]}</p></div></li>`).join('');
+// ---------- checks ----------
+const CK=[['2009Jul22T','Varanasi',25.318,82.987,IN,'06:25:44','3:01'],['2009Jul22T','Patna',25.594,85.137,IN,'06:26:31','3:44'],['2009Jul22T','New Delhi (partial)',28.614,77.209,IN,'06:26:35','83.00%'],['2010Jan15A','Thiruvananthapuram',8.524,76.936,IN,'13:14:19','7:16'],['2019Dec26A','Coimbatore',11.017,76.956,IN,'09:29:18','3:04'],['2027Aug02T','Luxor',25.687,32.639,'Africa/Cairo','13:05:26','6:22'],['2027Aug02T','Cádiz',36.527,-6.288,'Europe/Madrid','10:46:57','2:56'],['2027Aug02T','London (partial)',51.507,-0.128,'Europe/London','10:00:15','41.92%'],['2031May21A','Kochi',9.931,76.267,IN,'13:03:23','4:46'],['2031May21A','Madurai',9.925,78.120,IN,'13:10:30','5:14']];
+function checks(){const toS=s=>{const p=s.split(':').map(Number);return p.length===3?p[0]*3600+p[1]*60+p[2]:p[0]*60+p[1]};
+  const rows=CK.map(([k,n,la,lo,tz,mx,du])=>{const r=local(EL[k],la,lo),mine=fmtT(r.max,tz),dt=toS(mine)-toS(mx);const pubDur=du.includes('%')?du:du,myDur=du.includes('%')?(r.obs*100).toFixed(2)+'%':Math.floor(r.dur/60)+':'+String(Math.round(r.dur%60)).padStart(2,'0');
+    const dd=du.includes('%')?Math.abs(parseFloat(du)-r.obs*100):Math.abs(toS(du)-r.dur);return `<tr><td>${INFO[k].split(' · ')[0]}</td><td>${n}</td><td class="n">${mx}</td><td class="n">${mine}</td><td class="n ${Math.abs(dt)<=20?'ok':'mid'}">${dt>=0?'+':''}${dt} s</td><td class="n">${pubDur}</td><td class="n ${dd<=12?'ok':'mid'}">${myDur}</td></tr>`});
+  const sar=k=>{const e=EL[k];let b=0;for(let t=-2.5;t<=2.5;t+=0.02){const p=centralAt(e,t);if(!p)continue;const r=local(e,p[0],p[1]);if(r.dur>b)b=r.dur}return b},ms=d=>Math.floor(d/60)+':'+(d%60).toFixed(1).padStart(4,'0');const g9=EL['2009Jul22T'].ge,g7=EL['2027Aug02T'].ge;const d9=local(EL['2009Jul22T'],g9[1],g9[2]).dur,d7=local(EL['2027Aug02T'],g7[1],g7[2]).dur;
+  $('check').innerHTML='<tr><th>Eclipse</th><th>Place</th><th class="n">Published greatest</th><th class="n">This page</th><th class="n">Off by</th><th class="n">Published length or cover</th><th class="n">This page</th></tr>'+rows.join('')+
+   `<tr><td>2009</td><td>NASA’s point of greatest eclipse</td><td class="n" colspan="3"></td><td class="n">6:38.9</td><td class="n ok">${Math.floor(d9/60)}:${(d9%60).toFixed(1).padStart(4,'0')}</td></tr><tr><td>2027</td><td>NASA’s point of greatest eclipse</td><td class="n" colspan="3"></td><td class="n">6:22.6</td><td class="n ok">${Math.floor(d7/60)}:${(d7%60).toFixed(1).padStart(4,'0')}</td></tr>`+[['1919May29T','6:50.8'],['1955Jun20T','7:07.7'],['1991Jul11T','6:53.1']].map(([k,p])=>`<tr><td>${INFO[k].split(' · ')[0]}</td><td>Longest totality anywhere (searched along the centre line)</td><td class="n" colspan="3"></td><td class="n">${p}</td><td class="n ok">${ms(sar(k))}</td></tr>`).join('')}
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{disc();mapDraw();saros()},150)});
+count();you();mapDraw(true);saros();checks();
+window.__ecl={EL,local,centralAt,maxMag};
+})();
+</script>
+
+</html>
