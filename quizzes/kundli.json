@@ -2,7 +2,7 @@
 "questions": [
 {
 "q": "What is a lagna, astronomically?",
-"do": "Read the introduction, then <b>The real sky that night</b> after making any kundli.",
+"do": "Make any kundli, then read the <b>Your lagna</b> card and <b>The sky when you were born</b>.",
 "a": "The rashi that was <b>rising on the eastern horizon</b> at the moment and place of birth. It changes about every two hours, which is why the birth time and place matter so much.",
 "history": false
 },
@@ -14,19 +14,19 @@
 },
 {
 "q": "How wide is one nakshatra, and how many are there?",
-"do": "Read the positions table and the sources.",
+"do": "Open <b>See the full kundli</b> and look at the nakshatra column.",
 "a": "<b>27</b> nakshatras, each <b>13°20′</b> of the sky (360° ÷ 27).",
 "history": true
 },
 {
 "q": "What does the page check its Sun calculation against?",
-"do": "Read <b>How far to trust it</b>.",
+"do": "Open <b>For experts: how accurate is this?</b> at the bottom.",
 "a": "The dates of <b>Makar Sankranti</b> (14 January) and <b>Mesha Sankranti</b> (13 or 14 April), when the Sun enters sidereal Makara and Mesha.",
 "history": false
 },
 {
 "q": "Why does the page warn when a placement is close to a border?",
-"do": "Make a kundli and read the line under the four key cards.",
+"do": "Make a kundli and read the yellow or green box under your result cards.",
 "a": "Birth times are often rounded to 5 or 10 minutes. If the lagna or a graha is within a few minutes of changing rashi or nakshatra, the recorded time cannot settle it.",
 "history": false
 }
