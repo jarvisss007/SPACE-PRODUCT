@@ -1,0 +1,132 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>About Golapada</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: what Golapada is, how the numbers are checked, privacy in plain words with the exact list of outside services, how to report a mistake. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--acc:#e8c46a;--blue:#74c7ff;--ok:#5fd6a0;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.55;margin:0}*{box-sizing:border-box}
+.wrap{max-width:980px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--acc)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:72ch;color:#c9d2dc}a{color:var(--blue)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.promise{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:6px}
+.promise div{background:var(--panel2);border-radius:6px;padding:12px;border-top:3px solid var(--ok)}
+.promise b{display:block;font-family:var(--display);font-size:20px;text-transform:uppercase}.promise span{font-size:14px;color:#c3ccd6}
+ul{margin:4px 0 10px;padding-left:20px}li{margin:4px 0;color:#c9d2dc;max-width:72ch}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:7px 8px 7px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.scroll{overflow-x:auto}.note{font-size:13px;color:var(--dim)}
+.btn{display:inline-block;background:var(--acc);color:#1b1404;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;border-radius:6px;padding:9px 14px;margin:4px 0 10px}
+.btn:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-bar{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;padding-block:6px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);padding:2px 6px}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible,.sa-nav button:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:2px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+.sa-nav button{flex:none;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #2c3a4d;border-radius:4px;cursor:pointer;padding:5px 10px;line-height:1.2}
+.sa-nav .sa-arr{padding:5px 8px;font-size:16px}.sa-nav .sa-arr[disabled]{opacity:.3;cursor:default}
+.sa-nav .sa-all[aria-expanded="true"]{background:#e8c46a;color:#1b1404;border-color:#e8c46a}
+.sa-nav .sa-panel{max-width:1200px;margin:0 auto;padding:6px max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:4px;max-height:70vh;overflow:auto}
+.sa-nav .sa-panel[hidden]{display:none}
+.sa-nav .sa-panel a{background:#0b1017;border:1px solid #1f2a38}.sa-nav .sa-panel a[aria-current="page"]{background:#e7edf3;color:#0a0d12;border-color:#e7edf3}
+@media (max-width:560px){.sa-nav .sa-arr{display:none}}
+@media print{.sa-nav{display:none}}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-bar"><a href="index.html" class="sa-brand">Golapada</a><button type="button" class="sa-arr" aria-label="Scroll the lab list left">‹</button><div class="sa-in"><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="mars-now.html">Mars Now</a><a href="iss-life.html">ISS life</a><a href="eht-lab.html">EHT image</a><a href="comets.html">Comets</a><a href="moon-sites.html">Moon sites</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a><a href="about.html" aria-current="page">About</a></div><button type="button" class="sa-arr" aria-label="Scroll the lab list right">›</button><button type="button" class="sa-all" aria-expanded="false">All labs</button></div><div class="sa-panel" hidden><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="mars-now.html">Mars Now</a><a href="iss-life.html">ISS life</a><a href="eht-lab.html">EHT image</a><a href="comets.html">Comets</a><a href="moon-sites.html">Moon sites</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a><a href="about.html" aria-current="page">About</a></div></nav>
+<script>
+(()=>{const n=document.currentScript.previousElementSibling,s=n.querySelector('.sa-in'),[l,r]=n.querySelectorAll('.sa-arr'),b=n.querySelector('.sa-all'),p=n.querySelector('.sa-panel');
+const upd=()=>{l.disabled=s.scrollLeft<=2;r.disabled=s.scrollLeft+s.clientWidth>=s.scrollWidth-2};
+l.onclick=()=>{s.scrollLeft-=s.clientWidth*0.7};r.onclick=()=>{s.scrollLeft+=s.clientWidth*0.7};
+s.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);
+s.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&s.scrollWidth>s.clientWidth){s.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+const c=s.querySelector('[aria-current]');if(c)s.scrollLeft=c.offsetLeft-s.clientWidth/2+c.offsetWidth/2;upd();
+const close=()=>{p.hidden=true;b.setAttribute('aria-expanded','false')};
+b.onclick=()=>{const o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));if(o){const a=p.querySelector('a');if(a)a.focus()}};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!p.hidden){close();b.focus()}});
+addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
+</script>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">About · how we check · privacy</div>
+    <h1>About Golapada</h1>
+    <p><b>Golapada</b> is a free collection of interactive space-science labs. Each one starts with a few plain sentences for anyone, then lets you work things out yourself: launch a rocket, land on Mars, find tonight's nakshatra, steer a capsule home. The details for experts are one tap away. It is made in India, with India's own missions and history alongside the rest of the world's.</p>
+    <div class="promise">
+      <div><b>Free</b><span>No fees, no sign-up, no adverts.</span></div>
+      <div><b>Private</b><span>No tracking, no cookies, no accounts. What you type stays on your device.</span></div>
+      <div><b>Checked</b><span>Every lab compares its own numbers with published ones, and says where it is unsure.</span></div>
+      <div><b>Works offline</b><span>Install it as an app, or download the offline copy for a school.</span></div>
+    </div>
+  </header>
+
+  <section class="card" id="who">
+    <h2>Who makes it</h2>
+    <p>Golapada is an independent project from India. It is not part of ISRO, NASA, ESA or any other space agency, school board or company, and none of them has reviewed it.</p>
+    <p>The labs are written with the help of Claude, an AI model made by Anthropic. That makes it possible to build a lot quickly, and it is also exactly why every number is checked against a published source and every page shows its checks: an AI, like a person, can be confidently wrong. If you find a mistake, please tell us (see below).</p>
+  </section>
+
+  <section class="card" id="checks">
+    <h2>How the numbers are checked</h2>
+    <ul>
+      <li><b>Worked out, not copied.</b> Where possible a lab calculates its numbers live in your browser, from physics and from published orbital data, rather than quoting them.</li>
+      <li><b>Every lab shows its checks.</b> Open <i>For experts</i> on any lab: a table compares the page's own results with published values (NASA, JPL, ESA, ISRO and peer-reviewed papers). Green means it agrees, amber means close, red means wrong.</li>
+      <li><b>Sources on every page.</b> The small print at the foot of each lab lists where its numbers and dates come from, and when they were checked.</li>
+      <li><b>Checked by machine every day.</b> After every change, and once a day, a robot opens every page in a real browser. It fails if a page crashes, if it scrolls sideways on a phone, if any check turns red, or if a page grows too big for a slow connection.</li>
+      <li><b>Live data is fetched fresh.</b> Satellite orbits, asteroid lists and the year's launches are refreshed from public sources every day. Each lab says how old its data is.</li>
+      <li><b>Honest about limits.</b> Each lab has a <i>What the page leaves out</i> note. Plans and future dates are marked as plans. Where sources disagree, the page says so.</li>
+    </ul>
+    <p class="note">The Kundli Lab calculates a birth chart precisely, but Golapada makes no predictions; the <a href="reading-test.html">Reading Test</a> explains why vague readings feel so personal.</p>
+  </section>
+
+  <section class="card" id="privacy">
+    <h2>Privacy, in plain words</h2>
+    <ul>
+      <li><b>No tracking.</b> Golapada has no analytics, no advertising, no cookies of its own and no accounts.</li>
+      <li><b>Your birth details never leave your device.</b> The Kundli Lab, the personality questionnaire and the quizzes all work entirely inside your browser. Nothing you type is sent anywhere.</li>
+      <li><b>Your location, only if you ask.</b> Tonight's Sky and Satellite Watch can use your location when you press <i>Use my location</i>. Your phone asks first, and the position is used only on that page; it is not sent or stored.</li>
+      <li><b>Phone pointing</b> in Tonight's Sky reads your phone's compass and tilt only while it is switched on, and only on your phone.</li>
+      <li><b>Saved on your device:</b> if you install the app, your browser keeps copies of the pages so they work offline. Launch Watch keeps the launch list for 30 minutes so it does not ask the server too often. You can clear both in your browser's settings.</li>
+    </ul>
+    <p>To show some things, your browser does fetch files from other services. Like any website visit, they can see your device's internet address, but not anything you type into Golapada:</p>
+    <div class="scroll"><table>
+      <tr><th>Service</th><th>What for</th><th>Which labs</th></tr>
+      <tr><td>GitHub Pages</td><td>Hosts the Golapada website itself</td><td>All</td></tr>
+      <tr><td>Google Fonts</td><td>The lettering</td><td>All</td></tr>
+      <tr><td>jsDelivr</td><td>A satellite-orbit calculator and world-map outlines</td><td>Satellite Watch, Tonight's Sky, Eclipse Lab, Launch Watch, Asteroid Watch, One Sky</td></tr>
+      <tr><td>NASA EPIC</td><td>Today's photos of the whole Earth</td><td>Earth from Above</td></tr>
+      <tr><td>NOAA Space Weather and NASA SDO</td><td>Live solar activity and Sun images</td><td>Space Weather</td></tr>
+      <tr><td>The Space Devs (Launch Library)</td><td>Upcoming and recent rocket launches</td><td>Launch Watch</td></tr>
+    </table></div>
+    <p class="note">Links to Wikipedia, NASA and other sources in the small print are ordinary links: nothing is loaded from them until you click.</p>
+  </section>
+
+  <section class="card" id="report">
+    <h2>Report a mistake</h2>
+    <p>Spotted a wrong number, a broken button or a confusing sentence? Every lab has a <b>Report a mistake</b> link at the very bottom, which opens a short form with the page name already filled in. It needs a free GitHub account. Please say what is wrong, what it should be, and where you found the right value.</p>
+    <a class="btn" href="https://github.com/jarvisss007/SPACE-PRODUCT/issues/new?template=mistake.yml&amp;title=Mistake%20on%20" rel="noopener">Report a mistake</a>
+    <p class="note">Reports are public on GitHub, so please do not include personal details such as your birth date or address.</p>
+  </section>
+
+  <section class="card" id="schools">
+    <h2>For teachers</h2>
+    <p>See <a href="schools.html">Golapada for Schools</a> for which lab fits which NCERT chapter, ready lesson plans and an offline download, and <a href="worksheets.html">Worksheets</a> for printable practice with answer keys. Every lab ends with a five-question quiz that pairs can work through in class.</p>
+  </section>
+
+  <footer>Golapada is free to use. Space agency names are used only to describe their missions; no endorsement is implied. Last reviewed November 2026.</footer>
+</div>
+<p class="gt" style="max-width:1200px;margin:6px auto 0;padding:10px max(16px,env(safe-area-inset-left,0px)) 28px;border-top:1px solid #1f2a38;font:400 13px/1.6 'IBM Plex Sans',system-ui,sans-serif;color:#8a97a8"><a href="about.html" style="color:#74c7ff">About Golapada</a> · <a href="about.html#privacy" style="color:#74c7ff">Privacy</a> · <a href="https://github.com/jarvisss007/SPACE-PRODUCT/issues/new?template=mistake.yml&amp;page=about.html&amp;title=Mistake%20on%20about.html" rel="noopener" style="color:#74c7ff">Report a mistake on this page</a></p>

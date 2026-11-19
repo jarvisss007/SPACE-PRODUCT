@@ -65,6 +65,7 @@ PAGES = [
     ("nalanda.html", "Nalanda", "9GzdyyvJ8zRcBAznWXM37B"),
     ("starship-through-time.html", "Through time", "4jbD63EEZBxcEbE7WXseMN"),
     ("clues-in-old-books.html", "Old books", "RHr7yep3A95fUrPY78nS57"),
+    ("about.html", "About", "Sr4HjpkwPpx5d1mojsoH2v"),
 ]
 
 NAV_CSS = """<style>
@@ -209,6 +210,21 @@ def explore_html(fname: str, cards: dict) -> str:
     return f'{EXPLORE_CSS}<section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g">{items}</div></section>\n'
 
 
+# A thin strip at the very foot of every page: About, Privacy and a "Report a mistake" link that opens
+# the GitHub issue form (.github/ISSUE_TEMPLATE/mistake.yml) with the page name filled in.
+REPORT_URL = "https://github.com/jarvisss007/SPACE-PRODUCT/issues/new?template=mistake.yml&amp;page={page}&amp;title=Mistake%20on%20{page}"
+
+
+def trust_strip(fname: str) -> str:
+    hi = fname.endswith(".hi.html")
+    about, priv, rep = ("परिचय", "निजता", "गलती बताएँ") if hi else ("About Golapada", "Privacy", "Report a mistake on this page")
+    a = ' lang="hi"' if hi else ""
+    return ('<p class="gt"' + a + ' style="max-width:1200px;margin:6px auto 0;padding:10px max(16px,env(safe-area-inset-left,0px)) 28px;'
+            'border-top:1px solid #1f2a38;font:400 13px/1.6 \'IBM Plex Sans\',system-ui,sans-serif;color:#8a97a8">'
+            f'<a href="about.html" style="color:#74c7ff">{about}</a> · <a href="about.html#privacy" style="color:#74c7ff">{priv}</a> · '
+            f'<a href="{REPORT_URL.format(page=fname)}" rel="noopener" style="color:#74c7ff">{rep}</a></p>\n')
+
+
 def build() -> None:
     cards = lab_cards()
     missing = [f for f in RELATED if f not in cards] + [p for v in RELATED.values() for p in v if p not in cards]
@@ -235,6 +251,7 @@ def build() -> None:
             block = explore_html(fname, cards)
             if k > 0 and block:
                 src = src[:k] + block + src[k:]  # inside the page's own column, just above its sources
+        src = src.rstrip() + "\n" + trust_strip(fname)  # after the page's own column, at the very foot
         if fname != "index.html" and not src.lstrip().lower().startswith("<!doctype"):
             # extra pages are served without the artifact skeleton, so they need their own doctype
             src = "<!doctype html>\n" + src

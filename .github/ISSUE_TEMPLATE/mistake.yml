@@ -1,0 +1,37 @@
+name: Report a mistake
+description: A wrong number, a broken button or a confusing sentence on a Golapada lab
+title: "Mistake on "
+labels: ["mistake"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you! Reports are public, so please don't include personal details (birth date, address, phone).
+  - type: input
+    id: page
+    attributes:
+      label: Which page?
+      description: Filled in for you when you use the link at the bottom of a lab.
+      placeholder: e.g. tonight.html
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What is wrong?
+      description: Copy the sentence or number, or describe what the button did.
+    validations:
+      required: true
+  - type: textarea
+    id: right
+    attributes:
+      label: What should it be?
+    validations:
+      required: false
+  - type: input
+    id: source
+    attributes:
+      label: Where did you find the right value?
+      description: A link or a book, so we can check it.
+    validations:
+      required: false
