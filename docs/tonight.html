@@ -95,7 +95,7 @@ details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary
 details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 @media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
 </style>
-<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">What you can see in the sky tonight with your own eyes: which planets are up, where to look, and the Moon.</p><p class="gs-try"><b>Try this first:</b> Press <b>Use my location</b>. The page lists what is up tonight and which way to look.</p><ul><li>Planets shine steadily and twinkle less than stars. Venus and Jupiter are the brightest.</li><li>The Moon rises about 50 minutes later each day.</li><li>You don't need a telescope: go somewhere dark and give your eyes a few minutes to adjust.</li></ul></section>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">What you can see in the sky tonight with your own eyes: which planets are up, where to look, and the Moon.</p><p class="gs-try"><b>Try this first:</b> Press <b>Use my location</b>. The page lists what is up tonight and which way to look. On a phone, press <b>Point my phone</b> and hold it up to the sky.</p><ul><li>Planets shine steadily and twinkle less than stars. Venus and Jupiter are the brightest.</li><li>The Moon rises about 50 minutes later each day.</li><li>The Moon moves through 27 nakshatras, about one a day. The page shows tonight's nakshatra and tithi, and when they change, worked out to within a few minutes.</li></ul></section>
 <!-- golapada-simple:end -->
 
 
@@ -130,6 +130,21 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     </section>
   </div>
 
+  <div class="two">
+    <section class="card">
+      <h2>Tonight's nakshatra</h2>
+      <p class="note" style="margin-top:-4px">The Moon moves through 27 nakshatras, about one a day, along the same belt of sky the Sun and planets travel. This follows the time on the sky map.</p>
+      <div class="see" id="nak"></div>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:13.5px;color:#c3ccd6"><input type="checkbox" id="nakOn" checked style="width:auto"> Show the nakshatra belt on the sky map</label>
+    </section>
+    <section class="card">
+      <h2>Point your phone at the sky</h2>
+      <p class="note" style="margin-top:-4px">On a phone, press the button, then hold the phone up with its back towards the sky. A gold ring on the sky map shows where you are pointing, and the page says what is there.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button type="button" id="pointBtn">Point my phone</button><span class="note" id="pointNote">Works on phones with a compass. Nothing leaves your phone.</span></div>
+      <p class="big" id="pointOut" style="margin-top:10px;font-size:22px"></p>
+    </section>
+  </div>
+
   <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
   </details>
@@ -137,26 +152,26 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   <!-- golapada-quiz:start -->
 <style>
 .gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
-.gq h2{font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
+.gq h2{font-family:"Saira Condensed","Noto Sans Devanagari","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
 .gq .gq-sub{font-size:13px;color:#8a97a8;margin:0 0 12px;max-width:76ch}
 .gq ol{list-style:none;margin:0;padding:0;counter-reset:gq}
 .gq li{counter-increment:gq;border-top:1px solid #1f2a38;padding:12px 0 10px 40px;position:relative}
 .gq li::before{content:counter(gq);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:#121a25;border:1px solid #2c3a4d;color:#e8c46a;font:700 15px/26px "Saira Condensed",sans-serif;text-align:center}
 .gq .gq-q{font-size:15px;color:#e7edf3;margin:0 0 4px}
 .gq .gq-do{font-size:13px;color:#8a97a8;margin:0 0 6px}.gq .gq-do b{color:#c3ccd6;font-weight:500}
-.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
-.gq details summary{cursor:pointer;font:600 13px "Saira Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
+.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
+.gq details summary{cursor:pointer;font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
 .gq details summary:focus-visible,.gq button:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 .gq details p{margin:6px 0 0;padding:8px 10px;background:#121a25;border-left:3px solid #5fd6a0;border-radius:3px;font-size:14px;color:#d5dde6;max-width:76ch}
 .gq .gq-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.gq button{font:600 13px "Saira Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
+.gq button{font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
 @media print{.gq{background:#fff;border-color:#bbb}.gq h2,.gq .gq-q,.gq details p{color:#000}.gq .gq-sub,.gq .gq-do{color:#333}.gq details p{background:#fff}.gq .gq-bar{display:none}}
 </style>
-<section class="gq" aria-labelledby="gq-title"><h2 id="gq-title">Quiz: five questions</h2><p class="gq-sub">Answer each one by using the lab above, then check. Good for a class: pairs work through them, the teacher reveals the answers.</p><ol><li><p class="gq-q">How close is this page's Full Moon time to the published time for November 2026?</p><p class="gq-do"><b>Use the lab:</b> Find the <b>Full Moon</b> row in the <b>Checks</b> table and read <b>Published (UTC)</b> and <b>Off by</b>.</p><details><summary>Show answer</summary><p>Published: <b>24 November 2026, 14:53 UTC</b>. The page is off by about <b>30 minutes</b>, good enough for finding things by eye.</p></details></li><li><p class="gq-q">On the night of 24 November 2026 in Delhi, how full is the Moon and when does it rise?</p><p class="gq-do"><b>Use the lab:</b> Set <b>Your place</b> to <b>Delhi</b> and <b>Night of</b> to 24 November 2026. Read <b>The Moon</b> card and <b>Sunset</b> in <b>The night</b>.</p><details><summary>Show answer</summary><p><b>Full Moon, 100% lit</b>. It rises around <b>4:55 pm</b>, close to sunset (about 5:24 pm). A bright Moon washes out faint stars that night.</p></details></li><li><p class="gq-q">On 21 December 2026, whose night is longer: Srinagar's or Thiruvananthapuram's?</p><p class="gq-do"><b>Use the lab:</b> Set <b>Night of</b> to 21 December 2026. Pick <b>Srinagar</b>, then <b>Thiruvananthapuram</b>, and compare <b>Sunset</b> and <b>Sunrise</b> in <b>The night</b>.</p><details><summary>Show answer</summary><p>Srinagar: sunset about 5:25 pm, sunrise about 7:32 am, about <b>14 hours</b>. Thiruvananthapuram: about 6:09 pm to 6:31 am, about <b>12.4 hours</b>. In December, places further north have longer nights.</p></details></li><li><p class="gq-q">On 21 June 2027, the page says London is <i>never fully dark</i>. Why? Compare with Delhi.</p><p class="gq-do"><b>Use the lab:</b> Set <b>Night of</b> to 21 June 2027. Pick <b>London</b>, then <b>Delhi</b>, and read <b>Fully dark</b> in <b>The night</b>.</p><details><summary>Show answer</summary><p>London shows <b>never fully dark</b>. Delhi is fully dark from about <b>8:56 pm</b>. London is far north (51.5°N), so in midsummer the Sun never sinks far enough below the horizon. Twilight lasts all night.</p></details></li><li><p class="gq-q"><span class="gq-h">History</span>This page uses work done by earlier astronomers. Which star catalogue gives the bright stars' positions, and whose formulas give the planets' brightness?</p><p class="gq-do"><b>Use the lab:</b> Read the footer at the bottom of the page.</p><details><summary>Show answer</summary><p>Star positions come from the <b>Hipparcos catalogue</b>. Planet brightness uses the formulas of <b>Mallama and Hilton (2018)</b>. Planet orbits come from JPL's approximate elements (Standish and Williams).</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">Show all answers</button></div><script>
+<section class="gq" aria-labelledby="gq-title"><h2 id="gq-title">Quiz: five questions</h2><p class="gq-sub">Answer each one by using the lab above, then check. Good for a class: pairs work through them, the teacher reveals the answers.</p><ol><li><p class="gq-q">At 9 pm on 19 November 2026 in Delhi, which nakshatra is the Moon in, which tithi is it, and when does each change?</p><p class="gq-do"><b>Use the lab:</b> Set <b>Your place</b> to <b>Delhi</b> and <b>Night of</b> to 19 November 2026. Move the <b>Time</b> slider to about 9:00 pm and read <b>Tonight's nakshatra</b>.</p><details><summary>Show answer</summary><p>The Moon is in <b>Purva Bhadrapada</b> (पूर्वभाद्रपदा), the 25th nakshatra, and it is <b>Shukla Dashami</b>, the 10th tithi. The Moon moves into <b>Uttara Bhadrapada</b> at about <b>6:57 am</b> on 20 November, and Ekadashi starts at about <b>7:17 am</b>. Each nakshatra is 13°20′ of sky, and the Moon covers that in about a day.</p></details></li><li><p class="gq-q">On the night of 24 November 2026 in Delhi, how full is the Moon and when does it rise?</p><p class="gq-do"><b>Use the lab:</b> Set <b>Your place</b> to <b>Delhi</b> and <b>Night of</b> to 24 November 2026. Read <b>The Moon</b> card and <b>Sunset</b> in <b>The night</b>.</p><details><summary>Show answer</summary><p><b>Full Moon, 100% lit</b>. It rises around <b>4:55 pm</b>, close to sunset (about 5:24 pm). A bright Moon washes out faint stars that night.</p></details></li><li><p class="gq-q">On 21 December 2026, whose night is longer: Srinagar's or Thiruvananthapuram's?</p><p class="gq-do"><b>Use the lab:</b> Set <b>Night of</b> to 21 December 2026. Pick <b>Srinagar</b>, then <b>Thiruvananthapuram</b>, and compare <b>Sunset</b> and <b>Sunrise</b> in <b>The night</b>.</p><details><summary>Show answer</summary><p>Srinagar: sunset about 5:25 pm, sunrise about 7:32 am, about <b>14 hours</b>. Thiruvananthapuram: about 6:09 pm to 6:31 am, about <b>12.4 hours</b>. In December, places further north have longer nights.</p></details></li><li><p class="gq-q">On 21 June 2027, the page says London is <i>never fully dark</i>. Why? Compare with Delhi.</p><p class="gq-do"><b>Use the lab:</b> Set <b>Night of</b> to 21 June 2027. Pick <b>London</b>, then <b>Delhi</b>, and read <b>Fully dark</b> in <b>The night</b>.</p><details><summary>Show answer</summary><p>London shows <b>never fully dark</b>. Delhi is fully dark from about <b>8:56 pm</b>. London is far north (51.5°N), so in midsummer the Sun never sinks far enough below the horizon. Twilight lasts all night.</p></details></li><li><p class="gq-q"><span class="gq-h">History</span>This page uses work done by earlier astronomers. Which star catalogue gives the bright stars' positions, and whose formulas give the planets' brightness?</p><p class="gq-do"><b>Use the lab:</b> Read the footer at the bottom of the page.</p><details><summary>Show answer</summary><p>Star positions come from the <b>Hipparcos catalogue</b>. Planet brightness uses the formulas of <b>Mallama and Hilton (2018)</b>. Planet orbits come from JPL's approximate elements (Standish and Williams).</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">Show all answers</button></div><script>
 (()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
 </script></section>
 <!-- golapada-quiz:end -->
-  <footer>Planets from JPL’s approximate orbital elements (Standish and Williams, Table 2a). The Moon from the low-precision series in the Astronomical Almanac. Planet brightness from the standard formulas of Mallama and Hilton (2018), simplified. Bright stars’ J2000 positions from the Hipparcos catalogue. Satellites from CelesTrak’s public orbit data, propagated with satellite.js 5.0.0 (MIT); the snapshot date is shown on the Satellite Watch. Expect positions good to about a degree, which is plenty for finding things by eye.</footer>
+  <footer>Nakshatras and tithis: the Moon from Meeus, <i>Astronomical Algorithms</i> ch. 47 with nutation (checked against NASA JPL DE421 in the Checks table), the Lahiri ayanamsa (23.853° at 2000, growing 50.29″ a year), 27 equal nakshatras of 13°20′ and 30 tithis of 12°, as in the Kundli Lab; the marker stars are the traditional yogataras, whose identifications vary a little between texts. Phone pointing uses the W3C Device Orientation rules. Planets from JPL’s approximate orbital elements (Standish and Williams, Table 2a). The Moon from the low-precision series in the Astronomical Almanac. Planet brightness from the standard formulas of Mallama and Hilton (2018), simplified. Bright stars’ J2000 positions from the Hipparcos catalogue. Satellites from CelesTrak’s public orbit data, propagated with satellite.js 5.0.0 (MIT); the snapshot date is shown on the Satellite Watch. Expect positions good to about a degree, which is plenty for finding things by eye.</footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
@@ -249,6 +264,7 @@ function drawSky(){if(!N)return;const c=$('sky'),g=c.getContext('2d'),w=c.client
   const COL={mercury:'#c9c0b5',venus:'#fff3c4',mars:'#ff8a5c',jupiter:'#f0d7a8',saturn:'#e8cf8a'};
   for(const v of N.vis){const o=planet(v.p,jd),h=altaz(o,jd,N.lat,N.lon);if(h.alt<0)continue;const [x,y]=P(h.alt,h.az),r=Math.max(2.5,4.5-o.mag*0.8);g.fillStyle=COL[v.p];g.shadowColor=COL[v.p];g.shadowBlur=8;g.beginPath();g.arc(x,y,r,0,7);g.fill();g.shadowBlur=0;g.fillStyle='#ffe7a8';g.font='700 13px "Saira Condensed",sans-serif';g.fillText(v.name.toUpperCase(),x+r+3,y+4)}
   const m=moon(jd),mh=altaz(m,jd,N.lat,N.lon);if(mh.alt>-1){const [x,y]=P(mh.alt,mh.az),ph=moonPhase(jd);g.fillStyle='#2b3140';g.beginPath();g.arc(x,y,9,0,7);g.fill();g.fillStyle='#f2f0e6';g.beginPath();const wax=ph.el<180,kx=Math.cos(ph.k*Math.PI);g.arc(x,y,9,-Math.PI/2,Math.PI/2,!wax);g.ellipse(x,y,9*Math.abs(kx),9,0,Math.PI/2,-Math.PI/2,(ph.k<0.5)!==wax?false:true);g.fill();g.fillStyle='#e7edf3';g.font='600 12px "Saira Condensed",sans-serif';g.fillText('MOON',x+12,y+4)}
+  nakBand(g,P,jd);pointMark(g,P);nakCard(t);
   if(sa>-6){g.fillStyle='rgba(255,210,122,.8)';g.fillText(sa>0?'DAYLIGHT':'TWILIGHT',cx-26,cy+R*0.6)}}
 $('iT').addEventListener('input',drawSky);
 // ---- checks: the Moon against published phase times ----
@@ -256,8 +272,88 @@ $('iT').addEventListener('input',drawSky);
   const fq=find(90,Date.UTC(2026,10,12)),fm=find(180,Date.UTC(2026,10,19)),nm=find(0,Date.UTC(2026,11,3)),pub=[['First quarter',Date.UTC(2026,10,17,11,48),fq],['Full Moon',Date.UTC(2026,10,24,14,53),fm],['New Moon',Date.UTC(2026,11,9,0,52),nm]];
   const s=sun(jdOf(Date.UTC(2026,2,20,14,46)));
   $('check').innerHTML='<tr><th>Test</th><th>Published (UTC)</th><th>This page</th><th class="n">Off by</th></tr>'+pub.map(([n,t,m])=>{const d=m?(m-t)/60000:null;return `<tr><td>${n}</td><td>${new Date(t).toISOString().slice(0,16).replace('T',' ')}</td><td>${m?new Date(m).toISOString().slice(0,16).replace('T',' '):'—'}</td><td class="n ${d!==null&&Math.abs(d)<90?'ok':'mid'}">${d===null?'—':Math.round(Math.abs(d))+' min'}</td></tr>`}).join('')+`<tr><td>Sun’s longitude at the March 2026 equinox</td><td>0°</td><td>${(((s.lam/D)%360+540)%360-180).toFixed(2)}°</td><td class="n ok">${Math.abs(((s.lam/D)%360+540)%360-180).toFixed(2)}°</td></tr>`})();
+// ---- nakshatras (sidereal, Lahiri ayanamsa) ----
+// the Moon to a few arcseconds (Meeus, Astronomical Algorithms ch. 47, with nutation), the same code as the Kundli Lab
+const D2R=Math.PI/180,nrm=a=>((a%360)+360)%360;
+const LR=[[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],[2,0,1,0,53322],[2,-1,0,0,45758],
+[0,1,-1,0,-40923],[1,0,0,0,-34720],[0,1,1,0,-30383],[2,0,0,-2,15327],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],
+[2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],[4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],[2,0,-1,2,-2602],[2,-1,-2,0,2390],
+[1,0,1,0,-2348],[2,-2,0,0,2236],[0,1,2,0,-2120],[0,2,0,0,-2069],[2,-2,-1,0,2048],[2,0,1,-2,-1773],[2,0,0,2,-1595],[4,-1,-1,0,1215],[0,0,2,2,-1110],[3,0,-1,0,-892],
+[2,1,1,0,-810],[4,-1,-2,0,759],[0,2,-1,0,-713],[2,2,-1,0,-700],[2,1,-2,0,691],[2,-1,0,-2,596],[4,0,1,0,549],[0,0,4,0,537],[4,-1,0,0,520],[1,0,-2,0,-487],
+[2,1,0,-2,-399],[0,0,2,-2,-381],[1,1,1,0,351],[3,0,-2,0,-340],[4,0,-3,0,330],[2,-1,2,0,327],[0,2,1,0,-323],[1,1,-1,0,299],[2,0,3,0,294]];
+function moonApparent(jd){const T=(jd-2451545)/36525;
+  const Lp=nrm(218.3164477+481267.88123421*T-0.0015786*T*T+T*T*T/538841-T**4/65194000);
+  const D=nrm(297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868-T**4/113065000);
+  const M=nrm(357.5291092+35999.0502909*T-0.0001536*T*T+T*T*T/24490000);
+  const Mp=nrm(134.9633964+477198.8675055*T+0.0087414*T*T+T*T*T/69699-T**4/14712000);
+  const F=nrm(93.2720950+483202.0175233*T-0.0036539*T*T-T*T*T/3526000+T**4/863310000);
+  const A1=nrm(119.75+131.849*T),A2=nrm(53.09+479264.290*T),E=1-0.002516*T-0.0000074*T*T;
+  let sl=0;for(const [d,m,mp,f,c] of LR){const e=Math.abs(m)===1?E:Math.abs(m)===2?E*E:1;sl+=c*e*Math.sin((d*D+m*M+mp*Mp+f*F)*D2R)}
+  sl+=3958*Math.sin(A1*D2R)+1962*Math.sin((Lp-F)*D2R)+318*Math.sin(A2*D2R);
+  const Om=nrm(125.04452-1934.136261*T),Ls=nrm(280.4665+36000.7698*T);
+  const dpsi=(-17.20*Math.sin(Om*D2R)-1.32*Math.sin(2*Ls*D2R)-0.23*Math.sin(2*Lp*D2R)+0.21*Math.sin(2*Om*D2R))/3600;
+  const meanNode=Om,trueNode=nrm(Om-1.4979*Math.sin(2*(D-F)*D2R)-0.1500*Math.sin(M*D2R)-0.1226*Math.sin(2*D*D2R)+0.1176*Math.sin(2*F*D2R)-0.0801*Math.sin(2*(Mp-F)*D2R));
+  const lat=5.128122*Math.sin(F*D2R)+0.280602*Math.sin((Mp+F)*D2R)+0.277693*Math.sin((Mp-F)*D2R)+0.173237*Math.sin((2*D-F)*D2R);
+  return {lon:nrm(Lp+sl/1e6+dpsi),lat,meanNode,trueNode,dpsi}}
+const NAK=[['Ashwini','अश्विनी','Sheratan and Mesarthim, the head of Aries'],['Bharani','भरणी','35 Arietis, a faint star in Aries'],['Krittika','कृत्तिका','the Pleiades, a tiny cluster of stars'],['Rohini','रोहिणी','Aldebaran, the red eye of the Bull'],['Mrigashira','मृगशिरा','Meissa, the head of Orion'],['Ardra','आर्द्रा','Betelgeuse, Orion’s red shoulder'],['Punarvasu','पुनर्वसु','Castor and Pollux, the Twins'],['Pushya','पुष्य','faint stars of Cancer'],['Ashlesha','आश्लेषा','the head of Hydra, the water snake'],['Magha','मघा','Regulus, the heart of the Lion'],['Purva Phalguni','पूर्वा फाल्गुनी','Zosma, on the Lion’s back'],['Uttara Phalguni','उत्तरा फाल्गुनी','Denebola, the Lion’s tail'],['Hasta','हस्त','the four stars of Corvus, the crow'],['Chitra','चित्रा','Spica, a bright blue-white star'],['Swati','स्वाति','Arcturus, a bright orange star (well north of the belt)'],['Vishakha','विशाखा','the two stars of Libra'],['Anuradha','अनुराधा','the head of Scorpius'],['Jyeshtha','ज्येष्ठा','Antares, the red heart of Scorpius'],['Mula','मूल','the curled tail of Scorpius'],['Purva Ashadha','पूर्वाषाढ़ा','the Teapot in Sagittarius'],['Uttara Ashadha','उत्तराषाढ़ा','Nunki, in Sagittarius'],['Shravana','श्रवण','Altair, in the Eagle (well north of the belt)'],['Dhanishtha','धनिष्ठा','the Dolphin, a small diamond of stars'],['Shatabhisha','शतभिषा','faint stars of Aquarius'],['Purva Bhadrapada','पूर्वभाद्रपदा','Markab, a corner of the Great Square of Pegasus'],['Uttara Bhadrapada','उत्तरभाद्रपदा','Algenib, another corner of the Great Square'],['Revati','रेवती','faint stars of Pisces']];
+const RASHI=[['Mesha','Aries'],['Vrishabha','Taurus'],['Mithuna','Gemini'],['Karka','Cancer'],['Simha','Leo'],['Kanya','Virgo'],['Tula','Libra'],['Vrishchika','Scorpio'],['Dhanu','Sagittarius'],['Makara','Capricorn'],['Kumbha','Aquarius'],['Meena','Pisces']];
+const TITHI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi'];
+const ayan=jd=>23.853+(jd-2451545)/365.25*50.29/3600; // Lahiri ayanamsa, degrees (same as the Kundli Lab)
+const moonSid=jd=>norm(moonApparent(jd).lon-ayan(jd));
+const nakOf=jd=>Math.floor(moonSid(jd)/(360/27));
+const elong=jd=>norm(moonApparent(jd).lon-sun(jd).lam/D);
+const tithiOf=jd=>Math.floor(elong(jd)/12);
+function nextChange(f,t){const a0=f(jdOf(t));let lo=t,hi=null;for(let s=t+600000;s<t+3*86400000;s+=600000){if(f(jdOf(s))!==a0){hi=s;break}lo=s}if(hi===null)return null;for(let i=0;i<20;i++){const m=(lo+hi)/2;if(f(jdOf(m))===a0)lo=m;else hi=m}return hi}
+const tithiName=i=>i===14?'Purnima (full Moon)':i===29?'Amavasya (new Moon)':(i<15?'Shukla ':'Krishna ')+TITHI[i%15];
+function nakCard(t){if(!N)return;const jd=jdOf(t),s=moonSid(jd),k=Math.floor(s/(360/27)),into=s-k*360/27,ti=tithiOf(jd),r=Math.floor(s/30),R=RASHI[r];
+  const nk=nextChange(nakOf,t),nt=nextChange(tithiOf,t),near=into<0.5||into>360/27-0.5;
+  const when=x=>x?(x-t<86400000*0.9?df.format(x):new Intl.DateTimeFormat(undefined,{weekday:'short',hour:'2-digit',minute:'2-digit',timeZone:df.resolvedOptions().timeZone}).format(x)):'—';
+  $('nak').innerHTML=`<div class="obj top"><b>${NAK[k][0]} <span lang="hi" style="font-size:18px;color:var(--gold)">${NAK[k][1]}</span></b><span>The Moon is in nakshatra ${k+1} of 27, ${Math.round(into/(360/27)*100)}% of the way through. It moves on to <strong>${NAK[(k+1)%27][0]}</strong> at ${when(nk)}.</span><em>Its marker star: ${NAK[k][2]}.</em></div>
+   <div class="obj ok"><b>${tithiName(ti)}</b><span>Tithi ${ti+1} of 30: the Moon is ${Math.round(elong(jd))}° ahead of the Sun. The next tithi starts at ${when(nt)}.</span><em>Each tithi is 12° of the Moon catching up on the Sun.</em></div>
+   <div class="obj ok"><b>Moon in ${R[0]}</b><span>The rashi (sign) the Moon is in, called ${R[1]} in English. Each rashi holds 2¼ nakshatras.</span>${near?'<em style="color:var(--gold)">The Moon is right at a nakshatra border, so a panchang may show the neighbour.</em>':''}</div>`}
+function eclPoint(lamDeg){const l=lamDeg*D;return radec(eclToEq([Math.cos(l),Math.sin(l),0]))}
+function nakBand(g,P,jd){if(!$('nakOn').checked)return;const a=ayan(jd),cur=nakOf(jd);g.save();g.lineWidth=1.2;g.strokeStyle='rgba(232,196,106,.45)';g.setLineDash([3,4]);g.beginPath();let pen=false;
+  for(let l=0;l<=360;l+=2){const h=altaz(eclPoint(l),jd,N.lat,N.lon);if(h.alt<0){pen=false;continue}const [x,y]=P(h.alt,h.az);pen?g.lineTo(x,y):g.moveTo(x,y);pen=true}g.stroke();g.setLineDash([]);
+  g.font='600 10.5px "Saira Condensed",sans-serif';const placed=[];
+  // label the Moon's nakshatra first, then the others only where they do not overlap
+  for(const k of [cur,...[...Array(27).keys()].filter(i=>i!==cur)]){const hb=altaz(eclPoint(k*360/27+a),jd,N.lat,N.lon);if(hb.alt>0){const [x,y]=P(hb.alt,hb.az);g.fillStyle='rgba(232,196,106,.6)';g.fillRect(x-1.5,y-1.5,3,3)}
+    const hm=altaz(eclPoint((k+0.5)*360/27+a),jd,N.lat,N.lon);if(hm.alt>3){const [x,y]=P(hm.alt,hm.az);if(k!==cur&&placed.some(([px,py])=>Math.abs(px-x)<54&&Math.abs(py-y)<13))continue;placed.push([x,y]);g.fillStyle=k===cur?'#e8c46a':'rgba(232,196,106,.55)';g.fillText(NAK[k][0].toUpperCase(),x-12,y-5)}}
+  g.restore()}
+// ---- point your phone ----
+let PT=null,ptOn=false;
+function pointMark(g,P){if(!ptOn||!PT)return;const [x,y]=P(Math.max(PT.alt,-3),PT.az);g.strokeStyle='#e8c46a';g.lineWidth=2.5;g.beginPath();g.arc(x,y,14,0,7);g.stroke();g.beginPath();g.moveTo(x-20,y);g.lineTo(x-8,y);g.moveTo(x+8,y);g.lineTo(x+20,y);g.moveTo(x,y-20);g.lineTo(x,y-8);g.moveTo(x,y+8);g.lineTo(x,y+20);g.stroke()}
+// device angles (W3C: alpha about up, beta about east, gamma about north) -> where the back of the phone points
+function backDir(al,be,ga){const a=al*D,b=be*D,c=ga*D,ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b),cg=Math.cos(c),sg=Math.sin(c);
+  const v=[-ca*sg-sa*sb*cg,-sa*sg+ca*sb*cg,-cb*cg];return {alt:Math.asin(Math.max(-1,Math.min(1,v[2])))/D,az:norm(Math.atan2(v[0],v[1])/D)}}
+function sepDeg(a1,z1,a2,z2){const x=Math.sin(a1*D)*Math.sin(a2*D)+Math.cos(a1*D)*Math.cos(a2*D)*Math.cos((z1-z2)*D);return Math.acos(Math.max(-1,Math.min(1,x)))/D}
+function lookedAt(t){const jd=jdOf(t),c=[];for(const v of N.vis){const h=altaz(planet(v.p,jd),jd,N.lat,N.lon);if(h.alt>0)c.push([v.name,h])}const mh=altaz(moon(jd),jd,N.lat,N.lon);if(mh.alt>0)c.push(['the Moon',mh]);for(const s of STARS){const h=altaz(s,jd,N.lat,N.lon);if(h.alt>0)c.push([s.n,h])}
+  let best=null;for(const [n,h] of c){const d=sepDeg(PT.alt,PT.az,h.alt,h.az);if(!best||d<best.d)best={n,d}}
+  // which nakshatra lies along this direction: horizon -> equatorial -> ecliptic
+  const la=N.lat*D,A=PT.az*D,a=PT.alt*D,sd=Math.sin(la)*Math.sin(a)+Math.cos(la)*Math.cos(a)*Math.cos(A),dec=Math.asin(sd),H=Math.atan2(-Math.sin(A)*Math.cos(a),Math.cos(la)*Math.sin(a)-Math.sin(la)*Math.cos(a)*Math.cos(A)),ra=gmst(jd)+N.lon*D-H;
+  const q=[Math.cos(dec)*Math.cos(ra),Math.cos(dec)*Math.sin(ra),Math.sin(dec)],e=[q[0],q[1]*Math.cos(EPS)+q[2]*Math.sin(EPS),-q[1]*Math.sin(EPS)+q[2]*Math.cos(EPS)],lam=norm(Math.atan2(e[1],e[0])/D),bet=Math.asin(e[2])/D;
+  return {best,lam,bet,sid:norm(lam-ayan(jd))}}
+function showPoint(){if(!PT||!N)return;const now=Date.now(),inNight=now>=N.t0&&now<=N.t1;if(inNight){$('iT').value=Math.round((now-N.t0)/(N.t1-N.t0)*1000)}const t=inNight?now:N.t0+(N.t1-N.t0)*(+$('iT').value/1000);drawSky();
+  if(PT.alt<0){$('pointOut').textContent=`You are pointing ${Math.round(-PT.alt)}° below the horizon. Tilt the phone up.`;return}
+  const L=lookedAt(t);let s=`Pointing ${height(PT.alt)} in the ${dir(PT.az)}.`;
+  if(L.best&&L.best.d<8)s+=` That bright light is <b style="color:var(--gold)">${L.best.n}</b>.`;else if(L.best&&L.best.d<20)s+=` The nearest bright object is ${L.best.n}, ${Math.round(L.best.d)}° away.`;
+  if(Math.abs(L.bet)<12)s+=` You are looking along the nakshatra belt, at <b style="color:var(--gold)">${NAK[Math.floor(L.sid/(360/27))][0]}</b>.`;
+  if(!inNight)s+=' <span class="note">(It is not night now, so this uses the time on the sky map.)</span>';$('pointOut').innerHTML=s}
+let sm=null;
+function onOri(e){let al=e.alpha;if(typeof e.webkitCompassHeading==='number')al=360-e.webkitCompassHeading;else if(!e.absolute&&e.type!=='deviceorientationabsolute'){$('pointNote').textContent='This phone gives no compass reading, so directions may be off.'}
+  if(al==null||e.beta==null)return;const d=backDir(al,e.beta,e.gamma||0);if(!sm)sm=d;else{let dz=((d.az-sm.az+540)%360)-180;sm={alt:sm.alt+(d.alt-sm.alt)*0.25,az:norm(sm.az+dz*0.25)}}PT=sm}
+let ptTimer=null;
+$('pointBtn').onclick=async()=>{if(ptOn){ptOn=false;clearInterval(ptTimer);removeEventListener('deviceorientationabsolute',onOri);removeEventListener('deviceorientation',onOri);$('pointBtn').textContent='Point my phone';$('pointOut').textContent='';drawSky();return}
+  if(typeof DeviceOrientationEvent==='undefined'){$('pointNote').textContent='This device has no motion sensors. Try it on a phone.';return}
+  try{if(typeof DeviceOrientationEvent.requestPermission==='function'){const r=await DeviceOrientationEvent.requestPermission();if(r!=='granted'){$('pointNote').textContent='Motion access was not allowed.';return}}}catch(err){$('pointNote').textContent='Motion access was not allowed.';return}
+  ptOn=true;sm=null;$('pointBtn').textContent='Stop pointing';$('pointNote').textContent='Hold the phone up, back towards the sky. Wave it in a figure-8 once to wake up the compass.';
+  if('ondeviceorientationabsolute' in window)addEventListener('deviceorientationabsolute',onOri);else addEventListener('deviceorientation',onOri);
+  ptTimer=setInterval(()=>{if(PT)showPoint();else $('pointOut').textContent='Waiting for the phone’s motion sensors… (on a computer nothing will happen)'},250)};
+$('nakOn').addEventListener('change',drawSky);
+// checks for the nakshatra card: a Moon position checked against NASA JPL's DE421, and a published full Moon
+(()=>{const b=moonSid(jdOf(Date.UTC(2000,7,12,18,40)));let x=Date.UTC(2026,10,24,13,0);while(tithiOf(jdOf(x))===14&&x<Date.UTC(2026,10,24,17))x+=60000;const pub=Date.UTC(2026,10,24,14,53),d=Math.abs(x-pub)/60000;
+  $('check').insertAdjacentHTML('beforeend',`<tr><td>Moon’s sidereal longitude, 12 Aug 2000 18:40 UTC (Lahiri)</td><td>269.70° (NASA JPL DE421)</td><td>${b.toFixed(2)}°</td><td class="n ${Math.abs(b-269.70)<0.05?'ok':'mid'}">${(Math.abs(b-269.70)*60).toFixed(1)}′</td></tr><tr><td>Purnima ends at the full Moon, 24 Nov 2026</td><td>${new Date(pub).toISOString().slice(0,16).replace('T',' ')}</td><td>${new Date(x).toISOString().slice(0,16).replace('T',' ')}</td><td class="n ${d<10?'ok':'mid'}">${Math.round(d)} min</td></tr>`)})();
 const c=$('sky');size(c);new ResizeObserver(()=>{size(c);drawSky()}).observe(c);run();
-window.__tn={run,get N(){return N},planet,moon,moonPhase,altaz,sun};
+window.__tn={run,get N(){return N},planet,moon,moonPhase,altaz,sun,moonSid,nakOf,tithiOf,backDir,lookedAt,setPT:p=>{PT=p;ptOn=!!p},nextChange};
 })();
 </script>
 

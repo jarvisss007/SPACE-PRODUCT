@@ -1,7 +1,34 @@
-{"questions":[
-{"q":"How close is this page's Full Moon time to the published time for November 2026?","do":"Find the <b>Full Moon</b> row in the <b>Checks</b> table and read <b>Published (UTC)</b> and <b>Off by</b>.","a":"Published: <b>24 November 2026, 14:53 UTC</b>. The page is off by about <b>30 minutes</b>, good enough for finding things by eye.","history":false},
-{"q":"On the night of 24 November 2026 in Delhi, how full is the Moon and when does it rise?","do":"Set <b>Your place</b> to <b>Delhi</b> and <b>Night of</b> to 24 November 2026. Read <b>The Moon</b> card and <b>Sunset</b> in <b>The night</b>.","a":"<b>Full Moon, 100% lit</b>. It rises around <b>4:55 pm</b>, close to sunset (about 5:24 pm). A bright Moon washes out faint stars that night.","history":false},
-{"q":"On 21 December 2026, whose night is longer: Srinagar's or Thiruvananthapuram's?","do":"Set <b>Night of</b> to 21 December 2026. Pick <b>Srinagar</b>, then <b>Thiruvananthapuram</b>, and compare <b>Sunset</b> and <b>Sunrise</b> in <b>The night</b>.","a":"Srinagar: sunset about 5:25 pm, sunrise about 7:32 am, about <b>14 hours</b>. Thiruvananthapuram: about 6:09 pm to 6:31 am, about <b>12.4 hours</b>. In December, places further north have longer nights.","history":false},
-{"q":"On 21 June 2027, the page says London is <i>never fully dark</i>. Why? Compare with Delhi.","do":"Set <b>Night of</b> to 21 June 2027. Pick <b>London</b>, then <b>Delhi</b>, and read <b>Fully dark</b> in <b>The night</b>.","a":"London shows <b>never fully dark</b>. Delhi is fully dark from about <b>8:56 pm</b>. London is far north (51.5°N), so in midsummer the Sun never sinks far enough below the horizon. Twilight lasts all night.","history":false},
-{"q":"This page uses work done by earlier astronomers. Which star catalogue gives the bright stars' positions, and whose formulas give the planets' brightness?","do":"Read the footer at the bottom of the page.","a":"Star positions come from the <b>Hipparcos catalogue</b>. Planet brightness uses the formulas of <b>Mallama and Hilton (2018)</b>. Planet orbits come from JPL's approximate elements (Standish and Williams).","history":true}
-]}
+{
+"questions": [
+{
+"q": "At 9 pm on 19 November 2026 in Delhi, which nakshatra is the Moon in, which tithi is it, and when does each change?",
+"do": "Set <b>Your place</b> to <b>Delhi</b> and <b>Night of</b> to 19 November 2026. Move the <b>Time</b> slider to about 9:00 pm and read <b>Tonight's nakshatra</b>.",
+"a": "The Moon is in <b>Purva Bhadrapada</b> (पूर्वभाद्रपदा), the 25th nakshatra, and it is <b>Shukla Dashami</b>, the 10th tithi. The Moon moves into <b>Uttara Bhadrapada</b> at about <b>6:57 am</b> on 20 November, and Ekadashi starts at about <b>7:17 am</b>. Each nakshatra is 13°20′ of sky, and the Moon covers that in about a day.",
+"history": false
+},
+{
+"q": "On the night of 24 November 2026 in Delhi, how full is the Moon and when does it rise?",
+"do": "Set <b>Your place</b> to <b>Delhi</b> and <b>Night of</b> to 24 November 2026. Read <b>The Moon</b> card and <b>Sunset</b> in <b>The night</b>.",
+"a": "<b>Full Moon, 100% lit</b>. It rises around <b>4:55 pm</b>, close to sunset (about 5:24 pm). A bright Moon washes out faint stars that night.",
+"history": false
+},
+{
+"q": "On 21 December 2026, whose night is longer: Srinagar's or Thiruvananthapuram's?",
+"do": "Set <b>Night of</b> to 21 December 2026. Pick <b>Srinagar</b>, then <b>Thiruvananthapuram</b>, and compare <b>Sunset</b> and <b>Sunrise</b> in <b>The night</b>.",
+"a": "Srinagar: sunset about 5:25 pm, sunrise about 7:32 am, about <b>14 hours</b>. Thiruvananthapuram: about 6:09 pm to 6:31 am, about <b>12.4 hours</b>. In December, places further north have longer nights.",
+"history": false
+},
+{
+"q": "On 21 June 2027, the page says London is <i>never fully dark</i>. Why? Compare with Delhi.",
+"do": "Set <b>Night of</b> to 21 June 2027. Pick <b>London</b>, then <b>Delhi</b>, and read <b>Fully dark</b> in <b>The night</b>.",
+"a": "London shows <b>never fully dark</b>. Delhi is fully dark from about <b>8:56 pm</b>. London is far north (51.5°N), so in midsummer the Sun never sinks far enough below the horizon. Twilight lasts all night.",
+"history": false
+},
+{
+"q": "This page uses work done by earlier astronomers. Which star catalogue gives the bright stars' positions, and whose formulas give the planets' brightness?",
+"do": "Read the footer at the bottom of the page.",
+"a": "Star positions come from the <b>Hipparcos catalogue</b>. Planet brightness uses the formulas of <b>Mallama and Hilton (2018)</b>. Planet orbits come from JPL's approximate elements (Standish and Williams).",
+"history": true
+}
+]
+}
