@@ -1,0 +1,271 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>गगनयान प्रयोगशाला</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: India's crew capsule in three benches: escape (abort sim), the orbit, and coming home (deorbit, entry, parachutes); then the road so far, the checks and the limits. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--saffron:#ff9a3c;--lox:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--green:#3fbf7f;
+  --display:"Saira Condensed","Noto Sans Devanagari","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans","Noto Sans Devanagari",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--saffron)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h2 small{font-size:.6em;color:var(--saffron);letter-spacing:.12em;margin-right:8px}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:16px}@media (max-width:940px){.two{grid-template-columns:minmax(0,1fr)}}
+.facts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}@media (max-width:900px){.facts{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:480px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fact{border-left:3px solid var(--saffron);padding:4px 10px}.fact b{display:block;font-family:var(--display);font-size:26px;line-height:1.1}.fact span{font-size:12px;color:var(--dim)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
+button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:var(--display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+button[aria-pressed="true"]{background:var(--saffron);border-color:var(--saffron);color:#1c0a02}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--saffron)}select{font:inherit;background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px;width:100%}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-bottom:12px}label.f output{font-family:var(--display);font-size:17px;color:var(--ink)}
+label.c{display:flex;gap:8px;align-items:center;font-size:13.5px;color:#c3ccd6;margin-bottom:12px}label.c input{accent-color:var(--saffron);width:18px;height:18px}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}#ab{aspect-ratio:16/9}#ret{aspect-ratio:16/8}#orb{aspect-ratio:1/1;max-width:420px;margin:0 auto}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line)}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat.ok{border-top-color:var(--ok)}.stat.warn{border-top-color:var(--gold)}.stat.bad{border-top-color:var(--bad)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14px}.ok{color:var(--ok)}.mid{color:var(--gold)}.bad{color:var(--bad)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--dim);margin-top:6px}.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.road{list-style:none;margin:0;padding:0;display:grid;gap:0}.road li{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.road b{font-family:var(--display);font-size:17px;color:var(--saffron)}.road li.plan b{color:var(--dim)}.road li.plan{color:#aeb8c4}.road em{font-style:normal;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-left:6px}
+@media (max-width:520px){.road li{grid-template-columns:minmax(0,1fr);gap:2px}}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<div class="wrap">
+  <header lang="hi">
+    <div class="eyebrow">भारत का मानवयुक्त यान · असली परीक्षण उड़ानें · न्यूटन के नियम</div>
+    <h1>गगनयान प्रयोगशाला</h1>
+    <p class="note">यह पृष्ठ मशीन की सहायता से अनुवादित है; किसी हिन्दी भाषी विशेषज्ञ से समीक्षा की अनुशंसा है। <a href="https://claude.ai/artifact/6wABpadDbgD2bTpGxGxfFW" lang="en">Read in English</a></p>
+    <p>गगनयान (संस्कृत में “आकाश का यान”) वह कैप्सूल है जिसे इसरो भारतीय अंतरिक्ष यात्रियों को भारतीय रॉकेट पर उड़ाने के लिए बना रहा है। किसी के इसमें बैठने से पहले इसरो को तीन बातें साबित करनी हैं: रॉकेट विफल हो तो दल बच निकल सके, यान कक्षा में टिक सके, और कैप्सूल आग से गुज़रकर घर लौटे और समुद्र में धीरे से उतरे। इस प्रयोगशाला में आप तीनों उड़ानें ख़ुद चला सकते हैं, एक ऐसे मॉडल के साथ जिसे इसरो की असली परीक्षण उड़ानों से जाँचा गया है।</p>
+  </header>
+
+  <section class="card" lang="hi" aria-label="आँकड़ों में गगनयान">
+    <div class="facts">
+      <div class="fact"><b>3</b><span>दल (2 या 3)</span></div>
+      <div class="fact"><b>400 km</b><span>कक्षा की ऊँचाई</span></div>
+      <div class="fact"><b>7 दिन</b><span>सबसे लंबा प्रवास</span></div>
+      <div class="fact"><b>8.2 t</b><span>सर्विस मॉड्यूल सहित प्रक्षेपण द्रव्यमान</span></div>
+      <div class="fact"><b>3.5 m</b><span>क्रू मॉड्यूल की चौड़ाई</span></div>
+      <div class="fact"><b>&lt; 11 m/s</b><span>जल-अवतरण के समय गति</span></div>
+    </div>
+  </section>
+
+  <div class="two">
+    <section class="card" lang="hi">
+      <h2><small>1</small>बचाव!</h2>
+      <p>कैप्सूल के ऊपर क्रू एस्केप सिस्टम (दल बचाव प्रणाली) लगा होता है: ठोस रॉकेट मोटरें, जो विफल हो रहे रॉकेट से क्रू मॉड्यूल को पलक झपकते खींचकर अलग कर सकती हैं। इसरो इसका दो बार परीक्षण कर चुका है। उन परीक्षणों को दोबारा चलाइए, या रॉकेट के विफल होने का पल ख़ुद चुनिए।</p>
+      <div class="seg" id="abPre"><button type="button" data-p="pad">पैड एबॉर्ट, 2018</button><button type="button" data-p="tv">TV-D1, 2023</button><button type="button" data-p="d2">और तेज़, मैक 1.4</button></div>
+      <label class="f">रॉकेट इस ऊँचाई पर विफल होता है <output id="oH"></output><input type="range" id="iH" min="0" max="30" step="0.5" value="11"></label>
+      <label class="f">उस समय रॉकेट की गति <output id="oM"></output><input type="range" id="iM" min="0" max="3" step="0.05" value="1.2"></label>
+      <label class="c"><input type="checkbox" id="oneA"> एक मुख्य पैराशूट नहीं खुलता</label>
+      <div class="verdict" id="abV"></div>
+    </section>
+    <section class="card" lang="hi">
+      <h2>बचाव की उड़ान</h2>
+      <canvas id="ab" aria-label="एबॉर्ट के बाद क्रू मॉड्यूल की ऊँचाई बनाम दूरी"></canvas>
+      <div class="legend"><span><i style="background:var(--saffron)"></i>बचाव मोटरें</span><span><i style="background:var(--gold)"></i>बिना धक्के आगे बढ़ना</span><span><i style="background:var(--lox)"></i>ड्रोग पैराशूट</span><span><i style="background:var(--ok)"></i>मुख्य पैराशूट</span><span><i style="background:#5a6576"></i>बंद हो चुका रॉकेट</span></div>
+      <div class="stats" id="abS"></div>
+    </section>
+  </div>
+
+  <div class="two">
+    <section class="card" lang="hi">
+      <h2><small>2</small>कक्षा में</h2>
+      <p>कक्षा में पहुँचकर दल लगभग 400 km की ऊँचाई पर पृथ्वी के चक्कर लगाता है। ऊँचाई बदलकर देखिए कि कक्षा कैसे बदलती है। नीची कक्षा तक पहुँचना सस्ता पड़ता है, पर वहाँ की पतली हवा यान को जल्दी नीचे खींच लेती है।</p>
+      <label class="f">कक्षा की ऊँचाई <output id="oO"></output><input type="range" id="iO" min="200" max="600" step="10" value="400"></label>
+      <label class="f">कक्षा में दिन <output id="oD"></output><input type="range" id="iD" min="1" max="7" step="1" value="3"></label>
+      <div class="stats" id="orS" style="grid-template-columns:repeat(2,minmax(0,1fr))"></div>
+    </section>
+    <section class="card" lang="hi">
+      <h2>पृथ्वी और कक्षा, सही अनुपात में</h2>
+      <canvas id="orb" aria-label="पृथ्वी और गगनयान की कक्षा, सही अनुपात में बनी हुई"></canvas>
+      <p class="note" style="margin-top:8px" id="orT"></p>
+    </section>
+  </div>
+
+  <div class="two">
+    <section class="card" lang="hi">
+      <h2><small>3</small>घर वापसी</h2>
+      <p>घर लौटने के लिए सर्विस मॉड्यूल अपने पाँच 440-न्यूटन इंजनों को चलने की दिशा के उलटी ओर दागता है। यह छोटा-सा धक्का कक्षा के दूर वाले हिस्से को नीचे हवा तक ले आता है। धक्का बहुत हल्का हो तो कैप्सूल वायुमंडल को बस छूकर निकल जाता है। बहुत ज़ोरदार हो तो वह तीखे कोण से भीतर गोता लगाता है, ब्रेकिंग दल को बुरी तरह दबाती है और ऊष्मा कवच (हीट शील्ड) को भारी मार झेलनी पड़ती है।</p>
+      <label class="f">ब्रेकिंग दहन <output id="oB"></output><input type="range" id="iB" min="40" max="400" step="5" value="120"></label>
+      <label class="f">दिशा-नियंत्रण<select id="mode"><option value="auto">ऑटोपायलट: लिफ्ट को घुमाकर 4 g से नीचे रहें</option><option value="ball">बिना लिफ्ट (बैलिस्टिक बैकअप)</option></select></label>
+      <label class="c"><input type="checkbox" id="oneR"> एक मुख्य पैराशूट नहीं खुलता</label>
+      <div class="verdict" id="reV"></div>
+    </section>
+    <section class="card" lang="hi">
+      <h2>नीचे का रास्ता</h2>
+      <canvas id="ret" aria-label="पुनःप्रवेश से जल-अवतरण तक समय के साथ ऊँचाई और गति"></canvas>
+      <div class="legend"><span><i style="background:var(--saffron)"></i>ऊँचाई, आग से गुज़रते हुए</span><span><i style="background:var(--lox)"></i>ऊँचाई, ड्रोग पैराशूट के सहारे</span><span><i style="background:var(--ok)"></i>ऊँचाई, मुख्य पैराशूट के सहारे</span><span><i style="background:#c3ccd6"></i>गति</span></div>
+      <div class="stats" id="reS"></div>
+    </section>
+  </div>
+
+  <section class="card" lang="hi">
+    <h2>अब तक का सफ़र</h2>
+    <ul class="road" id="road"></ul>
+    <p class="note" style="margin-top:8px">नियोजित तिथियाँ इसरो के वे लक्ष्य हैं जो 2026 के अंत में बताए गए थे, और ये पहले भी आगे खिसक चुकी हैं। नवीनतम जानकारी के लिए इसरो की वेबसाइट देखें।</p>
+  </section>
+
+  <section class="card" lang="hi">
+    <h2>इस पर कितना भरोसा करें</h2>
+    <p class="note">बचाव मोटर का धक्का और पैराशूटों के आकार प्रकाशित नहीं हैं। इन्हें एक बार इस तरह तय किया गया कि मॉडल 2018 के पैड एबॉर्ट की ऊँचाई और दूरी से मेल खाए और 11 m/s से कम गति पर उतरे। इसके बाद नीचे TV-D1 के बारे में सब कुछ एक असली भविष्यवाणी है, जिसे यह पृष्ठ हर बार खुलने पर ख़ुद गणना करके निकालता है।</p>
+    <div class="scroll"><table id="check"></table></div>
+  </section>
+
+  <section class="card" lang="hi">
+    <h2>मॉडल किन बातों को छोड़ देता है</h2>
+    <p class="note">उड़ानों की गणना एक ही ऊर्ध्वाधर तल में, बिना हवा चले, US Standard Atmosphere 1976 के वायुमंडल में की गई है। बचाव को 12.6 t के स्टैक पर 5.98 s तक 975 kN के एक स्थिर धक्के के रूप में लिया गया है, जिसे एक स्थिर झुकाव (पिच-ओवर) से मोड़ा जाता है। असली प्रणाली में पाँच तरह की मोटरें, ग्रिड फ़िन और उसका अपना क्रम होता है। बचाव वाले चार्ट में रॉकेट को बस बंद करके अपने आप आगे बढ़ने के लिए छोड़ दिया जाता है, जैसा TV-D1 में हुआ था। वापसी में पुनःप्रवेश प्रयोगशाला (Re-entry Lab) का मॉडल इस्तेमाल होता है: स्थिर कर्षण (ड्रैग) और लिफ्ट, Sutton–Graves का तापन अनुमान, और एक गोल पृथ्वी जो घूमती नहीं। पैराशूट एक तय नियम से खुलते हैं: कैप्सूल की गति 216 m/s से कम होते ही ड्रोग, और 2 km पर मुख्य पैराशूट। रीफ़िंग हर मुख्य पैराशूट को पहले 7 s तक उसके क्षेत्रफल के 15% पर रोके रखती है, जैसा 2022 के ड्रॉप परीक्षण में हुआ था। द्रव्यमान: बचाव स्टैक के लिए 12.6 t और क्रू मॉड्यूल के लिए 4.5 t, दोनों परीक्षणों से। सर्विस मॉड्यूल के इंजन की दक्षता (315 s) मान ली गई है।</p>
+  </section>
+
+  <!-- golapada-quiz:start -->
+<style>
+.gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
+.gq h2{font-family:"Saira Condensed","Noto Sans Devanagari","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
+.gq .gq-sub{font-size:13px;color:#8a97a8;margin:0 0 12px;max-width:76ch}
+.gq ol{list-style:none;margin:0;padding:0;counter-reset:gq}
+.gq li{counter-increment:gq;border-top:1px solid #1f2a38;padding:12px 0 10px 40px;position:relative}
+.gq li::before{content:counter(gq);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:#121a25;border:1px solid #2c3a4d;color:#e8c46a;font:700 15px/26px "Saira Condensed",sans-serif;text-align:center}
+.gq .gq-q{font-size:15px;color:#e7edf3;margin:0 0 4px}
+.gq .gq-do{font-size:13px;color:#8a97a8;margin:0 0 6px}.gq .gq-do b{color:#c3ccd6;font-weight:500}
+.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
+.gq details summary{cursor:pointer;font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
+.gq details summary:focus-visible,.gq button:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+.gq details p{margin:6px 0 0;padding:8px 10px;background:#121a25;border-left:3px solid #5fd6a0;border-radius:3px;font-size:14px;color:#d5dde6;max-width:76ch}
+.gq .gq-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gq button{font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
+@media print{.gq{background:#fff;border-color:#bbb}.gq h2,.gq .gq-q,.gq details p{color:#000}.gq .gq-sub,.gq .gq-do{color:#333}.gq details p{background:#fff}.gq .gq-bar{display:none}}
+</style>
+<section class="gq" lang="hi" aria-labelledby="gq-title"><h2 id="gq-title">प्रश्नोत्तरी: पाँच प्रश्न</h2><p class="gq-sub">हर प्रश्न का उत्तर ऊपर की प्रयोगशाला का उपयोग करके निकालें, फिर जाँचें। क्लास के लिए: जोड़ियाँ प्रश्न हल करें, शिक्षक उत्तर दिखाएँ।</p><ol><li><p class="gq-q">अपनी नियोजित कक्षा की ऊँचाई पर गगनयान को पृथ्वी का एक चक्कर लगाने में कितना समय लगता है?</p><p class="gq-do"><b>प्रयोगशाला में:</b> खंड 2 <b>कक्षा में</b> में <b>कक्षा की ऊँचाई</b> स्लाइडर को 400 km पर रखें और <b>एक चक्कर</b> टाइल पढ़ें।</p><details><summary>उत्तर देखें</summary><p>लगभग <b>92 min</b> (92.4 min)। 400 km पर यान लगभग 27,600 km/h की गति से चलता है, इसलिए पृथ्वी का एक चक्कर लगभग डेढ़ घंटे में पूरा होता है।</p></details></li><li><p class="gq-q">दोनों असली बचाव परीक्षणों की तुलना करें। हर परीक्षण में क्रू मॉड्यूल कितनी ऊँचाई तक चढ़ा?</p><p class="gq-do"><b>प्रयोगशाला में:</b> खंड 1 <b>बचाव!</b> में <b>पैड एबॉर्ट, 2018</b> पर क्लिक करें और <b>चाप का शिखर</b> पढ़ें। फिर <b>TV-D1, 2023</b> पर क्लिक करें और उसे दोबारा पढ़ें।</p><details><summary>उत्तर देखें</summary><p>पैड एबॉर्ट: लगभग <b>2.79 km</b>। TV-D1: लगभग <b>16.5 km</b>। TV-D1 में रॉकेट पहले से लगभग 11 km ऊपर था और मैक 1.2 की गति से चल रहा था, इसलिए कैप्सूल ने वह गति बनाए रखी और कहीं ज़्यादा ऊँचाई तक चढ़ा।</p></details></li><li><p class="gq-q">अगर TV-D1 बचाव में एक मुख्य पैराशूट न खुले, तो जल-अवतरण गति का क्या होता है? क्या दल फिर भी सुरक्षित है?</p><p class="gq-do"><b>प्रयोगशाला में:</b> <b>TV-D1, 2023</b> पर क्लिक करें। <b>जल-अवतरण गति</b> पढ़ें। फिर <b>एक मुख्य पैराशूट नहीं खुलता</b> पर सही का निशान लगाएँ और उसे दोबारा पढ़ें।</p><details><summary>उत्तर देखें</summary><p>यह लगभग <b>7.5 m/s</b> से बढ़कर लगभग <b>10.6 m/s</b> हो जाती है। यह अब भी 11 m/s की सीमा से कम है, इसलिए दल सुरक्षित है। एक पैराशूट काफ़ी है, और दूसरा सुरक्षा के लिए अतिरिक्त रखा गया है।</p></details></li><li><p class="gq-q">घर वापसी में ऑटोपायलट क्यों ज़रूरी है? उसके साथ और उसके बिना एक ज़ोरदार ब्रेकिंग दहन आज़माएँ।</p><p class="gq-do"><b>प्रयोगशाला में:</b> खंड 3 <b>घर वापसी</b> में <b>ब्रेकिंग दहन</b> को 400 m/s पर रखें। <b>ऑटोपायलट: लिफ्ट को घुमाकर 4 g से नीचे रहें</b> के साथ <b>सबसे कड़ी ब्रेकिंग</b> पढ़ें। फिर <b>दिशा-नियंत्रण</b> को <b>बिना लिफ्ट (बैलिस्टिक बैकअप)</b> पर बदलें और उसे दोबारा पढ़ें।</p><details><summary>उत्तर देखें</summary><p>ऑटोपायलट के साथ लगभग <b>7.9 g</b>। बिना लिफ्ट के लगभग <b>15.6 g</b>, जिसे पृष्ठ <i>दल के लिए बहुत तीखा</i> बताता है (10 g से अधिक)। कैप्सूल की लिफ्ट उसे सीधे घनी हवा में गोता लगाने के बजाय ज़्यादा समय में धीरे-धीरे धीमा होने देती है।</p></details></li><li><p class="gq-q"><span class="gq-h">इतिहास</span>अंतरिक्ष में जाने वाले पहले भारतीय कौन थे, और किस वर्ष? उन्होंने किस अंतरिक्ष यान में उड़ान भरी?</p><p class="gq-do"><b>प्रयोगशाला में:</b> <b>अब तक का सफ़र</b> तक स्क्रॉल करें और समयरेखा की पहली प्रविष्टि पढ़ें।</p><details><summary>उत्तर देखें</summary><p><b>राकेश शर्मा, 1984 में</b>। उन्होंने इंटरकॉसमॉस कार्यक्रम के तहत सोवियत <b>सोयूज़ T-11</b> में उड़ान भरी। गगनयान का लक्ष्य पहले भारतीय दल को एक <i>भारतीय</i> रॉकेट पर भेजना है।</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">सभी उत्तर देखें</button></div><script>
+(()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'सभी उत्तर छिपाएँ':'सभी उत्तर देखें'})})();
+</script></section>
+<!-- golapada-quiz:end -->
+  <footer lang="hi">स्रोत: Wikipedia के लेख “Gaganyaan” (प्रक्षेपण द्रव्यमान 8,200 kg; क्रू मॉड्यूल 3.5 m; 400 km पर अधिकतम सात दिन; पाँच 440 N इंजन; पैराशूट कैप्सूल की गति 216 m/s से अधिक से घटाकर 11 m/s से कम करते हैं, और एक ही पैराशूट काफ़ी है; कम ऊँचाई वाली बचाव मोटर 5.98 s के लिए 842 kN; 2022 में 2.5 km से 5 t के डमी का ड्रॉप परीक्षण, 7 s बाद रीफ़िंग काटी गई), “ISRO Pad Abort Test” (5 जुलाई 2018: 12.6 t, 10 g, 2.75 km ऊँचाई, 2.9 km दूर जल-अवतरण, 259 s), “Test Vehicle Abort Mission-1” (21 अक्टूबर 2023: लगभग 11 km पर Mach 1.2 पर एबॉर्ट; घटनाओं के समय; लगभग 15 km ऊँचाई; अवतरण द्रव्यमान 4.5 t), “Gaganyaan-1” (मानवरहित, व्योममित्र के साथ, Q4 2026 के लिए नियोजित), “Axiom Mission 4” (शुभांशु शुक्ला, 25 जून से 15 जुलाई 2025) और “Bharatiya Antariksh Station” (पहला मॉड्यूल 2028, पूरा होना 2035, 52 t)। वायुमंडल: US Standard Atmosphere 1976। तापन: Sutton और Graves, NASA TR R-376। यह एक स्वतंत्र मॉडल है, जिसे न इसरो ने बनाया है, न इसरो के साथ मिलकर बनाया गया है।</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const RE=6371e3,MU=3.986004418e14,G0=9.80665,D=Math.PI/180,nf=new Intl.NumberFormat('en-US');
+const ATM=[[0,1.225],[5,0.7364],[10,0.4135],[15,0.1948],[20,0.08891],[25,0.04008],[30,0.01841],[40,0.003996],[50,0.001027],[60,3.097e-4],[70,8.283e-5],[80,1.846e-5],[90,3.416e-6],[100,5.604e-7],[110,9.708e-8],[120,2.222e-8],[130,8.152e-9],[150,2.076e-9],[200,2.541e-10],[300,1.916e-11],[400,2.803e-12],[500,5.215e-13],[600,1.137e-13]];
+function rho(h){const k=h/1000;if(k<=0)return 1.225;if(k>=600)return 1.137e-13;let i=0;while(ATM[i+1][0]<k)i++;const [a,ra]=ATM[i],[b,rb]=ATM[i+1];return ra*Math.exp(Math.log(rb/ra)*(k-a)/(b-a))}
+function sound(h){const k=h/1000,T=k<11?288.15-6.5*k:k<20?216.65:k<32?216.65+(k-20):k<47?228.65+2.8*(k-32):270.65;return Math.sqrt(1.4*287.05*T)}
+// ---- shared parachute model (assumed sizes, see checks) ----
+const CH={cdaCM:11,cdaDrog:40,cdaMain:640,hMain:2000,reef:7,reefF:0.15,mCM:4500};
+// ---- 1. escape ----
+const ESC={m0:12600,F:975e3,tb:5.98,isp:230,pitch:5,cdaStack:7};
+function abort(h0,mach,gam0,tm,nMain){const md=ESC.F/(ESC.isp*G0),dt=0.02;let t=0,x=0,h=Math.max(1,h0),v=Math.max(1,mach*sound(h0)),g=gam0*D,m=ESC.m0,ph='burn',peak=0,apo=h,mt=null;const ev=[],path=[];
+  // dead rocket: coasts from the same state with its own ballistic coefficient (assumed 4,000 kg/m2)
+  let rx=0,rh=h,rv=v,rg=g;const rp=[];
+  while(h>=0&&t<3000){let T=0;
+    if(t<ESC.tb){T=ESC.F;m-=md*dt}else if(ph==='burn')ph='coast';
+    if((ph==='burn'||ph==='coast')&&t>=tm.ces){ph='cm';m=CH.mCM;ev.push(['बचाव टावर अलग',t,h])}
+    if(ph==='cm'&&t>=tm.chute){if(h>CH.hMain){ph='drog';ev.push(['ड्रोग पैराशूट',t,h])}else{ph='main';mt=t;ev.push(['मुख्य पैराशूट',t,h])}}
+    if(ph==='drog'&&h<=CH.hMain){ph='main';mt=t;ev.push(['मुख्य पैराशूट',t,h])}
+    const cda=ph==='burn'||ph==='coast'?ESC.cdaStack:ph==='cm'?CH.cdaCM:ph==='drog'?CH.cdaDrog:(t-mt<CH.reef?CH.reefF:1)*CH.cdaMain*nMain;
+    const a=T/m-.5*rho(h)*v*v*cda/m;v+=(a-G0*Math.sin(g))*dt;g+=((ph==='burn'?-ESC.pitch*D:0)-G0*Math.cos(g)/v)*dt;if(v<0.5)v=0.5;
+    h+=v*Math.sin(g)*dt;x+=v*Math.cos(g)*dt;t+=dt;const felt=Math.abs(a)/G0;if(felt>peak&&(ph==='burn'||ph==='coast'))peak=felt;if(h>apo)apo=h;
+    if(rh>0){const ra=-.5*rho(rh)*rv*rv/4000;rv+=(ra-G0*Math.sin(rg))*dt;rg+=-G0*Math.cos(rg)/Math.max(rv,1)*dt;rh+=rv*Math.sin(rg)*dt;rx+=rv*Math.cos(rg)*dt}
+    if(path.length===0||t-path.at(-1)[0]>=0.25){path.push([t,x,h,ph]);if(rh>0)rp.push([t,rx,rh])}
+    if(t<=5.001&&Math.abs(t-5)<dt/2){var sep5=Math.hypot(x-rx,h-rh)}}
+  path.push([t,x,0,ph]);return {t,x,apo,peak,ev,v,path,rp,sep5}}
+const PRE={pad:{h:0,m:0,g:90,tm:{ces:20,chute:29},name:'2018 का पैड एबॉर्ट'},tv:{h:11,m:1.2,g:65,tm:{ces:30,chute:37.3},name:'TV-D1'},d2:{h:14,m:1.4,g:65,tm:{ces:30,chute:37.3},name:'और तेज़ एबॉर्ट (ऊँचाई मानी गई)'}};
+const $=id=>document.getElementById(id);let preset='tv',A=null;
+function runA(){const h=+$('iH').value*1000,M=+$('iM').value,p=PRE[preset]||PRE.tv;const pad=h<500&&M<0.05;
+  $('oH').textContent=(h/1000).toFixed(1)+' km'+(pad?' (लॉन्च पैड पर)':'');$('oM').textContent=M<0.05?'स्थिर खड़ा':'मैक '+M.toFixed(2)+' ('+nf.format(Math.round(M*sound(h)*3.6))+' km/h)';
+  const tm=pad?PRE.pad.tm:PRE.tv.tm;A=abort(h,M,pad?90:65,tm,$('oneA').checked?1:2);
+  const cells=[['सबसे तेज़ धक्का',A.peak.toFixed(1)+' g',A.peak>15?'bad':A.peak>10.5?'warn':'ok'],['चाप का शिखर',(A.apo/1000).toFixed(2)+' km',''],['5 s बाद रॉकेट से दूरी',nf.format(Math.round(A.sep5||0))+' m',''],['जल-अवतरण गति',A.v.toFixed(1)+' m/s',A.v<11?'ok':'bad'],
+    ['विफलता बिंदु से उतरने की दूरी',(A.x/1000).toFixed(1)+' km',''],['जल-अवतरण तक समय',Math.floor(A.t/60)+' min '+String(Math.round(A.t%60)).padStart(2,'0')+' s',''],['मुख्य पैराशूट, विफलता के बाद',A.ev.find(e=>e[0]==='मुख्य पैराशूट')?Math.round(A.ev.find(e=>e[0]==='मुख्य पैराशूट')[1])+' s':'—',''],['ड्रोग, विफलता के बाद',A.ev.find(e=>e[0]==='ड्रोग पैराशूट')?Math.round(A.ev.find(e=>e[0]==='ड्रोग पैराशूट')[1])+' s':'ज़रूरत नहीं','']];
+  $('abS').innerHTML=cells.map(c=>`<div class="stat ${c[2]}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  $('abV').innerHTML=A.v>=11?`<b class="bad">कठोर अवतरण।</b> एक ही मुख्य पैराशूट के साथ कैप्सूल ${A.v.toFixed(1)} m/s पर पानी से टकराता है, जो 11 m/s की सीमा से ज़्यादा है। इस मॉडल में दूसरे पैराशूट की ज़रूरत है।`
+   :`<b class="ok">दल सुरक्षित।</b> मोटरों ने अधिकतम ${A.peak.toFixed(1)} g पर 5 सेकंड में कैप्सूल को रॉकेट से ${nf.format(Math.round(A.sep5||0))} m दूर खींच लिया। यह ${(A.apo/1000).toFixed(1)} km की ऊँचाई तक पहुँचा और ${(A.x/1000).toFixed(1)} km दूर ${A.v.toFixed(1)} m/s पर समुद्र में उतरा${$('oneA').checked?', वह भी एक ही मुख्य पैराशूट पर: इसीलिए दो पैराशूट लगाए जाते हैं।':'।'}`;
+  drawA()}
+function size(c){const r=Math.min(2,devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;c.width=Math.round(w*r);c.height=Math.round(h*r);c.getContext('2d').setTransform(r,0,0,r,0,0)}
+const PHC={burn:'#ff9a3c',coast:'#e8c46a',cm:'#e8c46a',drog:'#74c7ff',main:'#5fd6a0'};
+function axes(g,X0,Y0,pw,ph,xm,ym,xl,yl,w){g.strokeStyle='#1f2a38';g.fillStyle='#8a97a8';g.font='11px "IBM Plex Sans",sans-serif';g.lineWidth=1;
+  const st=v=>{const e=Math.pow(10,Math.floor(Math.log10(v/4))),f=v/4/e;return (f<2?2:f<5?5:10)*e};
+  const sx=st(xm),sy=st(ym);g.textAlign='center';for(let a=0;a<=xm+1e-9;a+=sx){const X=X0+a/xm*pw;g.beginPath();g.moveTo(X,Y0);g.lineTo(X,Y0-ph);g.stroke();g.fillText(+a.toFixed(2),X,Y0+14)}
+  g.textAlign='right';for(let a=0;a<=ym+1e-9;a+=sy){const Y=Y0-a/ym*ph;g.beginPath();g.moveTo(X0,Y);g.lineTo(X0+pw,Y);g.stroke();g.fillText(+a.toFixed(2),X0-5,Y+4)}
+  g.textAlign='left';g.fillText(yl,X0+4,Y0-ph+12);g.textAlign='right';g.fillText(xl,X0+pw,Y0-ph+12)}
+function drawA(){const cv=$('ab');size(cv);const g=cv.getContext('2d'),w=cv.clientWidth,h=cv.clientHeight,X0=40,Y0=h-22,pw=w-X0-12,ph=h-22-10;
+  const xm=Math.max(2,A.x/1000*1.1,...A.rp.map(p=>p[1]/1000)),ym=Math.max(2,A.apo/1000*1.15);const xmax=Math.min(xm,Math.max(A.x/1000*1.6,3)),P=(x,y)=>[X0+x/1000/xmax*pw,Y0-y/1000/ym*ph];
+  g.clearRect(0,0,w,h);axes(g,X0,Y0,pw,ph,xmax,ym,'दूरी, km','ऊँचाई, km');
+  g.save();g.beginPath();g.rect(X0,Y0-ph,pw,ph);g.clip();
+  g.strokeStyle='#5a6576';g.setLineDash([4,4]);g.lineWidth=1.5;g.beginPath();A.rp.forEach((p,i)=>{const [X,Y]=P(p[1],p[2]);i?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();g.setLineDash([]);
+  g.lineWidth=2.5;for(let i=1;i<A.path.length;i++){const a=A.path[i-1],b=A.path[i];g.strokeStyle=PHC[b[3]];g.beginPath();g.moveTo(...P(a[1],a[2]));g.lineTo(...P(b[1],b[2]));g.stroke()}
+  g.fillStyle='#e7edf3';g.font='11px "IBM Plex Sans",sans-serif';g.textAlign='left';
+  A.ev.forEach((e,i)=>{const p=A.path.reduce((b,q)=>Math.abs(q[0]-e[1])<Math.abs(b[0]-e[1])?q:b);const [X,Y]=P(p[1],p[2]);g.beginPath();g.arc(X,Y,3.5,0,7);g.fill();const s=e[0]+' · '+Math.round(e[1])+' s',right=X>X0+pw*0.55;g.textAlign=right?'right':'left';g.fillText(s,right?X-8:X+8,Math.min(Y0-6,Math.max(Y0-ph+24,Y+(i%2?16:-6))))});
+  const [X,Y]=P(0,A.path[0][2]);g.fillStyle='#ff6b5e';g.beginPath();g.arc(X,Y,5,0,7);g.fill();g.fillText('रॉकेट विफल',X+7,Y+14);g.restore()}
+// ---- 2. orbit ----
+function runO(){const hk=+$('iO').value,days=+$('iD').value,r=RE+hk*1000,v=Math.sqrt(MU/r),T=2*Math.PI*r/v;const n=days*86400/T;
+  // drag lifetime: orbit-averaged decay, ballistic coefficient of the 8.2 t stack (Cd 2.2, 3.5 m wide)
+  const B=8200/(2.2*Math.PI*3.5*3.5/4);let a=r,t=0;while(a>RE+150e3&&t<3e9){const dadt=-Math.sqrt(MU*a)*rho(a-RE)/B;const dt=Math.min(86400,Math.abs(5e3/dadt));a+=dadt*dt;t+=dt}
+  const sh=Math.asin(RE/r),dark=sh/Math.PI;// fraction of orbit in Earth's shadow (orbit through the Sun line)
+  $('oO').textContent=hk+' km'+(hk===400?' (गगनयान)':'');$('oD').textContent=days+(days===1?' दिन':' दिन');
+  const life=t/86400;
+  $('orS').innerHTML=[['गति',nf.format(Math.round(v*3.6))+' km/h'],['एक चक्कर',(T/60).toFixed(1)+' min'],[days+(days>1?' दिनों में चक्कर':' दिन में चक्कर'),Math.floor(n)],['दिखने वाले सूर्योदय',Math.floor(n)],['हर चक्कर में रात, अधिकतम',Math.round(dark*T/60)+' min'],['यूँ ही छोड़ने पर लगभग इतने में गिरेगा',life>3650?'10 वर्ष से अधिक':life>365?(life/365).toFixed(1)+' वर्ष':Math.round(life)+' दिन']].map(c=>`<div class="stat"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  $('orT').textContent=`${hk} km पर कक्षा ज़मीन से पृथ्वी की त्रिज्या के केवल ${(hk/6371*100).toFixed(1)}% ऊपर है: सही अनुपात में बनाने पर यह ग्रह से लगभग चिपकी हुई दिखती है। दल को एक दिन में लगभग ${Math.floor(86400/T)} सूर्योदय दिखते हैं। गिरने का समय पूरे 8.2 t के यान और औसत सौर सक्रियता को मानकर निकाला गया है।`;
+  const cv=$('orb');size(cv);const g=cv.getContext('2d'),w=cv.clientWidth,hh=cv.clientHeight,cx=w/2,cy=hh/2,R=Math.min(w,hh)*0.36,ro=R*r/RE;g.clearRect(0,0,w,hh);
+  const gr=g.createRadialGradient(cx-R*.3,cy-R*.3,R*.1,cx,cy,R);gr.addColorStop(0,'#2d6fae');gr.addColorStop(1,'#0c2a4a');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,R,0,7);g.fill();
+  g.fillStyle='rgba(0,0,0,.45)';g.beginPath();g.arc(cx,cy,R,-Math.PI/2,Math.PI/2);g.fill();
+  g.strokeStyle='rgba(116,199,255,.35)';g.lineWidth=R*0.012+1;g.beginPath();g.arc(cx,cy,R*(1+100/6371),0,7);g.stroke();
+  g.strokeStyle='#ff9a3c';g.lineWidth=2;g.beginPath();g.arc(cx,cy,ro,0,7);g.stroke();
+  g.fillStyle='#e7edf3';g.beginPath();g.arc(cx,cy-ro,4,0,7);g.fill();g.font='12px "IBM Plex Sans",sans-serif';g.textAlign='center';g.fillText('गगनयान, '+hk+' km',cx,cy-ro-10);
+  g.fillStyle='#8a97a8';g.fillText('हवा (100 km)',cx,cy+R*(1+100/6371)+16);g.textAlign='left';g.fillText('रात वाला भाग',8,hh-10);g.textAlign='right';g.fillText('सूर्य →',w-8,hh-10)}
+// ---- 3. coming home ----
+function fly(v0,gam0,mode,nMain){const m=CH.mCM,cd=1.3,ld=mode==='ball'?0:0.25,rn=4.2,Aref=Math.PI*3.5*3.5/4,B=m/(cd*Aref);let v=v0,g=gam0,h=122e3,x=0,t=0,peakG=0,peakGh=0,peakQ=0,heat=0,ph='fire',mt=null,skipped=false,tD=null,tM=null;const out=[],dt=0.05;
+  while(h>0&&t<8000){const r=RE+h,gr=MU/r/r,rr=rho(h);let Dd,L=0;
+    if(ph==='fire'){Dd=.5*rr*v*v/B;L=ld*Dd;const n=Math.hypot(Dd,L)/G0;let k=1;if(ld>0){k=0.2+0.3*(n-4)-0.006*v*Math.sin(g);if(n<0.3)k=1;k=Math.max(-1,Math.min(1,k))}L*=k;
+      if(v<216&&h<30e3){ph='drog';tD=t}}
+    else{if(ph==='drog'&&h<=CH.hMain){ph='main';mt=tM=t}const cda=ph==='drog'?CH.cdaDrog:(t-mt<CH.reef?CH.reefF:1)*CH.cdaMain*nMain;Dd=.5*rr*v*v*cda/m}
+    v+=(-Dd-gr*Math.sin(g))*dt;g+=(L-(gr-v*v/r)*Math.cos(g))/v*dt;h+=v*Math.sin(g)*dt;x+=v*Math.cos(g)*dt*RE/r;t+=dt;
+    const n=Math.hypot(Dd,L)/G0;if(ph==='fire'&&n>peakG){peakG=n;peakGh=h}if(ph==='fire'){const q=1.7415e-4*Math.sqrt(rr/rn)*v**3;if(q>peakQ)peakQ=q;heat+=q*dt}
+    if(out.length===0||t-out.at(-1)[0]>=1)out.push([t,h,v,ph]);if(h>123e3&&g>0){skipped=true;break}}
+  out.push([t,Math.max(h,0),v,ph]);return {peakG,peakGh,peakQ,heat,t,x,skipped,out,v,tD,tM}}
+let RT=null;
+function runR(){const dv=+$('iB').value,r1=RE+400e3,v1=Math.sqrt(MU/r1),v2=v1-dv,a=1/(2/r1-v2*v2/MU),rp=2*a-r1,re=RE+122e3;
+  const sm=8200,ve=315*G0,burn=sm*(1-Math.exp(-dv/ve))/(2200/ve);
+  $('oB').textContent=dv+' m/s, '+(burn/60).toFixed(1)+' मिनट का दहन';
+  let html,cells;
+  if(rp>re-2e3){RT=null;$('reV').innerHTML=`<b class="bad">पर्याप्त गहराई नहीं।</b> नई कक्षा का सबसे निचला बिंदु ${Math.round((rp-RE)/1000)} km ऊपर है, उस हवा से ऊपर जो असर डालती है। कैप्सूल कई चक्करों तक वायुमंडल के ऊपरी हिस्से को बस छूता रहेगा। और ज़ोर से दहन करें।`;$('reS').innerHTML='';drawR();return}
+  const ve2=Math.sqrt(MU*(2/re-1/a)),h=Math.sqrt(MU*a*(1-((r1-rp)/(r1+rp))**2)),gam=-Math.acos(Math.min(1,h/(re*ve2)));
+  RT=fly(ve2,gam,$('mode').value,$('oneR').checked?1:2);const G=RT.peakG;
+  cells=[['नई कक्षा का निचला बिंदु',Math.round((rp-RE)/1000)+' km',''],['122 km पर प्रवेश कोण',(-gam/D).toFixed(2)+'°',''],['सबसे कड़ी ब्रेकिंग',RT.skipped?'—':G.toFixed(1)+' g',G>10?'bad':G>6?'warn':'ok'],['अधिकतम तापन',(RT.peakQ/1e6).toFixed(2)+' MW/m²',RT.peakQ>3e6?'warn':''],
+    ['ड्रोग खुलने की ऊँचाई',RT.tD?(RT.out.find(o=>o[0]>=RT.tD)||RT.out.at(-1))[1]/1000>0?((RT.out.find(o=>o[0]>=RT.tD)||[0,0])[1]/1000).toFixed(1)+' km':'—':'—',''],['जल-अवतरण गति',RT.v.toFixed(1)+' m/s',RT.v<11?'ok':'bad'],['हवा से समुद्र तक',Math.floor(RT.t/60)+' min',''],['ज़मीन के ऊपर तय दूरी',nf.format(Math.round(RT.x/1000))+' km','']];
+  $('reS').innerHTML=cells.map(c=>`<div class="stat ${c[2]}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('');
+  $('reV').innerHTML=RT.skipped?`<b class="bad">बाहर उछल गया।</b> कोण बहुत उथला: कैप्सूल ऊपरी हवा से टकराकर वापस उछल गया।`:G>10?`<b class="bad">दल के लिए बहुत तीखा।</b> ${G.toFixed(1)} g, जो 10 g से ज़्यादा है; यह पृष्ठ 10 g को दल की सीमा मानता है। हल्का दहन करें या दिशा ऑटोपायलट को संभालने दें।`
+   :RT.v>=11?`<b class="bad">कठोर अवतरण।</b> ${G.toFixed(1)} g पर आग से सुरक्षित निकल आया, पर एक ही मुख्य पैराशूट उसे ${RT.v.toFixed(1)} m/s पर उतारता है।`
+   :`<b class="ok">घर पहुँचे।</b> ${(RT.peakGh/1000).toFixed(0)} km पर ब्रेकिंग अधिकतम ${G.toFixed(1)} g तक पहुँची। ऊष्मा कवच ने ${(RT.peakQ/1e6).toFixed(1)} MW प्रति वर्ग मीटर झेला, जो अंतरिक्ष यान पर पड़ने वाली धूप का लगभग ${nf.format(Math.round(RT.peakQ/1361))} गुना है। ${RT.v.toFixed(1)} m/s पर जल-अवतरण${$('oneR').checked?', एक ही पैराशूट पर: फिर भी सुरक्षित, जैसा डिज़ाइन में सोचा गया है।':'।'}`;
+  drawR()}
+function drawR(){const cv=$('ret');size(cv);const g=cv.getContext('2d'),w=cv.clientWidth,h=cv.clientHeight,X0=40,Y0=h-22,pw=w-X0-44,ph=h-22-10;g.clearRect(0,0,w,h);
+  if(!RT){g.fillStyle='#8a97a8';g.font='13px "IBM Plex Sans",sans-serif';g.textAlign='center';g.fillText('पुनःप्रवेश नहीं: कक्षा अब भी हवा तक नहीं पहुँचती।',w/2,h/2);return}
+  const tm=RT.t/60*1.02,P=(t,y)=>[X0+t/60/tm*pw,Y0-y/125e3*ph],V=(t,v)=>[X0+t/60/tm*pw,Y0-v/8000*ph];axes(g,X0,Y0,pw,ph,tm,125,'122 km पर पहुँचने के बाद मिनट','ऊँचाई, km');
+  g.fillStyle='#8a97a8';g.textAlign='left';for(let s=0;s<=8;s+=2){g.fillText(s+'',X0+pw+6,Y0-s/8*ph+4)}g.fillText('km/s',X0+pw+4,Y0-ph+12);
+  g.lineWidth=2.5;const C={fire:'#ff9a3c',drog:'#74c7ff',main:'#5fd6a0'};for(let i=1;i<RT.out.length;i++){const a=RT.out[i-1],b=RT.out[i];g.strokeStyle=C[b[3]];g.beginPath();g.moveTo(...P(a[0],a[1]));g.lineTo(...P(b[0],b[1]));g.stroke()}
+  g.strokeStyle='#c3ccd6';g.lineWidth=1.5;g.beginPath();RT.out.forEach((o,i)=>{const [X,Y]=V(o[0],o[2]);i?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke()}
+// ---- road ----
+const ROAD=[['1984','राकेश शर्मा अंतरिक्ष में जाने वाले पहले भारतीय बने। उन्होंने इंटरकॉसमॉस कार्यक्रम के तहत सोवियत सोयूज़ T-11 में उड़ान भरी।'],['2007','SRE-1, कक्षा से लौटने वाला इसरो का पहला कैप्सूल, बंगाल की खाड़ी में उतरा।'],['2014','CARE, एक परीक्षण क्रू मॉड्यूल, पहले LVM3 पर उड़ा और पैराशूटों के सहारे वापस लौटा।'],['5 जुलाई 2018','पैड एबॉर्ट परीक्षण: बचाव मोटरें 12.6 t के परीक्षण स्टैक को 10 g पर 2.75 km की ऊँचाई तक खींच ले गईं।'],['18 नवंबर 2022','पैराशूट ड्रॉप परीक्षण: 5 t का एक डमी Il-76 विमान से 2.5 km की ऊँचाई से गिराया गया और वह धीरे से उतरा।'],['21 अक्टूबर 2023','TV-D1: लगभग 11 km की ऊँचाई पर मैक 1.2 की गति पर बचाव प्रणाली दागी गई। क्रू मॉड्यूल को बंगाल की खाड़ी से निकाला गया।'],['जून–जुलाई 2025','गगनयान के लिए चुने गए अंतरिक्ष यात्री शुभांशु शुक्ला Axiom Mission 4 (एक्सिओम मिशन 4) पर अंतरराष्ट्रीय अंतरिक्ष स्टेशन गए।'],
+ ['चौथी तिमाही 2026','गगनयान-1 (G1): पहली मानवरहित कक्षीय उड़ान, जिसमें रोबोट व्योममित्र सवार होगी।',1],['2027 या बाद में','भारतीय रॉकेट पर पहला भारतीय दल।',1],['2028','भारतीय अंतरिक्ष स्टेशन का पहला मॉड्यूल। यह भारत का नियोजित अंतरिक्ष स्टेशन है, लगभग 400–450 km की ऊँचाई पर।',1],['2035','स्टेशन पूरा: लगभग 52 t, जिसमें दल 3 से 6 महीने तक रहेंगे।',1]];
+$('road').innerHTML=ROAD.map(r=>`<li class="${r[2]?'plan':''}"><div><b>${r[0]}</b>${r[2]?'<em>नियोजित</em>':''}</div><div>${r[1]}</div></li>`).join('');
+// ---- checks (computed live) ----
+function checks(){const pad=abort(0,0,90,PRE.pad.tm,2),tv=abort(11000,1.2,65,PRE.tv.tm,2),one=abort(11000,1.2,65,PRE.tv.tm,1);const tvM=tv.ev.find(e=>e[0]==='मुख्य पैराशूट');
+  const rows=[['पैड एबॉर्ट: सबसे तेज़ धक्का','10 g',pad.peak.toFixed(1)+' g','miss'],['पैड एबॉर्ट: सबसे ऊँचा बिंदु','2.75 km',(pad.apo/1000).toFixed(2)+' km','tuned'],['पैड एबॉर्ट: जल-अवतरण की दूरी','2.9 km',(pad.x/1000).toFixed(1)+' km','tuned'],['पैड एबॉर्ट: पूरी उड़ान','259 s',Math.round(pad.t)+' s','prediction'],
+    ['TV-D1: सबसे ऊँचा बिंदु','लगभग 15 km',(tv.apo/1000).toFixed(1)+' km','prediction'],['TV-D1: मुख्य पैराशूट, उड़ान भरने के बाद का समय','307.9 s',Math.round(tvM[1]+60.9)+' s','prediction'],['TV-D1: जल-अवतरण, उड़ान भरने के बाद का समय','584.4 s',Math.round(tv.t+60.9)+' s','prediction'],
+    ['जल-अवतरण गति, दो मुख्य पैराशूट','11 m/s से कम',tv.v.toFixed(1)+' m/s','set'],['जल-अवतरण गति, एक मुख्य पैराशूट','“एक ही काफ़ी है”',one.v.toFixed(1)+' m/s','prediction']];
+  $('check').innerHTML='<tr><th>क्या</th><th class="n">प्रकाशित</th><th class="n">यह मॉडल</th><th>प्रकार</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${r[2]}</td><td class="note">${r[3]==='miss'?'कम: एक स्थिर दहन धक्के को फैला देता है, असली मोटरें कम समय में ज़्यादा ज़ोर से धकेलती हैं':r[3]==='tuned'?'बचाव का धक्का तय करने में इस्तेमाल':r[3]==='set'?'पैराशूटों का आकार तय करने में इस्तेमाल':'असली भविष्यवाणी'}</td></tr>`).join('')}
+// ---- wiring ----
+document.querySelectorAll('#abPre button').forEach(b=>b.addEventListener('click',()=>{preset=b.dataset.p;const p=PRE[preset];$('iH').value=p.h;$('iM').value=p.m;document.querySelectorAll('#abPre button').forEach(x=>x.setAttribute('aria-pressed',x===b));runA()}));
+['iH','iM'].forEach(id=>$(id).addEventListener('input',()=>{document.querySelectorAll('#abPre button').forEach(x=>x.setAttribute('aria-pressed','false'));runA()}));$('oneA').addEventListener('change',runA);
+['iO','iD'].forEach(id=>$(id).addEventListener('input',runO));['iB','mode','oneR'].forEach(id=>$(id).addEventListener('input',runR));$('oneR').addEventListener('change',runR);
+document.querySelector('#abPre [data-p="tv"]').setAttribute('aria-pressed','true');
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{drawA();runO();drawR()},120)});
+runA();runO();runR();checks();
+window.__gagan={abort,fly,PRE,get A(){return A},get RT(){return RT}};
+})();
+</script>

@@ -111,11 +111,24 @@ def nav_html(current: str) -> str:
             f'<div class="sa-panel" hidden>{tabs}</div></nav>\n' + NAV_JS)
 
 
+# Hindi versions: <page>.hi.html, built when present, reached from a switch on the English page
+# (not in the navigation bar). Machine-assisted translations; each says so at the top.
+HINDI = ["gaganyaan-lab", "chandrayaan-3", "launch-watch", "eclipse-lab"]
+LANG_SWITCH = ('<p style="max-width:1200px;margin:10px auto 0;padding:0 max(16px,env(safe-area-inset-left,0px));'
+               'font:500 14px/1.4 \'IBM Plex Sans\',system-ui,sans-serif;text-align:right">'
+               '<a href="{href}" lang="hi" style="color:#74c7ff">हिन्दी में पढ़ें</a></p>')
+
+
 def build() -> None:
     OUT.mkdir(exist_ok=True)
     id_to_file = {aid: fname for fname, _, aid in PAGES}
-    for fname, _, _ in PAGES:
+    hindi = [f"{p}.hi.html" for p in HINDI if (HERE / f"{p}.hi.html").exists()]
+    for fname in [f for f, _, _ in PAGES] + hindi:
         src = (HERE / fname).read_text(encoding="utf-8")
+        hi = fname.replace(".html", ".hi.html")
+        if hi in hindi:
+            # the English page offers its Hindi version just under the navigation
+            src = src.replace('<div class="wrap">', LANG_SWITCH.format(href=hi) + '<div class="wrap">', 1)
         # links between apps become relative, so the site works as one unit
         src = re.sub(r"https://claude\.ai/artifact/([A-Za-z0-9]+)",
                      lambda m: id_to_file.get(m.group(1), m.group(0)), src)
