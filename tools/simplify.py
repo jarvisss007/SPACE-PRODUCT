@@ -63,7 +63,8 @@ def card(d: dict, T: dict) -> str:
 def fold_expert(src: str, label: str = "For experts:") -> str:
     """Turn technical <section class="card"> blocks into <details> 'For experts' buttons."""
     out, i = [], 0
-    pat = re.compile(r'<section class="card"([^>]*)>(\s*)<h2>([^<]*)</h2>', re.S)
+    # any <section> whose class list holds "card", whatever the attribute order
+    pat = re.compile(r'<section\b([^>]*)>(\s*)<h2>([^<]*)</h2>', re.S)
     while True:
         m = pat.search(src, i)
         if not m:
@@ -72,12 +73,15 @@ def fold_expert(src: str, label: str = "For experts:") -> str:
         title = html.unescape(m.group(3)).strip()
         end = src.find("</section>", m.end())
         nxt = src.find("<section", m.end())
-        if not EXPERT.match(title) or end < 0 or (0 <= nxt < end):
+        cls = re.search(r'\bclass="([^"]*)"', m.group(1))
+        if (not cls or "card" not in cls.group(1).split() or not EXPERT.match(title)
+                or end < 0 or (0 <= nxt < end)):
             out.append(src[i:m.end()])
             i = m.end()
             continue
         out.append(src[i:m.start()])
-        out.append(f'<details class="card gx"{m.group(1)}><summary>{label} {m.group(3)}</summary>{src[m.end():end]}</details>')
+        attrs = m.group(1)[:cls.start()] + f'class="{cls.group(1)} gx"' + m.group(1)[cls.end():]
+        out.append(f'<details{attrs}><summary>{label} {m.group(3)}</summary>{src[m.end():end]}</details>')
         i = end + len("</section>")
     return "".join(out)
 
