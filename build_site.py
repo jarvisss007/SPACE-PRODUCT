@@ -420,7 +420,9 @@ def write_app() -> None:
     data = data_files()
     for name in pages + data:
         h.update((WEB / name).read_bytes())
-    files = ["./"] + pages + ["manifest.webmanifest", "icon-192.png", "icon-512.png"] + data
+    # data/ catalogues (about 1.4 MB) are not downloaded on install: phones on mobile data fetch them
+    # only when that lab is opened, and the fetch handler then keeps a copy for offline use
+    files = ["./"] + pages + ["manifest.webmanifest", "icon-192.png", "icon-512.png"]
     (WEB / "sw.js").write_text(SW.replace("__V__", "golapada-" + h.hexdigest()[:12]).replace("__PAGES__", json.dumps(files)), encoding="utf-8")
     print(f"built app: manifest, 3 icons, sw.js caching {len(files)} files")
 
