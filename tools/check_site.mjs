@@ -27,7 +27,6 @@ const EXEMPT = {
 // is listed here with the pages it may still appear on while it is being fixed.
 const A11Y_ALLOW = {
   // found by the first scan (19 Nov 2026); remove each page once it is fixed
-  "color-contrast": ["nalanda.html", "space-day.html"],
   "scrollable-region-focusable": ["mars-campaign.html"],
 };
 const SLOW4G = { offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 };
