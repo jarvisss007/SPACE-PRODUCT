@@ -138,7 +138,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 
   <details class="card gx"><summary>For experts: How far to trust it</summary>
     <p>The page does its own maths, so we test it against answers other people worked out and published. The numbers in the "This page" column are calculated live, right now, by the same code that runs the clocks above.</p>
-    <div class="scroll"><table id="checks"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="checks"></table></div>
     <p class="note" style="margin-top:8px">The clocks follow NASA GISS's Mars24 method (Allison and McEwen, 2000, with Mars24's later small fixes). It should match Mars24 to within a second or so. The planet positions use JPL's simple "approximate positions" formulas, which JPL says are good to about 25,000 km for Mars and 6,000 km for Earth between the years 1800 and 2050. That is tiny next to distances of 55 to 400 million km, which is why the slider stops before 2050.</p>
   </details>
 

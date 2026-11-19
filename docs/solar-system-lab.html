@@ -141,8 +141,8 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   </section>
 
   <div class="three">
-    <section class="card"><h2 id="dH">NASA fact sheet</h2><div class="scroll"><table id="data"></table></div></section>
-    <section class="card"><h2 id="mH">Sending a Starship</h2><div class="scroll"><table id="mission"></table></div><div class="verdict" id="mVerdict"></div>
+    <section class="card"><h2 id="dH">NASA fact sheet</h2><div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="data"></table></div></section>
+    <section class="card"><h2 id="mH">Sending a Starship</h2><div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="mission"></table></div><div class="verdict" id="mVerdict"></div>
       <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim);margin-top:10px">Payload to the surface <output id="oPay" style="font-family:var(--display);font-size:16px;color:var(--ink)"></output><input id="iPay" type="range" min="0" max="150" step="5" value="50"></label></section>
   </div>
 
@@ -160,7 +160,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
         <div class="seg"><button type="button" id="thrBtn">Hold to fire · or Space / ↑</button></div>
         <p style="font-size:13px;color:var(--dim);margin-top:8px">Touch down at 2 m/s or less for a clean landing, up to 5 m/s for a hard one. Faster is a crash. Running out of propellant ends your control.</p>
         <h2 style="margin-top:12px;font-size:20px">Attempt log</h2>
-        <div class="scroll"><table id="log"></table></div>
+        <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="log"></table></div>
       </div>
     </div>
   </section>

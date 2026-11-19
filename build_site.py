@@ -251,6 +251,9 @@ def build() -> None:
             block = explore_html(fname, cards)
             if k > 0 and block:
                 src = src[:k] + block + src[k:]  # inside the page's own column, just above its sources
+        # tables in side-scrolling boxes: reachable and scrollable with the keyboard (WCAG), named for screen readers
+        src = re.sub(r'<div class="scroll"(?![^>]*tabindex)',
+                     '<div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"', src)
         src = src.rstrip() + "\n" + trust_strip(fname)  # after the page's own column, at the very foot
         if fname != "index.html" and not src.lstrip().lower().startswith("<!doctype"):
             # extra pages are served without the artifact skeleton, so they need their own doctype

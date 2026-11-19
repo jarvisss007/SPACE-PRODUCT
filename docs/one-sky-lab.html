@@ -127,7 +127,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   <section class="card">
     <h2>Who can already do what</h2>
     <p>Each tick is a capability the agency has actually demonstrated, with its first mission named when you hover or tap it. Put the rows together and every box is filled.</p>
-    <div class="scroll"><table class="mx" id="mx"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table class="mx" id="mx"></table></div>
     <p class="note" style="margin-top:8px">“Reusable” here means the agency’s own launch systems (NASA’s Space Shuttle). Private companies such as SpaceX, which now reuse rocket boosters routinely, are not agencies and are left out of this table.</p>
   </section>
 
@@ -142,7 +142,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     <section class="card">
       <h2>Same goal, different price</h2>
       <p>Missions are never identical, so prices do not compare one to one. But the gaps show how much each agency could learn from the others.</p>
-      <div class="scroll"><table id="cost"></table></div>
+      <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="cost"></table></div>
     </section>
     <section class="card">
       <h2>Pool the money</h2>
@@ -180,7 +180,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
       <h2>Shared sky: every navigation satellite</h2>
       <p>Your phone’s location comes from navigation satellites. America runs GPS, Russia GLONASS, Europe Galileo, China BeiDou, Japan QZSS and India NavIC. A receiver that listens to all of them sees far more satellites, so it works in narrow streets and fixes faster. These are the real satellites, placed from today’s orbit data, as seen from the city you pick.</p>
       <label class="f">Seen from<select id="gCity"></select></label>
-      <div class="scroll"><table id="gT"></table></div>
+      <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="gT"></table></div>
       <p class="note" style="margin-top:8px" id="gAge"></p>
     </section>
     <section class="card">
@@ -219,7 +219,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   <section class="card">
     <h2>Who would bring what</h2>
     <p>The same jobs, with each side’s real hardware. A row marked <b class="bad">built twice</b> is money and years spent on a second copy.</p>
-    <div class="scroll"><table id="mbW"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="mbW"></table></div>
   </section>
 
   <div class="two">
@@ -243,7 +243,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   <p class="note card">How the base model works. Getting to the Moon’s surface from low Earth orbit takes 5.93 km/s (Wikipedia “Delta-v budget”). Blue Moon burns hydrogen (450 s, tanks 13% of the fuel) and Starship burns methane (380 s, tanks 10%), both assumed. A person uses about 5 kg of food, water and oxygen a day (Wikipedia “Life-support system”). With recycling this page assumes 2 kg; with ice, only about 1 kg of food is shipped. Each reactor gives 40 kW and weighs 6 t, NASA’s target. Assumed sizing: power of 20 kW plus 5 kW per person, a 20 t habitat per four people, 15 t of landing pad, radio and lab plus a 10 t rover per base, 1 t of spares and science per person per year, and an 8 t ice plant. The bill counts launches only, not building the hardware.</p>
 
   <details class="card gx"><summary>For experts: How far to trust the Moon base numbers</summary>
-    <div class="scroll"><table id="chk2"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="chk2"></table></div>
     <p class="note" style="margin-top:8px">The Mars model is a sketch. The mission stays the same throughout: a cargo lander and a crew ship, each pushed from low Earth orbit to Mars (3.6 km/s). Into orbit there costs 1.2 km/s, or a heat shield of 15% of the mass. Home costs 1.5 km/s. Landing is 0.9 km/s plus a 15% heat shield, and the ascent is 5 km/s on methane–oxygen (360 s). The surface cargo (55 t) and crew ship (55 t) were set once so the chemical case matches NASA’s 657 t. Fuel tanks weigh 8–20% of the fuel they hold. A nuclear stage carries one 18.1 t NERVA engine the whole way. Hydrogen slowly boiling away, crew radiation and launch failures are left out. The dish chart ignores mountains and assumes a 10° minimum height above the horizon. The navigation table counts every satellite in CelesTrak’s list, including a few spares and retired ones. Its “DOP” solves for one clock per system, as real receivers do.</p>
   </details>
 

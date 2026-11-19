@@ -145,13 +145,13 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 
   <details class="card gx"><summary>For experts: Checks</summary>
     <p>Is the page's maths right? It uses <b>Kepler's equation</b>: given the time since the comet was closest to the Sun, it works out where along its path the comet must be. Below, the page's own solver (the same one that drives the orbit player) is compared with published dates and with JPL Horizons, NASA's precise calculator that also includes the pull of every planet. The first seven rows are partly a self-test, because the closest-approach time is one of the numbers fed in; the solver still has to find the right distance and date by itself. The Horizons rows on other dates are the real test.</p>
-    <div class="scroll"><table id="chk"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="chk"></table></div>
     <div class="verdict" id="chkV"></div>
   </details>
 
   <details class="card gx"><summary>For experts: How far to trust it</summary>
     <p>The orbit shapes and dates come straight from NASA JPL's Small-Body Database and Horizons, so they are as good as published data gets. The weak points are the simplifications:</p>
-    <div class="scroll"><table>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table>
       <tr><th>Part</th><th>Good to about</th><th>Why</th></tr>
       <tr><td>Comet near closest approach</td><td>Better than 1%</td><td>See Checks. The elements are fitted to thousands of real sightings for exactly that time.</td></tr>
       <tr><td>Comet years away from it</td><td>Rough</td><td>The page uses the Sun's pull only. Jupiter and Saturn tug comets, and gas jets push them like tiny rockets. For Halley this shifts the 2061 return by about 200 days.</td></tr>

@@ -113,13 +113,13 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     </div>
     <div class="seg" style="margin-top:8px"><button type="button" id="geo">Use my location</button><span class="note" id="geoTxt">Your location stays in this page; it is never sent anywhere.</span></div>
     <div class="two" style="margin-top:12px">
-      <div class="scroll"><table id="passes"></table><p class="note" style="margin-top:6px">A pass is <b>visible</b> when the satellite is in sunlight while your sky is dark: just after sunset or before sunrise. Times are in your device’s time zone.</p></div>
+      <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="passes"></table><p class="note" style="margin-top:6px">A pass is <b>visible</b> when the satellite is in sunlight while your sky is dark: just after sunset or before sunrise. Times are in your device’s time zone.</p></div>
       <div><canvas id="sky" aria-label="Your sky, with the selected satellite's position now and its next pass"></canvas><p class="note" style="text-align:center">Your sky now: centre is straight up, edge is the horizon, north at top.</p></div>
     </div>
   </section>
 
   <details class="card gx"><summary>For experts: Checks</summary>
-    <div class="scroll"><table id="check"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="check"></table></div>
   </details>
 
   <section class="card">

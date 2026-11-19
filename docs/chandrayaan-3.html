@@ -110,7 +110,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     <section class="card">
       <h2>Every burn</h2>
       <p class="note">Each row is an orbit ISRO announced. The simulator fires the engine at the next low point of the orbit on that date, sized to reach exactly that orbit, and lets Earth and the Moon do the rest.</p>
-      <div class="scroll"><table id="burns"></table></div>
+      <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="burns"></table></div>
       <div class="kv" style="margin-top:12px" id="routeKv"></div>
     </section>
   </div>
@@ -118,14 +118,14 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   <section class="card">
     <h2>Did the replay find the Moon?</h2>
     <p>The orbits come from ISRO. The Moon’s position comes from its real orbit that month. The one thing we had to fit is which way the first orbit’s long axis pointed, because our model is flat and the real orbit was tilted. We tuned that single angle until the spacecraft passed the Moon at 164 km, the low point ISRO reported. Everything below is what the physics then produced on its own.</p>
-    <div class="scroll"><table id="check"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="check"></table></div>
   </section>
 
   <div class="two">
     <section class="card">
       <h2>The push budget</h2>
       <p>The speed each burn had to add or remove, worked out from ISRO’s before-and-after orbits. Around the Moon the numbers are braking: each burn lowers the far side of the orbit until Vikram is in a 25 by 134 km orbit, ready to land.</p>
-      <div class="scroll"><table id="budget"></table></div>
+      <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="budget"></table></div>
     </section>
     <section class="card">
       <h2>Why forty days, not three?</h2>

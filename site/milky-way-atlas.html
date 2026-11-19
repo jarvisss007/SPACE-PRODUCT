@@ -107,12 +107,12 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     <h2>How long to get there</h2>
     <p>Pick a destination. The last row is a ship that accelerates at 1 g to the halfway point and brakes at 1 g after it: relativity makes the crew age far less than the people at home.</p>
     <select id="dest" aria-label="Destination"></select>
-    <div class="scroll" style="margin-top:10px"><table id="travel"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)" style="margin-top:10px"><table id="travel"></table></div>
   </section>
 
   <section class="card">
     <h2>The 25 nearest stars</h2>
-    <div class="scroll"><table id="near"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="near"></table></div>
   </section>
 
   <!-- golapada-quiz:start -->

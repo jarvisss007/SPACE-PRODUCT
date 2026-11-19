@@ -360,7 +360,7 @@ const CLOSE=[
  ['π, the circle number','62832 ÷ 20000 = 3.1416','3.14159265…',PI_A,Math.PI,a=>`Right to four decimal places; too big by ${a.toFixed(7)}.`],
 ];
 $('close').innerHTML=CLOSE.map(([t,av,mv,a,m,f])=>{const err=a-m,N=Math.abs(m/err),w=Math.min(100,Math.log10(N)/7*100);
-  return `<div class="cl"><b>${t}</b><div class="scroll"><table><tr><th>Aryabhata, 499</th><th>Today</th><th class="n">Precise to</th></tr><tr><td>${av}</td><td>${mv}</td><td class="n">1 part in ${Math.round(N).toLocaleString('en-IN')}</td></tr></table></div><div class="bar" role="img" aria-label="1 part in ${Math.round(N)}"><i style="width:${w.toFixed(1)}%"></i></div><p>${f(err)}</p></div>`}).join('')+
+  return `<div class="cl"><b>${t}</b><div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table><tr><th>Aryabhata, 499</th><th>Today</th><th class="n">Precise to</th></tr><tr><td>${av}</td><td>${mv}</td><td class="n">1 part in ${Math.round(N).toLocaleString('en-IN')}</td></tr></table></div><div class="bar" role="img" aria-label="1 part in ${Math.round(N)}"><i style="width:${w.toFixed(1)}%"></i></div><p>${f(err)}</p></div>`}).join('')+
  '<p class="note">The bar is on a scale from 1 part in 10 (empty) to 1 part in 10 million (full), each step ten times finer.</p>';
 
 // ---- Samrat Yantra shadow, worked out from its size

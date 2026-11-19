@@ -113,7 +113,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   <section class="card">
     <h2>The test: how close did they have to pass?</h2>
     <p>For each flyby, the model works out the spacecraft’s path in from the previous planet and out to the next one, using only the arrival dates. The bend between the two paths has to come from the planet’s gravity, and a sharper bend needs a closer pass. The model never sees the real closest-approach distances; it predicts them.</p>
-    <div class="scroll"><table id="check"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="check"></table></div>
     <p class="note" style="margin-top:8px">Distances are from the planet’s centre. “Mismatch” is the engine push the model would need to stitch the two paths together. The real flybys needed almost none, so a small mismatch means the model is close to reality. Voyager 1’s Saturn flyby bent it up out of the planets’ plane towards Titan, so the model cannot follow it there.</p>
   </section>
 

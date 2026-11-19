@@ -128,12 +128,12 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
       <summary>See the full kundli: every planet, panchang, dasha and navamsa</summary>
       <div class="stats" id="key" style="margin-top:12px"></div>
       <h3 style="margin-top:16px">Where every planet was</h3>
-      <div class="scroll"><table id="pos"></table></div>
+      <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="pos"></table></div>
       <p class="note">Sidereal positions, Lahiri ayanamsa. Houses are counted from the lagna. ℞ means the planet seemed to move backwards that day.</p>
-      <h3 style="margin-top:16px">Panchang</h3><div class="scroll"><table id="pan"></table></div>
-      <h3 style="margin-top:16px">Vimshottari dasha</h3><p class="note">The traditional 120-year scheme of planetary periods, starting from your nakshatra.</p><div class="scroll"><table id="dasha"></table></div>
+      <h3 style="margin-top:16px">Panchang</h3><div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="pan"></table></div>
+      <h3 style="margin-top:16px">Vimshottari dasha</h3><p class="note">The traditional 120-year scheme of planetary periods, starting from your nakshatra.</p><div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="dasha"></table></div>
       <h3 style="margin-top:16px">Navamsa chart (D9)</h3><svg class="ch" id="d9" viewBox="0 0 100 100" role="img" aria-label="South Indian style navamsa chart"></svg><p class="note" id="varg" style="margin-top:6px"></p>
-      <h3 style="margin-top:16px">What the tradition says about your nakshatras</h3><p class="note">How the classical texts describe them. This is cultural heritage, not a description of you.</p><div class="scroll"><table id="trad"></table></div>
+      <h3 style="margin-top:16px">What the tradition says about your nakshatras</h3><p class="note">How the classical texts describe them. This is cultural heritage, not a description of you.</p><div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="trad"></table></div>
     </details>
 
     <section class="honest" style="margin-top:16px">This shows where the sky really was when you were born, worked out precisely. It does not predict your life: when scientists have tested astrology, it has done no better than chance. To understand yourself, try <a href="know-yourself.html">Know Yourself</a>. To see how “readings” can feel so true, try <a href="reading-test.html">the Reading Test</a>.</section>
@@ -141,7 +141,7 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
 
   <details class="card more">
     <summary>For experts: how accurate is this?</summary>
-    <div class="scroll" style="margin-top:10px"><table id="check"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)" style="margin-top:10px"><table id="check"></table></div>
     <p class="note" style="margin-top:10px">The Moon uses the lunar theory in Jean Meeus’s <i>Astronomical Algorithms</i> (chapter 47, from ELP-2000/82) with nutation. The Sun and planets use JPL’s approximate orbital elements, good to a few hundredths of a degree between 1800 and 2050. The ayanamsa is Lahiri’s, 23°51′11″ at the start of 2000, moving 50.29″ a year; other ayanamsas differ by up to a degree or so. City coordinates are approximate; for an exact lagna, choose “My own coordinates”. Local time uses your browser’s time-zone history, which for India before 1947 may differ from records of the day. The weekday follows the traditional day, from one sunrise to the next. The page works out positions, panchang and periods only. It makes no predictions.</p>
   </details>
 

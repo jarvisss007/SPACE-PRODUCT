@@ -25,7 +25,7 @@ jobs:
           node-version: "22"
       - name: Install a headless browser (on GitHub's machine only)
         run: |
-          npm i --no-save --no-package-lock playwright@1.49.1
+          npm i --no-save --no-package-lock playwright@1.49.1 axe-core@4.10.2
           npx playwright install --with-deps chromium
       - name: Check every page
         run: node tools/check_site.mjs

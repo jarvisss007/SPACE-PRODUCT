@@ -14,12 +14,21 @@ import { createServer } from "node:http";
 import { readFileSync, readdirSync, statSync, appendFileSync, existsSync } from "node:fs";
 import { join, extname } from "node:path";
 import { chromium } from "playwright";
+import { createRequire } from "node:module";
+const AXE = createRequire(import.meta.url).resolve("axe-core/axe.min.js");
 
 const ROOT = new URL("../docs/", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 const KB = 1024;
 const BUDGET = 250 * KB; // per page HTML
 // Pages allowed over budget for now, each with a reason and the size it must not grow past.
 const EXEMPT = {
+};
+// Accessibility (axe-core, WCAG 2 A and AA): a serious or critical problem fails the run, unless its rule
+// is listed here with the pages it may still appear on while it is being fixed.
+const A11Y_ALLOW = {
+  // found by the first scan (19 Nov 2026); remove each page once it is fixed
+  "color-contrast": ["nalanda.html", "space-day.html"],
+  "scrollable-region-focusable": ["mars-campaign.html"],
 };
 const SLOW4G = { offline: false, latency: 150, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8 };
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".jpg": "image/jpeg",
@@ -81,6 +90,11 @@ for (const page of pages) {
     setTimeout(() => r(v), 300);
   }));
   const p = await tab.evaluate(PROBE);
+  await tab.addScriptTag({ path: AXE });
+  const ax = await tab.evaluate(async () => {
+    const r = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa"] }, resultTypes: ["violations"] });
+    return r.violations.map((v) => ({ id: v.id, impact: v.impact, n: v.nodes.length, at: v.nodes.slice(0, 2).map((x) => x.target.join(" ")) }));
+  });
   await ctx.close();
 
   // 2) desktop: crashes only
@@ -93,6 +107,11 @@ for (const page of pages) {
   if (crashes.length) fails.push(`${page}: script error: ${[...new Set(crashes)].join(" | ")}`);
   if (p.sideways > 1) fails.push(`${page}: scrolls sideways by ${p.sideways}px on a 375px phone (widest: ${p.culprits.join(", ")})`);
   for (const r of p.red) fails.push(`${page}: red check: ${r}`);
+  for (const v of ax) {
+    const allowed = (A11Y_ALLOW[v.id] || []).includes(page) || (A11Y_ALLOW[v.id] || []).includes("*");
+    const msg = `${page}: accessibility (${v.impact}) ${v.id} on ${v.n} element(s), e.g. ${v.at.join(", ")}`;
+    if ((v.impact === "serious" || v.impact === "critical") && !allowed) fails.push(msg); else warns.push(msg);
+  }
   if (p.amber) warns.push(`${page}: ${p.amber} amber check(s)`);
   const ce = [...new Set(consoleErrors)].filter((m) => !/Failed to load resource/.test(m));
   if (ce.length) warns.push(`${page}: console: ${ce.slice(0, 2).join(" | ")}`);
