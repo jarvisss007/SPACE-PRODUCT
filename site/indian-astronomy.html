@@ -1,0 +1,373 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Indian Astronomy Through Time</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a map of India that lights up 3,000 years of astronomy as a year slider moves, the story of the chosen place, a squeezed timeline to tap, then how close the old numbers came to today's, and the sources. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--met:#9ee7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--space:#ff9f5a;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--gold)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h3{font-family:var(--display);font-weight:700;font-size:22px;margin:0 0 4px;text-transform:uppercase;line-height:1.1}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--met)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px}@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.eras{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.eras button,.play{font:600 14px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer}
+.eras button[aria-pressed="true"]{background:var(--gold);color:#1b1404;border-color:var(--gold)}
+.play{background:#13251c;border-color:var(--ok);color:var(--ok)}
+button:focus-visible,input:focus-visible,canvas:focus-visible{outline:2px solid var(--met);outline-offset:2px}
+.yr{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:4px 0 2px}.yr b{font-family:var(--display);font-size:40px;line-height:1;font-variant-numeric:tabular-nums}.yr span{color:var(--dim);font-size:13px}
+input[type=range]{width:100%;accent-color:var(--gold)}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px;touch-action:manipulation}#map{aspect-ratio:1/1;max-width:620px;margin:0 auto;cursor:pointer}#tl{aspect-ratio:16/5;min-height:170px;cursor:pointer}
+.story{background:var(--panel2);border-radius:6px;padding:14px;border-top:3px solid var(--gold)}.story.obs{border-top-color:var(--met)}.story.space{border-top-color:var(--space)}
+.story .when{font-family:var(--display);font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}.story.obs .when{color:var(--met)}.story.space .when{color:var(--space)}
+.story .where{font-size:13px;color:var(--dim);margin-bottom:8px}.story p{color:#d6dde5;margin-bottom:8px}
+.tag{display:inline-block;font:600 11px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:var(--gold);border-radius:3px;padding:3px 6px;margin-left:6px;vertical-align:3px}
+.nav2{display:flex;gap:6px;margin-top:8px}.nav2 button{font:600 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:#0b1017;border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--dim);margin-top:8px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+.close{display:grid;gap:14px}.cl b{font-family:var(--display);font-size:20px;text-transform:uppercase}.cl .bar{position:relative;height:16px;background:#0b1017;border:1px solid var(--line);border-radius:3px;margin:6px 0 4px;overflow:hidden}.cl .bar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#3a2f12,var(--gold))}.cl p{margin:0;font-size:14px}
+.big{font-family:var(--display);font-size:34px;line-height:1;font-variant-numeric:tabular-nums;color:var(--gold)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}.ok{color:var(--ok)}.bad{color:var(--bad)}
+ul.plain{margin:0;padding-left:20px;color:#c3ccd6}ul.plain li{margin:4px 0;max-width:80ch}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-bar{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;padding-block:6px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);padding:2px 6px}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible,.sa-nav button:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:2px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+.sa-nav button{flex:none;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #2c3a4d;border-radius:4px;cursor:pointer;padding:5px 10px;line-height:1.2}
+.sa-nav .sa-arr{padding:5px 8px;font-size:16px}.sa-nav .sa-arr[disabled]{opacity:.3;cursor:default}
+.sa-nav .sa-all[aria-expanded="true"]{background:#e8c46a;color:#1b1404;border-color:#e8c46a}
+.sa-nav .sa-panel{max-width:1200px;margin:0 auto;padding:6px max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:4px;max-height:70vh;overflow:auto}
+.sa-nav .sa-panel[hidden]{display:none}
+.sa-nav .sa-panel a{background:#0b1017;border:1px solid #1f2a38}.sa-nav .sa-panel a[aria-current="page"]{background:#e7edf3;color:#0a0d12;border-color:#e7edf3}
+@media (max-width:560px){.sa-nav .sa-arr{display:none}}
+@media print{.sa-nav{display:none}}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-bar"><a href="index.html" class="sa-brand">Golapada</a><button type="button" class="sa-arr" aria-label="Scroll the lab list left">‹</button><div class="sa-in"><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html" aria-current="page">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div><button type="button" class="sa-arr" aria-label="Scroll the lab list right">›</button><button type="button" class="sa-all" aria-expanded="false">All labs</button></div><div class="sa-panel" hidden><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html" aria-current="page">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a></div></nav>
+<script>
+(()=>{const n=document.currentScript.previousElementSibling,s=n.querySelector('.sa-in'),[l,r]=n.querySelectorAll('.sa-arr'),b=n.querySelector('.sa-all'),p=n.querySelector('.sa-panel');
+const upd=()=>{l.disabled=s.scrollLeft<=2;r.disabled=s.scrollLeft+s.clientWidth>=s.scrollWidth-2};
+l.onclick=()=>{s.scrollLeft-=s.clientWidth*0.7};r.onclick=()=>{s.scrollLeft+=s.clientWidth*0.7};
+s.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);
+s.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&s.scrollWidth>s.clientWidth){s.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+const c=s.querySelector('[aria-current]');if(c)s.scrollLeft=c.offsetLeft-s.clientWidth/2+c.offsetWidth/2;upd();
+const close=()=>{p.hidden=true;b.setAttribute('aria-expanded','false')};
+b.onclick=()=>{const o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));if(o){const a=p.querySelector('a');if(a)a.focus()}};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!p.hidden){close();b.focus()}});
+addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
+</script>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">From Lagadha to Aditya-L1 · 3,000 years of looking up</div>
+    <h1>Indian Astronomy Through Time</h1>
+    <p>People in India have been timing the Sun, Moon and stars for at least three thousand years: first to fix the dates of rituals and festivals, then to predict eclipses, then to measure the sky with giant stone instruments, and today with radio dishes, mountain telescopes and spacecraft. Move through time and watch the map fill up.</p>
+  </header>
+
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">People in India have studied the sky for about 3,000 years: first with their eyes and maths, then with giant stone instruments, and now with radio dishes and spacecraft. This page puts all of it on one map.</p><p class="gs-try"><b>Try this first:</b> Press <b>Play 3,000 years</b> and watch the map of India light up. Then tap any dot to read its story.</p><ul><li>About 1,500 years ago, Aryabhata worked out that the Earth spins, and measured one turn to within a hundredth of a second, with no telescope.</li><li>Indian ways of counting, including zero, travelled to Baghdad and from there around the world.</li><li>The same curiosity runs from old books to today's missions: India now has its own telescopes on mountains and spacecraft at the Moon, Mars and the Sun.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
+  <section class="card">
+    <h2>3,000 years on one map</h2>
+    <div class="eras" role="group" aria-label="Jump to an era">
+      <button type="button" data-era="0">Vedic sky</button>
+      <button type="button" data-era="1">Golden age, 500–1150</button>
+      <button type="button" data-era="2">Kerala school</button>
+      <button type="button" data-era="3">Observatories</button>
+      <button type="button" data-era="4">Space age</button>
+    </div>
+    <div class="two">
+      <div>
+        <canvas id="map" tabindex="0" aria-label="Map of India with a dot for each place in the story. Tap a dot to read it."></canvas>
+        <div class="legend"><span><i style="background:var(--gold)"></i>Books and scholars</span><span><i style="background:var(--met)"></i>Observatories and discoveries</span><span><i style="background:var(--space)"></i>Space missions</span><span><i style="border:2px dashed var(--gold);background:none"></i>Place not known</span></div>
+      </div>
+      <div>
+        <div class="yr"><b id="yrB">2026</b><span id="yrN">all places lit</span></div>
+        <input type="range" id="yr" min="0" max="1000" value="1000" aria-label="Year">
+        <div style="display:flex;justify-content:space-between" class="note"><span>1500 BCE</span><span>500 CE</span><span>1500</span><span>1900</span><span>2026</span></div>
+        <p style="margin-top:10px"><button type="button" class="play" id="play">Play 3,000 years</button></p>
+        <div class="story" id="story" aria-live="polite"></div>
+        <div class="nav2"><button type="button" id="prev">◂ Earlier</button><button type="button" id="next">Later ▸</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>The whole story, squeezed onto one line</h2>
+    <p class="note">Time is squeezed: the last hundred years get as much room as the thousand before them, so the busy modern age does not pile up. Tap a dot.</p>
+    <canvas id="tl" aria-label="Timeline of the events. Tap a dot to read it."></canvas>
+  </section>
+
+  <section class="card">
+    <h2>How close did they get?</h2>
+    <p>Aryabhata worked without telescopes or clocks, about 1,500 years ago. Here are three of his numbers next to today's. The bar shows how precise each one is: the longer the bar, the smaller his error compared with the number itself.</p>
+    <div class="close" id="close"></div>
+    <p class="note" style="margin-top:12px">More of Aryabhata's maths, worked step by step: <a href="aryabhata-lab.html">Aryabhata Lab</a>.</p>
+  </section>
+
+  <section class="card">
+    <h2>A stone clock you can almost watch move</h2>
+    <div class="two">
+      <div>
+        <p>The Samrat Yantra in Jaipur, finished in 1734, is a giant sundial 27 metres tall. Its curved hour scales sit 15.15 metres from the sloping wall that casts the shadow. Earth turns once a day, so the shadow sweeps 2π × 15.15 m in a day: that is <b id="spd"></b> a second. You can see it creep.</p>
+        <p class="note">Each mark on the scale is two seconds of time, so one mark is about 2 mm. That is why the dial can be read to about two seconds.</p>
+      </div>
+      <div class="story obs"><div class="when">Since you opened this page</div><div class="big" id="moved">0 mm</div><p style="margin-top:6px">is how far the shadow on Jaipur's great sundial has moved, on a sunny day.</p></div>
+    </div>
+  </section>
+
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
+    <ul class="plain">
+      <li><b>Dates.</b> Every date was checked against at least one reference work (see the sources below). Where scholars disagree, the page says so and shows the range, not one number.</li>
+      <li><b>The Vedanga Jyotisha.</b> Its description of the winter solstice fits the sky of about 1400–1200 BCE if read literally. Many scholars think the text itself was written much later (after 700 BCE or even in the last centuries BCE), for reasons of language and similarities to Babylonian works. The dot is placed at the early reading and marked "debated"; its place is not known, so its ring is dashed.</li>
+      <li><b>Nilakantha's model.</b> Historians agree he had planets going round the Sun while the Sun goes round Earth, but not on which planets: some read all five, others only Mercury and Venus.</li>
+      <li><b>Aryabhata's numbers</b> are as given in the Aryabhatiya and reported in standard histories; the modern values are today's sidereal day (86,164.0905 s) and sidereal year (365.256363 days).</li>
+      <li><b>The map</b> is a simple land outline with no borders, about 0.1° accurate. Dots are at the town or site; space missions are shown at Sriharikota, where they were launched.</li>
+      <li><b>The shadow speed</b> is worked out here from the 15.15 m radius given by UNESCO, not copied from a guide book. It is the speed along the middle of the scale.</li>
+    </ul>
+  </details>
+
+  <details class="card gx"><summary>For experts: What the page leaves out</summary>
+    <ul class="plain">
+      <li>Astronomy in Persian and Arabic in India: the Delhi Sultanate and Mughal courts, Mahendra Suri's book on the astrolabe (1370), and the star tables Jai Singh's astronomers used.</li>
+      <li>Many more scholars and texts: Lalla, Bhaskara I, Manjula, Shripati, Shatananda, Achyuta Pisharati and others, and the regional calendars still in use.</li>
+      <li>Nalanda and other centres of learning: see the <a href="nalanda.html">Nalanda</a> page.</li>
+      <li>Modern institutes beyond the few shown: TIFR, PRL, IUCAA, ARIES Nainital, the Devasthal telescope, and India's share in the LIGO-India and SKA projects.</li>
+      <li>How old records help science today: see <a href="clues-in-old-books.html">Clues in old books</a>, which also shows how a text is dated from where the solstice sat.</li>
+    </ul>
+  </details>
+
+  <!-- golapada-quiz:start -->
+<style>
+.gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
+.gq h2{font-family:"Saira Condensed","Noto Sans Devanagari","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
+.gq .gq-sub{font-size:13px;color:#8a97a8;margin:0 0 12px;max-width:76ch}
+.gq ol{list-style:none;margin:0;padding:0;counter-reset:gq}
+.gq li{counter-increment:gq;border-top:1px solid #1f2a38;padding:12px 0 10px 40px;position:relative}
+.gq li::before{content:counter(gq);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:#121a25;border:1px solid #2c3a4d;color:#e8c46a;font:700 15px/26px "Saira Condensed",sans-serif;text-align:center}
+.gq .gq-q{font-size:15px;color:#e7edf3;margin:0 0 4px}
+.gq .gq-do{font-size:13px;color:#8a97a8;margin:0 0 6px}.gq .gq-do b{color:#c3ccd6;font-weight:500}
+.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
+.gq details summary{cursor:pointer;font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
+.gq details summary:focus-visible,.gq button:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+.gq details p{margin:6px 0 0;padding:8px 10px;background:#121a25;border-left:3px solid #5fd6a0;border-radius:3px;font-size:14px;color:#d5dde6;max-width:76ch}
+.gq .gq-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gq button{font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
+@media print{.gq{background:#fff;border-color:#bbb}.gq h2,.gq .gq-q,.gq details p{color:#000}.gq .gq-sub,.gq .gq-do{color:#333}.gq details p{background:#fff}.gq .gq-bar{display:none}}
+</style>
+<section class="gq" aria-labelledby="gq-title"><h2 id="gq-title">Quiz: five questions</h2><p class="gq-sub">Answer each one by using the lab above, then check. Good for a class: pairs work through them, the teacher reveals the answers.</p><ol><li><p class="gq-q"><span class="gq-h">History</span>How old was Aryabhata when he wrote the Aryabhatiya, and in what year?</p><p class="gq-do"><b>Use the lab:</b> Press <b>Golden age, 500–1150</b> and read the first story.</p><details><summary>Show answer</summary><p>He says he was 23, and the book is dated to 499 CE.</p></details></li><li><p class="gq-q">Aryabhata's day (one turn of the Earth) was 23 h 56 m 4.1 s. How far off was he?</p><p class="gq-do"><b>Use the lab:</b> Look at <b>How close did they get?</b></p><details><summary>Show answer</summary><p>Today's value is 23 h 56 m 4.09 s, so he was off by about one hundredth of a second: precise to about 1 part in 9 million.</p></details></li><li><p class="gq-q"><span class="gq-h">History</span>Which place in Kerala gave its name to a famous school of mathematics and astronomy, and what did Madhava find there?</p><p class="gq-do"><b>Use the lab:</b> Press <b>Kerala school</b>.</p><details><summary>Show answer</summary><p>Sangamagrama, near Irinjalakuda. Madhava wrote π and the sine as never-ending sums, about 250 years before Europeans found the same series.</p></details></li><li><p class="gq-q">How fast does the shadow move on Jaipur's giant sundial, and how is that worked out?</p><p class="gq-do"><b>Use the lab:</b> Read <b>A stone clock you can almost watch move</b>.</p><details><summary>Show answer</summary><p>About 1.1 mm a second. The scale is 15.15 m from the shadow's edge, and in one day the shadow goes once round a circle of that size: 2π × 15.15 m ÷ 86,400 seconds.</p></details></li><li><p class="gq-q">Slide the year to 2000. How many space missions are lit, and which recent mission carries on Kodaikanal's work of watching the Sun?</p><p class="gq-do"><b>Use the lab:</b> Move the year slider, then press <b>Space age</b> and step with <b>Later ▸</b>.</p><details><summary>Show answer</summary><p>By 2000 only the Aryabhata satellite (1975) is lit. Aditya-L1, at the L1 point since 6 January 2024, watches the Sun like Kodaikanal has since 1899.</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">Show all answers</button></div><script>
+(()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
+</script></section>
+<!-- golapada-quiz:end -->
+  <footer>Sources: Wikipedia articles "Vedanga Jyotisha" (dating debate: Kochhar, Pingree, Witzel), "Aryabhatiya" (sidereal day 23 h 56 m 4.1 s; year 365 d 6 h 12 m 30 s; π = 62832/20000), "Pañcasiddhāntikā", "Brahmasphutasiddhanta", "Zij as-Sindhind" and "Muḥammad ibn Ibrāhīm al-Fazārī" (Arabic translation under al-Mansur, dated 750s–770s), "Bhāskara II", "Madhava of Sangamagrama", "Parameshvara", "Nilakantha Somayaji" and "Tantrasamgraha", "Jantar Mantar, Jaipur" (built 1728–1734); UNESCO World Heritage listing 1338 (Samrat Yantra quadrant radius 15.15 m); Indian Institute of Astrophysics history pages (Madras 1786, Kodaikanal 1 April 1899, Evershed effect January 1909, Kavalur first observations 1968 and the 2.3 m telescope 1986, Hanle 2 m Himalayan Chandra Telescope 2000–2001 at about 4,500 m); NCRA-TIFR (Ooty Radio Telescope 1970, 530 m × 30 m; GMRT, 30 dishes of 45 m, first light 1995); ISRO mission pages (Aryabhata 19 April 1975; Chandrayaan-1 22 October 2008; Mars Orbiter Mission in Mars orbit 24 September 2014; AstroSat 28 September 2015; Chandrayaan-3 landing 23 August 2023; Aditya-L1 launched 2 September 2023, halo orbit at L1 on 6 January 2024). Modern values: sidereal day 86,164.0905 s, sidereal year 365.256363 days (IERS / Astronomical Almanac).</footer>
+</div>
+
+<script>
+const MAP=[[96.3,4,95.4,5.0,95.3,5.5,95.9,5.4,97.5,5.2,98.4,4.3,98.7,4],[81.2,6.2,80.3,6.0,79.9,6.8,79.7,8.2,80.1,9.8,80.8,9.3,81.3,8.6,81.8,7.5,81.6,6.5,81.2,6.2],[100.0,38,100,12.3,100.0,12.3,99.5,10.8,99.2,10.0,99.2,9.2,99.9,9.2,100,9.0,100,6.6,99.7,6.8,99.5,7.3,99.0,7.9,98.5,8.4,98.3,7.8,98.1,8.3,98.3,9.0,98.6,9.9,98.5,10.7,98.8,11.4,98.4,12.0,98.5,13.1,98.1,13.6,97.8,14.8,97.6,16.1,97.2,16.9,96.5,16.4,95.4,15.7,94.8,15.8,94.2,16.0,94.5,17.3,94.3,18.2,93.5,19.4,93.1,19.9,92.4,20.7,92.1,21.2,91.8,22.2,91.4,22.8,90.5,22.8,90.3,21.8,89.8,22.0,89.0,22.1,88.2,21.7,87.0,21.5,87.0,20.7,86.5,20.2,85.1,19.5,83.9,18.3,83.2,17.7,82.2,17.0,81.7,16.3,80.8,16.0,80.0,15.1,80.2,13.8,80.3,13.0,79.9,12.1,79.9,10.4,79.3,10.3,78.9,9.5,78.3,8.9,77.9,8.3,77.5,8.0,76.6,8.9,76.1,10.3,75.7,11.3,75.4,11.8,74.9,12.7,74.6,14.0,74.4,14.6,73.5,16.0,73.1,17.9,72.8,19.2,72.8,20.4,72.6,21.4,71.2,20.8,70.5,20.9,69.2,22.1,69.6,22.5,68.2,23.7,67.4,23.9,67.1,24.7,66.4,25.4,64.5,25.2,64,25.2,64.0,38]];
+const ART=id=>'https://claude.ai/artifact/'+id;
+// y: year used to place the event; kind: old | obs | space; unknown: place not known
+const E=[
+ {y:-1300,when:'About 1400–1200 BCE, or later',place:'Place not known (north India)',lat:28.5,lon:77.5,unknown:true,debated:true,kind:'old',t:'Vedanga Jyotisha',
+  s:'The oldest Indian book that is all about astronomy, credited to Lagadha. It sets out a five-year calendar of Sun and Moon so that rituals fall on the right days, and it uses the 27 nakshatras, star groups along the Moon\'s path, that are still in every panchang.',
+  s2:'Its description of where the winter solstice sat points to about 1400–1200 BCE. Many scholars think the book was written down much later, so the date is debated.',link:['How a text is dated from the solstice','RHr7yep3A95fUrPY78nS57']},
+ {y:499,when:'499 CE',place:'Kusumapura, near today\'s Patna',lat:25.6,lon:85.1,kind:'old',t:'Aryabhata writes the Aryabhatiya',
+  s:'Aryabhata says he wrote it when he was 23. In 121 short verses he says the Earth spins once a day, explains eclipses as shadows of the Earth and Moon (not a demon swallowing the Sun), and gives π as 62832 ÷ 20000 = 3.1416.',
+  s2:'India named its first satellite after him in 1975.',link:['Aryabhata Lab','LaFFtHTwWZh7EiU6gL9F8Z']},
+ {y:505,when:'Starting year 505; written in the 500s',place:'Ujjain',lat:23.18,lon:75.78,kind:'old',t:'Varahamihira\'s five astronomies',
+  s:'Varahamihira\'s Pancha-siddhantika sums up five older astronomy books, two of them with Greek and Roman roots (the Romaka and Paulisa). It shows ideas travelling between India and the Mediterranean.',
+  s2:'Ujjain was so important that Indian astronomers measured longitude from it, the way the world uses Greenwich today.'},
+ {y:628,when:'628 CE',place:'Bhinmal, Rajasthan',lat:25.0,lon:72.27,kind:'old',t:'Brahmagupta and the number zero',
+  s:'Brahmagupta\'s Brahmasphutasiddhanta is an astronomy book that also gives the first written rules for calculating with zero and negative numbers.',
+  s2:'In the 700s it was carried to Baghdad and translated into Arabic for the Caliph al-Mansur (the "Sindhind"), and from there Indian numbers spread to the rest of the world.'},
+ {y:1150,when:'1150 CE',place:'Born near Vijayapura, Karnataka; head of the Ujjain school',lat:16.83,lon:75.71,kind:'old',t:'Bhaskara II, the Siddhanta Shiromani',
+  s:'Written when he was 36, it covers arithmetic, algebra, planets and the shape of the Earth. To follow planets that keep speeding up and slowing down, he worked with their speed at a single instant: an idea close to what calculus later made exact.'},
+ {y:1380,when:'About 1340–1425',place:'Sangamagrama, near Irinjalakuda, Kerala',lat:10.35,lon:76.21,kind:'old',t:'Madhava and the Kerala school',
+  s:'Madhava found ways to write π and the sine of an angle as sums that go on for ever, getting closer and closer. Europeans found the same series about 250 years later.',
+  s2:'He started a line of teachers and students in Kerala that lasted about 200 years.'},
+ {y:1431,when:'1431 CE (the usual date)',place:'Vatasseri, near Tirur, Kerala',lat:10.95,lon:75.95,kind:'old',t:'Parameshvara checks the sky',
+  s:'Parameshvara noticed that the old tables no longer matched where planets and eclipses really were. He watched eclipses over many decades and wrote the Drgganita, "calculation that agrees with what you see".'},
+ {y:1500,when:'1500–1501 CE',place:'Trikkandiyur, Tirur, Kerala',lat:10.87,lon:75.88,kind:'old',t:'Nilakantha: planets around the Sun',
+  s:'In the Tantrasangraha and later writings, Nilakantha Somayaji has planets going round the Sun while the Sun goes round the Earth: the same kind of picture Tycho Brahe drew in Denmark in 1588.',
+  s2:'Historians disagree on whether he meant all five planets or only Mercury and Venus.'},
+ {y:1734,when:'1728–1734',place:'Jaipur',lat:26.92,lon:75.82,kind:'obs',t:'Jai Singh\'s stone observatories',
+  s:'Maharaja Jai Singh II built five observatories (Delhi first, in 1724). In Jaipur the Samrat Yantra, a sundial 27 m tall, tells local time to about two seconds. It is a UNESCO World Heritage Site since 2010.'},
+ {y:1786,when:'1786',place:'Madras (Chennai)',lat:13.07,lon:80.25,kind:'obs',t:'Madras Observatory',
+  s:'William Petrie set up an observatory in Madras that the East India Company soon took over. For over a century it measured star positions and kept time for ships and for mapping India.'},
+ {y:1899,when:'1899; discovery in 1909',place:'Kodaikanal, Tamil Nadu',lat:10.23,lon:77.47,kind:'obs',t:'Kodaikanal and the Evershed effect',
+  s:'The solar observatory moved up to the hills of Kodaikanal on 1 April 1899. In January 1909 John Evershed found gas flowing outward across sunspots, still called the Evershed effect.',
+  s2:'Kodaikanal has photographed the Sun almost every day for over a hundred years.'},
+ {y:1920,when:'1920',place:'Kolkata',lat:22.57,lon:88.36,kind:'obs',t:'Meghnad Saha reads the stars',
+  s:'Meghnad Saha worked out how heat strips electrons from atoms. His equation showed that the different patterns in starlight mostly mean different temperatures, not different ingredients. Astronomers still use it.'},
+ {y:1930,when:'1930',place:'Set sail from Bombay (Mumbai)',lat:18.94,lon:72.84,kind:'obs',t:'Chandrasekhar\'s limit',
+  s:'On the ship to England, 19-year-old Subrahmanyan Chandrasekhar worked out that a dead star, a white dwarf, cannot be heavier than about 1.4 Suns. Heavier ones must collapse further, into neutron stars or black holes.',
+  s2:'He won the Nobel Prize in Physics in 1983.',link:['Black Hole Lab','4cEbohQeaFS4ezqs2R8Ahb']},
+ {y:1968,when:'1968; big telescope 1986',place:'Kavalur, Tamil Nadu',lat:12.58,lon:78.83,kind:'obs',t:'Vainu Bappu Observatory',
+  s:'Observations began at Kavalur in 1968. Vainu Bappu planned a 2.3 m telescope there but died in 1982; when it was finished in 1986, the observatory and the telescope were named after him.'},
+ {y:1970,when:'1970',place:'Ooty (Udhagamandalam)',lat:11.38,lon:76.67,kind:'obs',t:'The Ooty Radio Telescope',
+  s:'Govind Swarup\'s team built a radio telescope 530 m long on a hillside tilted at the same angle as the latitude, so that Earth\'s turning lets it follow a source for 9½ hours a day. It started in 1970.'},
+ {y:1975,when:'19 April 1975',place:'Built in Bengaluru',lat:12.97,lon:77.59,kind:'space',t:'Aryabhata, India\'s first satellite',
+  s:'Built by ISRO in Bengaluru and launched on a Soviet rocket, it was named after the astronomer of 499.'},
+ {y:1995,when:'First light 1995',place:'Khodad, near Pune',lat:19.1,lon:74.05,kind:'obs',t:'The Giant Metrewave Radio Telescope',
+  s:'Thirty dishes, each 45 m wide, spread over 25 km and work together as one giant radio telescope, also designed under Govind Swarup. Astronomers from all over the world use it.'},
+ {y:2001,when:'2000–2001',place:'Hanle, Ladakh',lat:32.78,lon:78.96,kind:'obs',t:'A telescope on the roof of the world',
+  s:'The 2 m Himalayan Chandra Telescope sits at about 4,500 m in Ladakh, where the air is thin, dry and dark. It is run by remote control from near Bengaluru.'},
+ {y:2008,when:'22 October 2008',place:'Launched from Sriharikota',lat:13.72,lon:80.23,kind:'space',t:'Chandrayaan-1 finds water',
+  s:'India\'s first Moon mission. Instruments on board, including a NASA one, found signs of water on the Moon\'s surface.',link:['Moon Lab','XUK9zxrq87WJyK17kfWNLF']},
+ {y:2014,when:'In Mars orbit, 24 September 2014',place:'Launched from Sriharikota',lat:13.72,lon:80.23,kind:'space',t:'Mangalyaan reaches Mars',
+  s:'India reached Mars orbit on its first try, the first Asian country to do so.',link:['Mangalyaan Lab','Q5T2DFByz6EPAzpzHmgXSE']},
+ {y:2015,when:'28 September 2015',place:'Launched from Sriharikota',lat:13.72,lon:80.23,kind:'space',t:'AstroSat, India\'s space observatory',
+  s:'One satellite with several telescopes that see ultraviolet light, visible light and X-rays at the same time.'},
+ {y:2023.6,when:'23 August 2023',place:'Launched from Sriharikota',lat:13.72,lon:80.23,kind:'space',t:'Chandrayaan-3 lands',
+  s:'Vikram landed near the Moon\'s south pole, the first landing that close to the pole.',link:['Moon Lab','XUK9zxrq87WJyK17kfWNLF']},
+ {y:2024,when:'Launched 2 September 2023; at L1 on 6 January 2024',place:'Launched from Sriharikota',lat:13.72,lon:80.23,kind:'space',t:'Aditya-L1 watches the Sun',
+  s:'India\'s first solar observatory in space sits 1.5 million km away at the L1 point, where it can watch the Sun all the time, carrying on what Kodaikanal began in 1899.',link:['L-points Lab','21WDJwTNzvBc2rM3Ajv5aH']},
+];
+const ERAS=[[-1500,-1000],[400,1200],[1300,1600],[1700,1970],[1975,2026]];
+const COL={old:'#e8c46a',obs:'#9ee7ff',space:'#ff9f5a'};
+const Y0=-1500,Y1=2026;
+// squeezed time: position = log of (2100 - year)
+const tq=y=>(Math.log(2100-Y0)-Math.log(2100-y))/(Math.log(2100-Y0)-Math.log(2100-Y1));
+const tqInv=f=>2100-Math.exp(Math.log(2100-Y0)-f*(Math.log(2100-Y0)-Math.log(2100-Y1)));
+let year=Y1,sel=E.length-1;
+const $=id=>document.getElementById(id);
+const fmtY=y=>{y=Math.round(y);return y<0?(-y)+' BCE':y<1000?y+' CE':String(y)};
+
+function fit(c){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=Math.round(r.width*d);c.height=Math.round(r.height*d);const g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);return [g,r.width,r.height]}
+
+// ---- map
+const LON0=64,LON1=100,LAT0=4,LAT1=38,K=Math.cos(21*Math.PI/180);
+let mapPts=[];
+function drawMap(){
+  const c=$('map'),[g,w,h]=fit(c);
+  const sx=w/((LON1-LON0)*K),sy=h/(LAT1-LAT0),s=Math.min(sx,sy),ox=(w-(LON1-LON0)*K*s)/2,oy=(h-(LAT1-LAT0)*s)/2;
+  const X=lon=>ox+(lon-LON0)*K*s,Y=lat=>oy+(LAT1-lat)*s;
+  g.clearRect(0,0,w,h);g.fillStyle='#16283a';g.strokeStyle='#2c3a4d';g.lineWidth=1;
+  for(const r of MAP){g.beginPath();for(let i=0;i<r.length;i+=2){const x=X(r[i]),y=Y(r[i+1]);i?g.lineTo(x,y):g.moveTo(x,y)}g.closePath();g.fill()}
+  mapPts=[];
+  const shown=E.map((e,i)=>({e,i})).filter(o=>o.e.y<=year+0.01);
+  // newest of a crowded spot drawn last
+  for(const {e,i} of shown){
+    const x=X(e.lon),y=Y(e.lat),on=i===sel,r=on?8:5;
+    g.globalAlpha=on?1:.75;g.fillStyle=COL[e.kind];
+    if(e.unknown){g.setLineDash([3,3]);g.strokeStyle=COL[e.kind];g.lineWidth=2;g.beginPath();g.arc(x,y,r+4,0,7);g.stroke();g.setLineDash([])}
+    g.beginPath();g.arc(x,y,r,0,7);g.fill();
+    if(on){g.globalAlpha=1;g.strokeStyle='#fff';g.lineWidth=2;g.beginPath();g.arc(x,y,r+3,0,7);g.stroke()}
+    mapPts.push({x,y,i});
+  }
+  g.globalAlpha=1;
+  if(sel>=0&&E[sel].y<=year+0.01){const e=E[sel],x=X(e.lon),y=Y(e.lat);
+    g.font='600 14px "Saira Condensed",sans-serif';const t=e.t.length>34?e.t.slice(0,33)+'…':e.t,tw=g.measureText(t).width;
+    let lx=x+12,ly=y-10;if(lx+tw+8>w)lx=x-12-tw-8;if(ly<16)ly=y+24;
+    g.fillStyle='rgba(4,6,11,.85)';g.fillRect(lx-4,ly-14,tw+8,19);g.fillStyle='#e7edf3';g.fillText(t,lx,ly)}
+  g.fillStyle='#8a97a8';g.font='12px "IBM Plex Sans",sans-serif';g.fillText('Land outline only · no borders',8,h-8);
+}
+
+// ---- timeline
+let tlPts=[];
+function drawTL(){
+  const c=$('tl'),[g,w,h]=fit(c),pad=18,X=y=>pad+tq(y)*(w-2*pad);
+  g.clearRect(0,0,w,h);const base=h-34;
+  g.strokeStyle='#2c3a4d';g.lineWidth=2;g.beginPath();g.moveTo(pad,base);g.lineTo(w-pad,base);g.stroke();
+  g.fillStyle='#8a97a8';g.font='12px "IBM Plex Sans",sans-serif';g.textAlign='center';
+  const ticks=w<500?[-1000,1000,1800,2000]:[-1000,0,500,1000,1500,1800,1900,1950,2000];
+  for(const t of ticks){const x=X(t);g.fillRect(x-.5,base,1,6);g.fillText(t<0?(-t)+' BCE':t===0?'1 CE':t,x,base+20)}
+  // the year marker
+  const xm=X(year);g.strokeStyle='rgba(232,196,106,.5)';g.lineWidth=1;g.beginPath();g.moveTo(xm,6);g.lineTo(xm,base);g.stroke();
+  tlPts=[];const rows=[];const rh=Math.min(22,(base-14)/6);
+  E.forEach((e,i)=>{const x=X(e.y);let r=0;while(rows[r]!==undefined&&x-rows[r]<16)r++;rows[r]=x;
+    const y=base-14-r*rh,on=i===sel;
+    g.globalAlpha=e.y<=year+0.01?1:.25;g.fillStyle=COL[e.kind];g.beginPath();g.arc(x,y,on?8:6,0,7);g.fill();
+    if(on){g.strokeStyle='#fff';g.lineWidth=2;g.beginPath();g.arc(x,y,11,0,7);g.stroke()}
+    tlPts.push({x,y,i})});
+  g.globalAlpha=1;g.textAlign='left';
+}
+
+function story(){
+  const e=E[sel],el=$('story');el.className='story '+(e.kind==='old'?'':e.kind);
+  const shown=e.y<=year+0.01;
+  el.innerHTML=`<div class="when">${e.when}${e.debated?'<span class="tag">debated</span>':''}</div><h3>${e.t}</h3><div class="where">${e.place}</div><p>${e.s}</p>${e.s2?`<p>${e.s2}</p>`:''}${e.link?`<p><a href="${ART(e.link[1])}">${e.link[0]} →</a></p>`:''}${shown?'':'<p class="note">Not on the map yet at this year: slide later to light it up.</p>'}`;
+  $('prev').disabled=sel===0;$('next').disabled=sel===E.length-1;
+}
+function setYear(y,keepSel){
+  year=Math.max(Y0,Math.min(Y1,y));$('yr').value=Math.round(tq(year)*1000);
+  $('yrB').textContent=fmtY(year);const n=E.filter(e=>e.y<=year+0.01).length;
+  $('yrN').textContent=n===E.length?'all '+n+' events lit':n+' of '+E.length+' events so far';
+  if(!keepSel){let s=-1;E.forEach((e,i)=>{if(e.y<=year+0.01)s=i});sel=Math.max(0,s)}
+  document.querySelectorAll('.eras button').forEach(b=>{const r=ERAS[+b.dataset.era];b.setAttribute('aria-pressed',String(E[sel].y>=r[0]&&E[sel].y<=r[1]&&year<=r[1]))});
+  draw();
+}
+function choose(i){sel=i;if(E[i].y>year)setYear(E[i].y,true);else draw()}
+function draw(){drawMap();drawTL();story()}
+
+$('yr').addEventListener('input',ev=>{stop();setYear(tqInv(ev.target.value/1000))});
+document.querySelectorAll('.eras button').forEach(b=>b.addEventListener('click',()=>{stop();const r=ERAS[+b.dataset.era];
+  // light the map up to the end of the era and open its first story
+  const inEra=E.map((e,i)=>i).filter(i=>E[i].y>=r[0]&&E[i].y<=r[1]);sel=inEra[0];setYear(E[inEra[inEra.length-1]].y,true)}));
+$('prev').addEventListener('click',()=>{stop();if(sel>0)choose(sel-1)});
+$('next').addEventListener('click',()=>{stop();if(sel<E.length-1)choose(sel+1)});
+function hit(pts,c,ev){const r=c.getBoundingClientRect(),x=ev.clientX-r.left,y=ev.clientY-r.top;let best=null,bd=22*22;
+  for(const p of pts){const d=(p.x-x)**2+(p.y-y)**2;if(d<=bd){bd=d;best=p}}return best}
+$('map').addEventListener('click',ev=>{const p=hit(mapPts,$('map'),ev);if(p){stop();
+  // several events at one spot: tapping again steps through them
+  const here=mapPts.filter(q=>Math.abs(q.x-p.x)<2&&Math.abs(q.y-p.y)<2).map(q=>q.i);const k=here.indexOf(sel);choose(k>=0?here[(k+1)%here.length]:here[here.length-1])}});
+$('tl').addEventListener('click',ev=>{const p=hit(tlPts,$('tl'),ev);if(p){stop();choose(p.i)}});
+$('map').addEventListener('keydown',ev=>{if(ev.key==='ArrowRight'&&sel<E.length-1){choose(sel+1);ev.preventDefault()}if(ev.key==='ArrowLeft'&&sel>0){choose(sel-1);ev.preventDefault()}});
+
+let anim=null;
+function stop(){if(anim){cancelAnimationFrame(anim);anim=null;$('play').textContent='Play 3,000 years'}}
+$('play').addEventListener('click',()=>{if(anim){stop();return}
+  // plays in squeezed time (about 14 s for the whole story), from the start if already at the end
+  $('play').textContent='Pause';const t0=performance.now(),f0=tq(year)>=0.999?0:tq(year);
+  const step=t=>{const f=Math.min(1,f0+(t-t0)/14000);setYear(tqInv(f));if(f<1)anim=requestAnimationFrame(step);else stop()};
+  anim=requestAnimationFrame(step)});
+addEventListener('resize',()=>draw());
+
+// ---- how close did they get
+const DAY_A=23*3600+56*60+4.1,DAY_M=86164.0905,YR_A=365+(6*3600+12*60+30)/86400,YR_M=365.256363,PI_A=62832/20000;
+const CLOSE=[
+ ['Length of one turn of the Earth (sidereal day)','23 h 56 m 4.1 s','23 h 56 m 4.09 s',DAY_A,DAY_M,a=>`Off by about ${(Math.abs(a)).toFixed(3)} seconds: one hundredth of a second.`],
+ ['Length of the year, measured against the stars','365 d 6 h 12 m 30 s','365 d 6 h 9 m 10 s',YR_A,YR_M,a=>`Too long by ${Math.floor(a*1440)} minutes ${Math.round((a*1440%1)*60)} seconds in a whole year.`],
+ ['π, the circle number','62832 ÷ 20000 = 3.1416','3.14159265…',PI_A,Math.PI,a=>`Right to four decimal places; too big by ${a.toFixed(7)}.`],
+];
+$('close').innerHTML=CLOSE.map(([t,av,mv,a,m,f])=>{const err=a-m,N=Math.abs(m/err),w=Math.min(100,Math.log10(N)/7*100);
+  return `<div class="cl"><b>${t}</b><div class="scroll"><table><tr><th>Aryabhata, 499</th><th>Today</th><th class="n">Precise to</th></tr><tr><td>${av}</td><td>${mv}</td><td class="n">1 part in ${Math.round(N).toLocaleString('en-IN')}</td></tr></table></div><div class="bar" role="img" aria-label="1 part in ${Math.round(N)}"><i style="width:${w.toFixed(1)}%"></i></div><p>${f(err)}</p></div>`}).join('')+
+ '<p class="note">The bar is on a scale from 1 part in 10 (empty) to 1 part in 10 million (full), each step ten times finer.</p>';
+
+// ---- Samrat Yantra shadow, worked out from its size
+const R=15.15,V=2*Math.PI*R/86400; // metres per second
+$('spd').textContent=(V*1000).toFixed(2)+' mm';
+const t00=performance.now();
+setInterval(()=>{const mm=V*1000*(performance.now()-t00)/1000;$('moved').textContent=mm<1000?mm.toFixed(0)+' mm':(mm/1000).toFixed(2)+' m'},250);
+
+setYear(Y1);
+window.__ia={E,tq,tqInv,setYear,choose,CLOSE,V,get sel(){return sel},get year(){return year}};
+</script>

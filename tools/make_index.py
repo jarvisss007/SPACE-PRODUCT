@@ -49,6 +49,7 @@ LABS = [
     ("reading-test.html","The Reading Test","Take Forer's famous 1948 experiment yourself: a personal reading that feels uncannily right, and why it does.","learn","",'#b6a4ff'),
     ("space-startups.html","India's Space Startups","Skyroot, Agnikul, Pixxel, Digantara, GalaxEye and more: who builds, launches and watches, what has really flown, the money going in, and the road to $44 billion by 2033.","india","",'#ff9933'),
  ("aryabhata-lab.html","Aryabhata Lab","Aryabhata's spinning Earth, value of π and table of sines, implemented from his verses and put to work on space problems.","ancient india learn","maths night",'#e8c46a'),
+ ("indian-astronomy.html","Indian Astronomy Through Time","3,000 years on one map: Lagadha's calendar, Aryabhata, Brahmagupta's zero, the Kerala school, Jai Singh's stone sundials, Kodaikanal and today's missions, with how close the old numbers came.","ancient india learn","maths night",'#e8c46a'),
  ("nalanda.html","Nalanda","A working rebuild of Nalanda's water clock from an eyewitness account, and the manuscripts that survived.","ancient india","maths",'#c4623f'),
  ("starship-through-time.html","Starship Through Time","Hand a spacecraft to Aryabhata or Brahmagupta and fly to Mars on their own planetary numbers.","ancient india","orbits",'#e8c46a'),
  ("clues-in-old-books.html","Clues in Old Books","Old Indian and Chinese records tested against modern science: planet gatherings, ancient eclipses and a supernova.","ancient india","night",'#e8c46a'),

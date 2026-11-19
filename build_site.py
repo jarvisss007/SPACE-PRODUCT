@@ -55,6 +55,7 @@ PAGES = [
     ("know-yourself.html", "Know yourself", "BiWch6C6JQdo3dK5HbAZ2J"),
     ("reading-test.html", "Reading test", "K6rUB5qQc5PdkKot6hzHoQ"),
     ("aryabhata-lab.html", "Aryabhata", "LaFFtHTwWZh7EiU6gL9F8Z"),
+    ("indian-astronomy.html", "Indian astronomy", "Ud4noTfngQSDCp9kByDHYY"),
     ("nalanda.html", "Nalanda", "9GzdyyvJ8zRcBAznWXM37B"),
     ("starship-through-time.html", "Through time", "4jbD63EEZBxcEbE7WXseMN"),
     ("clues-in-old-books.html", "Old books", "RHr7yep3A95fUrPY78nS57"),

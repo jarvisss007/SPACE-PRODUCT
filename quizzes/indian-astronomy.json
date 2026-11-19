@@ -1,0 +1,24 @@
+{
+ "questions": [
+  {"q": "How old was Aryabhata when he wrote the Aryabhatiya, and in what year?",
+   "do": "Press <b>Golden age, 500–1150</b> and read the first story.",
+   "a": "He says he was 23, and the book is dated to 499 CE.",
+   "history": true},
+  {"q": "Aryabhata's day (one turn of the Earth) was 23 h 56 m 4.1 s. How far off was he?",
+   "do": "Look at <b>How close did they get?</b>",
+   "a": "Today's value is 23 h 56 m 4.09 s, so he was off by about one hundredth of a second: precise to about 1 part in 9 million.",
+   "history": false},
+  {"q": "Which place in Kerala gave its name to a famous school of mathematics and astronomy, and what did Madhava find there?",
+   "do": "Press <b>Kerala school</b>.",
+   "a": "Sangamagrama, near Irinjalakuda. Madhava wrote π and the sine as never-ending sums, about 250 years before Europeans found the same series.",
+   "history": true},
+  {"q": "How fast does the shadow move on Jaipur's giant sundial, and how is that worked out?",
+   "do": "Read <b>A stone clock you can almost watch move</b>.",
+   "a": "About 1.1 mm a second. The scale is 15.15 m from the shadow's edge, and in one day the shadow goes once round a circle of that size: 2π × 15.15 m ÷ 86,400 seconds.",
+   "history": false},
+  {"q": "Slide the year to 2000. How many space missions are lit, and which recent mission carries on Kodaikanal's work of watching the Sun?",
+   "do": "Move the year slider, then press <b>Space age</b> and step with <b>Later ▸</b>.",
+   "a": "By 2000 only the Aryabhata satellite (1975) is lit. Aditya-L1, at the L1 point since 6 January 2024, watches the Sun like Kodaikanal has since 1899.",
+   "history": false}
+ ]
+}
