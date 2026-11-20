@@ -76,6 +76,41 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     <div class="scroll"><table id="cities"></table></div>
   </section>
 
+  <section class="card"><h2>Then and now</h2>
+<style>
+.tn-sub{font-size:13px;color:var(--dim);margin:0 0 10px}
+.tn{list-style:none;margin:0;padding:0 0 0 16px;border-left:2px solid var(--line)}
+.tn li{position:relative;margin:0 0 4px}
+.tn li::before{content:"";position:absolute;left:-24px;top:11px;width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--gold)}
+.tn li.in::before{border-color:var(--ok);background:var(--ok)}
+.tn summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;padding:6px 8px;border-radius:4px;min-width:0}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary:hover,.tn details[open]>summary{background:var(--panel2)}
+.tn summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.tn .y{flex:none;width:4.6em;font-family:var(--display);font-weight:700;font-size:16px;color:var(--gold);font-variant-numeric:tabular-nums}
+.tn summary b{flex:1;min-width:0;font-weight:600;color:var(--ink)}
+.tn summary::after{content:"+";flex:none;color:var(--dim);font-family:var(--display);font-size:18px;line-height:1}
+.tn details[open]>summary::after{content:"\2212"}
+.tn details p{margin:6px 0 10px;padding:0 8px;font-size:14.5px}
+.tn .tag{display:inline-block;margin-left:6px;font:600 10.5px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#04160d;background:var(--ok);border-radius:3px;padding:3px 5px;vertical-align:2px}
+</style>
+    <p class="tn-sub">From wartime radio beacons to India’s own navigation satellites. Tap a year to open it; green dots mark India’s part.</p>
+    <ol class="tn">
+      <li><details><summary><span class="y">1942</span><b>LORAN: finding your way by radio</b></summary><p>During the Second World War, American engineers built LORAN (“long range navigation”). Ships timed radio pulses from pairs of stations on the coast, and the difference in arrival times told them where they were. The first chain went live in June 1942. NavIC works on the same idea, timing signals, but its stations are in space.</p></details></li>
+      <li><details><summary><span class="y">1960–64</span><b>Transit, the first navigation satellites</b></summary><p>The US Navy launched Transit 1B on 13 April 1960. Ships listened to how the satellite’s radio tone shifted as it passed overhead and worked out their position from that. Transit was declared working in 1964 and was used until 1996, when GPS replaced it.</p></details></li>
+      <li><details><summary><span class="y">1978</span><b>The first GPS satellite</b></summary><p>On 22 February 1978 the first GPS satellite, Navstar 1, was launched from California. GPS was built by the US military; today anyone’s phone can use it, but the United States still runs it.</p></details></li>
+      <li class="in"><details><summary><span class="y">1999</span><b>Kargil: a lesson about depending on others</b><span class="tag">India</span></summary><p>During the Kargil conflict in 1999, it was widely reported that the United States turned down India’s request for GPS data of the area. The full story is hard to check, but it is often told as one reason India decided to build a navigation system of its own.</p></details></li>
+      <li class="in"><details><summary><span class="y">2006</span><b>India says yes to IRNSS</b><span class="tag">India</span></summary><p>In May 2006 the Government of India approved the Indian Regional Navigation Satellite System (IRNSS), later named NavIC. Instead of covering the whole world like GPS, it would cover India and about 1,500 km around it.</p></details></li>
+      <li class="in"><details><summary><span class="y">2013</span><b>IRNSS-1A, the first satellite</b><span class="tag">India</span></summary><p>On 1 July 2013 a PSLV rocket launched IRNSS-1A from Sriharikota. More followed, making up the seven-satellite design you can switch on at the top of this page.</p></details></li>
+      <li class="in"><details><summary><span class="y">2017–18</span><b>The atomic clocks start failing</b><span class="tag">India</span></summary><p>Every navigation satellite carries atomic clocks, because a timing error of a millionth of a second means a position error of about 300 m. In January 2017 all three imported clocks on IRNSS-1A were reported to have failed. More failures followed, and by May 2018 about nine clocks across the fleet had stopped. A satellite with no working clock can still send messages but cannot help you find your position.</p></details></li>
+      <li class="in"><details><summary><span class="y">2017</span><b>IRNSS-1H is lost at launch</b><span class="tag">India</span></summary><p>IRNSS-1H was meant to replace the clock-less IRNSS-1A. It launched on a PSLV on 31 August 2017, but the heat shield, the nose cover that protects the satellite on the way up, did not come off. Trapped inside, the satellite could not separate and never reached its orbit.</p></details></li>
+      <li class="in"><details><summary><span class="y">2020</span><b>NavIC arrives in phones</b><span class="tag">India</span></summary><p>In January 2020 the chip-maker Qualcomm released phone chips that could pick up NavIC signals, and some phones able to use NavIC went on sale that year. Most such phones combine NavIC with GPS and other systems.</p></details></li>
+      <li class="in"><details><summary><span class="y">2023</span><b>NVS-01 brings an Indian clock</b><span class="tag">India</span></summary><p>On 29 May 2023 a GSLV launched NVS-01, the first of NavIC’s second-generation satellites. For the first time it carried a rubidium atomic clock made in India, at ISRO’s Space Applications Centre in Ahmedabad.</p></details></li>
+      <li class="in"><details><summary><span class="y">2025</span><b>NVS-02 gets stuck</b><span class="tag">India</span></summary><p>NVS-02 was launched on 29 January 2025. The rocket did its job, but in early February the satellite’s own engine could not fire because valves on its fuel lines did not open. So it never climbed to its proper orbit and is stuck in a stretched loop.</p></details></li>
+      <li class="in"><details><summary><span class="y">2026</span><b>NVS-03: back to four</b><span class="tag">India</span></summary><p>By March 2026 only three NavIC satellites could still give positions, one short of the four needed. On 30 October 2026 a GSLV launched NVS-03, and by 4 November it had reached its orbit, bringing NavIC back to four: the bare minimum this page shows.</p></details></li>
+    </ol>
+  </section>
+
   <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll"><table id="check"></table></div>
   </details>
@@ -106,7 +141,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 (()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
 </script></section>
 <!-- golapada-quiz:end -->
-  <footer>Sources: Wikipedia article “NavIC” (orbital slots and inclinations; satellite status table; primary service area of India and 1,500 km around it, with 10–20 m position accuracy; only IRNSS-1B, IRNSS-1I and NVS-01 able to provide positioning as of March 2026; NVS-02’s fuel-system failure; NVS-03 (IRNSS-1L) launched on GSLV-F18 on 30 October 2026, in its intended orbit by 4 November, listed operational at 111.75°E with a 29.98° inclination; the restored four-satellite minimum). NVS-03’s orbit is confirmed by CelesTrak (catalogue number 101228, inclination 29.93°, mean motion 1.0028 revolutions a day, element set of 18 November 2026). Its position along that orbit here is assumed, as for the other satellites. Earth model WGS-84 radius; geosynchronous radius 42,164 km. An independent model, not affiliated with ISRO.</footer>
+  <footer>Sources: Wikipedia article “NavIC” (orbital slots and inclinations; satellite status table; primary service area of India and 1,500 km around it, with 10–20 m position accuracy; only IRNSS-1B, IRNSS-1I and NVS-01 able to provide positioning as of March 2026; NVS-02’s fuel-system failure; NVS-03 (IRNSS-1L) launched on GSLV-F18 on 30 October 2026, in its intended orbit by 4 November, listed operational at 111.75°E with a 29.98° inclination; the restored four-satellite minimum). NVS-03’s orbit is confirmed by CelesTrak (catalogue number 101228, inclination 29.93°, mean motion 1.0028 revolutions a day, element set of 18 November 2026). Its position along that orbit here is assumed, as for the other satellites. Earth model WGS-84 radius; geosynchronous radius 42,164 km. An independent model, not affiliated with ISRO. Then and now: LORAN’s first chain in June 1942 from the IEEE Milestone “Loran, 1940–1946” (ethw.org) and Wikipedia “LORAN”; Transit 1B on 13 April 1960, in service 1964–1996, from Britannica “Transit satellite” and the US Space Force’s Los Angeles history office; Navstar 1 on 22 February 1978 from Wikipedia “OPS 5111” and History.com; the 1999 Kargil GPS request, IRNSS approval in May 2006, IRNSS-1A on 1 July 2013, IRNSS-1A’s clock failures (January 2017) and about nine failed clocks by May 2018, IRNSS-1H’s heat-shield failure on 31 August 2017, and Qualcomm’s NavIC chips of January 2020 from Wikipedia “NavIC”; NVS-01 and its Indian-made clock from ISRO’s GSLV-F12/NVS-01 mission page; NVS-02’s valve failure from ISRO’s “NVS-02 Spacecraft: On-Orbit Observations” and GPS World (February 2025).</footer>
 </div>
 
 <script>

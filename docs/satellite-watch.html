@@ -125,6 +125,39 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     </div>
   </section>
 
+  <section class="card"><h2>Then and now</h2>
+<style>
+.tn-sub{font-size:13px;color:var(--dim);margin:0 0 10px}
+.tn{list-style:none;margin:0;padding:0 0 0 16px;border-left:2px solid var(--line)}
+.tn li{position:relative;margin:0 0 4px}
+.tn li::before{content:"";position:absolute;left:-24px;top:11px;width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--gold)}
+.tn li.in::before{border-color:var(--ok);background:var(--ok)}
+.tn summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;padding:6px 8px;border-radius:4px;min-width:0}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary:hover,.tn details[open]>summary{background:var(--panel2)}
+.tn summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.tn .y{flex:none;width:4.6em;font-family:var(--display);font-weight:700;font-size:16px;color:var(--gold);font-variant-numeric:tabular-nums}
+.tn summary b{flex:1;min-width:0;font-weight:600;color:var(--ink)}
+.tn summary::after{content:"+";flex:none;color:var(--dim);font-family:var(--display);font-size:18px;line-height:1}
+.tn details[open]>summary::after{content:"\2212"}
+.tn details p{margin:6px 0 10px;padding:0 8px;font-size:14.5px}
+.tn .tag{display:inline-block;margin-left:6px;font:600 10.5px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#04160d;background:var(--ok);border-radius:3px;padding:3px 5px;vertical-align:2px}
+</style>
+    <p class="tn-sub">From one beeping ball to thousands of satellites a night. Tap a year to open it; green dots mark India’s part.</p>
+    <ol class="tn">
+      <li><details><summary><span class="y">1957</span><b>Sputnik, object number 2</b></summary><p>On 4 October 1957 the Soviet Union put Sputnik into orbit. People around the world tuned radios to hear it beep and went outside to spot it. In the official list of objects in space, Sputnik’s rocket is number 1 and Sputnik itself is number 2.</p></details></li>
+      <li><details><summary><span class="y">1960s</span><b>NORAD and the two-line elements</b></summary><p>The American military began keeping a catalogue of everything in orbit, a job later done by NORAD and today by US Space Command. In the early 1960s, mathematician Max Lane worked out ways to predict where a satellite will be from just a few numbers. Those numbers are sent as two lines of text, first designed to fit on punched cards: the “two-line elements” this page uses.</p></details></li>
+      <li class="in"><details><summary><span class="y">1975</span><b>Aryabhata, India’s first satellite</b><span class="tag">India</span></summary><p>On 19 April 1975 a Soviet rocket launched Aryabhata, designed and built in India. It got its own number in the same catalogue and orbited about 600 km up.</p></details></li>
+      <li><details><summary><span class="y">1985</span><b>CelesTrak starts sharing orbits</b></summary><p>In 1985 T.S. Kelso set up a computer bulletin board about satellites, at first typing orbit numbers in by hand. It grew into CelesTrak, the free website that this page’s data comes from.</p></details></li>
+      <li><details><summary><span class="y">1997–2019</span><b>Iridium flares come and go</b></summary><p>From 1997, the first Iridium phone satellites had flat, shiny antennas that could catch the Sun and send a flash to the ground, sometimes bright enough to see in daylight. Skywatchers could predict them in advance. The newer Iridium satellites do not flash, and the last of the old ones was brought down by 27 December 2019.</p></details></li>
+      <li><details><summary><span class="y">1998</span><b>The first piece of the space station</b></summary><p>On 20 November 1998, exactly 28 years before today, a Russian Proton rocket launched Zarya, the first module of the International Space Station. You can follow it on the map at the top of this page.</p></details></li>
+      <li><details><summary><span class="y">2019</span><b>Starlink trains</b></summary><p>On 23 May 2019 SpaceX launched 60 Starlink internet satellites at once. Soon after launch they crossed the sky in a line, like a string of pearls. Astronomers worried that thousands of bright satellites would leave streaks across their telescope pictures and interfere with radio astronomy, and SpaceX said it would look for ways to make them less shiny.</p></details></li>
+      <li class="in"><details><summary><span class="y">2020</span><b>ISRO’s NETRA watches the sky</b><span class="tag">India</span></summary><p>On 14 December 2020 ISRO opened its space situational awareness control centre, NETRA, in Bengaluru. Its job is to keep track of space junk and warn when something might hit an Indian satellite.</p></details></li>
+      <li class="in"><details><summary><span class="y">2025</span><b>Digantara: tracking satellites from space</b><span class="tag">India</span></summary><p>On 14 January 2025 the Bengaluru company Digantara launched SCOT, a small satellite with a camera that watches other objects in orbit. It is meant to spot objects as small as about 5 cm.</p></details></li>
+      <li><details><summary><span class="y">2026</span><b>How many are up there now?</b></summary><p>The European Space Agency counts about 15,800 working satellites around Earth (its figures of 17 November 2026), out of about 19,770 satellites still in space.</p></details></li>
+    </ol>
+  </section>
+
   <details class="card gx"><summary>For experts: Checks</summary>
     <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="check"></table></div>
   </details>
@@ -157,7 +190,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 </script></section>
 <!-- golapada-quiz:end -->
   <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="iss-life.html" style="--k:#74c7ff"><b>Life on the ISS</b><span>Live through one day on the space station: 16 sunrises, 2½ hours of exercise, 98% recycled water, and the physics that keeps it up.</span></a><a href="navic-lab.html" style="--k:#ff9933"><b>NavIC Lab</b><span>India&#x27;s own GPS: how a receiver finds its position, the quality map across the region, and why three working satellites meant no fix.</span></a><a href="space-debris-lab.html" style="--k:#ff8f6b"><b>Space Debris Lab</b><span>Break up a satellite and watch the pieces fall: Mission Shakti at 283 km against a collision at 789 km, where junk stays for decades.</span></a></div></section>
-<footer>Data: CelesTrak general-perturbations element sets (celestrak.org), groups “stations”, “visual” and “gnss”, plus Hubble (catalogue number 20580), all fetched on the date shown at the top. Propagation: satellite.js 5.0.0 (MIT licence), an implementation of the SGP4/SDP4 models. Coastlines: Natural Earth land at 1:110m via world-atlas 2.0.2, land only, with no borders drawn. An independent page; not affiliated with CelesTrak, NORAD, NASA or ISRO.</footer>
+<footer>Data: CelesTrak general-perturbations element sets (celestrak.org), groups “stations”, “visual” and “gnss”, plus Hubble (catalogue number 20580), all fetched on the date shown at the top. Propagation: satellite.js 5.0.0 (MIT licence), an implementation of the SGP4/SDP4 models. Coastlines: Natural Earth land at 1:110m via world-atlas 2.0.2, land only, with no borders drawn. An independent page; not affiliated with CelesTrak, NORAD, NASA or ISRO. Then and now: Sputnik’s catalogue numbers, Max Lane’s early-1960s models and the punched-card origin of two-line elements from Wikipedia “Satellite Catalog Number” and “Two-line element set”; Aryabhata on 19 April 1975 from ISRO’s Aryabhata page; CelesTrak’s 1985 start from T.S. Kelso’s “A Brief History” (celestrak.org); Iridium flares from 1997 to 27 December 2019 from Wikipedia “Satellite flare”; Zarya on 20 November 1998 from NASA and ESA; the first 60 Starlinks on 23 May 2019 and astronomers’ concerns from Smithsonian Magazine and NPR (June 2019); NETRA on 14 December 2020 from ISRO’s “ISRO SSA Control Centre” page; Digantara’s SCOT on 14 January 2025 from SatNews; satellite counts from ESA’s Space Debris Office statistics page, last updated 17 November 2026.</footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>

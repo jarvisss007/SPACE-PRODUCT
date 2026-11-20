@@ -73,6 +73,40 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     <p class="note" style="margin-top:8px">One number is fitted: the engine’s efficiency (specific impulse). It is chosen so the propellant used across all the burns leaves the 40 kg ISRO reported in the tank after arriving at Mars. It comes out at <b id="ispOut"></b>, a little below the usual figure for this class of engine, because the model leaves out the small course corrections and the losses from firing for many minutes rather than in an instant. Every burn time is then a prediction.</p>
   </section>
 
+  <section class="card"><h2>Then and now</h2>
+<style>
+.tn-sub{font-size:13px;color:var(--dim);margin:0 0 10px}
+.tn{list-style:none;margin:0;padding:0 0 0 16px;border-left:2px solid var(--line)}
+.tn li{position:relative;margin:0 0 4px}
+.tn li::before{content:"";position:absolute;left:-24px;top:11px;width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--mars)}
+.tn li.in::before{border-color:var(--ok);background:var(--ok)}
+.tn summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;padding:6px 8px;border-radius:4px;min-width:0}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary:hover,.tn details[open]>summary{background:var(--panel2)}
+.tn summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.tn .y{flex:none;width:4.6em;font-family:var(--display);font-weight:700;font-size:16px;color:var(--mars);font-variant-numeric:tabular-nums}
+.tn summary b{flex:1;min-width:0;font-weight:600;color:var(--ink)}
+.tn summary::after{content:"+";flex:none;color:var(--dim);font-family:var(--display);font-size:18px;line-height:1}
+.tn details[open]>summary::after{content:"\2212"}
+.tn details p{margin:6px 0 10px;padding:0 8px;font-size:14.5px}
+.tn .tag{display:inline-block;margin-left:6px;font:600 10.5px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#04160d;background:var(--ok);border-radius:3px;padding:3px 5px;vertical-align:2px}
+</style>
+    <p class="tn-sub">From the first blurry photos of Mars to India’s orbiter and what comes next. Tap a year to open it; green dots mark India’s part.</p>
+    <ol class="tn">
+      <li><details><summary><span class="y">1965</span><b>Mariner 4: the first close look</b></summary><p>On 14 July 1965 NASA’s Mariner 4 flew past Mars and sent back 22 pictures, the first close-up photos ever taken of another planet. They showed a dry world covered in craters.</p></details></li>
+      <li><details><summary><span class="y">1971</span><b>Mars 3: the first landing</b></summary><p>On 2 December 1971 the Soviet Mars 3 lander became the first spacecraft to land softly on Mars. Its signal stopped after only about 15 to 20 seconds, and nobody knows for sure why.</p></details></li>
+      <li><details><summary><span class="y">1976</span><b>Viking on the ground</b></summary><p>On 20 July 1976 NASA’s Viking 1 landed and sent back the first clear photo taken on the surface of Mars. The Viking landers also tested the soil for signs of life.</p></details></li>
+      <li><details><summary><span class="y">2003</span><b>Japan’s Nozomi misses</b></summary><p>Japan’s Nozomi, launched in 1998, was meant to be the first Asian spacecraft to orbit Mars. After years of problems it reached Mars in December 2003 but could not brake into orbit, and flew on past.</p></details></li>
+      <li class="in"><details><summary><span class="y">2012</span><b>India says yes to Mars</b><span class="tag">India</span></summary><p>On 3 August 2012 India’s cabinet approved the Mars Orbiter Mission, and the Prime Minister announced it in his Independence Day speech on 15 August. That left ISRO only about 15 months to get ready for the November 2013 launch window.</p></details></li>
+      <li class="in"><details><summary><span class="y">2013</span><b>Launch on the PSLV</b><span class="tag">India</span></summary><p>On 5 November 2013 a PSLV rocket put Mangalyaan into a stretched orbit around Earth. Its own engine raised that orbit step by step, then on 30 November sent it off towards Mars: the journey you can replay at the top of this page.</p></details></li>
+      <li class="in"><details><summary><span class="y">2014</span><b>Captured by Mars, first time lucky</b><span class="tag">India</span></summary><p>On 24 September 2014 a 23-minute engine burn slowed Mangalyaan enough for Mars to capture it. India became the first Asian nation to reach Mars orbit, and the first country ever to get there on its very first try.</p></details></li>
+      <li class="in"><details><summary><span class="y">2014</span><b>Cheaper than a space film?</b><span class="tag">India</span></summary><p>The whole mission, rocket and ground stations included, cost about ₹450 crore. In 2014 Prime Minister Narendra Modi pointed out that this was less than the Hollywood space film Gravity, whose budget was reported at about US$100 million. It is a fun comparison more than a fair one: a film budget and a space mission budget are not counted the same way. But Mangalyaan really was the cheapest Mars mission yet.</p></details></li>
+      <li><details><summary><span class="y">2021</span><b>Hope and Tianwen-1 arrive</b></summary><p>On 9 February 2021 the United Arab Emirates’ Hope probe went into orbit around Mars, the first Arab mission to do it. The next day China’s Tianwen-1 arrived too, and in May 2021 its rover Zhurong landed on the surface.</p></details></li>
+      <li class="in"><details><summary><span class="y">2022</span><b>Goodbye, Mangalyaan</b><span class="tag">India</span></summary><p>Built to last about six months, Mangalyaan kept working around Mars for about seven and a half years. Contact was lost in April 2022 after a long eclipse left it without sunlight, and in October 2022 ISRO said the mission was over.</p></details></li>
+      <li class="in"><details><summary><span class="y">2030?</span><b>Plan: Mangalyaan-2, with a lander</b><span class="tag">India</span></summary><p>This is a plan, not a flight yet. ISRO’s chairman has said a second Mars mission is aimed at about 2030, with an orbiter and India’s first try at landing on Mars. Dates for missions like this often slip.</p></details></li>
+    </ol>
+  </section>
+
   <details class="card gx"><summary>For experts: Checks against the real mission</summary>
     <div class="scroll"><table id="check"></table></div>
   </details>
@@ -110,7 +144,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 (()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
 </script></section>
 <!-- golapada-quiz:end -->
-  <footer>Sources: ISRO’s mission reports as tabulated in the Wikipedia article “Mars Orbiter Mission” (masses 1,337.2 kg at launch and 482.5 kg dry; every burn date, duration and resulting orbit; the 35 m/s fourth burn; the Mars orbit of 421.7 × 76,993.6 km and 72 h 51 min 51 s; 40 kg of propellant left; the 780 million km distance; the cost). Planet positions: E. M. Standish and J. G. Williams, JPL approximate positions, Table 2a. GM values for Earth and Mars from JPL. An independent model, not affiliated with ISRO.</footer>
+  <footer>Sources: ISRO’s mission reports as tabulated in the Wikipedia article “Mars Orbiter Mission” (masses 1,337.2 kg at launch and 482.5 kg dry; every burn date, duration and resulting orbit; the 35 m/s fourth burn; the Mars orbit of 421.7 × 76,993.6 km and 72 h 51 min 51 s; 40 kg of propellant left; the 780 million km distance; the cost). Planet positions: E. M. Standish and J. G. Williams, JPL approximate positions, Table 2a. GM values for Earth and Mars from JPL. Then and now: NASA’s Mariner 4 history page and Mars chronology; the Wikipedia articles “Mars 3”, “Mars Orbiter Mission” and “Nozomi (spacecraft)” with JAXA’s Nozomi page; PTI and UPI reports of the cabinet approval (3 August 2012) and the Independence Day speech; ISRO’s end-of-mission statement (3 October 2022) as reported by Space.com and Deccan Herald; NBC News on the cost and the Gravity comparison; AP reports of Hope (9 February 2021) and Tianwen-1 (10 February 2021) entering orbit; Business Today and India TV (November 2025) on the Mangalyaan-2 plan. An independent model, not affiliated with ISRO.</footer>
 </div>
 
 <script>
