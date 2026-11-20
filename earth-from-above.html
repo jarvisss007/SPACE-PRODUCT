@@ -308,14 +308,18 @@ $('gSats').onchange=e=>{st.sats=e.target.checked;if(!st.sats&&st.ride){st.ride=f
 $('gRide').onclick=()=>{if(st.ride){st.ride=false;rideUI();wantDetail();return}if(!SAT||!SAT.iss){setDet('The orbit calculator has not loaded yet. Try again in a moment.');return}
   st.sats=true;$('gSats').checked=true;const p=satAt(SAT.iss,st.t);if(!p)return;st.ride=true;rideUI();flyTo(p.lat,p.lon,5,1200)};
 $('gFast').onclick=()=>{st.fast=!st.fast;$('gFast').setAttribute('aria-pressed',st.fast);if(!st.fast){timeUI()}};
-{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js';sc.onload=initSats;document.head.appendChild(sc)}
 timeUI();
 new ResizeObserver(resize).observe(cv);resize();
-(async()=>{try{const r=await fetch('earth-globe.json',{cache:'no-cache'});if(!r.ok)throw new Error(r.status);INFO=await r.json();
+// nothing below is downloaded until the globe is about to scroll into view
+let started=false;
+const start=async()=>{if(started)return;started=true;
+  {const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js';sc.onload=initSats;document.head.appendChild(sc)}
+  try{const r=await fetch('earth-globe.json',{cache:'no-cache'});if(!r.ok)throw new Error(r.status);INFO=await r.json();
     const img=new Image();img.decoding='async';img.src='earth-globe.jpg?d='+INFO.date;await img.decode();base=tex(0,img,true);$('gmsg').style.display='none';st.dirty=true;gchecks();loadNight(st.night).then(()=>{st.dirty=true;wantDetail()})}
-  catch(err){$('gmsg').innerHTML='The stitched globe is made once a day on the Golapada website. Open this page at <a href="https://jarvisss007.github.io/SPACE-PRODUCT/earth-from-above.html">jarvisss007.github.io</a> to turn it.'}})();
+  catch(err){$('gmsg').innerHTML='The stitched globe is made once a day on the Golapada website. Open this page at <a href="https://jarvisss007.github.io/SPACE-PRODUCT/earth-from-above.html">jarvisss007.github.io</a> to turn it.'}};
+if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();start()}},{rootMargin:'400px'});io.observe(cv)}else start();
 requestAnimationFrame(loop);
-window.__globe={st,flyTo,sunAt,satAt,get SAT(){return SAT},get INFO(){return INFO}};
+window.__globe={st,flyTo,sunAt,satAt,start,get SAT(){return SAT},get INFO(){return INFO}};
 })();
 </script>
   </section>
