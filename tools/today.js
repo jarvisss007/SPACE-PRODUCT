@@ -102,5 +102,10 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
       if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text})}
       else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='golapada-today.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);$('tdShareNote').textContent='Saved as a picture. Send it from your photos or downloads.'}}
     catch(e){if(e&&e.name!=='AbortError')$('tdShareNote').textContent='Sharing did not work on this device.'}finally{btn.disabled=false}}})();
+// this week's Mars Colony challenge (same rotation as the simulator)
+(()=>{const el=$('tdChal');if(!el)return;const T=["Storm on arrival","Thin air","No ships coming","Half the parts","Ticket home","A rough landing"];
+  const d=new Date(),t=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()),dow=(new Date(t).getUTCDay()+6)%7,th=t+(3-dow)*864e5,y=new Date(th).getUTCFullYear(),w=1+Math.floor((th-Date.UTC(y,0,1))/(7*864e5)),key=y+"-W"+String(w).padStart(2,"0");
+  let done=false;try{done=!!JSON.parse(localStorage.getItem("golapada-mc-done")||"{}")[key]}catch(e){}
+  el.innerHTML=`🚀 This week's Mars challenge: <a href="mars-colony.html">${T[(y*53+w)%T.length]}</a>${done?' <span style="color:#5fd6a0">✓ done</span>':''}`})();
 })();
 </script>

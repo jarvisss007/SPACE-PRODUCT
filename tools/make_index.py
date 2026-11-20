@@ -241,6 +241,7 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
       <div class="td" style="--acc:var(--saffron)"><div class="k">Coming up in the sky</div><div id="tdSky"></div></div>
       <div class="td bd" style="--acc:var(--violet)"><div class="k">Your birthday in space</div><div id="tdBday"></div></div>
     </div>
+    <p class="note" id="tdChal" style="font-size:14px;margin:12px 0 0"></p>
     <p class="note" id="tdStreak" hidden></p>
   </section>
 
