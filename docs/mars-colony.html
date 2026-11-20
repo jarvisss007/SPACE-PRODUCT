@@ -50,7 +50,7 @@ canvas{display:block;width:100%;background:#02030a;border-radius:4px}#dock{aspec
 .maths{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:#070b11;border:1px solid var(--line);border-radius:4px;padding:8px 10px;color:#cfd8e2;overflow-wrap:anywhere;margin:8px 0}
 .locked{font-size:12.5px;color:var(--gold);margin:6px 0}
 table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
-td.ok{color:var(--ok)}td.bad{color:var(--bad)}
+td.ok{color:var(--ok)}td.bad{color:var(--bad)}td.mid{color:var(--gold)}
 .scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
 .meters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}@media (max-width:760px){.meters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mt{background:var(--panel2);border-radius:4px;padding:8px 10px;min-width:0}.mt span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
@@ -719,7 +719,7 @@ function trust(){const rows=[
  ["Landing odds, breakdowns, storms","see text","game guesses",""],
  ["Solar farm","17.6 kW per 500 m² at the equator","game guess built on 586 W/m²",""],
  ["Ice drill, brick printer, fuel plant","150 kg, 1 bed/10 sols, 8 kWh/kg","game guesses",""]];
- $("#trust").innerHTML=`<tr><th>Number</th><th>In the simulator</th><th>Published</th><th>Source</th></tr>`+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td${r[2].startsWith("game")?' class="bad"':""}>${r[2]}</td><td>${r[3]}</td></tr>`).join("");
+ $("#trust").innerHTML=`<tr><th>Number</th><th>In the simulator</th><th>Published</th><th>Source</th></tr>`+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td${r[2].startsWith("game")?' class="mid"':""}>${r[2]}</td><td>${r[3]}</td></tr>`).join("");
  const past=[["Curiosity",Date.UTC(2011,10,26)],["Mangalyaan (left Earth orbit about 1 Dec)",Date.UTC(2013,11,1)],["MAVEN",Date.UTC(2013,10,18)],["InSight",Date.UTC(2018,4,5)],["Perseverance",Date.UTC(2020,6,30)]];
  const ws=windows(Date.UTC(2011,0,1),Date.UTC(2021,0,1));
  $("#wincheck").innerHTML=`<tr><th>Mission</th><th>Real departure</th><th>This page's Hohmann date</th><th>Gap</th></tr>`+past.map(([n,t])=>{const w=ws.reduce((a,b)=>Math.abs(b[0]-t)<Math.abs(a[0]-t)?b:a);const g=Math.round((w[0]-t)/DAY);
