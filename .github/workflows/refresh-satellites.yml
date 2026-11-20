@@ -29,10 +29,6 @@ jobs:
         run: python tools/refresh_neo.py
       - name: Download this year's launch log
         run: python tools/refresh_launches.py
-      - name: Join today's EPIC photographs into the globe
-        run: |
-          pip install --quiet numpy pillow
-          python tools/stitch_epic.py || echo "Globe not refreshed today; yesterday's stays up."
       - name: Rebuild the website
         run: python build_site.py
       - name: Publish if anything changed

@@ -106,141 +106,6 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     </div>
   </section>
 
-  <section class="card globe" aria-labelledby="gl-h">
-<style>
-.globe{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}@media (max-width:900px){.globe{grid-template-columns:minmax(0,1fr)}}
-.gwrap{position:relative;aspect-ratio:1/1;max-width:640px;width:100%;margin:0 auto}
-#globe{width:100%;height:100%;background:transparent;border-radius:0;cursor:grab;touch-action:none}#globe.drag{cursor:grabbing}
-#globe:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
-.gmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;color:var(--dim);font-size:14px;pointer-events:none}
-.gmsg a{pointer-events:auto}
-.ghint{position:absolute;left:0;right:0;bottom:2px;text-align:center;font-size:12px;color:var(--dim);pointer-events:none;transition:opacity .6s}
-.zoomb{position:absolute;right:4px;top:4px;display:flex;flex-direction:column;gap:6px}.zoomb .btn{width:38px;height:38px;padding:0;font-size:20px;line-height:1}
-.gdet{border-left:3px solid var(--line);padding-left:10px}.gdet.on{border-color:var(--ok)}
-</style>
-    <div>
-      <div class="gwrap">
-        <canvas id="globe" tabindex="0" role="img" aria-label="A globe made from this day's EPIC photographs. Drag to turn it, scroll or pinch to zoom. With the keyboard: arrow keys turn it, plus and minus zoom."></canvas>
-        <div class="gmsg" id="gmsg">Joining the day’s photographs into a globe…</div>
-        <div class="zoomb"><button type="button" class="btn" id="gIn" aria-label="Zoom in">+</button><button type="button" class="btn" id="gOut" aria-label="Zoom out">−</button></div>
-        <div class="ghint" id="ghint">Drag to turn · scroll or pinch to zoom</div>
-      </div>
-      <div class="seg"><button type="button" class="btn main" id="gCam">From the camera</button><button type="button" class="btn" id="gIndia">Zoom to India</button><button type="button" class="btn" id="gN">North Pole</button><button type="button" class="btn" id="gS">South Pole</button><button type="button" class="btn" id="gSpin" aria-pressed="false">Spin</button></div>
-    </div>
-    <div>
-      <h2 id="gl-h">The whole Earth, stitched</h2>
-      <p>One camera never sees all of Earth at once. So here every photograph from one day is laid back onto the globe where the camera saw it, and each spot is taken from the picture that looked at it most squarely. Turn it to see the side facing away from you in the photos above.</p>
-      <div class="kv" id="gkv"></div>
-      <p class="note gdet" id="gdet" style="margin-top:10px"></p>
-      <p class="note"><b>Zoom in past 3×</b> and the picture sharpens. That detail comes from a second NASA source: the VIIRS camera on the NOAA-20 weather satellite, which flies only 824 km up and passes over every place around 1:30 in the afternoon, local time. Its clouds are from a different hour than EPIC’s, so they may not match. Thin black wedges near the equator are gaps between its passes.</p>
-      <p class="note"><b>Why some parts look odd.</b> The photographs are about two hours apart, so clouds can jump a little where two pictures meet. The dark cap is polar night: in November the Sun does not rise near the North Pole, and EPIC, which always looks from the Sun’s side, cannot see it. In June the dark cap moves to the south.</p>
-    </div>
-<script>
-(()=>{
-'use strict';
-const $=id=>document.getElementById(id),D=Math.PI/180,cv=$('globe'),nf=new Intl.NumberFormat('en-US');
-const gl=cv.getContext('webgl2',{antialias:true,premultipliedAlpha:false});
-if(!gl){$('gmsg').textContent='This browser cannot draw the 3D globe (it needs WebGL 2). The photographs above still work.';return}
-const VS=`#version 300 es
-in vec2 a;out vec2 p;void main(){p=a;gl_Position=vec4(a,0.,1.);}`;
-const FS=`#version 300 es
-precision highp float;in vec2 p;out vec4 o;
-uniform sampler2D T,U;uniform mat3 R;uniform float S,H,DON;uniform vec4 BOX;
-const float PI=3.14159265;
-void main(){vec2 q=p/S;float r=length(q);
- if(r>1.){float g=exp(-(r-1.)*S*28.)*.5;o=vec4(.35,.62,1.,g);return;}
- vec3 s=vec3(q,sqrt(max(0.,1.-r*r)));vec3 e=R*s;
- float lat=asin(clamp(e.z,-1.,1.)),lon=atan(e.y,e.x);
- vec2 uv=vec2(lon/(2.*PI)+.5,.5-lat/PI),uw=vec2(fract(uv.x+.5),uv.y);
- vec2 dx=dFdx(uv),dy=dFdy(uv),dx2=dFdx(uw),dy2=dFdy(uw);
- if(dot(dx2,dx2)+dot(dy2,dy2)<dot(dx,dx)+dot(dy,dy)){dx=dx2;dy=dy2;}
- vec3 c=textureGrad(T,uv,dx,dy).rgb;
- if(DON>0.){float dl=mod(lon-BOX.z+3.*PI,2.*PI)-PI;vec2 d=vec2(dl/(2.*BOX.w)+.5,(BOX.y-lat)/(BOX.y-BOX.x));
-  if(d.x>0.&&d.x<1.&&d.y>0.&&d.y<1.){vec3 v=texture(U,d).rgb;float m=smoothstep(0.,.03,min(min(d.x,1.-d.x),min(d.y,1.-d.y)))*step(.03,max(v.r,max(v.g,v.b)))*DON;c=mix(c,v,m);}}
- float sh=.6+.4*pow(s.z,.55),rim=pow(1.-s.z,3.)*.35;
- o=vec4(c*sh+vec3(.3,.55,1.)*rim,clamp((1.-r)*S*H,0.,1.));}`;
-function sh(t,src){const x=gl.createShader(t);gl.shaderSource(x,src);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(x));return x}
-const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);gl.useProgram(pr);
-const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
-const al=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(al);gl.vertexAttribPointer(al,2,gl.FLOAT,false,0,0);
-const L={};['T','U','R','S','H','DON','BOX'].forEach(k=>L[k]=gl.getUniformLocation(pr,k));gl.uniform1i(L.T,0);gl.uniform1i(L.U,1);
-const aniso=gl.getExtension('EXT_texture_filter_anisotropic');
-function tex(unit,img,base){const t=gl.createTexture();gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,t);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
-  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,base?gl.REPEAT:gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
-  if(aniso)gl.texParameterf(gl.TEXTURE_2D,aniso.TEXTURE_MAX_ANISOTROPY_EXT,8);return t}
-const SHRINK=.92,ZMAX=80;
-const st={lat:12,lon:78,zoom:1,vx:0,vy:0,spin:false,anim:null,box:null,don:0,dTarget:0,dirty:true,ready:false};
-let INFO=null,base=null,det=null,detSeq=0,detTimer=0,last=performance.now();
-const Sc=()=>st.zoom*SHRINK;
-function frame(lat,lon){const a=lat*D,b=lon*D;return {e:[-Math.sin(b),Math.cos(b),0],n:[-Math.sin(a)*Math.cos(b),-Math.sin(a)*Math.sin(b),Math.cos(a)],c:[Math.cos(a)*Math.cos(b),Math.cos(a)*Math.sin(b),Math.sin(a)]}}
-const wrap=x=>((x+540)%360+360)%360-180;
-function toLL(px,py){const S=Sc(),qx=px/S,qy=py/S,r2=qx*qx+qy*qy;if(r2>1)return null;const z=Math.sqrt(1-r2),f=frame(st.lat,st.lon),v=[0,1,2].map(i=>f.e[i]*qx+f.n[i]*qy+f.c[i]*z);return [Math.asin(Math.max(-1,Math.min(1,v[2])))/D,Math.atan2(v[1],v[0])/D]}
-function resize(){const r=Math.min(2,devicePixelRatio||1),w=Math.round(cv.clientWidth*r);if(w&&cv.width!==w){cv.width=cv.height=w;st.dirty=true}}
-function draw(){gl.viewport(0,0,cv.width,cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);if(!base)return;
-  const f=frame(st.lat,st.lon);gl.uniformMatrix3fv(L.R,false,[...f.e,...f.n,...f.c]);gl.uniform1f(L.S,Sc());gl.uniform1f(L.H,cv.width/2);
-  const zf=Math.min(1,Math.max(0,(Sc()-2.2)/1));gl.uniform1f(L.DON,det&&st.box?st.don*zf:0);
-  if(st.box)gl.uniform4f(L.BOX,st.box[0]*D,st.box[1]*D,st.box[2]*D,st.box[3]*D);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);readout()}
-function readout(){const S=Sc(),w=S<=1?12742:2*6371*Math.asin(1/S),la=st.lat,lo=wrap(st.lon);
-  const rows=[['Photographs joined',INFO?`${INFO.pictures.length}, from ${INFO.pictures[0].time} to ${INFO.pictures.at(-1).time} UTC`:''],['Day',INFO?new Date(INFO.date+'T12:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}):''],
-    ['Centre of the view',`${Math.abs(la).toFixed(1)}°${la>=0?'N':'S'}, ${Math.abs(lo).toFixed(1)}°${lo>=0?'E':'W'}`],['Width of the view',`${nf.format(Math.round(w))} km`],['Zoom',`${st.zoom.toFixed(1)}×`]];
-  $('gkv').innerHTML=rows.map(r=>`<span>${r[0]}</span><b>${r[1]}</b>`).join('')}
-function setDet(t,on){const g=$('gdet');g.textContent=t;g.classList.toggle('on',!!on)}
-function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;let moving=false;
-  if(st.anim){const a=st.anim,k=Math.min(1,(t-a.t0)/a.ms),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;st.lat=a.la0+(a.la1-a.la0)*e;st.lon=a.lo0+a.dlo*e;st.zoom=Math.exp(Math.log(a.z0)+(Math.log(a.z1)-Math.log(a.z0))*e);if(k>=1)st.anim=null;moving=true}
-  else if(Math.abs(st.vx)+Math.abs(st.vy)>.01&&!drag){st.lon+=st.vx*dt;st.lat=Math.max(-90,Math.min(90,st.lat+st.vy*dt));st.vx*=Math.pow(.04,dt);st.vy*=Math.pow(.04,dt);moving=true}
-  if(st.spin&&!drag&&!st.anim){st.lon-=12*dt/Math.max(1,st.zoom);moving=true}
-  if(Math.abs(st.don-st.dTarget)>.001){st.don+=(st.dTarget-st.don)*Math.min(1,dt*5);moving=true}
-  if(moving){st.dirty=true;wantDetail()}
-  if(st.dirty){draw();st.dirty=false}requestAnimationFrame(loop)}
-function flyTo(la,lo,z,ms=1300){st.vx=st.vy=0;st.anim={t0:performance.now(),ms,la0:st.lat,la1:la,lo0:st.lon,dlo:wrap(lo-st.lon),z0:st.zoom,z1:Math.max(1,Math.min(ZMAX,z))}}
-function zoomBy(k){st.anim=null;st.zoom=Math.max(1,Math.min(ZMAX,st.zoom*k));st.dirty=true;wantDetail()}
-// sharper detail from NASA GIBS (NOAA-20 VIIRS) for whatever is in view, once the view has settled
-function wantDetail(){clearTimeout(detTimer);if(!INFO)return;if(Sc()<2.2){if(st.dTarget){st.dTarget=0}setDet('At this zoom: the stitched EPIC globe, about 15 to 20 km per pixel. Zoom in past 3× for NOAA-20’s sharper view.');return}detTimer=setTimeout(fetchDetail,450)}
-function fetchDetail(){if(drag||st.anim)return wantDetail();const S=Sc(),f=frame(st.lat,st.lon);let la0=90,la1=-90,dmin=180,dmax=-180;
-  for(let i=0;i<=10;i++)for(let j=0;j<=10;j++){const ll=toLL(-1+i/5,-1+j/5);if(!ll)continue;la0=Math.min(la0,ll[0]);la1=Math.max(la1,ll[0]);const d=wrap(ll[1]-st.lon);dmin=Math.min(dmin,d);dmax=Math.max(dmax,d)}
-  if(la1<la0)return;const pole=S*Math.cos(st.lat*D)<1;let lc=wrap(st.lon+(dmin+dmax)/2),hw=(dmax-dmin)/2*1.1+.05;
-  if(pole){lc=0;hw=180;if(st.lat>0)la1=90;else la0=-90}
-  const pad=(la1-la0)*.05;la0=Math.max(-90,la0-pad);la1=Math.min(90,la1+pad);
-  let lo0=lc-hw,lo1=lc+hw;if(lo0<-180||lo1>180){if(lc>=0){lo0=Math.max(lo0,-180);lo1=180}else{lo0=-180;lo1=Math.min(lo1,180)}if(lo1-lo0>=360){lo0=-180;lo1=180}}
-  const midc=Math.max(.05,Math.cos((la0+la1)/2*D)),N=Math.min(2048,Math.round(cv.width*1.2));let h=N,w=Math.round(N*(lo1-lo0)*midc/(la1-la0));if(w>2048){h=Math.round(h*2048/w);w=2048}w=Math.max(64,w);h=Math.max(64,h);
-  const box=[la0,la1,(lo0+lo1)/2,(lo1-lo0)/2];if(st.box&&det&&box[0]>=st.box[0]&&box[1]<=st.box[1]&&Math.abs(wrap(box[2]-st.box[2]))+box[3]<=st.box[3]&&(st.box[1]-st.box[0])/st.boxH<=1.5*(la1-la0)/h)return;
-  const seq=++detSeq,img=new Image();img.crossOrigin='anonymous';setDet('Loading NOAA-20’s sharper view of this area…');
-  img.onload=()=>{if(seq!==detSeq)return;if(det)gl.deleteTexture(det);det=tex(1,img,false);st.box=box;st.boxH=h;st.don=0;st.dTarget=1;st.dirty=true;
-    const m=Math.round((la1-la0)*111320/h);setDet(`At this zoom: NOAA-20’s VIIRS camera, ${new Date(INFO.date+'T12:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'long',timeZone:'UTC'})}, about ${m>=1000?(m/1000).toFixed(1)+' km':nf.format(m)+' m'} per pixel here (its finest is 250 m)`,true)};
-  img.onerror=()=>{if(seq===detSeq)setDet('NASA’s sharper imagery did not load just now; showing the stitched globe.')};
-  img.src=`https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=VIIRS_NOAA20_CorrectedReflectance_TrueColor&STYLES=&CRS=EPSG:4326&BBOX=${la0.toFixed(4)},${lo0.toFixed(4)},${la1.toFixed(4)},${lo1.toFixed(4)}&WIDTH=${w}&HEIGHT=${h}&FORMAT=image/jpeg&TIME=${INFO.date}`}
-// mouse, touch and keyboard
-let drag=null;const pts=new Map();
-const rel=e=>{const r=cv.getBoundingClientRect();return [((e.clientX-r.left)/r.width)*2-1,1-((e.clientY-r.top)/r.height)*2]};
-function hint(){$('ghint').style.opacity=0}
-cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);st.anim=null;st.vx=st.vy=0;drag={t:performance.now(),pd:0};cv.classList.add('drag');hint()});
-cv.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const prev=pts.get(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);
-  if(pts.size===2){const [a,c]=[...pts.values()],d=Math.hypot(a[0]-c[0],a[1]-c[1]);if(drag.pd)zoomBy(d/drag.pd);drag.pd=d;st.vx=st.vy=0;return}
-  if(pts.size>2)return;
-  const px=cv.clientWidth/2*Sc(),dx=e.clientX-prev[0],dy=e.clientY-prev[1],dlon=-dx/px/D/Math.max(.25,Math.cos(st.lat*D)),dlat=dy/px/D;
-  st.lon+=dlon;st.lat=Math.max(-90,Math.min(90,st.lat+dlat));const now=performance.now(),dt=Math.max(.008,(now-drag.t)/1000);drag.t=now;const vm=150/st.zoom;st.vx=Math.max(-vm,Math.min(vm,dlon/dt));st.vy=Math.max(-vm,Math.min(vm,dlat/dt));st.dirty=true});
-const up=e=>{pts.delete(e.pointerId);if(drag)drag.pd=0;if(!pts.size){cv.classList.remove('drag');if(drag&&performance.now()-drag.t>80)st.vx=st.vy=0;drag=null;wantDetail()}};
-cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
-cv.addEventListener('wheel',e=>{e.preventDefault();hint();zoomBy(Math.exp(-e.deltaY*(e.deltaMode?0.05:0.0015)))},{passive:false});
-cv.addEventListener('dblclick',e=>{const ll=toLL(...rel(e));if(ll)flyTo(ll[0],ll[1],st.zoom*2.5,900)});
-cv.addEventListener('keydown',e=>{const k=8/st.zoom,m={ArrowLeft:[0,-k],ArrowRight:[0,k],ArrowUp:[k,0],ArrowDown:[-k,0]}[e.key];
-  if(m){e.preventDefault();flyTo(Math.max(-90,Math.min(90,st.lat+m[0])),st.lon+m[1],st.zoom,250)}else if(e.key==='+'||e.key==='='){e.preventDefault();zoomBy(1.5)}else if(e.key==='-'||e.key==='_'){e.preventDefault();zoomBy(1/1.5)}});
-$('gIn').onclick=()=>flyTo(st.lat,st.lon,st.zoom*2,500);$('gOut').onclick=()=>flyTo(st.lat,st.lon,st.zoom/2,500);
-$('gCam').onclick=()=>{const ep=window.__epic,e=ep&&ep.LIST&&ep.LIST.length&&ep.LIST[0].date.slice(0,10)===INFO?.date?ep.LIST[ep.cur||0]:null,c=e?e.centroid_coordinates:INFO?.pictures[0];if(c)flyTo(c.lat,c.lon,1)};
-$('gIndia').onclick=()=>flyTo(21,79,3.4);$('gN').onclick=()=>flyTo(90,st.lon,1.2);$('gS').onclick=()=>flyTo(-90,st.lon,1.2);
-$('gSpin').onclick=()=>{st.spin=!st.spin;$('gSpin').setAttribute('aria-pressed',st.spin);$('gSpin').textContent=st.spin?'Stop':'Spin'};
-new ResizeObserver(resize).observe(cv);resize();
-(async()=>{try{const r=await fetch('earth-globe.json',{cache:'no-cache'});if(!r.ok)throw new Error(r.status);INFO=await r.json();
-    const img=new Image();img.decoding='async';img.src='earth-globe.jpg?d='+INFO.date;await img.decode();base=tex(0,img,true);$('gmsg').style.display='none';st.dirty=true;wantDetail()}
-  catch(err){$('gmsg').innerHTML='The stitched globe is made once a day on the Golapada website. Open this page at <a href="https://jarvisss007.github.io/SPACE-PRODUCT/earth-from-above.html">jarvisss007.github.io</a> to turn it.'}})();
-requestAnimationFrame(loop);
-window.__globe={st,flyTo,get INFO(){return INFO}};
-})();
-</script>
-  </section>
-
   <section class="card"><h2>Then and now</h2>
 <style>
 .tn-sub{font-size:13px;color:var(--dim);margin:0 0 10px}
@@ -307,7 +172,7 @@ window.__globe={st,flyTo,get INFO(){return INFO}};
 </script></section>
 <!-- golapada-quiz:end -->
   <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="satellite-watch.html" style="--k:#7ee0c8"><b>Satellite Watch</b><span>The space stations, Hubble, NavIC and the brightest satellites live on a world map, and when each one passes over your city.</span></a><a href="space-weather.html" style="--k:#ffb347"><b>Space Weather Now</b><span>Live from NOAA and NASA: the Sun right now, solar flares, the solar wind and storm levels, plus a storm launcher that predicts when a solar cloud hits Earth.</span></a><a href="iss-life.html" style="--k:#74c7ff"><b>Life on the ISS</b><span>Live through one day on the space station: 16 sunrises, 2½ hours of exercise, 98% recycled water, and the physics that keeps it up.</span></a></div></section>
-<footer>Blue Marble: Wikipedia articles “The Blue Marble” (Apollo 17, 7 December 1972) and “Deep Space Climate Observatory” (launched February 2015). Images and positions: NASA EPIC team, Earth Polychromatic Imaging Camera on NOAA’s DSCOVR spacecraft (epic.gsfc.nasa.gov), loaded live through its public API. NASA images are public domain. The stitched globe joins the same EPIC images once a day (tools/stitch_epic.py in this site’s code); its sharper zoomed-in view is NASA GIBS (Global Imagery Browse Services), VIIRS corrected-reflectance true colour from the NOAA-20 satellite, loaded live; NOAA-20’s 824 km orbit and early-afternoon overpass from NOAA’s JPSS mission pages. Distances and angles on this page are computed from the positions NASA publishes with each image. An independent page, not affiliated with NASA or NOAA. Then and now: Wikipedia articles “First images of Earth from space”, “Explorer 6”, “Earthrise”, “Landsat 1”, “Bhaskara (satellite)”, “IRS-1A”, “Pale Blue Dot” and “Cartosat-1”; NOAA NESDIS and Spaceflight Now (DSCOVR safe hold from June 2019, back in operation March 2020); the EPIC public API (newest natural-colour image dated 16 November 2026 when checked on 19 November 2026); ISRO (NISAR launched 30 July 2025 on GSLV-F16; science phase announced November 2025; one year of operations marked 4 August 2026) and NASA Earthdata (first public NISAR L-band data released 20 July 2026).</footer>
+<footer>Blue Marble: Wikipedia articles “The Blue Marble” (Apollo 17, 7 December 1972) and “Deep Space Climate Observatory” (launched February 2015). Images and positions: NASA EPIC team, Earth Polychromatic Imaging Camera on NOAA’s DSCOVR spacecraft (epic.gsfc.nasa.gov), loaded live through its public API. NASA images are public domain. Distances and angles on this page are computed from the positions NASA publishes with each image. An independent page, not affiliated with NASA or NOAA. Then and now: Wikipedia articles “First images of Earth from space”, “Explorer 6”, “Earthrise”, “Landsat 1”, “Bhaskara (satellite)”, “IRS-1A”, “Pale Blue Dot” and “Cartosat-1”; NOAA NESDIS and Spaceflight Now (DSCOVR safe hold from June 2019, back in operation March 2020); the EPIC public API (newest natural-colour image dated 16 November 2026 when checked on 19 November 2026); ISRO (NISAR launched 30 July 2025 on GSLV-F16; science phase announced November 2025; one year of operations marked 4 August 2026) and NASA Earthdata (first public NISAR L-band data released 20 July 2026).</footer>
 </div>
 
 <script>
@@ -355,7 +220,7 @@ function checks(){if(LIST.length<2)return;const a=LIST[0],b=LIST.at(-1),ds=mag(a
    ['How fast the view turns','15° an hour: the camera stays near the Sun’s direction, so the view turns with the solar day (24 hours)',`${rate.toFixed(2)}° an hour, from the first and last picture of the day`,Math.abs(rate-15)<0.6?'ok':'mid']];
   $('check').innerHTML='<tr><th>Test</th><th>Expected</th><th>From NASA’s own numbers</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="${r[3]}">${r[2]}</td></tr>`).join('')}
 const c=$('map');size(c);new ResizeObserver(()=>{size(c);drawMap(LIST[cur])}).observe(c);load();
-window.__epic={get LIST(){return LIST},get cur(){return cur},show,load};
+window.__epic={get LIST(){return LIST},show,load};
 })();
 </script>
 <p class="gt" style="max-width:1200px;margin:6px auto 0;padding:10px max(16px,env(safe-area-inset-left,0px)) 28px;border-top:1px solid #1f2a38;font:400 13px/1.6 'IBM Plex Sans',system-ui,sans-serif;color:#8a97a8"><a href="about.html" style="color:#74c7ff">About Golapada</a> · <a href="about.html#privacy" style="color:#74c7ff">Privacy</a> · <a href="https://github.com/jarvisss007/SPACE-PRODUCT/issues/new?template=mistake.yml&amp;page=earth-from-above.html&amp;title=Mistake%20on%20earth-from-above.html" rel="noopener" style="color:#74c7ff">Report a mistake on this page</a></p>
