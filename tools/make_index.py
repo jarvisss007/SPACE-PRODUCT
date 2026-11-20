@@ -243,6 +243,7 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
       <div class="td bd" style="--acc:var(--violet)"><div class="k">Your birthday in space</div><div id="tdBday"></div></div>
     </div>
     <p class="note" id="tdChal" style="font-size:14px;margin:12px 0 0"></p>
+    <p class="note" style="font-size:14px;margin:6px 0 0">🖨️ For teachers: <a href="weekly.html">this week on one printable page</a>, fresh every day.</p>
     <p class="note" id="tdStreak" hidden></p>
   </section>
 

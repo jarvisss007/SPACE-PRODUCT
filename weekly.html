@@ -1,0 +1,114 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>This Week in Space</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a one-page sheet for a school notice board. Dark on screen, black on white when printed (A4). Rebuilt every day from the site's own data. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--gold:#e8c46a;--lox:#74c7ff;--flame:#ffa24a;--violet:#b6a4ff;--mars:#e0774a;--ok:#5fd6a0;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}*{box-sizing:border-box}
+.wrap{max-width:900px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--gold)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,54px);line-height:.95;margin:4px 0 6px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0 0 8px;text-transform:uppercase}
+p{margin:0 0 8px;max-width:74ch;color:#c3ccd6}a{color:var(--lox)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;min-width:0}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:700 15px var(--display);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:#1b1404;border:0;border-radius:6px;padding:9px 16px;cursor:pointer}
+.btn:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}@media (max-width:760px){.days{grid-template-columns:minmax(0,1fr)}}
+.day{background:var(--panel2);border-radius:6px;padding:8px 10px;border-top:3px solid var(--line);min-width:0}
+.day.today{border-top-color:var(--gold)}
+.day b{font-family:var(--display);font-size:17px;text-transform:uppercase;display:block}
+.day .moon{font-size:13px;color:#d6dde5}.day .hist{font-size:12.5px;color:var(--dim);margin-top:4px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media (max-width:760px){.two{grid-template-columns:minmax(0,1fr)}}
+ul{margin:4px 0;padding-left:18px}li{margin:3px 0;color:#d6dde5}
+.q{margin:0 0 8px}.q b{color:var(--gold)}
+.ans{font-size:13.5px;color:var(--dim)}
+.note{font-size:12.5px;color:var(--dim)}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+@media print{
+  html,body{background:#fff;color:#000}.wrap{max-width:none;padding:0;gap:8px}body{font-size:11.5px}
+  .card,.day{background:#fff;border:1px solid #999;color:#000}.day.today{border-top:3px solid #000}
+  p,li,.day .moon,.day .hist,.note,.ans,footer{color:#000}a{color:#000;text-decoration:none}
+  .eyebrow,.q b{color:#000}.noprint,.sa-nav,.gt,.gs{display:none!important}h1{font-size:30px}
+  .days{grid-template-columns:repeat(7,minmax(0,1fr))}.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @page{size:A4;margin:12mm}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">For the class notice board · free to print</div>
+    <h1 id="title">This Week in Space</h1>
+    <p>One page for the week: the Moon each night, what happened in space on these dates, launches and asteroids to watch, and two questions for the class. It is made fresh every day from the same data as the Golapada labs.</p>
+    <div class="bar noprint"><button type="button" class="btn" onclick="print()">Print this sheet</button><span class="note">Prints in black on white on one A4 page.</span></div>
+  </header>
+
+  <section class="card">
+    <h2>The week, night by night</h2>
+    <div class="days" id="days"></div>
+    <p class="note" style="margin-top:6px">Moon at 9 pm in your own time zone. The nakshatra uses the Lahiri system, as in the Kundli Lab and Tonight's Sky.</p>
+  </section>
+
+  <div class="two">
+    <section class="card"><h2>To watch this week</h2><ul id="watch"></ul></section>
+    <section class="card"><h2>Coming up</h2><ul id="soon"></ul></section>
+  </div>
+
+  <section class="card">
+    <h2>Questions for the class</h2>
+    <div id="quiz"></div>
+    <p class="note">Answers at the bottom of the sheet. Each question comes from a Golapada lab where the class can work it out.</p>
+  </section>
+
+  <section class="card">
+    <h2>Answers</h2>
+    <div id="ans" class="ans"></div>
+  </section>
+
+  <footer>From Golapada (jarvisss007.github.io/SPACE-PRODUCT). Moon positions: Meeus, <i>Astronomical Algorithms</i> ch. 47, the same code as the Kundli Lab. Dates in history: the "Then and now" timelines in each lab, each with its sources. Asteroids: NASA/JPL close-approach data, refreshed daily. Launches: The Space Devs' Launch Library, fetched when you open the page. Free to print and share for teaching.</footer>
+</div>
+
+<script>
+(()=>{'use strict';
+const TODAY=/*golapada-today*/null;
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0');
+/*golapada-moon*/
+if(!TODAY||typeof moonApparent!=='function'){$('days').textContent='This sheet is filled in when the site is built.';return}
+const NAK=['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),mon=new Date(today);mon.setDate(today.getDate()-((today.getDay()+6)%7));
+const sun=jd=>{const T=(jd-2451545)/36525,L=nrm(280.46646+36000.76983*T),M=nrm(357.52911+35999.05029*T)*D2R;return nrm(L+(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M))};
+const fmtD=(d,o)=>d.toLocaleDateString(undefined,o);
+const sunday=new Date(mon);sunday.setDate(mon.getDate()+6);
+$('title').textContent='This Week in Space: '+fmtD(mon,{day:'numeric',month:'short'})+' to '+fmtD(sunday,{day:'numeric',month:'short',year:'numeric'});
+document.title='This Week in Space, '+fmtD(mon,{day:'numeric',month:'short'});
+// night by night
+let html='';const phases=[];
+for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const ev=new Date(d);ev.setHours(21,0,0,0);const jd=ev.getTime()/864e5+2440587.5;
+  const m=moonApparent(jd).lon,el=nrm(m-sun(jd)),lit=Math.round((1-Math.cos(el*D2R))/2*100),k=Math.floor(nrm(m-(23.853+(jd-2451545)/365.25*50.29/3600))/(360/27));
+  const ph=el<12||el>348?'New Moon':el<168?'growing':el<192?'Full Moon':'shrinking';phases.push([d,el]);
+  const hist=(TODAY.onthis||{})[pad(d.getMonth()+1)+'-'+pad(d.getDate())]||[];
+  html+=`<div class="day${+d===+today?' today':''}"><b>${fmtD(d,{weekday:'short',day:'numeric'})}</b><div class="moon">Moon ${lit}% · ${ph}<br>${NAK[k]}</div>${hist.slice(0,1).map(h=>`<div class="hist">${h[0]}: ${h[1]}</div>`).join('')}</div>`}
+$('days').innerHTML=html;
+// to watch: asteroids this week, meteor shower or eclipse inside the week, launches (live)
+const watch=[],soon=[],end=new Date(sunday);end.setHours(23,59);
+for(const r of (TODAY.neo||[]).filter(r=>{const t=new Date(r[1]);return t>=mon&&t<=end}).sort((a,b)=>a[2]-b[2]).slice(0,3)){const t=new Date(r[1]);if(t>=mon&&t<=end)watch.push([t,`<b>${fmtD(t,{weekday:'short'})}</b>: asteroid ${r[0]} passes at ${r[2]<1?'less than the Moon’s distance':r[2].toFixed(1)+' times the Moon’s distance'}${r[3]?`, about ${r[3]<1?Math.round(r[3]*1000)+' m':r[3].toFixed(1)+' km'} across`:''}. It will miss.`])}
+const y=today.getFullYear();for(const [n,m,dd,z] of (TODAY.showers||[]))for(const yy of [y,y+1]){const t=new Date(yy,m-1,dd);if(t>=mon&&t<=end)watch.push([t,`<b>${fmtD(t,{weekday:'short'})}</b>: the ${n} meteor shower peaks${z?`, up to about ${z} an hour from a dark place`:''}.`]);else if(t>end&&t-end<60*864e5)soon.push([t,`${fmtD(t,{day:'numeric',month:'short'})}: the ${n} meteor shower peaks.`])}
+const ec=(TODAY.eclipses||[]).map(([iso,l])=>{const [a,b,c]=iso.split('-').map(Number);return [new Date(a,b-1,c),l]}).find(e=>e[0]>today);if(ec)soon.push([ec[0],`${fmtD(ec[0],{day:'numeric',month:'short',year:'numeric'})}: total solar eclipse, ${ec[1].split(' · ').pop()}.`]);
+for(let i=0;i<phases.length-1;i++){const [d,a]=phases[i],b=phases[i+1][1];if(a<180&&b>=180)watch.push([d,`<b>${fmtD(d,{weekday:'short'})}–${fmtD(phases[i+1][0],{weekday:'short'})}</b>: full Moon (Purnima).`]);if(a>b)watch.push([d,`<b>${fmtD(d,{weekday:'short'})}–${fmtD(phases[i+1][0],{weekday:'short'})}</b>: new Moon (Amavasya), the darkest nights for stars.`])}
+const draw=()=>{$('watch').innerHTML=watch.length?watch.sort((a,b)=>a[0]-b[0]).map(w=>`<li>${w[1]}</li>`).join(''):'<li>A quiet week: a good time to find the planets with Tonight’s Sky.</li>';
+  $('soon').innerHTML=soon.sort((a,b)=>a[0]-b[0]).slice(0,4).map(w=>`<li>${w[1]}</li>`).join('')||'<li>See the labs for what is next.</li>'};draw();
+(async()=>{let d=null;try{const c=JSON.parse(localStorage.getItem('gp-ll-upcoming')||'null');if(c&&Date.now()-c.t<30*60e3)d=c.d}catch(e){}
+  if(!d){try{const r=await fetch('https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=25&mode=normal&hide_recent_previous=true');if(!r.ok)throw 0;const j=await r.json();
+    d=j.results.map(L=>({name:L.name,net:Date.parse(L.net),prec:(L.net_precision||{}).abbrev||'',status:(L.status||{}).abbrev||'',rocket:((L.rocket||{}).configuration||{}).full_name||'',prov:(L.launch_service_provider||{}).name||'',pad:(L.pad||{}).name||'',site:((L.pad||{}).location||{}).name||'',lat:+(L.pad||{}).latitude,lon:+(L.pad||{}).longitude,cc:(((L.pad||{}).country)||{}).alpha_3_code||'',orbit:(((L.mission||{}).orbit)||{}).name||'',desc:((L.mission||{}).description||'').slice(0,240)}));
+    try{localStorage.setItem('gp-ll-upcoming',JSON.stringify({t:Date.now(),d}))}catch(e){}}catch(e){return}}
+  const nm=x=>x.name.split(' | ')[1]||x.name,wk=d.filter(L=>L.net>=+mon&&L.net<=+end&&L.net>Date.now()),india=d.filter(L=>L.cc==='IND'&&L.net>Date.now());
+  if(wk.length)watch.push([new Date(wk[0].net),`<b>Launches</b>: ${wk.length} rocket${wk.length>1?'s':''} planned this week, starting with ${nm(wk[0])} on ${wk[0].rocket} (${fmtD(new Date(wk[0].net),{weekday:'short'})}).`]);
+  if(india[0])soon.push([new Date(india[0].net),`${fmtD(new Date(india[0].net),{day:'numeric',month:'short'})}: next launch from India, ${nm(india[0])} on ${india[0].rocket}.`]);draw()})();
+// two questions for the week, the same for every class that week
+const Q=TODAY.quiz||[];if(Q.length){const wkN=Math.floor(+mon/(7*864e5)),q1=Q[(wkN*31)%Q.length],q2=Q[(wkN*31+97)%Q.length];
+  $('quiz').innerHTML=[q1,q2].map((q,i)=>`<p class="q"><b>${i+1}.</b> ${q[0]} <span class="note">(${q[2].replace('.html','').replace(/-/g,' ')})</span></p>`).join('');
+  $('ans').innerHTML=[q1,q2].map((q,i)=>`<p><b>${i+1}.</b> ${q[1]}</p>`).join('')}
+})();
+</script>

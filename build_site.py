@@ -66,6 +66,7 @@ PAGES = [
     ("nalanda.html", "Nalanda", "9GzdyyvJ8zRcBAznWXM37B"),
     ("starship-through-time.html", "Through time", "4jbD63EEZBxcEbE7WXseMN"),
     ("clues-in-old-books.html", "Old books", "RHr7yep3A95fUrPY78nS57"),
+    ("weekly.html", "This week", "9ac5wSwHMBS4HUMmdwtM4a"),
     ("about.html", "About", "Sr4HjpkwPpx5d1mojsoH2v"),
 ]
 
@@ -260,6 +261,7 @@ def today_data() -> str:
             title = h.unescape(re.sub(r"<[^>]+>", " ", re.sub(r'<span class="(y|tag)[^"]*">.*?</span>', "", summary, flags=re.S)))
             title = re.sub(r"\s+", " ", title).replace("+", "").strip()
             title = re.sub(r"^(\d{4}(\s*[–-]\s*\d{2,4})?|~?\d{3,4}s?)\s+", "", title)  # drop a repeated year
+            title = re.sub(r"^(\d{1,2}\s+)?(" + "|".join(m[:3] for m in MONTHS) + r")[a-z]*\.?\s+\d{4}\s+", "", title)  # and a leading "Nov 2026"
             text = re.sub(r"<[^>]+>", " ", m.group(0))
             for d in date.finditer(text):
                 day, mon, yr = int(d.group(1)), MONTHS[d.group(2)], d.group(3)
@@ -376,6 +378,8 @@ def build() -> None:
         src = src.replace(marker, NAV_CSS + nav_html(fname) + marker, 1)
         if fname == "index.html":
             src = src.replace("/*golapada-today*/null", today, 1)
+        elif fname == "weekly.html":  # the printable weekly sheet: same daily data, plus the Moon code
+            src = src.replace("/*golapada-today*/null", today, 1).replace("/*golapada-moon*/", moon_js, 1)
         elif fname in RELATED:  # English labs: the Today line goes just under the simple-words card (or the header)
             block = day_block(fname, tdata, moon_js)
             end = "<!-- golapada-simple:end -->"
