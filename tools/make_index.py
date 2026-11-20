@@ -206,6 +206,12 @@ h2{{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);
 .td details summary:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}.td details span{{margin-top:6px;background:var(--panel2);border-radius:6px;padding:8px 10px}}
 .td #tdSky a b,.td a b{{display:inline;font-size:16px;margin-right:4px}}.td a em{{display:block;font-style:normal;font-size:12.5px;color:var(--dim)}}
 #tdStreak{{font-size:13.5px;color:var(--dim);margin:10px 0 0}}
+.td.bd{{grid-column:1/-1}}.bd-l{{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--dim);margin:8px 0}}
+.bd-l input{{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;max-width:220px;color-scheme:dark}}
+.bd-b,.bd-x{{font:600 14px var(--display);letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:8px 12px;cursor:pointer;align-self:flex-start}}
+.bd-b{{background:var(--violet);color:#120a24;border:0}}.bd-x{{background:none;color:var(--dim);border:1px solid var(--line);margin-top:6px}}
+.bd-b:focus-visible,.bd-x:focus-visible,.bd-l input:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}
+#tdBday span{{margin-top:4px}}#tdBday a{{display:inline;color:var(--violet);text-decoration:underline}}
 .td .tq b,.td details b,.td .tq i{{display:inline;font-family:inherit;font-size:inherit;text-transform:none;line-height:inherit;margin:0;color:var(--ink)}}
 footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
 @media (max-width:560px){{.hero{{min-height:72vh;padding-top:36px}}}}
@@ -231,6 +237,7 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
       <div class="td" style="--acc:var(--mars)"><div class="k">Asteroid this week</div><div id="tdRock"></div><a class="more" href="asteroid-watch.html">Every close pass →</a></div>
       <div class="td" style="--acc:var(--lox)"><div class="k">Question of the day</div><div id="tdQuiz"></div></div>
       <div class="td" style="--acc:var(--saffron)"><div class="k">Coming up in the sky</div><div id="tdSky"></div></div>
+      <div class="td bd" style="--acc:var(--violet)"><div class="k">Your birthday in space</div><div id="tdBday"></div></div>
     </div>
     <p class="note" id="tdStreak" hidden></p>
   </section>

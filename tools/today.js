@@ -56,5 +56,30 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
   if(!days.includes(key(d))){days.push(key(d));days=days.slice(-400);localStorage.setItem(k,JSON.stringify(days))}
   let n=0;for(let x=new Date(d);days.includes(key(x));x.setDate(x.getDate()-1))n++;
   box.textContent=n>1?`🔥 ${n} days in a row. Come back tomorrow to keep it going. (Remembered only in this browser.)`:'Come back tomorrow: this strip changes every day, and your visits in a row are counted here (only in this browser).';box.hidden=false}catch(e){}})();
+// your birthday in space: the date is kept only in this browser (localStorage), never sent anywhere
+(()=>{const box=$('tdBday');if(!box)return;const K='golapada-bday';
+  const get=()=>{try{return localStorage.getItem(K)}catch(e){return null}},put=v=>{try{v?localStorage.setItem(K,v):localStorage.removeItem(K)}catch(e){}};
+  const form=()=>{box.innerHTML=`<span>Enter your birthday to see the sky the day you were born, your age in Mars years, and what happened in space on your date. It stays on this phone only.</span>
+    <label class="bd-l">Your birthday <input type="date" id="bdIn" min="1900-01-01" max="${new Date().toISOString().slice(0,10)}"></label><button type="button" id="bdGo" class="bd-b">Show my birthday in space</button>`;
+    $('bdGo').onclick=()=>{const v=$('bdIn').value;if(/^\d{4}-\d{2}-\d{2}$/.test(v)){put(v);show(v)}}};
+  const show=v=>{const [y,m,d]=v.split('-').map(Number),born=new Date(y,m-1,d,12),now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    if(isNaN(born)||born>now){put(null);form();return}
+    const days=Math.floor((today-new Date(y,m-1,d))/864e5),years=days/365.2422;
+    let next=new Date(now.getFullYear(),m-1,d);if(next<today)next=new Date(now.getFullYear()+1,m-1,d);const until=Math.round((next-today)/864e5);
+    // the Moon on the day you were born (noon); the nakshatra can change during the day
+    const jd=born.getTime()/864e5+2440587.5,T=(jd-2451545)/36525,L=nrm(280.46646+36000.76983*T),M=nrm(357.52911+35999.05029*T)*D2R,sun=nrm(L+(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M));
+    const mo=moonApparent(jd).lon,el=nrm(mo-sun),lit=Math.round((1-Math.cos(el*D2R))/2*100),ay=23.853+(jd-2451545)/365.25*50.29/3600,nk=NAK[Math.floor(nrm(mo-ay)/(360/27))];
+    const RASHI=['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrishchika','Dhanu','Makara','Kumbha','Meena'],sunR=RASHI[Math.floor(nrm(sun-ay)/30)],moonR=RASHI[Math.floor(nrm(mo-ay)/30)];
+    const ph=el<12||el>348?'a new Moon':el<168?'a growing Moon':el<192?'a full Moon':'a shrinking Moon';
+    const mars=years*365.2422/686.98,km=years*940e6,fulls=Math.floor(days/29.5306);
+    const fmt=x=>x.toLocaleString(undefined,{maximumFractionDigits:0});
+    const hist=((TODAY&&TODAY.onthis)||{})[pad(m)+'-'+pad(d)]||[];
+    const head=until===0?`<b>🎂 Happy birthday!</b><span>You have gone round the Sun <strong>${Math.round(years)}</strong> times.</span>`:`<b>${until===1?'Tomorrow':until+' days'} to your birthday</b>`;
+    box.innerHTML=head+`<span>The day you were born the Moon was ${ph}, ${lit}% lit, in <strong>${nk}</strong> (rashi ${moonR}); the Sun was in ${sunR}. The Moon moves to a new nakshatra about once a day, so for your exact birth time open the <a href="kundli.html">Kundli Lab</a>.</span>
+      <span>You are <strong>${mars.toFixed(1)}</strong> in Mars years, you have seen about <strong>${fmt(fulls)}</strong> full Moons, and riding on Earth you have travelled about <strong>${fmt(km/1e9)} billion km</strong> around the Sun.</span>
+      ${hist.length?`<span>Also on ${d} ${born.toLocaleDateString(undefined,{month:'long'})}: ${hist.slice(0,2).map(e=>`<a href="${e[2]}">${e[0]}, ${e[1]}</a>`).join('; ')}</span>`:''}
+      <button type="button" id="bdForget" class="bd-x">Forget my birthday</button>`;
+    $('bdForget').onclick=()=>{put(null);form()}};
+  const v=get();v?show(v):form()})();
 })();
 </script>

@@ -59,6 +59,12 @@ h2{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);m
 .td details summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}.td details span{margin-top:6px;background:var(--panel2);border-radius:6px;padding:8px 10px}
 .td #tdSky a b,.td a b{display:inline;font-size:16px;margin-right:4px}.td a em{display:block;font-style:normal;font-size:12.5px;color:var(--dim)}
 #tdStreak{font-size:13.5px;color:var(--dim);margin:10px 0 0}
+.td.bd{grid-column:1/-1}.bd-l{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--dim);margin:8px 0}
+.bd-l input{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;max-width:220px;color-scheme:dark}
+.bd-b,.bd-x{font:600 14px var(--display);letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:8px 12px;cursor:pointer;align-self:flex-start}
+.bd-b{background:var(--violet);color:#120a24;border:0}.bd-x{background:none;color:var(--dim);border:1px solid var(--line);margin-top:6px}
+.bd-b:focus-visible,.bd-x:focus-visible,.bd-l input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+#tdBday span{margin-top:4px}#tdBday a{display:inline;color:var(--violet);text-decoration:underline}
 .td .tq b,.td details b,.td .tq i{display:inline;font-family:inherit;font-size:inherit;text-transform:none;line-height:inherit;margin:0;color:var(--ink)}
 footer{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}
 @media (max-width:560px){.hero{min-height:72vh;padding-top:36px}}
@@ -118,6 +124,7 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
       <div class="td" style="--acc:var(--mars)"><div class="k">Asteroid this week</div><div id="tdRock"></div><a class="more" href="asteroid-watch.html">Every close pass →</a></div>
       <div class="td" style="--acc:var(--lox)"><div class="k">Question of the day</div><div id="tdQuiz"></div></div>
       <div class="td" style="--acc:var(--saffron)"><div class="k">Coming up in the sky</div><div id="tdSky"></div></div>
+      <div class="td bd" style="--acc:var(--violet)"><div class="k">Your birthday in space</div><div id="tdBday"></div></div>
     </div>
     <p class="note" id="tdStreak" hidden></p>
   </section>
@@ -324,6 +331,31 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
   if(!days.includes(key(d))){days.push(key(d));days=days.slice(-400);localStorage.setItem(k,JSON.stringify(days))}
   let n=0;for(let x=new Date(d);days.includes(key(x));x.setDate(x.getDate()-1))n++;
   box.textContent=n>1?`🔥 ${n} days in a row. Come back tomorrow to keep it going. (Remembered only in this browser.)`:'Come back tomorrow: this strip changes every day, and your visits in a row are counted here (only in this browser).';box.hidden=false}catch(e){}})();
+// your birthday in space: the date is kept only in this browser (localStorage), never sent anywhere
+(()=>{const box=$('tdBday');if(!box)return;const K='golapada-bday';
+  const get=()=>{try{return localStorage.getItem(K)}catch(e){return null}},put=v=>{try{v?localStorage.setItem(K,v):localStorage.removeItem(K)}catch(e){}};
+  const form=()=>{box.innerHTML=`<span>Enter your birthday to see the sky the day you were born, your age in Mars years, and what happened in space on your date. It stays on this phone only.</span>
+    <label class="bd-l">Your birthday <input type="date" id="bdIn" min="1900-01-01" max="${new Date().toISOString().slice(0,10)}"></label><button type="button" id="bdGo" class="bd-b">Show my birthday in space</button>`;
+    $('bdGo').onclick=()=>{const v=$('bdIn').value;if(/^\d{4}-\d{2}-\d{2}$/.test(v)){put(v);show(v)}}};
+  const show=v=>{const [y,m,d]=v.split('-').map(Number),born=new Date(y,m-1,d,12),now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    if(isNaN(born)||born>now){put(null);form();return}
+    const days=Math.floor((today-new Date(y,m-1,d))/864e5),years=days/365.2422;
+    let next=new Date(now.getFullYear(),m-1,d);if(next<today)next=new Date(now.getFullYear()+1,m-1,d);const until=Math.round((next-today)/864e5);
+    // the Moon on the day you were born (noon); the nakshatra can change during the day
+    const jd=born.getTime()/864e5+2440587.5,T=(jd-2451545)/36525,L=nrm(280.46646+36000.76983*T),M=nrm(357.52911+35999.05029*T)*D2R,sun=nrm(L+(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M));
+    const mo=moonApparent(jd).lon,el=nrm(mo-sun),lit=Math.round((1-Math.cos(el*D2R))/2*100),ay=23.853+(jd-2451545)/365.25*50.29/3600,nk=NAK[Math.floor(nrm(mo-ay)/(360/27))];
+    const RASHI=['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrishchika','Dhanu','Makara','Kumbha','Meena'],sunR=RASHI[Math.floor(nrm(sun-ay)/30)],moonR=RASHI[Math.floor(nrm(mo-ay)/30)];
+    const ph=el<12||el>348?'a new Moon':el<168?'a growing Moon':el<192?'a full Moon':'a shrinking Moon';
+    const mars=years*365.2422/686.98,km=years*940e6,fulls=Math.floor(days/29.5306);
+    const fmt=x=>x.toLocaleString(undefined,{maximumFractionDigits:0});
+    const hist=((TODAY&&TODAY.onthis)||{})[pad(m)+'-'+pad(d)]||[];
+    const head=until===0?`<b>🎂 Happy birthday!</b><span>You have gone round the Sun <strong>${Math.round(years)}</strong> times.</span>`:`<b>${until===1?'Tomorrow':until+' days'} to your birthday</b>`;
+    box.innerHTML=head+`<span>The day you were born the Moon was ${ph}, ${lit}% lit, in <strong>${nk}</strong> (rashi ${moonR}); the Sun was in ${sunR}. The Moon moves to a new nakshatra about once a day, so for your exact birth time open the <a href="kundli.html">Kundli Lab</a>.</span>
+      <span>You are <strong>${mars.toFixed(1)}</strong> in Mars years, you have seen about <strong>${fmt(fulls)}</strong> full Moons, and riding on Earth you have travelled about <strong>${fmt(km/1e9)} billion km</strong> around the Sun.</span>
+      ${hist.length?`<span>Also on ${d} ${born.toLocaleDateString(undefined,{month:'long'})}: ${hist.slice(0,2).map(e=>`<a href="${e[2]}">${e[0]}, ${e[1]}</a>`).join('; ')}</span>`:''}
+      <button type="button" id="bdForget" class="bd-x">Forget my birthday</button>`;
+    $('bdForget').onclick=()=>{put(null);form()}};
+  const v=get();v?show(v):form()})();
 })();
 </script>
 <p class="gt" style="max-width:1200px;margin:6px auto 0;padding:10px max(16px,env(safe-area-inset-left,0px)) 28px;border-top:1px solid #1f2a38;font:400 13px/1.6 'IBM Plex Sans',system-ui,sans-serif;color:#8a97a8"><a href="about.html" style="color:#74c7ff">About Golapada</a> · <a href="about.html#privacy" style="color:#74c7ff">Privacy</a> · <a href="https://github.com/jarvisss007/SPACE-PRODUCT/issues/new?template=mistake.yml&amp;page=index.html&amp;title=Mistake%20on%20index.html" rel="noopener" style="color:#74c7ff">Report a mistake on this page</a></p>
