@@ -1,0 +1,37 @@
+<script>
+(()=>{'use strict';
+const TODAY=/*golapada-today*/null;
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0');
+@@MOON@@
+// tonight's Moon: phase and nakshatra (Lahiri, as in the Kundli Lab and Tonight's Sky)
+const NAK=['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi'];
+(()=>{const ev=new Date();ev.setHours(21,0,0,0);const jd=ev.getTime()/864e5+2440587.5,T=(jd-2451545)/36525;
+  const L=nrm(280.46646+36000.76983*T),M=nrm(357.52911+35999.05029*T)*D2R,sun=nrm(L+(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M));
+  const m=moonApparent(jd).lon,el=nrm(m-sun),lit=Math.round((1-Math.cos(el*D2R))/2*100),ay=23.853+(jd-2451545)/365.25*50.29/3600,sid=nrm(m-ay),k=Math.floor(sid/(360/27)),t=Math.floor(el/12);
+  const ph=el<12?'New Moon':el<84?'Crescent, growing':el<96?'Half Moon, growing':el<168?'Gibbous, growing':el<192?'Full Moon':el<264?'Gibbous, shrinking':el<276?'Half Moon, shrinking':el<348?'Crescent, shrinking':'New Moon';
+  const tn=t===14?'Purnima':t===29?'Amavasya':(t<15?'Shukla ':'Krishna ')+TI[t%15];
+  $('tdMoon').innerHTML=`<b>${ph}, ${lit}% lit</b><span>At 9 pm tonight the Moon is in <strong>${NAK[k]}</strong>, ${tn}.</span>`})();
+// on this day, from the history timelines
+(()=>{const box=$('tdHist');if(!TODAY||!TODAY.onthis){box.closest('.td').hidden=true;return}
+  const now=new Date(),key=d=>pad(d.getMonth()+1)+'-'+pad(d.getDate());let lead='On this day',list=TODAY.onthis[key(now)];
+  if(!list){for(let i=1;i<=14&&!list;i++){const d=new Date(now.getTime()+i*864e5);list=TODAY.onthis[key(d)];if(list)lead='Coming up on '+d.toLocaleDateString(undefined,{day:'numeric',month:'long'})}}
+  if(!list){box.closest('.td').hidden=true;return}
+  box.innerHTML=`<b>${lead}</b>`+list.slice(0,3).map(e=>`<a href="${e[2]}"><span class="ty">${e[0]}</span> ${e[1]}</a>`).join('')})();
+// this week's closest asteroid, from Asteroid Watch's daily NASA/JPL data
+(()=>{const box=$('tdRock');const now=Date.now();const rows=((TODAY&&TODAY.neo)||[]).filter(r=>Date.parse(r[1])>now-864e5);if(!rows.length){box.closest('.td').hidden=true;return}
+  const r=rows.slice().sort((a,b)=>a[2]-b[2])[0],ld=r[2],when=new Date(r[1]).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short'});
+  const size=r[3]?(r[3]<1?'about '+Math.round(r[3]*1000)+' m':'about '+r[3].toFixed(1)+' km'):'';
+  box.innerHTML=`<b>${r[0]}</b><span>Passes Earth on ${when} at ${ld<1?'<strong>closer than the Moon</strong> ('+ld.toFixed(2)+' Moon distances)':ld.toFixed(1)+' times the Moon’s distance'}${size?', '+size+' across':''}. It will miss.</span>`})();
+// the next rocket launch, sharing Launch Watch's 30-minute cache (the free service allows few requests an hour)
+(async()=>{const box=$('tdLaunch');let d=null;try{const c=JSON.parse(localStorage.getItem('gp-ll-upcoming')||'null');if(c&&Date.now()-c.t<30*60e3)d=c.d}catch(e){}
+  if(!d){try{const r=await fetch('https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=25&mode=normal&hide_recent_previous=true');if(!r.ok)throw 0;const j=await r.json();
+    d=j.results.map(L=>({name:L.name,net:Date.parse(L.net),prec:(L.net_precision||{}).abbrev||'',status:(L.status||{}).abbrev||'',rocket:((L.rocket||{}).configuration||{}).full_name||'',prov:(L.launch_service_provider||{}).name||'',pad:(L.pad||{}).name||'',site:((L.pad||{}).location||{}).name||'',lat:+(L.pad||{}).latitude,lon:+(L.pad||{}).longitude,cc:(((L.pad||{}).country)||{}).alpha_3_code||'',orbit:(((L.mission||{}).orbit)||{}).name||'',desc:((L.mission||{}).description||'').slice(0,240)}));
+    try{localStorage.setItem('gp-ll-upcoming',JSON.stringify({t:Date.now(),d}))}catch(e){}}catch(e){box.innerHTML='<b>Rocket launches</b><span>Could not reach the launch list just now; Launch Watch has the full list.</span>';return}}
+  const L=d.find(x=>x.net>Date.now()-36e5)||d[0];if(!L){box.closest('.td').hidden=true;return}
+  const india=d.find(x=>x.cc==='IND'&&x.net>Date.now());const nm=x=>x.name.split(' | ')[1]||x.name;
+  const tick=()=>{const s=Math.max(0,(L.net-Date.now())/1000),dd=Math.floor(s/86400),h=Math.floor(s%86400/3600),mi=Math.floor(s%3600/60);
+    box.innerHTML=`<b>${nm(L)}</b><span>${L.rocket}, from ${L.site.split(',')[0]}. ${s>0?`Lifts off in <strong>${dd?dd+'d ':''}${h}h ${pad(mi)}m</strong>`:'Launching about now'}${L.prec&&L.prec!=='SEC'&&L.prec!=='MIN'?' (time not fixed yet)':''}.</span>${india&&india!==L?`<span class="tin">Next from India: ${nm(india)}, ${new Date(india.net).toLocaleDateString(undefined,{day:'numeric',month:'short'})}</span>`:''}`};
+  tick();setInterval(tick,30000)})();
+})();
+</script>

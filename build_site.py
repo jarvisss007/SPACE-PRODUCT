@@ -228,8 +228,64 @@ def trust_strip(fname: str) -> str:
             "a=JSON.parse(localStorage.getItem(k)||'[]');if(!a.includes(f)){a.push(f);localStorage.setItem(k,JSON.stringify(a.slice(-300)))}}catch(e){}</script>\n")
 
 
+MONTHS = {m: i + 1 for i, m in enumerate(["January", "February", "March", "April", "May", "June", "July",
+                                           "August", "September", "October", "November", "December"])}
+
+
+def today_data() -> str:
+    """Data for the home page's "Today in space", rebuilt every day:
+    onthis: {"MM-DD": [[year, title, page], ...]} from every "Then and now" entry that names a full date;
+    neo: the coming week's asteroid passes [name, ISO time, Moon distances, size km] from Asteroid Watch."""
+    import html as h, json, math
+    from datetime import datetime, timedelta, timezone
+    onthis = {}
+    item = re.compile(r'<li[^>]*>\s*<details[^>]*>\s*<summary>(.*?)</summary>(.*?)</details>', re.S)
+    date = re.compile(r'\b(\d{1,2}) (' + "|".join(MONTHS) + r') (\d{4})\b')
+    for fname, _, _ in PAGES:
+        src = (HERE / fname).read_text(encoding="utf-8")
+        k = src.find("<h2>Then and now</h2>")
+        if k < 0:
+            continue
+        end = src.find("</section>", k)
+        for m in item.finditer(src[k:end]):
+            summary = m.group(1)
+            ylab = re.search(r'<span class="y[^"]*">(.*?)</span>', summary, re.S)
+            label = h.unescape(ylab.group(1)) if ylab else re.sub(r"<[^>]+>", " ", summary)[:12]
+            # the entry's own year(s): "1978", "2023–24" -> 2023, 2024; only dates in those years count
+            years = set(re.findall(r"\d{4}", label))
+            for a, b in re.findall(r"(\d{4})\s*[–-]\s*(\d{2})\b", label):
+                years.add(a[:2] + b)
+            title = h.unescape(re.sub(r"<[^>]+>", " ", re.sub(r'<span class="(y|tag)[^"]*">.*?</span>', "", summary, flags=re.S)))
+            title = re.sub(r"\s+", " ", title).replace("+", "").strip()
+            title = re.sub(r"^(\d{4}(\s*[–-]\s*\d{2,4})?|~?\d{3,4}s?)\s+", "", title)  # drop a repeated year
+            text = re.sub(r"<[^>]+>", " ", m.group(0))
+            for d in date.finditer(text):
+                day, mon, yr = int(d.group(1)), MONTHS[d.group(2)], d.group(3)
+                before = text[max(0, d.start() - 12):d.start()].lower()
+                if not 1 <= day <= 31 or (years and yr not in years) or "as of" in before or "until" in before:
+                    continue
+                row = [yr, title, fname]
+                lst = onthis.setdefault(f"{mon:02d}-{day:02d}", [])
+                if not any(r[1] == title for r in lst):
+                    lst.append(row)
+    for lst in onthis.values():
+        lst.sort(key=lambda r: r[0])
+    neo = []
+    aw = (HERE / "asteroid-watch.html").read_text(encoding="utf-8")
+    m = re.search(r"^const NEO=(\{.*?\});$", aw, re.M)
+    if m:
+        now = datetime.now(timezone.utc)
+        for des, cd, dist, _v, hmag, diam in json.loads(m.group(1)).get("close", []):
+            t = datetime.strptime(cd, "%Y-%b-%d %H:%M").replace(tzinfo=timezone.utc)
+            if now - timedelta(days=1) <= t <= now + timedelta(days=8):
+                size = diam if diam else (1329 / math.sqrt(0.14) * 10 ** (-hmag / 5) if hmag else None)
+                neo.append([des, t.strftime("%Y-%m-%dT%H:%MZ"), round(dist / 0.00256956, 2), round(size, 3) if size else None])
+    return json.dumps({"onthis": onthis, "neo": neo}, ensure_ascii=False, separators=(",", ":"))
+
+
 def build() -> None:
     cards = lab_cards()
+    today = today_data()
     missing = [f for f in RELATED if f not in cards] + [p for v in RELATED.values() for p in v if p not in cards]
     if missing:
         print(f"note: no home-page card for {sorted(set(missing))}")
@@ -249,6 +305,8 @@ def build() -> None:
         if marker not in src:
             raise SystemExit(f"{fname}: no {marker} to place the navigation before")
         src = src.replace(marker, NAV_CSS + nav_html(fname) + marker, 1)
+        if fname == "index.html":
+            src = src.replace("/*golapada-today*/null", today, 1)
         if fname in RELATED:  # English labs only; the Hindi pages keep their own endings
             k = src.rfind("<footer")
             block = explore_html(fname, cards)

@@ -116,6 +116,16 @@ PATHS = [
    ("eht-lab.html","How an Earth-sized telescope photographed one."),
  ]),
 ]
+
+# "Today in space": a strip that changes every day, from data the site already has.
+# The next launch is read live (sharing Launch Watch's 30-minute cache); the Moon and tonight's
+# nakshatra are worked out in the browser (Moon code shared with the Kundli Lab); "on this day" and
+# this week's asteroids are written in daily by build_site.py at the golapada-today marker.
+_k = (Path(__file__).resolve().parent.parent / "kundli.html").read_text(encoding="utf-8")
+_a = _k.index("const D2R=Math.PI/180,nrm=")
+_e = "return {lon:nrm(Lp+sl/1e6+dpsi),lat,meanNode,trueNode,dpsi}}"
+_b = _k.index(_e, _a) + len(_e)
+TODAY_JS = (Path(__file__).resolve().parent / "today.js").read_text(encoding="utf-8").replace("@@MOON@@", _k[_a:_b])
 e = html.escape
 cards = "\n".join(
   f'      <a class="lab" href="{f}" data-use="{u}" data-topic="{tp}" data-text="{e((t+" "+d).lower())}" style="--acc:{c}"><b>{e(t)}</b><span>{e(d)}</span><em>{" · ".join(dict(USES)[x] for x in u.split())}</em></a>'
@@ -183,6 +193,13 @@ h2{{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);
 .path li.next a b::after{{content:"  ← next";font-size:12px;color:var(--acc);letter-spacing:.06em}}
 .path li a{{display:block;text-decoration:none;color:var(--ink)}}.path li a b{{font-family:var(--display);font-size:18px;text-transform:uppercase}}.path li a span{{display:block;font-size:13.5px;color:#aeb9c6}}
 .path li a:hover b,.path li a:focus-visible b{{color:var(--acc)}}.path li a:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}
+.today{{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}}
+.td{{display:flex;flex-direction:column;gap:6px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--acc);border-radius:10px;padding:14px 16px;min-width:0;color:var(--ink)}}
+.td .k{{font:700 12.5px var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--acc)}}
+.td b{{display:block;font-family:var(--display);font-size:21px;line-height:1.1;text-transform:uppercase;margin-bottom:4px}}.td span{{display:block;font-size:14px;color:#c3ccd6}}.td strong{{color:var(--ink)}}
+.td .tin{{font-size:13px;color:var(--saffron);margin-top:4px}}.td a{{color:var(--ink);text-decoration:none;font-size:14px;display:block;padding:3px 0}}.td a:hover{{color:var(--acc)}}
+.td .ty{{display:inline;font-family:var(--display);font-weight:700;color:var(--acc);margin-right:4px;font-size:15px}}.td .more{{margin-top:auto;font-size:13px;color:var(--acc)}}
+.td[hidden]{{display:none}}
 footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
 @media (max-width:560px){{.hero{{min-height:72vh;padding-top:36px}}}}
 </style>
@@ -196,6 +213,17 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
     <p class="meaning"><i>Golapada</i>, “the chapter on the sphere”, is the part of Aryabhata’s <i>Aryabhatiya</i> (499 CE) where he explained the turning Earth, the sky and eclipses.</p>
     <div class="ctas"><a class="cta main" href="tonight.html">What’s in my sky tonight?</a><a class="cta alt" href="#paths">Start a guided path</a><a class="cta alt" href="#labs">Explore all {len(LABS)} labs</a><a class="cta alt" href="schools.html">For schools</a></div>
   </header>
+
+  <section id="today">
+    <h2>Today in space</h2>
+    <p class="sub">Changes every day, from the same live data the labs use.</p>
+    <div class="today">
+      <div class="td" style="--acc:var(--flame)"><div class="k">Next launch</div><div id="tdLaunch" aria-live="polite"><b>Rocket launches</b><span>Loading the launch list…</span></div><a class="more" href="launch-watch.html">All launches →</a></div>
+      <div class="td" style="--acc:var(--gold)"><div class="k">Tonight's Moon</div><div id="tdMoon"></div><a class="more" href="tonight.html">What else is up tonight →</a></div>
+      <div class="td" style="--acc:var(--violet)"><div class="k">From history</div><div id="tdHist"></div></div>
+      <div class="td" style="--acc:var(--mars)"><div class="k">Asteroid this week</div><div id="tdRock"></div><a class="more" href="asteroid-watch.html">Every close pass →</a></div>
+    </div>
+  </section>
 
   <section id="paths">
     <h2>Start with a path</h2>
@@ -261,6 +289,7 @@ document.querySelectorAll('.path').forEach(p=>{{const li=[...p.querySelectorAll(
   p.querySelector('.pp').textContent=done?`${{done}} of ${{li.length}} done${{done===li.length?' ✓':''}}`:`${{li.length}} labs`;if(done&&done<li.length)p.open=true}});
 }})();
 </script>
+{TODAY_JS}
 '''
 OUT.write_text(page, encoding="utf-8")
 print("labs", len(LABS))
