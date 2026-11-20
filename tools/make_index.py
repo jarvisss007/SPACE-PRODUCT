@@ -206,6 +206,7 @@ h2{{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);
 .td details summary:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}.td details span{{margin-top:6px;background:var(--panel2);border-radius:6px;padding:8px 10px}}
 .td #tdSky a b,.td a b{{display:inline;font-size:16px;margin-right:4px}}.td a em{{display:block;font-style:normal;font-size:12.5px;color:var(--dim)}}
 #tdStreak{{font-size:13.5px;color:var(--dim);margin:10px 0 0}}
+.shr{{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0 0 12px}}.shb{{font:700 15px var(--display);letter-spacing:.06em;text-transform:uppercase;background:#25d366;color:#04160d;border:0;border-radius:999px;padding:9px 16px;cursor:pointer}}.shb:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}.shb:disabled{{opacity:.6}}.shr .note{{font-size:13px;color:var(--dim)}}
 .td.bd{{grid-column:1/-1}}.bd-l{{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--dim);margin:8px 0}}
 .bd-l input{{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;max-width:220px;color-scheme:dark}}
 .bd-b,.bd-x{{font:600 14px var(--display);letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:8px 12px;cursor:pointer;align-self:flex-start}}
@@ -230,6 +231,7 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
   <section id="today">
     <h2>Today in space</h2>
     <p class="sub">Changes every day, from the same live data the labs use.</p>
+    <p class="shr"><button type="button" id="tdShare" class="shb">Share today’s sky</button> <span class="note" id="tdShareNote">Makes a picture on your phone for WhatsApp or any app. Nothing is uploaded.</span></p>
     <div class="today">
       <div class="td" style="--acc:var(--flame)"><div class="k">Next launch</div><div id="tdLaunch" aria-live="polite"><b>Rocket launches</b><span>Loading the launch list…</span></div><a class="more" href="launch-watch.html">All launches →</a></div>
       <div class="td" style="--acc:var(--gold)"><div class="k">Tonight's Moon</div><div id="tdMoon"></div><a class="more" href="tonight.html">What else is up tonight →</a></div>

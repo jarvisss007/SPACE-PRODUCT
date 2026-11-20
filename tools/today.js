@@ -81,5 +81,26 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
       <button type="button" id="bdForget" class="bd-x">Forget my birthday</button>`;
     $('bdForget').onclick=()=>{put(null);form()}};
   const v=get();v?show(v):form()})();
+// share today's sky: draws a picture of today's cards on the phone itself and hands it to WhatsApp or any app
+(()=>{const btn=$('tdShare');if(!btn)return;
+  const txt=id=>{const e=$(id);return e&&!e.closest('.td').hidden?e.innerText.replace(/\n+/g,'\n').trim():''};
+  function wrap(g,t,x,y,w,lh,max){const words=t.split(/\s+/);let line='',n=0;for(const wd of words){const test=line?line+' '+wd:wd;if(g.measureText(test).width>w&&line){g.fillText(line,x,y);y+=lh;n++;line=wd;if(n>=max-1){line=line+' …';break}}else line=test}if(line){g.fillText(line,x,y);y+=lh}return y}
+  function draw(){const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+    const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0b1430');bg.addColorStop(1,'#04060b');g.fillStyle=bg;g.fillRect(0,0,W,H);
+    let s=7;const R=()=>{s=(s*16807)%2147483647;return s/2147483647};for(let i=0;i<220;i++){g.globalAlpha=.2+R()*.7;g.fillStyle='#fff';g.beginPath();g.arc(R()*W,R()*H*0.55,R()*1.8+.3,0,7);g.fill()}g.globalAlpha=1;
+    g.fillStyle='#e8c46a';g.font='600 34px "Saira Condensed","Arial Narrow",sans-serif';g.fillText('GOLAPADA · TODAY IN SPACE',70,110);
+    g.fillStyle='#e7edf3';g.font='700 64px "Saira Condensed","Arial Narrow",sans-serif';g.fillText(new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}).toUpperCase(),70,185);
+    const blocks=[['TONIGHT’S MOON','#e8c46a',txt('tdMoon')],['NEXT LAUNCH','#ffa24a',txt('tdLaunch')],['FROM HISTORY','#b6a4ff',txt('tdHist')],['ASTEROID THIS WEEK','#e0774a',txt('tdRock')]].filter(b=>b[2]&&!/Loading/.test(b[2]));
+    let y=260;for(const [k,col,t] of blocks){g.fillStyle='rgba(18,26,37,.85)';const top=y-10;g.fillRect(60,top,W-120,230);g.fillStyle=col;g.fillRect(60,top,8,230);
+      g.font='700 28px "Saira Condensed","Arial Narrow",sans-serif';g.fillText(k,95,y+32);g.fillStyle='#e7edf3';g.font='400 34px "IBM Plex Sans",system-ui,sans-serif';
+      wrap(g,t.replace(/\n/g,' · ').replace(/(All launches|What else is up tonight|Every close pass) →/g,''),95,y+82,W-200,44,3);y+=228}
+    g.fillStyle='#8a97a8';g.font='400 30px "IBM Plex Sans",system-ui,sans-serif';g.fillText('Free space-science labs, worked out from real data',70,H-110);
+    g.fillStyle='#74c7ff';g.font='600 34px "IBM Plex Sans",system-ui,sans-serif';g.fillText(location.host?location.host+location.pathname.replace(/index\.html$/,''):'jarvisss007.github.io/SPACE-PRODUCT',70,H-60);
+    return c}
+  btn.onclick=async()=>{btn.disabled=true;try{const c=draw();const blob=await new Promise(r=>c.toBlob(r,'image/png'));const file=new File([blob],'golapada-today.png',{type:'image/png'});
+      const text='Today in space, from Golapada: '+(location.href.split('#')[0]);
+      if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text})}
+      else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='golapada-today.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);$('tdShareNote').textContent='Saved as a picture. Send it from your photos or downloads.'}}
+    catch(e){if(e&&e.name!=='AbortError')$('tdShareNote').textContent='Sharing did not work on this device.'}finally{btn.disabled=false}}})();
 })();
 </script>
