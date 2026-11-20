@@ -50,7 +50,7 @@ canvas{display:block;width:100%;background:#02030a;border-radius:4px}#dock{aspec
 .maths{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:#070b11;border:1px solid var(--line);border-radius:4px;padding:8px 10px;color:#cfd8e2;overflow-wrap:anywhere;margin:8px 0}
 .locked{font-size:12.5px;color:var(--gold);margin:6px 0}
 table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
-td.ok{color:var(--ok)}td.bad{color:var(--bad)}td.mid{color:var(--gold)}
+td.ok{color:var(--ok)}td.bad{color:var(--bad)}td.mid{color:var(--gold)}.chal{background:#1a1408;border:1px solid #4a3a14;border-left:4px solid var(--gold);border-radius:8px;padding:10px 12px;margin:0 0 14px}.chal b{color:var(--gold)}.chal p{margin:4px 0;font-size:14px}.chal button{margin-top:6px}.chal .ok{color:var(--ok)}
 .scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
 .meters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}@media (max-width:760px){.meters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mt{background:var(--panel2);border-radius:4px;padding:8px 10px;min-width:0}.mt span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
@@ -233,6 +233,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
         <div class="blds" id="blds"></div>
       </div>
       <div>
+        <div class="chal" id="chal"></div>
         <h3>Goals</h3>
         <ul class="goals" id="goals"></ul>
         <h3 style="margin-top:14px">Colony log</h3>
@@ -668,6 +669,32 @@ $("#play").onclick=()=>{if(timer)return stop();const c=C();if(!c||c.over)return;
  timer=setInterval(()=>{const c=C();if(!c||c.over||S.fin){stop();r5();return}acc+=speed/10;let n=Math.floor(acc);acc-=n;while(n-->0&&!c.over)tick(c);if(c.sol%10===0)save();r5()},100)};
 $("#step").onclick=()=>{const c=C();if(!c||c.over)return;stop();tick(c);save();r5()};
 $("#finish").onclick=()=>{stop();S.fin=true;save();renderProg();r5();try{$("#fin").scrollIntoView({behavior:"smooth"})}catch(e){}};
+
+// ---- this week's challenge: the same one for every player, a new one each week; completions kept in this browser ----
+const CHAL=[
+ {id:"storm",t:"Storm on arrival",d:"A planet-wide dust storm is already raging when you land: sunlight is down to a few per cent for about 50 sols. Keep everyone alive to sol 100.",
+  setup:c=>{c.storm=50;c.tau=8;c.stormBig=true;c.storms++},ok:c=>c.sol>=100},
+ {id:"thin",t:"Thin air",d:"A leak on the way lost most of your stored oxygen: only 12 sols left at landing. Make your own oxygen before it runs out.",
+  setup:c=>{c.o2=c.crew*O2PP*12;c.log=c.log.map(l=>[l[0],l[1].replace("oxygen for 40 sols","oxygen for only 12 sols"),l[2]])},ok:c=>!!c.goals.g2},
+ {id:"alone",t:"No ships coming",d:"Earth's supply ships are cancelled. Grow half your food from your own greenhouses.",
+  setup:c=>{c.sup=[]},ok:c=>!!c.goals.g3},
+ {id:"spares",t:"Half the parts",d:"A cargo ship crashed: you have only half the spare parts and building material. Survive 300 sols.",
+  setup:c=>{c.imp=+(c.imp/2).toFixed(1)},ok:c=>c.sol>=300},
+ {id:"home",t:"Ticket home",d:"Make enough fuel from Mars air and ice to refill a ship for the trip home, within 800 sols.",
+  setup:c=>{},ok:c=>!!c.goals.g4&&c.goals.g4<=800},
+ {id:"weak",t:"A rough landing",d:"The landing shook the crew: health starts at 50. Bring everyone through 150 sols.",
+  setup:c=>{c.health=50},ok:c=>c.sol>=150}];
+function isoWeek(){const d=new Date(),t=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()),dow=(new Date(t).getUTCDay()+6)%7,th=t+(3-dow)*864e5,y=new Date(th).getUTCFullYear();return y+"-W"+String(1+Math.floor((th-Date.UTC(y,0,1))/(7*864e5))).padStart(2,"0")}
+const WEEK=isoWeek(),CH=CHAL[(+WEEK.slice(0,4)*53+ +WEEK.slice(-2))%CHAL.length];
+const chDone=()=>{try{return JSON.parse(localStorage.getItem("golapada-mc-done")||"{}")}catch(e){return {}}};
+const _newColony=newColony;newColony=function(){const c=_newColony();if(S.chal===CH.id){CH.setup(c);c.chal=CH.id;logc(c,"This week's challenge: "+CH.t+". "+CH.d,"warn")}return c};
+function drawChal(){const el=$("#chal");if(!el)return;const c=C(),done=chDone();let st="";
+ if(c&&c.chal===CH.id){if(CH.ok(c)){if(!done[WEEK]){done[WEEK]={id:CH.id,sol:c.sol};try{localStorage.setItem("golapada-mc-done",JSON.stringify(done))}catch(e){}}st=`<p class="ok"><b style="color:var(--ok)">Challenge complete</b> on sol ${done[WEEK]?done[WEEK].sol:c.sol}. Well done! A new one arrives next week.</p>`}
+   else if(c.over)st=`<p>The colony did not make it this time. Press the button to try the challenge again.</p>`;else st=`<p>You are playing it now: sol ${c.sol}.</p>`}
+ const n=Object.keys(done).length;
+ el.innerHTML=`<b>This week's challenge (${WEEK}): ${CH.t}</b><p>${CH.d}</p>${st}${c&&c.chal===CH.id&&!c.over&&!CH.ok(c)?"":`<button type="button" id="chGo">${c&&c.chal===CH.id?"Try again":"Play this week's challenge"}</button><p class="note">Starts the colony again from landing day, with this week's twist.</p>`}${n?`<p class="note">Challenges you have completed: ${n}.</p>`:""}`;
+ const b=$("#chGo");if(b)b.onclick=()=>{S.chal=CH.id;S.col=newColony();S.fin=false;save();r5()}}
+const _r5=r5;r5=function(){_r5();drawChal()};
 function finale(){const c=C(),p=plan(),g=GOALS.filter(([k])=>c.goals[k]).length,R=ROCK[S.r];
  const grown=c.last.foodUse?c.last.foodg/c.last.foodUse*100:0;
  $("#fin").hidden=false;
