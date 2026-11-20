@@ -98,6 +98,71 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 </style>
 <section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">How India's Chandrayaan-3 got to the Moon and landed near the Moon's south pole in August 2023.</p><p class="gs-try"><b>Try this first:</b> Press <b>From launch</b> to watch the whole journey, then <b>Start descent</b> to try the landing.</p><ul><li>It did not fly straight there. It raised its orbit around Earth step by step to save fuel.</li><li>Near the Moon it braked to be captured, then lowered its orbit closer and closer.</li><li>The final landing took about 20 minutes of careful braking with its engines.</li></ul></section>
 <!-- golapada-simple:end -->
+<style>.gday{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid #74c7ff;border-radius:8px;padding:9px 14px;font:400 14px/1.5 'IBM Plex Sans',system-ui,sans-serif;color:#c3ccd6;min-width:0}.gday[hidden]{display:none}.gday .gd-k{font:700 12.5px 'Saira Condensed','Arial Narrow',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#74c7ff}.gday .gd-i{min-width:0}.gday b{color:#e7edf3;font-weight:600}@media print{.gday{display:none}}</style><div class="gday" id="gday" hidden aria-live="polite"></div>
+<script>
+// "Today" line at the top of a lab: one or two things that change every day, from data the site already has.
+// build_site.py writes DAY (this lab's own data) and, for Moon labs, the Moon code shared with the Kundli Lab.
+(()=>{'use strict';
+const DAY={"hist":[["07-22","2019","Chandrayaan-2: an orbiter that works, a lander that crashed"],["07-14","2023","Chandrayaan-3 lifts off"],["08-23","2023","Vikram lands near the south pole"],["08-23","2024","23 August, National Space Day"],["02-03","1966","Luna 9 and Surveyor 1 land softly"],["06-02","1966","Luna 9 and Surveyor 1 land softly"],["10-22","2008","Chandrayaan-1 and water on the Moon"],["08-19","2023","Russia’s Luna 25 crashes"],["08-29","2023","Pragyan finds sulphur, Vikram hops"],["01-19","2024","Japan’s SLIM lands on its nose"]],"moon":1,"launch":"india"};if(!DAY)return;
+const box=document.getElementById('gday');if(!box)return;
+const pad=n=>String(n).padStart(2,'0'),now=Date.now(),items=[];
+const dshort=t=>new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short'});
+const inDays=t=>{const a=new Date();a.setHours(0,0,0,0);const b=new Date(t);b.setHours(0,0,0,0);return Math.round((b-a)/864e5)};
+const when=n=>n===0?'today':n===1?'tomorrow':`in ${n} days`;
+const D2R=Math.PI/180,nrm=a=>((a%360)+360)%360;
+const LR=[[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],[2,0,1,0,53322],[2,-1,0,0,45758],
+[0,1,-1,0,-40923],[1,0,0,0,-34720],[0,1,1,0,-30383],[2,0,0,-2,15327],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],
+[2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],[4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],[2,0,-1,2,-2602],[2,-1,-2,0,2390],
+[1,0,1,0,-2348],[2,-2,0,0,2236],[0,1,2,0,-2120],[0,2,0,0,-2069],[2,-2,-1,0,2048],[2,0,1,-2,-1773],[2,0,0,2,-1595],[4,-1,-1,0,1215],[0,0,2,2,-1110],[3,0,-1,0,-892],
+[2,1,1,0,-810],[4,-1,-2,0,759],[0,2,-1,0,-713],[2,2,-1,0,-700],[2,1,-2,0,691],[2,-1,0,-2,596],[4,0,1,0,549],[0,0,4,0,537],[4,-1,0,0,520],[1,0,-2,0,-487],
+[2,1,0,-2,-399],[0,0,2,-2,-381],[1,1,1,0,351],[3,0,-2,0,-340],[4,0,-3,0,330],[2,-1,2,0,327],[0,2,1,0,-323],[1,1,-1,0,299],[2,0,3,0,294]];
+function moonApparent(jd){const T=(jd-2451545)/36525;
+  const Lp=nrm(218.3164477+481267.88123421*T-0.0015786*T*T+T*T*T/538841-T**4/65194000);
+  const D=nrm(297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868-T**4/113065000);
+  const M=nrm(357.5291092+35999.0502909*T-0.0001536*T*T+T*T*T/24490000);
+  const Mp=nrm(134.9633964+477198.8675055*T+0.0087414*T*T+T*T*T/69699-T**4/14712000);
+  const F=nrm(93.2720950+483202.0175233*T-0.0036539*T*T-T*T*T/3526000+T**4/863310000);
+  const A1=nrm(119.75+131.849*T),A2=nrm(53.09+479264.290*T),E=1-0.002516*T-0.0000074*T*T;
+  let sl=0;for(const [d,m,mp,f,c] of LR){const e=Math.abs(m)===1?E:Math.abs(m)===2?E*E:1;sl+=c*e*Math.sin((d*D+m*M+mp*Mp+f*F)*D2R)}
+  sl+=3958*Math.sin(A1*D2R)+1962*Math.sin((Lp-F)*D2R)+318*Math.sin(A2*D2R);
+  const Om=nrm(125.04452-1934.136261*T),Ls=nrm(280.4665+36000.7698*T);
+  const dpsi=(-17.20*Math.sin(Om*D2R)-1.32*Math.sin(2*Ls*D2R)-0.23*Math.sin(2*Lp*D2R)+0.21*Math.sin(2*Om*D2R))/3600;
+  const meanNode=Om,trueNode=nrm(Om-1.4979*Math.sin(2*(D-F)*D2R)-0.1500*Math.sin(M*D2R)-0.1226*Math.sin(2*D*D2R)+0.1176*Math.sin(2*F*D2R)-0.0801*Math.sin(2*(Mp-F)*D2R));
+  const lat=5.128122*Math.sin(F*D2R)+0.280602*Math.sin((Mp+F)*D2R)+0.277693*Math.sin((Mp-F)*D2R)+0.173237*Math.sin((2*D-F)*D2R);
+  return {lon:nrm(Lp+sl/1e6+dpsi),lat,meanNode,trueNode,dpsi}}
+// this lab's own history: today's anniversary, or the next one coming up
+if(DAY.hist&&DAY.hist.length){const t=new Date(),y=t.getFullYear();let best=null;
+  for(const [md,yr,title] of DAY.hist){const [m,d]=md.split('-').map(Number);for(const yy of [y,y+1]){const at=new Date(yy,m-1,d).getTime(),n=inDays(at);if(n>=0&&n<=60&&(!best||n<best.n)){best={n,yr,title,at,ago:yy-+yr}}}}
+  if(best)items.push(best.n===0?`<b>On this day</b> in ${best.yr}: ${best.title}${best.ago>0?` (${best.ago} year${best.ago>1?'s':''} ago)`:''}`:`<b>Coming up ${dshort(best.at)}</b>: ${best.title} (${best.yr}${best.ago>0?`, ${best.ago} year${best.ago>1?'s':''} ago`:''})`)}
+// tonight's Moon and nakshatra
+if(DAY.moon&&typeof moonApparent==='function'){const ev=new Date();ev.setHours(21,0,0,0);const jd=ev.getTime()/864e5+2440587.5,T=(jd-2451545)/36525;
+  const L=nrm(280.46646+36000.76983*T),M=nrm(357.52911+35999.05029*T)*D2R,sun=nrm(L+(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M));
+  const m=moonApparent(jd).lon,el=nrm(m-sun),lit=Math.round((1-Math.cos(el*D2R))/2*100),sid=nrm(m-(23.853+(jd-2451545)/365.25*50.29/3600));
+  const NAK=['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+  items.push(`<b>Tonight's Moon</b>: ${lit}% lit, in ${NAK[Math.floor(sid/(360/27))]}${DAY.moon==='glare'?(lit>60?'. Bright moonlight will hide faint meteors.':'. A dark sky for faint meteors.'):''}`)}
+// next meteor shower peak
+if(DAY.showers){const y=new Date().getFullYear();let sh=null;for(const [n,m,d,z] of DAY.showers)for(const yy of [y,y+1]){const at=new Date(yy,m-1,d,23).getTime(),k=inDays(at);if(k>=0&&(!sh||k<sh.k))sh={k,n,z}}
+  if(sh)items.push(`<b>Next shower</b>: the ${sh.n} peak ${when(sh.k)}${sh.z?`, up to about ${sh.z} an hour`:''}`)}
+// next total solar eclipse
+if(DAY.eclipses){const e=DAY.eclipses.map(([iso,l])=>{const [y,m,d]=iso.split('-').map(Number);return [new Date(y,m-1,d).getTime(),l]}).find(e=>e[0]>now);
+  if(e){const n=inDays(e[0]);items.push(`<b>Next total solar eclipse</b>: ${dshort(e[0])} ${new Date(e[0]).getFullYear()}, ${e[1].split(' · ').pop()} (${n} days to go)`)}}
+// this week's closest asteroid
+if(DAY.neo){const r=DAY.neo.filter(r=>Date.parse(r[1])>now-864e5).sort((a,b)=>a[2]-b[2])[0];
+  if(r)items.push(`<b>Asteroid this week</b>: ${r[0]} passes ${new Date(r[1]).toLocaleDateString(undefined,{weekday:'long'})} at ${r[2]<1?'less than the Moon’s distance':r[2].toFixed(1)+' times the Moon’s distance'}, and will miss`)}
+const draw=()=>{box.innerHTML=items.length?`<span class="gd-k">Today</span>${items.map(i=>`<span class="gd-i">${i}</span>`).join('')}`:'';box.hidden=!items.length};
+// next launch (and next from India), from the launch list Launch Watch and the home page already keep for 30 minutes
+if(DAY.launch){(async()=>{let d=null;try{const c=JSON.parse(localStorage.getItem('gp-ll-upcoming')||'null');if(c&&now-c.t<30*60e3)d=c.d}catch(e){}
+  if(!d){try{const r=await fetch('https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=25&mode=normal&hide_recent_previous=true');if(!r.ok)throw 0;const j=await r.json();
+    d=j.results.map(L=>({name:L.name,net:Date.parse(L.net),prec:(L.net_precision||{}).abbrev||'',status:(L.status||{}).abbrev||'',rocket:((L.rocket||{}).configuration||{}).full_name||'',prov:(L.launch_service_provider||{}).name||'',pad:(L.pad||{}).name||'',site:((L.pad||{}).location||{}).name||'',lat:+(L.pad||{}).latitude,lon:+(L.pad||{}).longitude,cc:(((L.pad||{}).country)||{}).alpha_3_code||'',orbit:(((L.mission||{}).orbit)||{}).name||'',desc:((L.mission||{}).description||'').slice(0,240)}));
+    try{localStorage.setItem('gp-ll-upcoming',JSON.stringify({t:Date.now(),d}))}catch(e){}}catch(e){return}}
+  const nm=x=>x.name.split(' | ')[1]||x.name,L=d.find(x=>x.net>now),I=d.find(x=>x.cc==='IND'&&x.net>now);
+  if(DAY.launch==='india'&&I)items.unshift(`<b>Next from India</b>: ${nm(I)} on ${I.rocket}, ${dshort(I.net)}`);
+  else if(L)items.unshift(`<b>Next launch</b>: ${nm(L)} on ${L.rocket}, ${dshort(L.net)}${I&&I!==L?` · next from India: ${nm(I)}, ${dshort(I.net)}`:''}`);
+  draw()})()}
+draw();
+})();
+</script>
+
 
 
   <div class="two">

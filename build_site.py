@@ -300,9 +300,54 @@ def today_data() -> str:
                       ensure_ascii=False, separators=(",", ":"))
 
 
+# The "Today" line at the top of each lab: what each lab shows besides its own history anniversaries.
+DAILY = {
+    "tonight.html": {"moon": 1, "showers": 1, "eclipses": 1},
+    "kundli.html": {"moon": 1}, "indian-astronomy.html": {"moon": 1}, "aryabhata-lab.html": {"moon": 1},
+    "moon-sites.html": {"moon": 1}, "chandrayaan-3.html": {"moon": 1, "launch": "india"},
+    "eclipse-lab.html": {"moon": 1, "eclipses": 1},
+    "meteor-showers.html": {"moon": "glare", "showers": 1}, "comets.html": {"showers": 1, "neo": 1},
+    "planetary-defense-lab.html": {"neo": 1}, "space-debris-lab.html": {"neo": 0},
+    "isro-launches.html": {"launch": "india"}, "gaganyaan-lab.html": {"launch": "india"}, "space-startups.html": {"launch": "india"},
+    "navic-lab.html": {"launch": "india"}, "mangalyaan.html": {"launch": "india"},
+    "rocket-lab.html": {"launch": 1}, "starship-catch.html": {"launch": 1}, "iss-life.html": {"launch": 1},
+    "touch-the-sun.html": {"eclipses": 1}, "space-weather.html": {"eclipses": 0},
+}
+DAY_CSS = ("<style>.gday{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;background:#0b1017;border:1px solid #1f2a38;"
+           "border-left:4px solid #74c7ff;border-radius:8px;padding:9px 14px;font:400 14px/1.5 'IBM Plex Sans',system-ui,sans-serif;color:#c3ccd6;min-width:0}"
+           ".gday[hidden]{display:none}.gday .gd-k{font:700 12.5px 'Saira Condensed','Arial Narrow',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#74c7ff}"
+           ".gday .gd-i{min-width:0}.gday b{color:#e7edf3;font-weight:600}@media print{.gday{display:none}}</style>")
+
+
+def day_block(fname: str, data: dict, moon_js: str) -> str:
+    """The Today line for one lab: a placeholder plus the shared script with this lab's data."""
+    import json
+    want = DAILY.get(fname, {})
+    day = {"hist": [[md, r[0], r[1]] for md, rows in data["onthis"].items() for r in rows if r[2] == fname]}
+    if want.get("moon"):
+        day["moon"] = want["moon"]
+    for k in ("showers", "eclipses", "neo"):
+        if want.get(k):
+            day[k] = data[k]
+    if want.get("launch"):
+        day["launch"] = want["launch"]
+    if not (day["hist"] or len(day) > 1):
+        return ""
+    js = (HERE / "tools" / "daily.js").read_text(encoding="utf-8")
+    js = js.replace("/*golapada-day*/null", json.dumps(day, ensure_ascii=False, separators=(",", ":")), 1)
+    js = js.replace("/*golapada-moon*/", moon_js if day.get("moon") else "", 1)
+    return DAY_CSS + '<div class="gday" id="gday" hidden aria-live="polite"></div>\n' + js
+
+
 def build() -> None:
+    import json
     cards = lab_cards()
     today = today_data()
+    tdata = json.loads(today)
+    _k = (HERE / "kundli.html").read_text(encoding="utf-8")
+    _a = _k.index("const D2R=Math.PI/180,nrm=")
+    _e = "return {lon:nrm(Lp+sl/1e6+dpsi),lat,meanNode,trueNode,dpsi}}"
+    moon_js = _k[_a:_k.index(_e, _a) + len(_e)]
     missing = [f for f in RELATED if f not in cards] + [p for v in RELATED.values() for p in v if p not in cards]
     if missing:
         print(f"note: no home-page card for {sorted(set(missing))}")
@@ -324,6 +369,13 @@ def build() -> None:
         src = src.replace(marker, NAV_CSS + nav_html(fname) + marker, 1)
         if fname == "index.html":
             src = src.replace("/*golapada-today*/null", today, 1)
+        elif fname in RELATED:  # English labs: the Today line goes just under the simple-words card (or the header)
+            block = day_block(fname, tdata, moon_js)
+            end = "<!-- golapada-simple:end -->"
+            if block and end in src:
+                src = src.replace(end, end + "\n" + block, 1)
+            elif block and "</header>" in src:
+                src = src.replace("</header>", "</header>\n" + block, 1)
         if fname in RELATED:  # English labs only; the Hindi pages keep their own endings
             k = src.rfind("<footer")
             block = explore_html(fname, cards)
