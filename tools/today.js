@@ -33,5 +33,28 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
   const tick=()=>{const s=Math.max(0,(L.net-Date.now())/1000),dd=Math.floor(s/86400),h=Math.floor(s%86400/3600),mi=Math.floor(s%3600/60);
     box.innerHTML=`<b>${nm(L)}</b><span>${L.rocket}, from ${L.site.split(',')[0]}. ${s>0?`Lifts off in <strong>${dd?dd+'d ':''}${h}h ${pad(mi)}m</strong>`:'Launching about now'}${L.prec&&L.prec!=='SEC'&&L.prec!=='MIN'?' (time not fixed yet)':''}.</span>${india&&india!==L?`<span class="tin">Next from India: ${nm(india)}, ${new Date(india.net).toLocaleDateString(undefined,{day:'numeric',month:'short'})}</span>`:''}`};
   tick();setInterval(tick,30000)})();
+// question of the day: the same question for everyone today, a new one tomorrow, from the labs' quizzes
+(()=>{const box=$('tdQuiz');const Q=(TODAY&&TODAY.quiz)||[];if(!Q.length){box.closest('.td').hidden=true;return}
+  const now=new Date(),day=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))/864e5),q=Q[(day*7919)%Q.length];
+  box.innerHTML=`<span class="tq">${q[0]}</span><details><summary>Show the answer</summary><span>${q[1]}</span></details><a class="more" href="${q[2]}">Work it out in the lab →</a>`})();
+// coming up in the sky: next full and new Moon, next meteor shower peak, next total solar eclipse
+(()=>{const box=$('tdSky');const now=Date.now(),out=[];
+  const sunL=jd=>{const T=(jd-2451545)/36525,L=nrm(280.46646+36000.76983*T),M=nrm(357.52911+35999.05029*T)*D2R;return nrm(L+(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M))};
+  const el=t=>{const jd=t/864e5+2440587.5;return nrm(moonApparent(jd).lon-sunL(jd))};
+  const find=target=>{let prev=((el(now)-target+540)%360)-180;for(let t=now+36e5;t<now+32*864e5;t+=36e5){const v=((el(t)-target+540)%360)-180;if(prev<0&&v>=0){let a=t-36e5,b=t;for(let i=0;i<20;i++){const m=(a+b)/2;if(((el(m)-target+540)%360)-180<0)a=m;else b=m}return b}prev=v}return null};
+  const dt=t=>new Date(t).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
+  const fm=find(180),nm=find(0);
+  [[fm,'Full Moon','Purnima'],[nm,'New Moon','Amavasya: the darkest nights for stars']].filter(x=>x[0]).sort((a,b)=>a[0]-b[0]).forEach(([t,n,x])=>out.push([t,`<b>${dt(t)}</b> ${n} <em>${x}</em>`,'tonight.html']));
+  const yr=new Date().getFullYear();let sh=null;for(const [n,m,d,z] of ((TODAY&&TODAY.showers)||[])){for(const y of [yr,yr+1]){const t=new Date(y,m-1,d,23).getTime();if(t>now-864e5&&(!sh||t<sh[0])){sh=[t,n,z]}}}
+  if(sh)out.push([sh[0],`<b>${dt(sh[0])}</b> ${sh[1]} meteor shower peaks <em>${sh[2]?'up to about '+sh[2]+' an hour from a dark site':'numbers vary year to year'}</em>`,'meteor-showers.html']);
+  const ld=x=>{const [y,m,d]=x.split('-').map(Number);return new Date(y,m-1,d)};const ec=((TODAY&&TODAY.eclipses)||[]).find(e=>ld(e[0]).getTime()>now);
+  if(ec)out.push([ld(ec[0]).getTime(),`<b>${ld(ec[0]).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}</b> Next total solar eclipse <em>${ec[1].split(' · ').pop()}</em>`,'eclipse-lab.html']);
+  if(!out.length){box.closest('.td').hidden=true;return}
+  box.innerHTML=out.sort((a,b)=>a[0]-b[0]).map(o=>`<a href="${o[2]}">${o[1]}</a>`).join('')})();
+// your visit streak, kept only in this browser
+(()=>{const box=$('tdStreak');try{const k='golapada-days',d=new Date(),key=x=>x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate());let days=JSON.parse(localStorage.getItem(k)||'[]');
+  if(!days.includes(key(d))){days.push(key(d));days=days.slice(-400);localStorage.setItem(k,JSON.stringify(days))}
+  let n=0;for(let x=new Date(d);days.includes(key(x));x.setDate(x.getDate()-1))n++;
+  box.textContent=n>1?`🔥 ${n} days in a row. Come back tomorrow to keep it going. (Remembered only in this browser.)`:'Come back tomorrow: this strip changes every day, and your visits in a row are counted here (only in this browser).';box.hidden=false}catch(e){}})();
 })();
 </script>

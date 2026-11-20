@@ -280,7 +280,24 @@ def today_data() -> str:
             if now - timedelta(days=1) <= t <= now + timedelta(days=8):
                 size = diam if diam else (1329 / math.sqrt(0.14) * 10 ** (-hmag / 5) if hmag else None)
                 neo.append([des, t.strftime("%Y-%m-%dT%H:%MZ"), round(dist / 0.00256956, 2), round(size, 3) if size else None])
-    return json.dumps({"onthis": onthis, "neo": neo}, ensure_ascii=False, separators=(",", ":"))
+    # question of the day: every English lab quiz question, with its answer and lab
+    quiz = []
+    for f in sorted((HERE / "quizzes").glob("*.json")):
+        if f.stem.endswith(".hi") or not (HERE / f"{f.stem}.html").exists():
+            continue
+        for q in json.loads(f.read_text(encoding="utf-8")).get("questions", []):
+            quiz.append([q["q"], q["a"], f"{f.stem}.html"])
+    # coming up in the sky: meteor shower peaks (Meteor Showers' own list) and the total solar eclipses in the Eclipse Lab
+    showers = []
+    ms = (HERE / "meteor-showers.html").read_text(encoding="utf-8")
+    for nm, mo, dy, zhr in re.findall(r"\['[A-Z]{3}','([^']+)',(\d+),(\d+),[^,]+,[^,]+,[^,]+,(null|\d+),", ms):
+        showers.append([nm, int(mo), int(dy), None if zhr == "null" else int(zhr)])
+    ecl = (HERE / "eclipse-lab.html").read_text(encoding="utf-8")
+    mon3 = {m[:3]: i for m, i in MONTHS.items()}
+    eclipses = sorted({(f"{y}-{mon3[mo]:02d}-{d}", label) for y, mo, d, label in
+                       re.findall(r"'(\d{4})([A-Z][a-z]{2})(\d{2})T':'(\d{1,2} [A-Za-z]+ \d{4} · total · [^']+)'", ecl)})
+    return json.dumps({"onthis": onthis, "neo": neo, "quiz": quiz, "showers": showers, "eclipses": [list(e) for e in eclipses]},
+                      ensure_ascii=False, separators=(",", ":"))
 
 
 def build() -> None:

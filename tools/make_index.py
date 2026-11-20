@@ -200,6 +200,11 @@ h2{{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);
 .td .tin{{font-size:13px;color:var(--saffron);margin-top:4px}}.td a{{color:var(--ink);text-decoration:none;font-size:14px;display:block;padding:3px 0}}.td a:hover{{color:var(--acc)}}
 .td .ty{{display:inline;font-family:var(--display);font-weight:700;color:var(--acc);margin-right:4px;font-size:15px}}.td .more{{margin-top:auto;font-size:13px;color:var(--acc)}}
 .td[hidden]{{display:none}}
+.td .tq{{font-size:15px;color:var(--ink);margin-bottom:6px}}.td details{{margin:2px 0 6px}}.td details summary{{cursor:pointer;color:var(--acc);font-size:13.5px;font-weight:600}}
+.td details summary:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}.td details span{{margin-top:6px;background:var(--panel2);border-radius:6px;padding:8px 10px}}
+.td #tdSky a b,.td a b{{display:inline;font-size:16px;margin-right:4px}}.td a em{{display:block;font-style:normal;font-size:12.5px;color:var(--dim)}}
+#tdStreak{{font-size:13.5px;color:var(--dim);margin:10px 0 0}}
+.td .tq b,.td details b,.td .tq i{{display:inline;font-family:inherit;font-size:inherit;text-transform:none;line-height:inherit;margin:0;color:var(--ink)}}
 footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
 @media (max-width:560px){{.hero{{min-height:72vh;padding-top:36px}}}}
 </style>
@@ -222,7 +227,10 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
       <div class="td" style="--acc:var(--gold)"><div class="k">Tonight's Moon</div><div id="tdMoon"></div><a class="more" href="tonight.html">What else is up tonight →</a></div>
       <div class="td" style="--acc:var(--violet)"><div class="k">From history</div><div id="tdHist"></div></div>
       <div class="td" style="--acc:var(--mars)"><div class="k">Asteroid this week</div><div id="tdRock"></div><a class="more" href="asteroid-watch.html">Every close pass →</a></div>
+      <div class="td" style="--acc:var(--lox)"><div class="k">Question of the day</div><div id="tdQuiz"></div></div>
+      <div class="td" style="--acc:var(--saffron)"><div class="k">Coming up in the sky</div><div id="tdSky"></div></div>
     </div>
+    <p class="note" id="tdStreak" hidden></p>
   </section>
 
   <section id="paths">
