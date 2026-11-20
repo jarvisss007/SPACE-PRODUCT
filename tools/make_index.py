@@ -70,10 +70,65 @@ TOPICS = [
  ("maths","Mathematics from history","π, the sine and big numbers from Aryabhata's and Nalanda's India."),
 ]
 WS = {'gravity':'gravity','orbits':'gravity','motion':'motion','energy':'energy','light':'light','night':'sky'}
+# Guided paths: a few labs in a sensible order, each with one line on why it comes next.
+# Progress is ticked from the labs you have opened, remembered only in your own browser.
+PATHS = [
+ ("sky","Your first night under the stars","For anyone: go outside tonight knowing what you are looking at.",'#9db8ff',[
+   ("tonight.html","Find the planets and the Moon from your own city."),
+   ("satellite-watch.html","Catch the space station gliding over."),
+   ("meteor-showers.html","Learn when shooting stars come, and why on those nights."),
+   ("comets.html","See where the dust for those shooting stars comes from."),
+   ("eclipse-lab.html","Plan for the next eclipse you can see."),
+ ]),
+ ("india","How India reached the Moon and Mars","From the first small rocket to landing near the Moon's south pole.",'#ff9933',[
+   ("rocket-lab.html","Why rockets need so much fuel, and how stages help."),
+   ("isro-launches.html","Every ISRO launch since 1979: the failures and the comebacks."),
+   ("mangalyaan.html","Reach Mars on the first try with a small budget."),
+   ("chandrayaan-3.html","Fly Chandrayaan-3's 40-day trip and land it yourself."),
+   ("moon-sites.html","See where Vikram landed among every Moon landing."),
+   ("gaganyaan-lab.html","What comes next: Indian astronauts on an Indian rocket."),
+ ]),
+ ("gravity","Gravity and orbits, step by step","For Class 9 and Class 11 physics: from falling to orbiting.",'#74c7ff',[
+   ("iss-life.html","Why the space station goes round Earth every 92 minutes."),
+   ("satellite-watch.html","Real satellites at different heights, moving at different speeds."),
+   ("lagrange-lab.html","Where the Sun's and Earth's pulls balance."),
+   ("gravity-assist-lab.html","Steal speed from a planet as you fly past."),
+   ("touch-the-sun.html","Why falling into the Sun is harder than escaping it."),
+ ]),
+ ("safe","Is Earth safe?","Asteroids, space junk and storms from the Sun, and what people do about them.",'#ff6b5e',[
+   ("asteroid-watch.html","The asteroids flying past Earth this month."),
+   ("planetary-defense-lab.html","How NASA pushed an asteroid off course in 2022."),
+   ("space-debris-lab.html","The junk around Earth and how long it stays."),
+   ("space-weather.html","The Sun's storms, live, and what they can knock out."),
+ ]),
+ ("ancient","3,000 years of Indian astronomy","From the Vedanga Jyotisha to Aryabhata, Nalanda and today.",'#e8c46a',[
+   ("indian-astronomy.html","The whole story on one map and timeline."),
+   ("aryabhata-lab.html","Aryabhata's spinning Earth and his value of π."),
+   ("nalanda.html","The water clock that ran a great university's day."),
+   ("clues-in-old-books.html","Old records tested against modern science."),
+   ("starship-through-time.html","Fly to Mars on the ancient astronomers' own numbers."),
+ ]),
+ ("deep","Beyond the Solar System","Telescopes, other worlds, our galaxy and black holes.",'#b6a4ff',[
+   ("telescope-lab.html","Why bigger telescopes see sharper."),
+   ("exoplanet-explorer.html","The planets found around other stars."),
+   ("milky-way-atlas.html","Our place in the galaxy."),
+   ("black-hole-lab.html","What a black hole does to space and time."),
+   ("eht-lab.html","How an Earth-sized telescope photographed one."),
+ ]),
+]
 e = html.escape
 cards = "\n".join(
   f'      <a class="lab" href="{f}" data-use="{u}" data-topic="{tp}" data-text="{e((t+" "+d).lower())}" style="--acc:{c}"><b>{e(t)}</b><span>{e(d)}</span><em>{" · ".join(dict(USES)[x] for x in u.split())}</em></a>'
   for f,t,d,u,tp,c in LABS)
+TITLE = {f: t for f, t, *_ in LABS}
+for _k, _n, _d, _c, steps in PATHS:
+    for f, _ in steps:
+        assert f in TITLE, f"path {_k}: {f} is not on the home page list"
+paths_html = "\n".join(
+  f'      <details class="path" data-path="{k}" style="--acc:{c}"><summary><b>{e(n)}</b><span>{e(d)}</span><em class="pp">{len(steps)} labs</em></summary><ol>'
+  + "".join(f'<li data-f="{f}"><a href="{f}"><b>{e(TITLE[f])}</b><span>{e(why)}</span></a></li>' for f, why in steps)
+  + '</ol></details>'
+  for k, n, d, c, steps in PATHS)
 chips = "".join(f'<button type="button" class="chip" data-f="{k}" aria-pressed="{str(k=="all").lower()}">{e(v)}</button>' for k,v in USES)
 topics = "\n".join(
   f'      <div class="topic"><h3>{e(n)}</h3><p>{e(d)}</p><div class="tl">' + "".join(f'<a href="{f}">{e(t)}</a>' for f,t,_,_,tp,_ in LABS if k in tp.split()) + (f'<a class="ws" href="worksheets.html?topic={WS[k]}">Printable worksheet</a>' if k in WS else '') + '</div></div>'
@@ -116,6 +171,18 @@ h2{{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);
 .topic{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}}.topic h3{{margin:0 0 4px;font-family:var(--display);font-size:20px;text-transform:uppercase}}.topic p{{margin:0 0 10px;font-size:13.5px;color:#c3ccd6}}
 .tl{{display:flex;flex-wrap:wrap;gap:6px}}.tl a{{font-size:13px;color:var(--ink);text-decoration:none;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:4px 10px}}.tl a:hover{{border-color:var(--lox)}}.tl a.ws{{background:rgba(168,230,161,.12);border-color:#3f6b3a;color:#cdeec8}}
 .trust{{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}}.trust div{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}}.trust b{{font-family:var(--display);font-size:20px;text-transform:uppercase;display:block;margin-bottom:4px}}.trust span{{font-size:13.5px;color:#c3ccd6}}
+.paths{{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;align-items:start}}
+.path{{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:10px;padding:14px 16px;min-width:0}}
+.path summary{{cursor:pointer;list-style:none;display:flex;flex-direction:column;gap:4px}}.path summary::-webkit-details-marker{{display:none}}
+.path summary b{{font-family:var(--display);font-weight:700;font-size:23px;line-height:1.05;text-transform:uppercase}}.path summary span{{font-size:14px;color:#c3ccd6}}
+.path .pp{{font-style:normal;font-size:12.5px;color:var(--acc);font-weight:600}}.path summary:focus-visible{{outline:2px solid var(--lox);outline-offset:3px}}
+.path ol{{list-style:none;margin:12px 0 0;padding:0;counter-reset:st}}
+.path li{{counter-increment:st;position:relative;padding:0 0 10px 36px}}
+.path li::before{{content:counter(st);position:absolute;left:0;top:2px;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--acc);color:var(--acc);font:700 13px/21px var(--display);text-align:center}}
+.path li.done::before{{content:"✓";background:var(--acc);color:#0a0d12}}
+.path li.next a b::after{{content:"  ← next";font-size:12px;color:var(--acc);letter-spacing:.06em}}
+.path li a{{display:block;text-decoration:none;color:var(--ink)}}.path li a b{{font-family:var(--display);font-size:18px;text-transform:uppercase}}.path li a span{{display:block;font-size:13.5px;color:#aeb9c6}}
+.path li a:hover b,.path li a:focus-visible b{{color:var(--acc)}}.path li a:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}
 footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
 @media (max-width:560px){{.hero{{min-height:72vh;padding-top:36px}}}}
 </style>
@@ -127,8 +194,16 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
     <h1>Golapada</h1>
     <p class="lede">Space science you can play with. {len(LABS)} interactive labs built on real mission data, from tonight’s sky to the edge of the galaxy.</p>
     <p class="meaning"><i>Golapada</i>, “the chapter on the sphere”, is the part of Aryabhata’s <i>Aryabhatiya</i> (499 CE) where he explained the turning Earth, the sky and eclipses.</p>
-    <div class="ctas"><a class="cta main" href="tonight.html">What’s in my sky tonight?</a><a class="cta alt" href="#labs">Explore all {len(LABS)} labs</a><a class="cta alt" href="schools.html">For schools</a></div>
+    <div class="ctas"><a class="cta main" href="tonight.html">What’s in my sky tonight?</a><a class="cta alt" href="#paths">Start a guided path</a><a class="cta alt" href="#labs">Explore all {len(LABS)} labs</a><a class="cta alt" href="schools.html">For schools</a></div>
   </header>
+
+  <section id="paths">
+    <h2>Start with a path</h2>
+    <p class="sub">Not sure where to begin? Pick a path and follow the labs in order. The ticks fill in as you open each lab; they are remembered only in this browser.</p>
+    <div class="paths">
+{paths_html}
+    </div>
+  </section>
 
   <section id="labs">
     <h2>What would you like to do?</h2>
@@ -180,6 +255,10 @@ const labs=[...document.querySelectorAll('.lab')],q=document.getElementById('q')
 function apply(){{const s=q.value.trim().toLowerCase();let n=0;for(const l of labs){{const ok=(use==='all'||l.dataset.use.split(' ').includes(use))&&(!s||l.dataset.text.includes(s)||l.dataset.use.includes(s));l.hidden=!ok;if(ok)n++}}document.getElementById('none').hidden=n>0}}
 document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{{use=b.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b));apply()}});
 q.addEventListener('input',apply);
+// guided paths: tick the labs this browser has opened (written by every lab page), point at the next one
+let seen=[];try{{seen=JSON.parse(localStorage.getItem('golapada-seen')||'[]')}}catch(e){{}}
+document.querySelectorAll('.path').forEach(p=>{{const li=[...p.querySelectorAll('li')];let done=0,next=null;li.forEach(x=>{{const d=seen.includes(x.dataset.f);x.classList.toggle('done',d);if(d)done++;else if(!next)next=x}});if(next&&done)next.classList.add('next');
+  p.querySelector('.pp').textContent=done?`${{done}} of ${{li.length}} done${{done===li.length?' ✓':''}}`:`${{li.length}} labs`;if(done&&done<li.length)p.open=true}});
 }})();
 </script>
 '''

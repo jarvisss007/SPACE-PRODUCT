@@ -107,7 +107,7 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
       <li><b>Your birth details never leave your device.</b> The Kundli Lab, the personality questionnaire and the quizzes all work entirely inside your browser. Nothing you type is sent anywhere.</li>
       <li><b>Your location, only if you ask.</b> Tonight's Sky and Satellite Watch can use your location when you press <i>Use my location</i>. Your phone asks first, and the position is used only on that page; it is not sent or stored.</li>
       <li><b>Phone pointing</b> in Tonight's Sky reads your phone's compass and tilt only while it is switched on, and only on your phone.</li>
-      <li><b>Saved on your device:</b> if you install the app, your browser keeps copies of the pages so they work offline. Launch Watch keeps the launch list for 30 minutes so it does not ask the server too often. You can clear both in your browser's settings.</li>
+      <li><b>Saved on your device:</b> if you install the app, your browser keeps copies of the pages so they work offline. Launch Watch keeps the launch list for 30 minutes so it does not ask the server too often. Each lab also notes, in your browser only, that you have opened it, so the guided paths on the home page can tick it off. You can clear all of this in your browser's settings.</li>
     </ul>
     <p>To show some things, your browser does fetch files from other services. Like any website visit, they can see your device's internet address, but not anything you type into Golapada:</p>
     <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table>
@@ -138,6 +138,7 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
   <footer>Golapada is free to use. Space agency names are used only to describe their missions; no endorsement is implied. Last reviewed November 2026.</footer>
 </div>
 <p class="gt" style="max-width:1200px;margin:6px auto 0;padding:10px max(16px,env(safe-area-inset-left,0px)) 28px;border-top:1px solid #1f2a38;font:400 13px/1.6 'IBM Plex Sans',system-ui,sans-serif;color:#8a97a8"><a href="about.html" style="color:#74c7ff">About Golapada</a> · <a href="about.html#privacy" style="color:#74c7ff">Privacy</a> · <a href="https://github.com/jarvisss007/SPACE-PRODUCT/issues/new?template=mistake.yml&amp;page=about.html&amp;title=Mistake%20on%20about.html" rel="noopener" style="color:#74c7ff">Report a mistake on this page</a></p>
+<script>try{const k='golapada-seen',f=(location.pathname.split('/').pop()||'index.html').replace('.hi.html','.html'),a=JSON.parse(localStorage.getItem(k)||'[]');if(!a.includes(f)){a.push(f);localStorage.setItem(k,JSON.stringify(a.slice(-300)))}}catch(e){}</script>
 
 <style>.ga-install{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:80;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;background:#e8c46a;color:#1b1404;border:0;border-radius:999px;padding:10px 16px;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer}.ga-install[hidden]{display:none}.ga-install:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}@media print{.ga-install{display:none}}</style>
 <button type="button" class="ga-install" id="gaInstall" hidden>Install Golapada</button>

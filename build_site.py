@@ -222,7 +222,10 @@ def trust_strip(fname: str) -> str:
     return ('<p class="gt"' + a + ' style="max-width:1200px;margin:6px auto 0;padding:10px max(16px,env(safe-area-inset-left,0px)) 28px;'
             'border-top:1px solid #1f2a38;font:400 13px/1.6 \'IBM Plex Sans\',system-ui,sans-serif;color:#8a97a8">'
             f'<a href="about.html" style="color:#74c7ff">{about}</a> · <a href="about.html#privacy" style="color:#74c7ff">{priv}</a> · '
-            f'<a href="{REPORT_URL.format(page=fname)}" rel="noopener" style="color:#74c7ff">{rep}</a></p>\n')
+            f'<a href="{REPORT_URL.format(page=fname)}" rel="noopener" style="color:#74c7ff">{rep}</a></p>\n'
+            # remember, in this browser only, that this lab was opened (ticks the guided paths on the home page)
+            "<script>try{const k='golapada-seen',f=(location.pathname.split('/').pop()||'index.html').replace('.hi.html','.html'),"
+            "a=JSON.parse(localStorage.getItem(k)||'[]');if(!a.includes(f)){a.push(f);localStorage.setItem(k,JSON.stringify(a.slice(-300)))}}catch(e){}</script>\n")
 
 
 def build() -> None:
