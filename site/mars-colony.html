@@ -1,0 +1,726 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Mars Colony Simulator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a six-stage mission game (lift-off, refuelling in orbit, a Moon test, the launch window and cruise, landing, then a sol-by-sol colony), with a progress bar; then the India angle and expert folds. All state lives in one object saved to localStorage. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--acc:#ff9933;--blue:#74c7ff;--gold:#e8c46a;--ok:#5fd6a0;--bad:#ff6b5e;--mars:#e2683c;
+  --display:"Saira Condensed","Arial Narrow","Helvetica Neue",sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}*{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:13px;color:var(--mars)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.95;margin:4px 0 8px;text-transform:uppercase}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 10px;text-transform:uppercase}
+h3{font-family:var(--display);font-weight:700;font-size:20px;margin:0 0 6px;text-transform:uppercase}
+p{margin:0 0 10px;max-width:74ch;color:#c3ccd6}a{color:var(--blue)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.prog{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}@media (max-width:620px){.prog{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.prog button{background:var(--panel2);color:var(--dim);border:1px solid var(--line);border-top:4px solid var(--line);border-radius:4px;padding:6px 6px;font:600 14px var(--display);letter-spacing:.04em;text-transform:uppercase;cursor:pointer;text-align:left;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prog button.done{border-top-color:var(--ok);color:var(--ink)}.prog button.cur{border-top-color:var(--mars);color:var(--ink);background:#1d1209}
+.prog button:disabled{opacity:.45;cursor:default}
+.bar0{height:6px;background:var(--panel2);border-radius:3px;margin-top:10px;overflow:hidden}.bar0 i{display:block;height:100%;background:linear-gradient(90deg,var(--ok),var(--mars))}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--panel2);border-radius:4px;padding:8px 10px;border-top:3px solid var(--line);min-width:0}.stat span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}.stat b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}.stat i{display:block;font-style:normal;font-size:12px;color:#aeb9c6}
+.stat.a{border-top-color:var(--acc)}.stat.g{border-top-color:var(--gold)}.stat.o{border-top-color:var(--ok)}.stat.b{border-top-color:var(--blue)}.stat.r{border-top-color:var(--mars)}.stat.x{border-top-color:var(--bad)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.lab{font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.seg button,.btn{background:#0b1017;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:7px 11px;font:inherit;font-size:13.5px;cursor:pointer;text-align:left}
+.seg button[aria-pressed="true"]{border-color:var(--mars);color:var(--mars);background:#1d1209}
+.seg button small{display:block;color:var(--dim);font-size:11.5px}
+.seg button:disabled,.btn:disabled{opacity:.5;cursor:default}
+.btn.go{background:var(--mars);border-color:var(--mars);color:#140803;font-weight:600}
+.btn.big{font:700 20px var(--display);letter-spacing:.05em;text-transform:uppercase;padding:12px 18px}
+.btn.next{font:700 17px var(--display);letter-spacing:.06em;text-transform:uppercase;background:var(--ok);border-color:var(--ok);color:#04130c}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+canvas{display:block;width:100%;background:#02030a;border-radius:4px}#dock{aspect-ratio:5/2}#orb{aspect-ratio:1/1;max-width:520px;margin:0 auto}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:4px;background:var(--panel2);font-size:14.5px}
+.verdict.good{border-left:4px solid var(--ok)}.verdict.warn{border-left:4px solid var(--gold)}.verdict.bad{border-left:4px solid var(--bad)}
+.maths{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:#070b11;border:1px solid var(--line);border-radius:4px;padding:8px 10px;color:#cfd8e2;overflow-wrap:anywhere;margin:8px 0}
+.locked{font-size:12.5px;color:var(--gold);margin:6px 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}td,th{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:500}
+td.ok{color:var(--ok)}td.bad{color:var(--bad)}
+.scroll{overflow-x:auto}.note{font-size:12.5px;color:var(--dim)}
+.meters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}@media (max-width:760px){.meters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mt{background:var(--panel2);border-radius:4px;padding:8px 10px;min-width:0}.mt span{display:block;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.mt b{font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}.mt i{display:block;font-style:normal;font-size:12px;color:#aeb9c6;overflow-wrap:anywhere}
+.mt .m{height:7px;background:#070b11;border-radius:3px;margin:5px 0 3px;overflow:hidden}.mt .m u{display:block;height:100%;width:0;background:var(--ok);text-decoration:none}
+.mt.lo .m u{background:var(--gold)}.mt.crit .m u{background:var(--bad)}.mt.crit b{color:var(--bad)}
+.advice{font-size:15.5px;padding:10px 12px;border-radius:4px;background:#1d1509;border-left:4px solid var(--gold);margin:10px 0}
+.advice.ok{background:#0f2119;border-left-color:var(--ok)}.advice.bad{background:#2a0f0d;border-left-color:var(--bad)}
+.blds{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:8px}
+.bld{background:var(--panel2);border-radius:5px;padding:10px;border-top:3px solid var(--line);display:flex;flex-direction:column;gap:4px;min-width:0}
+.bld b{font-family:var(--display);font-size:18px;text-transform:uppercase}.bld .c{font-size:12px;color:var(--dim)}.bld .o{font-size:13px;color:#d6dde5}
+.bld .n{font-family:var(--display);font-size:15px;color:var(--gold)}.bld button{margin-top:auto}
+.goals{list-style:none;margin:0;padding:0}.goals li{padding:5px 0 5px 26px;position:relative;font-size:14px;color:#c3ccd6;border-bottom:1px solid var(--line)}
+.goals li::before{content:"";position:absolute;left:2px;top:9px;width:14px;height:14px;border-radius:50%;border:2px solid var(--dim)}
+.goals li.y{color:var(--ink)}.goals li.y::before{background:var(--ok);border-color:var(--ok)}
+.log{list-style:none;margin:0;padding:0;font-size:13px;max-height:220px;overflow-y:auto}.log li{padding:4px 0;border-bottom:1px solid var(--line);color:#c3ccd6}.log li b{color:var(--gold);font-weight:500;font-family:var(--display);margin-right:6px}
+.log li.bad{color:#ffb0a8}.log li.good{color:#a9ecc9}
+.queue{font-size:13px;color:#c3ccd6;margin:6px 0}
+textarea{width:100%;min-height:150px;background:#070b11;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:8px;font:13.5px/1.5 var(--body)}
+.fin{border:1px solid var(--ok);background:#0b1712}
+.tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-right:6px;background:#2a230f;color:var(--gold)}
+.tag.ok{background:#0f2a20;color:var(--ok)}
+ul.plain{margin:4px 0 10px;padding-left:18px}ul.plain li{margin:3px 0;color:#d6dde5;font-size:14.5px}
+footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+[hidden]{display:none!important}
+</style>
+
+<style>
+.sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
+.sa-nav .sa-bar{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;padding-block:6px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.sa-nav .sa-in{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);padding:2px 6px}
+.sa-nav .sa-in::-webkit-scrollbar{display:none}
+.sa-nav a{flex:none;font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#a9b4c2;text-decoration:none;padding:5px 9px;border-radius:4px;white-space:nowrap}
+.sa-nav a:hover{color:#e7edf3;background:#121a25}
+.sa-nav a:focus-visible,.sa-nav button:focus-visible{outline:2px solid #e8c46a;outline-offset:1px}
+.sa-nav a[aria-current="page"]{color:#0a0d12;background:#e7edf3}
+.sa-nav a.sa-brand{color:#ffa24a;font-weight:700;font-size:15px;margin-right:2px}
+.sa-nav a.sa-brand[aria-current="page"]{color:#0a0d12;background:#ffa24a}
+.sa-nav button{flex:none;font:600 14px "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #2c3a4d;border-radius:4px;cursor:pointer;padding:5px 10px;line-height:1.2}
+.sa-nav .sa-arr{padding:5px 8px;font-size:16px}.sa-nav .sa-arr[disabled]{opacity:.3;cursor:default}
+.sa-nav .sa-all[aria-expanded="true"]{background:#e8c46a;color:#1b1404;border-color:#e8c46a}
+.sa-nav .sa-panel{max-width:1200px;margin:0 auto;padding:6px max(12px,env(safe-area-inset-right,0px)) 12px max(12px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:4px;max-height:70vh;overflow:auto}
+.sa-nav .sa-panel[hidden]{display:none}
+.sa-nav .sa-panel a{background:#0b1017;border:1px solid #1f2a38}.sa-nav .sa-panel a[aria-current="page"]{background:#e7edf3;color:#0a0d12;border-color:#e7edf3}
+@media (max-width:560px){.sa-nav .sa-arr{display:none}}
+@media print{.sa-nav{display:none}}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#04060b}
+</style>
+<nav class="sa-nav" aria-label="Golapada"><div class="sa-bar"><a href="index.html" class="sa-brand">Golapada</a><button type="button" class="sa-arr" aria-label="Scroll the lab list left">‹</button><div class="sa-in"><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="mars-now.html">Mars Now</a><a href="mars-colony.html" aria-current="page">Mars Colony</a><a href="iss-life.html">ISS life</a><a href="eht-lab.html">EHT image</a><a href="comets.html">Comets</a><a href="moon-sites.html">Moon sites</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a><a href="about.html">About</a></div><button type="button" class="sa-arr" aria-label="Scroll the lab list right">›</button><button type="button" class="sa-all" aria-expanded="false">All labs</button></div><div class="sa-panel" hidden><a href="tonight.html">Tonight</a><a href="earth-from-above.html">Earth</a><a href="satellite-watch.html">Live satellites</a><a href="space-weather.html">Space weather</a><a href="meteor-showers.html">Meteors</a><a href="asteroid-watch.html">Asteroids</a><a href="eclipse-lab.html">Eclipses</a><a href="isro-launches.html">ISRO launches</a><a href="launch-watch.html">Launches now</a><a href="starship-catch.html">Catch</a><a href="rocket-lab.html">Rockets</a><a href="navic-lab.html">NavIC</a><a href="space-debris-lab.html">Debris</a><a href="gaganyaan-lab.html">Gaganyaan</a><a href="chandrayaan-3.html">Moon</a><a href="mangalyaan.html">Mangalyaan</a><a href="mars-landing-lab.html">Landing</a><a href="mars-campaign.html">Mars</a><a href="solar-system-lab.html">Planets</a><a href="gravity-assist-lab.html">Flybys</a><a href="ion-engine-lab.html">Ion engines</a><a href="touch-the-sun.html">Sun</a><a href="lagrange-lab.html">L-points</a><a href="voyager-now.html">Voyager</a><a href="milky-way-atlas.html">Galaxy</a><a href="telescope-lab.html">Telescopes</a><a href="exoplanet-explorer.html">Exoplanets</a><a href="black-hole-lab.html">Black holes</a><a href="spacecraft-archive.html">Missions</a><a href="reentry-lab.html">Re-entry</a><a href="one-sky-lab.html">One Sky</a><a href="space-startups.html">Startups</a><a href="mars-now.html">Mars Now</a><a href="mars-colony.html" aria-current="page">Mars Colony</a><a href="iss-life.html">ISS life</a><a href="eht-lab.html">EHT image</a><a href="comets.html">Comets</a><a href="moon-sites.html">Moon sites</a><a href="planetary-defense-lab.html">Defense</a><a href="schools.html">For schools</a><a href="space-day.html">Space Day</a><a href="worksheets.html">Worksheets</a><a href="kundli.html">Kundli</a><a href="know-yourself.html">Know yourself</a><a href="reading-test.html">Reading test</a><a href="aryabhata-lab.html">Aryabhata</a><a href="indian-astronomy.html">Indian astronomy</a><a href="nalanda.html">Nalanda</a><a href="starship-through-time.html">Through time</a><a href="clues-in-old-books.html">Old books</a><a href="about.html">About</a></div></nav>
+<script>
+(()=>{const n=document.currentScript.previousElementSibling,s=n.querySelector('.sa-in'),[l,r]=n.querySelectorAll('.sa-arr'),b=n.querySelector('.sa-all'),p=n.querySelector('.sa-panel');
+const upd=()=>{l.disabled=s.scrollLeft<=2;r.disabled=s.scrollLeft+s.clientWidth>=s.scrollWidth-2};
+l.onclick=()=>{s.scrollLeft-=s.clientWidth*0.7};r.onclick=()=>{s.scrollLeft+=s.clientWidth*0.7};
+s.addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);
+s.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&s.scrollWidth>s.clientWidth){s.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+const c=s.querySelector('[aria-current]');if(c)s.scrollLeft=c.offsetLeft-s.clientWidth/2+c.offsetWidth/2;upd();
+const close=()=>{p.hidden=true;b.setAttribute('aria-expanded','false')};
+b.onclick=()=>{const o=p.hidden;p.hidden=!o;b.setAttribute('aria-expanded',String(o));if(o){const a=p.querySelector('a');if(a)a.focus()}};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!p.hidden){close();b.focus()}});
+addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
+</script>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Mars · a mission you run · real published numbers</div>
+    <h1>Mars Colony Simulator</h1>
+    <p>You are in charge. Get a crew and their whole kit off Earth, fill up with fuel in orbit, try everything out on the Moon first, fly to Mars when the planets line up, land, and then keep a small town alive on a cold, dusty planet, sol by sol, by making air, water, food and rocket fuel from what is already there. Every number comes from real missions and published studies; where a number is only a game guess, the page says so. The idea was inspired by India's Mangalyaan planners and by the film <i>The Martian</i> (2015), but the game is our own.</p>
+    <p class="note">Want the details of one part? Plan a whole fleet with tankers in the <a href="mars-campaign.html">Mars Campaign planner</a>, catch a booster in <a href="starship-catch.html">Starship Catch</a>, fly the full descent in the <a href="mars-landing-lab.html">Mars Landing Lab</a>, see the time on Mars today in <a href="mars-now.html">Mars Now</a>, learn the rocket equation in the <a href="rocket-lab.html">Rocket Lab</a> and follow India's first Mars trip in <a href="mangalyaan.html">Mangalyaan</a>.</p>
+  </header>
+
+  <!-- golapada-simple:start -->
+<style>
+.gs{background:linear-gradient(180deg,#14202c,#0e1620);border:1px solid #2c3a4d;border-left:5px solid #e8c46a;border-radius:8px;padding:16px 18px;min-width:0}
+.gs .gs-k{font:700 13px/1 "Saira Condensed","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8c46a;margin-bottom:8px}
+.gs .gs-lead{font-size:17.5px;line-height:1.5;color:#f1f5f9;margin:0 0 10px;max-width:70ch}
+.gs .gs-try{font-size:15.5px;color:#e7edf3;background:#0b1017;border-radius:6px;padding:10px 12px;margin:0 0 10px}.gs .gs-try b{color:#5fd6a0}
+.gs ul{margin:0;padding-left:20px}.gs li{font-size:15.5px;line-height:1.5;color:#d6dde5;margin:5px 0}
+details.gx>summary{cursor:pointer;font:700 19px "Saira Condensed","Arial Narrow",sans-serif;text-transform:uppercase;color:#74c7ff;list-style:none}
+details.gx>summary::before{content:"▸ ";color:#e8c46a}details.gx[open]>summary::before{content:"▾ "}
+details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+@media print{.gs{background:#fff;border-color:#999}.gs .gs-lead,.gs li,.gs .gs-try{color:#000;background:#fff}}
+</style>
+<section class="gs" aria-label="In simple words"><div class="gs-k">In simple words</div><p class="gs-lead">Run a whole mission yourself: launch a crew and their kit from Earth, refuel in orbit, test everything on the Moon, fly to Mars when the planets line up, land, and then keep a small colony alive day by day by making air, water, food and fuel from Mars itself. The numbers come from real missions.</p><p class="gs-try"><b>Try this first:</b> In <b>Stage 1</b>, pick <b>Starship-class</b> and <b>Crew of 4</b>, then press <b>Next stage</b>. In Stage 2 press <b>Dock the next tanker</b> until the tanks are full (or press <b>Auto-fill</b>). Play on to <b>Stage 6</b>, press <b>Play</b>, and build an <b>Oxygen plant</b> first.</p><ul><li>Rockets are mostly fuel: only a few tonnes in every hundred reach orbit. So Mars ships go up with empty tanks and are filled by tanker flights.</li><li>Earth and Mars line up for the cheap trip only about every 26 months, and the journey takes about 8 to 9 months. India's Mangalyaan cruised for 298 days.</li><li>Each person breathes about 0.84 kg of oxygen a day. On Mars you must make it from the carbon dioxide air, as NASA's MOXIE machine proved, a little at a time.</li></ul></section>
+<!-- golapada-simple:end -->
+
+
+  <section class="card" aria-label="Mission progress">
+    <div class="toprow"><h2 style="margin:0">Your mission</h2><button type="button" class="btn" id="restart">Restart</button></div>
+    <div class="prog" id="prog"></div>
+    <div class="bar0"><i id="pbar" style="width:0"></i></div>
+    <p class="note" id="savenote" style="margin:8px 0 0">Your progress is saved in this browser.</p>
+  </section>
+
+  <!-- Stage 1 -->
+  <section class="card stage" id="s0" hidden>
+    <h2>Stage 1 · Lift-off from Earth</h2>
+    <p>Everything starts on the ground. A rocket has to climb to about 300 km and reach about 28,000 km an hour to stay in orbit. Counting the push lost to air and gravity, that takes a speed change, called <b>Δv</b> ("delta-v"), of about <b>9.4 km/s</b>. Most of a rocket is fuel: only a few tonnes in every hundred reach orbit as cargo.</p>
+    <div class="lab">Choose a rocket</div>
+    <div class="seg" id="rk"></div>
+    <div class="lab">Choose the size of your first crew</div>
+    <div class="seg" id="cr"></div>
+    <div id="s0out"></div>
+    <div class="row"><button type="button" class="btn next" data-next="0" disabled>Next stage</button><span class="locked" data-lock="0" hidden>Locked in for this mission. Press Restart to change it.</span></div>
+  </section>
+
+  <!-- Stage 2 -->
+  <section class="card stage" id="s1" hidden>
+    <h2>Stage 2 · Fill up in orbit</h2>
+    <p>Your Mars ships reach low Earth orbit with <b>empty tanks</b>: lifting the cargo used up all their fuel. To leave for Mars, each ship must speed up by about <b>3.6 km/s</b> more. So <b>tankers</b> fly up one by one and pump methane and liquid oxygen across. Here we make refuelling easy: one press docks one tanker.</p>
+    <div id="s1math"></div>
+    <canvas id="dock" role="img" aria-label="A Mars ship in orbit with a fuel gauge; a tanker flies in and docks each time you press the button"></canvas>
+    <div class="row"><button type="button" class="btn big go" id="dockbtn">Dock the next tanker</button><button type="button" class="btn" id="autobtn">Auto-fill</button></div>
+    <div id="s1out"></div>
+    <p class="note">Boil-off is a real headache. Liquid oxygen boils at −183 °C and liquid methane at −162 °C, so sunlight slowly warms the tanks and some fuel turns to gas that has to be let out. The longer you wait between tankers, the more you lose. Nobody has yet moved large amounts of these super-cold liquids between two ships in orbit; it is one of the big tests still to come.</p>
+    <div class="row"><button type="button" class="btn next" data-next="1" disabled>Next stage</button></div>
+  </section>
+
+  <!-- Stage 3 -->
+  <section class="card stage" id="s2" hidden>
+    <h2>Stage 3 · Prove it at the Moon</h2>
+    <p>Before betting lives on Mars, test the whole base where help is close. The Moon is about <b>3 days</b> away: Apollo 11 left on 16 July 1969 and reached lunar orbit on 19 July. Mars is <b>months</b> away, and it can only be reached when the planets line up, about every two years. A broken pump on the Moon is a nuisance; on Mars, with no spare, it can end the mission.</p>
+    <p>You will land a <b>20-tonne test base</b> at the Moon's south pole. Getting there from low Earth orbit takes about <b>4.0 km/s</b> to reach low lunar orbit and about <b>1.9 km/s</b> more to land. The crater floors near the pole never see sunlight and stay around −220 °C, cold enough to trap ice for billions of years. India's Chandrayaan-1 (its Moon Mineralogy Mapper, built by NASA) saw that ice on the surface, and NASA's LCROSS probe crashed into Cabeus crater in 2009 and threw up a plume that was about <b>5.6% water</b> by mass.</p>
+    <div id="s2math"></div>
+    <div class="lab">How long will the test crew live there?</div>
+    <div class="seg" id="md"></div>
+    <div class="row"><button type="button" class="btn go" id="moonrun">Run the Moon test</button></div>
+    <div id="s2out"></div>
+    <div class="lab">Where should future fuel come from?</div>
+    <div class="seg" id="mf"></div>
+    <div id="s2fuel"></div>
+    <div class="row"><button type="button" class="btn next" data-next="2" disabled>Next stage</button></div>
+  </section>
+
+  <!-- Stage 4 -->
+  <section class="card stage" id="s3" hidden>
+    <h2>Stage 4 · Wait for the window, then cruise</h2>
+    <p>You cannot fly to Mars whenever you like. The cheapest path, a <b>Hohmann transfer</b>, is half an oval that touches Earth's orbit on one side of the Sun and Mars's orbit on the other. You must leave when Mars is about 44° ahead of Earth, so that Mars arrives at the far end of the oval at the same moment you do. That lining-up comes round about every <b>26 months</b>. The page finds the next windows from where the planets really are, using JPL's planet-position formulas.</p>
+    <div class="lab">Pick a launch window</div>
+    <div class="seg" id="wn"></div>
+    <div class="lab">Pick a path</div>
+    <div class="seg" id="sp"></div>
+    <div class="two">
+      <canvas id="orb" role="img" aria-label="Top-down view of the Sun, Earth's and Mars's orbits, and your transfer path from Earth to Mars"></canvas>
+      <div id="s3out"></div>
+    </div>
+    <div class="row"><button type="button" class="btn next" data-next="3" disabled>Next stage</button></div>
+  </section>
+
+  <!-- Stage 5 -->
+  <section class="card stage" id="s4" hidden>
+    <h2>Stage 5 · Land</h2>
+    <p>Mars's air is only about 1% as thick as Earth's: enough to burn up a careless ship, too thin to slow it down fully. Landers use a heat shield, then parachutes or rocket engines, to drop from about 20,000 km an hour to walking pace in a few minutes. Every landing so far has been run by computers on board, because a radio message takes many minutes each way. Fly the descent itself, step by step, in the <a href="mars-landing-lab.html">Mars Landing Lab</a>.</p>
+    <div class="lab">How do you arrive?</div>
+    <div class="seg" id="en"></div>
+    <div class="lab">Where do you land?</div>
+    <div class="seg" id="si"></div>
+    <div id="s4odds"></div>
+    <div class="row"><button type="button" class="btn go big" id="landbtn">Try the landing</button></div>
+    <div id="s4out"></div>
+    <div class="row"><button type="button" class="btn next" data-next="4" disabled>Next stage</button></div>
+  </section>
+
+  <!-- Stage 6 -->
+  <section class="card stage" id="s5" hidden>
+    <h2>Stage 6 · Build the colony</h2>
+    <p>You are down. Now keep everyone alive and make the base grow. Each <b>sol</b> (a Mars day, 24 h 39 min) the crew breathes about <b>0.84 kg of oxygen each</b>, eats about 1.8 kg of food (counting the water in it) and loses a little water, even though the recycler saves about 98% of it, like the one on the space station. Sunlight at Mars is only about <b>43%</b> as strong as at Earth, and dust storms can block almost all of it. Build machines that make what you need from Mars itself: oxygen from the carbon dioxide air, water from buried ice, food from greenhouses, and fuel for the trip home.</p>
+    <p class="note">The real things behind the buttons: <b>MOXIE</b>, a toaster-sized machine on the Perseverance rover, made <b>122 g</b> of oxygen in 16 runs from 2021 to 2023, at best <b>12 g an hour</b>, proving it can be done. NASA's <b>Kilopower</b> reactor design gives 1 to 10 kW day and night; its ground test, KRUSTY, ran at full power for 28 hours in 2018. Solar panels are cheaper but fear dust: in 2018 a planet-wide storm darkened the sky over the <b>Opportunity</b> rover so much (a dust thickness, or "optical depth", of 10.8) that it never woke up again, and NASA ended its mission in February 2019. Radar from orbit has found <b>buried glaciers</b> of nearly pure ice at middle latitudes. A <b>greenhouse</b> needs roughly 50 m² of crops to feed one person, and 20 to 25 m² gives one person's oxygen; some studies say far more. The <b>Sabatier</b> reaction turns carbon dioxide and hydrogen into methane and water (CO₂ + 4H₂ → CH₄ + 2H₂O); split the water again and you have methane and oxygen, rocket fuel. Bricks of baked regolith piled over the habitat cut the radiation, which on the surface is about <b>0.67 mSv a sol</b>; NASA lets an astronaut collect at most <b>600 mSv</b> in a whole career.</p>
+    <div class="row">
+      <button type="button" class="btn go" id="play">Play</button>
+      <button type="button" class="btn" id="step">Step one sol</button>
+      <span class="seg" id="spd" style="margin:0"></span>
+    </div>
+    <div class="toprow" style="margin:6px 0"><b id="solno" style="font-family:var(--display);font-size:24px">Sol 0</b><span class="note" id="soldate"></span></div>
+    <div class="meters" id="meters"></div>
+    <div class="advice" id="advice" aria-live="polite"></div>
+    <div class="two">
+      <div>
+        <h3>Build</h3>
+        <p class="note" style="margin-bottom:6px">Each building costs <b>imported mass</b> (parts brought from Earth), <b>crew-hours</b> to put together, <b>power</b> to run and some crew time every sol to look after. Your crew works 6 hours a sol each.</p>
+        <div class="queue" id="queue"></div>
+        <div class="blds" id="blds"></div>
+      </div>
+      <div>
+        <h3>Goals</h3>
+        <ul class="goals" id="goals"></ul>
+        <h3 style="margin-top:14px">Colony log</h3>
+        <ul class="log" id="log"></ul>
+        <div class="row"><button type="button" class="btn" id="finish">Finish mission</button></div>
+      </div>
+    </div>
+    <div class="card fin" id="fin" hidden style="margin-top:14px">
+      <h2>Mission summary</h2>
+      <div id="finbody"></div>
+      <label class="lab" for="share" style="display:block">Share it as text</label>
+      <textarea id="share" readonly></textarea>
+      <div class="row"><button type="button" class="btn go" id="copy">Copy summary</button><span class="note" id="copied"></span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>India and Mars</h2>
+    <div class="two">
+      <div>
+        <p><span class="tag ok">Done</span><b>Mangalyaan</b>, the Mars Orbiter Mission, left Sriharikota on a PSLV on <b>5 November 2013</b>. It spent about a month raising its orbit round Earth, then cruised for <b>298 days</b> and slipped into orbit round Mars on <b>24 September 2014</b>. India became the first country to reach Mars orbit on its first try. It shows the same rule this game uses: you leave in a window, take the slow, cheap path, and arrive months later. Read its story in <a href="mangalyaan.html">Mangalyaan</a>.</p>
+        <p><span class="tag">Plan</span><b>A Mars lander.</b> ISRO's next Mars mission, often called Mangalyaan-2 or the Mars Lander Mission, is planned to try India's first landing on Mars, with a launch target of around <b>2030</b> reported in November 2025. Talks by ISRO scientists have shown ideas for a supersonic parachute, a sky crane, a small rover and even a helicopter, but these are plans, not final designs.</p>
+      </div>
+      <div>
+        <p><span class="tag">Plan</span><b>Bharatiya Antariksh Station.</b> India plans its own space station: the first module, <b>BAS-1</b> (about 10 tonnes, on an LVM3), by <b>2028</b>, and five modules by <b>2035</b>. The first module is meant as a test bed for life support and crew quarters. That is exactly the "test close to home first" idea of Stage 3: a station in low orbit is hours from Earth, so life-support machines can fail there safely and be fixed before anyone trusts them on a trip that lasts years.</p>
+        <p><span class="tag">Today</span><b>LVM3</b>, India's heaviest rocket, lifts about 640 tonnes off the pad and puts about 8 tonnes into low orbit today, rising to about 10 tonnes with a new upper stage ISRO is building. In Stage 1 you can see why a colony needs far bigger, reusable rockets, or a very long queue of launches.</p>
+      </div>
+    </div>
+  </section>
+
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
+    <p>Each key number in the simulator, next to what was published and who published it. Rows marked <b>game guess</b> are our own simple choices to make a playable game; they are in the right ballpark but not taken from one source.</p>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="trust"></table></div>
+    <h3 style="margin-top:14px">Launch-window check</h3>
+    <p class="note">The page's window finder is tested on past launches. Real missions leave on slightly different, faster-or-slower paths than a perfect half-oval, so a few weeks of difference is normal.</p>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table id="wincheck"></table></div>
+  </details>
+
+  <details class="card gx"><summary>For experts: What the page leaves out</summary>
+    <p>This is a game built on real numbers, not a mission design tool. The big simplifications:</p>
+    <ul class="plain">
+      <li><b>Kit masses are guesses.</b> About 11.7 tonnes per person (habitat 4, life support 1.5, power 1.5, rovers and tools 1, food for 400 sols 0.74, building parts 3) plus 8 tonnes of shared equipment. Real design studies vary a lot.</li>
+      <li><b>One kind of Mars ship.</b> Every rocket choice uses the same 100-tonne-empty ship carrying 100 tonnes, shaped like published Starship numbers. With LVM3 or Falcon Heavy the ships are lifted in pieces, which no one has planned for real. Rockets that are not reusable would also cost far more.</li>
+      <li><b>One burn, one Δv.</b> The trip is one 3.6 km/s burn from low orbit (4.3 km/s for the fast path). Real windows need a little more or less each time, and arriving needs braking that the landing stage handles only as odds.</li>
+      <li><b>Boil-off</b> is a flat 0.1% a day of the stored fuel, half-full on average, and launches are spaced 60, 14 or 2 days apart. These are game guesses; real losses depend on sunshades, insulation and coolers.</li>
+      <li><b>Moon fuel</b> is a choice that adds safety margin, not a modelled mine-and-ship chain. Lunar ice may be much patchier than one crater suggests.</li>
+      <li><b>Landing odds</b> are made up from your margins, not from an entry simulation.</li>
+      <li><b>Power is a sol average.</b> No batteries, no night-time gap, no sun angle changes with the seasons except in dust-storm odds. A dust storm cuts sunlight by a simple formula that gives about 3% of normal at the 2018 storm's thickness.</li>
+      <li><b>Machines are scaled-up guesses.</b> The oxygen plant uses MOXIE's measured rate per unit of electricity, but a big plant would likely do better. The ice drill, greenhouse, brick printer and fuel plant outputs are round numbers in a sensible range. The fuel plant uses 8 kWh of electricity per kg of fuel; the bare chemistry needs about 3, and real plants lose a lot more.</li>
+      <li><b>Radiation shielding</b> halves the surface dose once every bed is covered with regolith bricks: a simple rule, not a measurement. Solar storms, which can give a big dose in hours, are not modelled.</li>
+      <li><b>People</b> are simple: one health number for body and mood, 6 working hours a sol each, no illness, no skills.</li>
+      <li><b>Not included:</b> spacesuits, rovers' trips, perchlorate salts in Mars soil, low gravity's effect on health, communications blackouts at solar conjunction, cost, and the law about who may build on Mars.</li>
+    </ul>
+  </details>
+
+  <!-- golapada-quiz:start -->
+<style>
+.gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
+.gq h2{font-family:"Saira Condensed","Noto Sans Devanagari","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(20px,3vw,26px);margin:0 0 6px;text-transform:uppercase;color:#e7edf3}
+.gq .gq-sub{font-size:13px;color:#8a97a8;margin:0 0 12px;max-width:76ch}
+.gq ol{list-style:none;margin:0;padding:0;counter-reset:gq}
+.gq li{counter-increment:gq;border-top:1px solid #1f2a38;padding:12px 0 10px 40px;position:relative}
+.gq li::before{content:counter(gq);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:#121a25;border:1px solid #2c3a4d;color:#e8c46a;font:700 15px/26px "Saira Condensed",sans-serif;text-align:center}
+.gq .gq-q{font-size:15px;color:#e7edf3;margin:0 0 4px}
+.gq .gq-do{font-size:13px;color:#8a97a8;margin:0 0 6px}.gq .gq-do b{color:#c3ccd6;font-weight:500}
+.gq .gq-h{display:inline-block;font:600 11px/1 "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1b1404;background:#e8c46a;border-radius:3px;padding:3px 6px;margin-right:6px;vertical-align:2px}
+.gq details summary{cursor:pointer;font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#74c7ff;width:max-content}
+.gq details summary:focus-visible,.gq button:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
+.gq details p{margin:6px 0 0;padding:8px 10px;background:#121a25;border-left:3px solid #5fd6a0;border-radius:3px;font-size:14px;color:#d5dde6;max-width:76ch}
+.gq .gq-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gq button{font:600 13px "Saira Condensed","Noto Sans Devanagari",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e7edf3;background:#121a25;border:1px solid #1f2a38;border-radius:4px;padding:6px 10px;cursor:pointer}
+@media print{.gq{background:#fff;border-color:#bbb}.gq h2,.gq .gq-q,.gq details p{color:#000}.gq .gq-sub,.gq .gq-do{color:#333}.gq details p{background:#fff}.gq .gq-bar{display:none}}
+</style>
+<section class="gq" aria-labelledby="gq-title"><h2 id="gq-title">Quiz: five questions</h2><p class="gq-sub">Answer each one by using the lab above, then check. Good for a class: pairs work through them, the teacher reveals the answers.</p><ol><li><p class="gq-q">How much oxygen does one person breathe in a day, and how much oxygen did NASA's MOXIE make on Mars in total?</p><p class="gq-do"><b>Use the lab:</b> Read the opening of <b>Stage 6 · Build the colony</b>, or find the <b>MOXIE</b> and <b>Oxygen per person</b> rows in <b>How far to trust it</b>.</p><details><summary>Show answer</summary><p>About <b>0.84 kg</b> a day. MOXIE made <b>122 g</b> in total over 16 runs (2021 to 2023), at best 12 g an hour. That is less than a sixth of what one person breathes in a single day, so a colony needs much bigger oxygen plants.</p></details></li><li><p class="gq-q">With a Starship-class rocket and a crew of 4, how much fuel does your Mars ship need for the trip, and how many tanker flights bring it?</p><p class="gq-do"><b>Use the lab:</b> In <b>Stage 1</b> pick <b>Starship-class</b> and <b>Crew of 4</b>, press <b>Next stage</b>, then read the boxes at the top of <b>Stage 2</b>.</p><details><summary>Show answer</summary><p>About <b>252 t</b> of methane and oxygen for the 3.6 km/s burn (155 t of ship and kit × 1.63), brought by <b>3 tanker flights</b> of 100 t each.</p></details></li><li><p class="gq-q">Why test the base on the Moon before Mars, and how much water did LCROSS find in the soil of Cabeus crater?</p><p class="gq-do"><b>Use the lab:</b> Read the opening of <b>Stage 3 · Prove it at the Moon</b> and its maths box.</p><details><summary>Show answer</summary><p>The Moon is only about <b>3 days</b> away, so spare parts and help can arrive quickly; Mars is months away and reachable only when the planets line up. LCROSS found about <b>5.6% water</b> by mass, so each tonne of soil holds about 56 kg of water, enough to make about 50 kg of oxygen.</p></details></li><li><p class="gq-q"><span class="gq-h">History</span>When did India's Mangalyaan leave Earth, how long did it cruise, and when did it reach Mars?</p><p class="gq-do"><b>Use the lab:</b> Read <b>India and Mars</b>.</p><details><summary>Show answer</summary><p>It launched on <b>5 November 2013</b>, cruised for <b>298 days</b> after leaving Earth's orbit, and entered orbit round Mars on <b>24 September 2014</b>. India was the first country to reach Mars orbit on its first try.</p></details></li><li><p class="gq-q"><span class="gq-h">History</span>What happened to the Opportunity rover in 2018, and why does it matter for a Mars colony's power?</p><p class="gq-do"><b>Use the lab:</b> Read the second paragraph of <b>Stage 6 · Build the colony</b>, and find the <b>Dust storm thickness</b> row in <b>How far to trust it</b>.</p><details><summary>Show answer</summary><p>A planet-wide <b>dust storm</b> darkened the sky (optical depth <b>10.8</b>) so much that Opportunity's solar panels could not keep it alive; it never woke up and NASA ended the mission in <b>February 2019</b>. A colony that relies only on solar power can lose almost all of it for weeks, which is why a fission reactor, which works day and night, is useful.</p></details></li></ol><div class="gq-bar"><button type="button" class="gq-all">Show all answers</button></div><script>
+(()=>{const s=document.currentScript.closest('.gq');const b=s.querySelector('.gq-all');b.addEventListener('click',()=>{const d=[...s.querySelectorAll('details')],open=!d.every(x=>x.open);d.forEach(x=>x.open=open);b.textContent=open?'Hide all answers':'Show all answers'})})();
+</script></section>
+<!-- golapada-quiz:end -->
+  <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="mars-campaign.html" style="--k:#e0774a"><b>Mars Campaign</b><span>Refuel a ship in orbit with tanker flights, pick a real launch window and fly to the Moon or Mars and home again.</span></a><a href="mars-now.html" style="--k:#e2683c"><b>Mars Now</b><span>The time, season and sol at the Perseverance and Curiosity rover sites right now, plus how far away Mars is and how long a radio signal takes to get there.</span></a><a href="mars-landing-lab.html" style="--k:#e0774a"><b>Mars Landing Lab</b><span>The seven minutes from 5.8 km/s to standing still on Mars: heat shield, supersonic parachute and a sky crane you fly.</span></a></div></section>
+<footer>Sources (checked November 2026): Mars solar irradiance 586.2 W/m² against Earth's 1,361 W/m² (ratio 0.431), synodic period 779.94 days, surface pressure 6.36 mbar: NASA NSSDC, "Mars Fact Sheet". Δv about 9.4 km/s to a 300 km orbit; LEO to Mars by Hohmann transfer 3.6 km/s (8.5 months) and "typical" 4.3 km/s; LEO to low lunar orbit 4.04 km/s, low lunar orbit to the surface 1.87 km/s, low lunar orbit to Earth escape 1.40 km/s; low Mars orbit to the surface 4.1 km/s: Wikipedia, "Delta-v budget" (tables compiled from NASA and other sources). Fast transfer about 4.3 km/s for about 176 days: Mars Society Canada, "Rocket physics: how to go to Mars" (2021). LVM3 lift-off mass 640 t and about 8 t to LEO today, 10 t with the planned C32 stage: ISRO via Business Today and The Week (Nov 2025). Falcon Heavy 63,800 kg to LEO (expendable): SpaceX vehicle page. Starship payload 100–150 t reusable (design target; later "100+ t"), ship propellant 1,200 t (Block 1), ship dry mass about 100 t, full stack about 5,000 t, Raptor Vacuum Isp 380 s: SpaceX vehicle page and Wikipedia "SpaceX Starship". Tanker counts of 8 to 12 per Mars-bound ship: Aerospace America (D. Rapp), The Space Review. Apollo 11 timeline: NASA. Lunar ice: Li, S. et al. (2018) "Direct evidence of surface exposed water ice in the lunar polar regions", PNAS (Chandrayaan-1 Moon Mineralogy Mapper); Colaprete, A. et al. (2010) Science, LCROSS: 155 ± 12 kg of water vapour and ice in view, about 5.6 ± 2.9% water by mass in Cabeus. Launch windows every 26 months: The Planetary Society; planet positions: E. M. Standish, JPL, "Approximate Positions of the Planets". Mangalyaan launch 5 Nov 2013, 298-day cruise, Mars orbit 24 Sep 2014: ISRO, Lok Sabha reply, The Planetary Society, Wikipedia. Past launch dates for the window check (Curiosity 26 Nov 2011, MAVEN 18 Nov 2013, InSight 5 May 2018, Perseverance 30 Jul 2020): NASA. Radiation: Zeitlin, C. et al. (2013) Science, 1.8 mSv/day in cruise; Hassler, D. M. et al. (2014) Science, 0.67 mSv/day on the surface (NASA/JPL, SwRI releases). NASA career limit 600 mSv: NASA OCHMO "Radiation Protection" technical brief (2022, Rev. 2023), following the National Academies (2021). Oxygen 0.84 kg per person per day: NASA Baseline Values and Assumptions Document as tabled in AIAA life-support papers and NASA ASCEND 2023 logistics slides (food 1.7–2.4 kg/day with water). ISS water recovery 98%: NASA (June 2023). MOXIE 122 g total, best 12 g/hour at 98% purity, 16 runs, last on 7 Aug 2023: NASA/JPL (6 Sep 2023); MOXIE power 300 W: NASA PDS and Wikipedia. Kilopower 1–10 kWe, about 400 kg at 1 kWe and 1,500 kg at 10 kWe, KRUSTY 28-hour full-power test in 2018: NASA press release and NASA Kilopower presentations (NTRS). Crop area about 50 m² per person for calories and 20–25 m² for oxygen: R. M. Wheeler, NASA (NTRS); larger analogue figures from Biosphere 2, CEEF and Lunar Palace 1 as reviewed there and in Mars On Earth studies. Opportunity: 2018 global dust storm, optical depth 10.8, last signal 10 Jun 2018, mission ended 13 Feb 2019: NASA/JPL. Mid-latitude buried ice: Holt, J. W. et al. (2008) Science (SHARAD); Morgan, G. A. et al. (2021) Nature Astronomy and the 2025 SWIM update (USGS). Sabatier reaction CO₂ + 4H₂ → CH₄ + 2H₂O: standard chemistry. Mars Lander Mission target of about 2030: ISRO chairman V. Narayanan, reported by Business Today and India TV (Nov 2025); lander hardware ideas: Space.com (2024). Bharatiya Antariksh Station, BAS-1 by 2028, five modules by 2035: Government of India, PIB releases. Mars time and season maths: NASA GISS Mars24 (Allison and McEwen, 2000). <i>The Martian</i> (2015 film) is mentioned only as inspiration.</footer>
+</div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const D=Math.PI/180,sin=x=>Math.sin(x*D),cos=x=>Math.cos(x*D);
+const DAY=864e5,SOL=88775244,AU=149597870.7,CL=299792.458,G0=9.80665;
+const fmt=(x,d=0)=>Number(x).toLocaleString("en",{maximumFractionDigits:d,minimumFractionDigits:d});
+const MON="Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+const fmtD=ms=>{const d=new Date(ms);return d.getUTCDate()+" "+MON[d.getUTCMonth()]+" "+d.getUTCFullYear()};
+
+/* ---------- published numbers ---------- */
+const DV={LEO:9.4,TMI:3.6,FAST:4.3,LLO:4.04,MOONLAND:1.87,LLOESC:1.40,MARSUP:4.1,HOME:2.0};
+const ISP=380,VE=ISP*G0/1000;           // km/s, methane-oxygen vacuum engine (Raptor Vacuum)
+const O2PP=0.84,FOODPP=1.8,WATERPP=3.5,RECYCLE=0.98; // kg per person per day (sol in game)
+const DOSE_CRUISE=1.8,DOSE_SURF=0.67,DOSE_LIMIT=600;
+const SUN=0.431;                          // Mars/Earth sunlight
+const MOXIE_G_PER_KWH=12/0.3;             // 12 g/h at 300 W = 40 g per kWh
+
+/* ---------- game choices (game guesses flagged in the trust table) ---------- */
+const ROCK={
+ lvm3:{n:"ISRO LVM3",leo:10,lift:640,cad:60,self:false,sub:"about 10 t to low orbit (8 t today) · 640 t at lift-off · thrown away"},
+ fh:{n:"Falcon Heavy",leo:63.8,lift:1420,cad:14,self:false,sub:"63.8 t to low orbit when fully thrown away · 1,420 t at lift-off"},
+ ss:{n:"Starship-class",leo:100,lift:5000,cad:2,self:true,sub:"100–150 t reusable · 5,000 t at lift-off · design target, not yet flown with this load"}};
+const CREWS=[4,12,50];
+const PER={hab:4.0,life:1.5,power:1.5,rovers:1.0,food:+(FOODPP*400*1.0275/1000).toFixed(2),build:3.0};
+const PERSUM=Object.values(PER).reduce((a,b)=>a+b,0),BASE=8;
+const SHIP_DRY=100,SHIP_CARGO=100,BOIL=0.001;
+const SITES={
+ arc:{n:"Arcadia Planitia, about 40°N",sub:"ice-rich ground a metre or less down · colder, weaker sun",sun:0.77,ice:1.0,heat:2.5},
+ jez:{n:"Jezero-like, about 18°N",sub:"some ice deeper down · middling sun",sun:0.95,ice:0.35,heat:2.2},
+ eq:{n:"Near the equator",sub:"warmest and sunniest · little ice near the surface",sun:1.0,ice:0.1,heat:2.0}};
+const ENTRY={aero:{n:"Aerobrake into orbit first",sub:"brake in the air, wait in orbit, pick your moment",p:0.02},direct:{n:"Direct entry",sub:"straight down from the cruise path, like Curiosity and Perseverance",p:0}};
+const SOLAR_KW=500*586*0.30*0.20/1000;   // 500 m², sol-average 30% of noon sun, 20% panels = 17.6 kW
+const BLD={
+ solar:{n:"Solar farm",imp:4,hrs:60,up:0.5,kw:0,c:"#e8c46a",o:()=>`500 m² of panels: about ${fmt(SOLAR_KW*site().sun,1)} kW here on a clear sol; dust storms cut it`},
+ fission:{n:"Fission reactor",imp:1.5,hrs:80,up:0.5,kw:0,c:"#74c7ff",o:()=>"Kilopower-type, 10 kW day and night, storm or not"},
+ oxy:{n:"Oxygen plant",imp:1,hrs:40,up:1,kw:3,c:"#5fd6a0",o:()=>`A big MOXIE: splits CO₂ air, ${fmt(3*24.66*MOXIE_G_PER_KWH/1000,2)} kg of oxygen a sol`},
+ drill:{n:"Ice drill",imp:2,hrs:50,up:2,kw:2,c:"#9fd3ff",o:()=>`Digs and melts buried ice: about ${fmt(150*site().ice)} kg of water a sol here`},
+ green:{n:"Greenhouse",imp:3,hrs:80,up:3,kw:6,c:"#7fe08a",o:()=>"50 m² under lamps: food for 1 person, oxygen for 2"},
+ brick:{n:"Brick printer",imp:2.5,hrs:40,up:1,kw:3,c:"#d9a07a",o:()=>"Bakes regolith into bricks to shield 1 bed every 10 sols"},
+ hab:{n:"Habitat module",imp:6,hrs:120,up:0.5,kw:0,c:"#c3ccd6",o:()=>`4 more beds; heating needs ${fmt(4*site().heat,0)} kW`},
+ sab:{n:"Sabatier fuel plant",imp:3,hrs:100,up:2,kw:25,c:"#ff9933",o:()=>"CO₂ + water → methane + oxygen: 77 kg of fuel a sol, uses 35 kg of water"}};
+const ORDER=["solar","fission","oxy","drill","green","brick","hab","sab"];
+const PRIO=["oxy","green","drill","brick","sab"];
+const FAILS=[["The CO₂ scrubber clogged","the space station's carbon dioxide removers have needed many repairs"],
+ ["A water pump failed","pumps are among the parts that fail most often in life support"],
+ ["The urine-to-water distiller jammed","the station's urine processor has broken down more than once"],
+ ["Coolant leaked from a radiator loop","the space station had an ammonia coolant leak in 2013"],
+ ["Moon dust wore out a hatch seal","Apollo crews found the sharp dust scratched visors and jammed seals"],
+ ["A power converter tripped","electronics trip when they get too hot or a cable shorts"]];
+const BREAK={oxy:"An oxygen plant's compressor pump failed",drill:"An ice drill's bit jammed",green:"A greenhouse water pump failed",brick:"A brick printer's heater burnt out",sab:"A fuel plant's pump failed",solar:"A solar farm's power cable was cut by a rock"};
+
+/* ---------- state ---------- */
+const KEY="golapada-mars-colony-v1";
+const fresh=()=>({v:1,st:0,max:0,r:null,n:null,dock:0,moon:{days:null,ran:false,log:[],fails:0,far:0,score:0,fuel:null},win:{dep:null,T:null,fast:false},land:{e:null,site:null,res:null},col:null,fin:false});
+let S=fresh();
+try{const t=JSON.parse(localStorage.getItem(KEY));if(t&&t.v===1)S=Object.assign(fresh(),t)}catch(e){}
+let saveOK=true;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){saveOK=false}}
+const site=()=>SITES[S.land.site||"arc"];
+
+/* ---------- maths ---------- */
+const mr=dv=>Math.exp(dv/VE);   // rocket equation: start mass / end mass
+function plan(){
+ const R=ROCK[S.r],n=S.n;if(!R||!n)return null;
+ const kit=BASE+n*PERSUM,ships=Math.ceil(kit/SHIP_CARGO);
+ const hw=R.self?ships:Math.ceil((ships*SHIP_DRY+kit)/R.leo);
+ const dry=ships*SHIP_DRY+kit,prop=dry*(mr(DV.TMI)-1),propFast=dry*(mr(DV.FAST)-1);
+ const load=R.self?100:R.leo*0.85;
+ const tank=need=>{let k=Math.ceil(need/load);for(let i=0;i<60;i++){const days=k*R.cad,loss=need*BOIL*days/2,k2=Math.ceil((need+loss)/load);if(k2===k)break;k=k2;if(k>5000)break}
+  const days=k*R.cad;return {k,days,loss:need*BOIL*days/2,bad:need*BOIL*days/2>need*0.5||k>3000}};
+ let t=tank(prop),tf=tank(propFast);
+ if(t.bad){const k=Math.ceil(prop/load);t={k,days:k*R.cad,loss:Infinity,bad:true};tf={k:Math.ceil(propFast/load)}}
+ return {R,n,kit,ships,hw,dry,prop,propFast,load,tank:t.k,days:t.days,loss:t.loss,bad:t.bad,tankFast:tf.k};
+}
+const moonProp=()=>(SHIP_DRY+20)*(mr(DV.LLO+DV.MOONLAND)-1);
+const RETURN_T=Math.round((SHIP_DRY+10)*(mr(DV.MARSUP+DV.HOME)-1));
+
+/* Mars season (Ls) for dust-storm odds: NASA GISS Mars24 (Allison & McEwen 2000) */
+function Ls(ms){const jd=2440587.5+ms/DAY+69.184/86400,dt=jd-2451545;
+ const M=19.3871+0.52402073*dt,af=270.3871+0.524038496*dt;
+ const P=[[.0071,2.2353,49.409],[.0057,2.7543,168.173],[.0039,1.1177,191.837],[.0037,15.7866,21.736],[.0021,2.1354,15.704],[.0020,2.4694,95.528],[.0018,32.8493,49.095]];
+ const pbs=P.reduce((s,[A,t,f])=>s+A*cos(0.985626*dt/t+f),0);
+ const eoc=(10.691+3e-7*dt)*sin(M)+0.623*sin(2*M)+0.050*sin(3*M)+0.005*sin(4*M)+0.0005*sin(5*M)+pbs;
+ return ((af+eoc)%360+360)%360}
+
+/* planets: JPL Approximate Positions (Standish), Table 1, 1800-2050 */
+const EL={E:[1.00000261,.00000562,.01671123,-.00004392,-.00001531,-.01294668,100.46457166,35999.37244981,102.93768193,.32327364,0,0],
+          M:[1.52371034,.00001847,.09339410,.00007882,1.84969142,-.00813131,-4.55343205,19140.30268499,-23.94362959,.44441088,49.55953891,-.29257343]};
+function pos(k,ms){const T=(2440587.5+ms/DAY+69.184/86400-2451545)/36525,e=EL[k];
+ const a=e[0]+e[1]*T,ec=e[2]+e[3]*T,I=e[4]+e[5]*T,L=e[6]+e[7]*T,w=e[8]+e[9]*T,O=e[10]+e[11]*T;
+ const M=((L-w)%360+540)%360-180,om=w-O;let E=M+ec/D*sin(M);
+ for(let i=0;i<30;i++){const dM=M-(E-ec/D*sin(E)),dE=dM/(1-ec*cos(E));E+=dE;if(Math.abs(dE)<1e-9)break}
+ const x=a*(cos(E)-ec),y=a*Math.sqrt(1-ec*ec)*sin(E);
+ return [(cos(om)*cos(O)-sin(om)*sin(O)*cos(I))*x+(-sin(om)*cos(O)-cos(om)*sin(O)*cos(I))*y,
+         (cos(om)*sin(O)+sin(om)*cos(O)*cos(I))*x+(-sin(om)*sin(O)+cos(om)*cos(O)*cos(I))*y,
+         sin(om)*sin(I)*x+cos(om)*sin(I)*y]}
+const lon=p=>Math.atan2(p[1],p[0])/D,rad=p=>Math.hypot(p[0],p[1]);
+/* Hohmann window: leave when Mars will reach the point opposite Earth just as the half-ellipse does */
+function miss(t){const e=pos("E",t),le=lon(e),re=rad(e);let T=259;
+ for(let k=0;k<4;k++){const a=(re+rad(pos("M",t+T*DAY)))/2;T=365.25*Math.sqrt(a*a*a)/2}
+ let d=lon(pos("M",t+T*DAY))-(le+180);d=((d%360)+540)%360-180;return [d,T]}
+function windows(from,to){const out=[];let p=miss(from)[0];
+ for(let t=from+DAY;t<to;t+=DAY){const [v,T]=miss(t);if(p>0&&v<=0&&p<30)out.push([t,T]);p=v}return out}
+const dist=ms=>{const e=pos("E",ms),m=pos("M",ms);return Math.hypot(m[0]-e[0],m[1]-e[1],m[2]-e[2])};
+const delay=au=>{const s=au*AU/CL;return Math.floor(s/60)+" min "+String(Math.round(s%60)).padStart(2,"0")+" s"};
+const TODAY=(()=>{const d=new Date();return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),12)})();
+const WIN=windows(TODAY-40*DAY,Math.min(Date.UTC(2049,0,1),TODAY+3300*DAY)).slice(0,3);
+
+/* ---------- shared UI helpers ---------- */
+const NAMES=["Lift-off","Refuel","Moon test","Cruise","Land","Colony"];
+function segButtons(el,items,cur,on,locked){el.innerHTML="";items.forEach(([k,label,sub])=>{const b=document.createElement("button");b.type="button";
+ b.innerHTML=label+(sub?`<small>${sub}</small>`:"");b.setAttribute("aria-pressed",String(k===cur));b.disabled=!!locked;b.onclick=()=>on(k);el.appendChild(b)})}
+const stat=(c,k,v,i)=>`<div class="stat ${c}"><span>${k}</span><b>${v}</b>${i?`<i>${i}</i>`:""}</div>`;
+const doneStage=i=>[()=>S.r&&S.n,()=>{const p=plan();return p&&S.dock>=p.tank},()=>S.moon.ran&&S.moon.fuel,()=>S.win.dep,()=>S.land.res,()=>S.fin][i]();
+
+function renderProg(){const el=$("#prog");el.innerHTML="";NAMES.forEach((n,i)=>{const b=document.createElement("button");b.type="button";
+ b.textContent=(i+1)+" "+n;b.className=(i===S.st?"cur ":"")+(i<S.max||(i===5&&S.fin)?"done":"");b.disabled=i>S.max;
+ b.setAttribute("aria-current",i===S.st?"step":"false");b.onclick=()=>{S.st=i;save();show()};el.appendChild(b)});
+ $("#pbar").style.width=(Math.min(6,S.max+(S.fin?1:0))/6*100)+"%";
+ $("#savenote").textContent=saveOK?"Your progress is saved in this browser.":"This browser is not letting the page save, so progress resets if you reload."}
+function show(){for(let i=0;i<6;i++)$("#s"+i).hidden=i!==S.st;renderProg();[r0,r1,r2,r3,r4,r5][S.st]()}
+document.querySelectorAll("[data-next]").forEach(b=>b.onclick=()=>{const i=+b.dataset.next;if(!doneStage(i))return;
+ S.st=i+1;S.max=Math.max(S.max,i+1);if(i+1===5&&!S.col)S.col=newColony();save();show();try{$("#s"+(i+1)).scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}});
+function nextBtn(i){const b=document.querySelector(`[data-next="${i}"]`);b.disabled=!doneStage(i)}
+const locked=i=>S.max>i;
+
+/* ---------- Stage 1 ---------- */
+function r0(){const L=locked(0);
+ segButtons($("#rk"),Object.entries(ROCK).map(([k,R])=>[k,R.n,R.sub]),S.r,k=>{S.r=k;S.dock=0;save();r0()},L);
+ segButtons($("#cr"),CREWS.map(n=>[n,"Crew of "+n,n===4?"a first outpost":n===12?"a small base":"a real village"]),S.n,n=>{S.n=n;S.dock=0;save();r0()},L);
+ document.querySelector('[data-lock="0"]').hidden=!L;
+ const p=plan(),o=$("#s0out");
+ let h=`<div class="maths">Rocket equation: start mass ÷ end mass = e<sup>Δv ÷ (Isp × g)</sup>. To orbit: Δv ≈ 9.4 km/s, engines averaging Isp ≈ 350 s, g = 9.81 m/s² → e<sup>9.4 ÷ 3.43</sup> ≈ ${fmt(Math.exp(9.4/(350*G0/1000)),1)}. So only about 1 kg in ${fmt(Math.exp(9.4/(350*G0/1000)),0)} of a rocket at lift-off is not fuel, and the cargo is only part of that.</div>`;
+ if(S.r){const R=ROCK[S.r];h+=`<p>${R.n}: about <b>${fmt(R.leo,1)} t</b> of cargo reaches orbit out of <b>${fmt(R.lift)} t</b> at lift-off, which is <b>${fmt(R.leo/R.lift*100,1)}%</b>.${S.r==="ss"?" This is SpaceX's design target; test flights so far have carried much less.":""}${S.r==="lvm3"?" ISRO's LVM3 manages about 8 t today; 10 t needs its new C32 upper stage.":""}</p>`}
+ if(p){const k=Object.entries({"Habitat":PER.hab,"Life support":PER.life,"Power":PER.power,"Rovers and tools":PER.rovers,"Food for 400 sols":PER.food,"Building parts":PER.build});
+  h+=`<div class="two"><div><table><tr><th>Per person</th><th>Tonnes</th></tr>${k.map(([a,b])=>`<tr><td>${a}</td><td>${fmt(b,2)}</td></tr>`).join("")}<tr><td><b>Each person</b></td><td><b>${fmt(PERSUM,2)}</b></td></tr><tr><td>Shared equipment (radio, workshop, spares)</td><td>${BASE}</td></tr></table><p class="note">Food: ${FOODPP} kg a day (with its water) × 400 sols. Masses per person are game guesses.</p></div>
+  <div>${'<div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:0">'+stat("r","Colony kit",fmt(p.kit)+" t",`${p.n} people × ${fmt(PERSUM,1)} t + ${BASE} t`)+stat("b","Mars ships",p.ships,`each 100 t empty, carries 100 t`)+stat("a","Launches to orbit",fmt(p.hw),p.R.self?"each ship flies up with its cargo":`ships and cargo lifted in ${fmt(p.R.leo,1)} t pieces`)+stat("g","Rocket mass lifted",fmt(p.hw*p.R.lift)+" t","at lift-off, all launches")+"</div>"}</div></div>`;
+  h+=`<div class="verdict ${p.hw>100?"bad":p.hw>20?"warn":"good"}">${p.hw>100?`<b>${fmt(p.hw)} launches</b> just for the hardware. At one every ${p.R.cad} days that is about ${fmt(p.hw*p.R.cad/365,1)} years of launches before anyone fuels up. Try a bigger, reusable rocket or a smaller first crew.`:p.hw>20?`<b>${fmt(p.hw)} launches.</b> Possible, but it keeps the launch pads busy for ${fmt(p.hw*p.R.cad/30,0)} months.`:`<b>${fmt(p.hw)} launch${p.hw>1?"es":""}</b> carry the whole kit up. That is why big reusable rockets matter for Mars.`}</div>`}
+ o.innerHTML=h;nextBtn(0)}
+
+/* ---------- Stage 2 ---------- */
+const dk=$("#dock"),dg=dk.getContext("2d");let anim=null;
+function drawDock(frac,tx){const dpr=window.devicePixelRatio||1,W=dk.clientWidth||600,H=dk.clientHeight||240;dk.width=W*dpr;dk.height=H*dpr;dg.setTransform(dpr,0,0,dpr,0,0);dg.clearRect(0,0,W,H);
+ for(let i=0;i<40;i++){dg.fillStyle="rgba(255,255,255,"+(0.15+((i*37)%10)/25)+")";dg.fillRect((i*97)%W,(i*53)%H,1.2,1.2)}
+ dg.fillStyle="#123a5c";dg.beginPath();dg.arc(W*0.5,H*2.15,H*1.45,0,7);dg.fill();
+ const sx=W*0.08,sy=H*0.36,sw=W*0.42,sh=H*0.26;
+ dg.fillStyle="#c3ccd6";dg.fillRect(sx,sy,sw,sh);dg.beginPath();dg.moveTo(sx+sw,sy);dg.lineTo(sx+sw+sh*0.9,sy+sh/2);dg.lineTo(sx+sw,sy+sh);dg.fill();
+ dg.fillStyle="#04060b";dg.fillRect(sx+6,sy+6,sw-12,sh-12);dg.fillStyle="#e2683c";dg.fillRect(sx+6,sy+6,(sw-12)*Math.min(1,frac),sh-12);
+ dg.fillStyle="#e7edf3";dg.font=`600 ${Math.max(11,Math.min(15,W/40))}px IBM Plex Sans, sans-serif`;dg.fillText("Mars ship tanks: "+Math.round(Math.min(1,frac)*100)+"%",sx+10,sy+sh/2+5);
+ if(tx!=null){const x=sx+sw+sh*0.9+4+tx*(W*0.4),w=W*0.26,h=sh*0.8,y=sy+sh*0.1;
+  dg.fillStyle="#8a97a8";dg.fillRect(x+h*0.7,y,w,h);dg.beginPath();dg.moveTo(x+h*0.7,y);dg.lineTo(x,y+h/2);dg.lineTo(x+h*0.7,y+h);dg.fill();
+  dg.fillStyle="#04060b";dg.font=`600 ${Math.max(10,Math.min(13,W/48))}px IBM Plex Sans, sans-serif`;dg.fillText("TANKER",x+h*0.8,y+h/2+4)}
+ dg.fillStyle="#8a97a8";dg.font="12px IBM Plex Sans, sans-serif";dg.fillText("Low Earth orbit, about 300 km up",8,H-8)}
+function animDock(from,to,done){const p=plan(),t0=performance.now(),dur=to-from>3?900:650;if(anim)cancelAnimationFrame(anim);
+ const f=now=>{const u=Math.min(1,(now-t0)/dur),a=u<0.6?1-u/0.6:0,fill=u<0.6?from:from+(to-from)*(u-0.6)/0.4;
+  drawDock(fill/p.tank,u<0.6?a:(to-from>3?null:0));if(u<1)anim=requestAnimationFrame(f);else{anim=null;drawDock(to/p.tank,null);done&&done()}};
+ anim=requestAnimationFrame(f)}
+function r1(){const p=plan();if(!p)return;
+ $("#s1math").innerHTML=`<div class="maths">Fuel for the Mars burn = (empty ships + cargo) × (e<sup>Δv ÷ (Isp × g)</sup> − 1)<br>= ${fmt(p.dry)} t × (e<sup>3.6 ÷ ${fmt(VE,2)}</sup> − 1) = ${fmt(p.dry)} t × ${fmt(mr(DV.TMI)-1,2)} = <b>${fmt(p.prop)} t</b> of methane and oxygen (Isp 380 s).</div>
+ <div class="stats">${stat("a","Fuel needed",fmt(p.prop)+" t",`for ${p.ships} ship${p.ships>1?"s":""}`)+stat("b","Each tanker brings",fmt(p.load,1)+" t",p.R.self?"a Starship-class tanker":"85% of the payload; the rest is tank")+stat("r","Tankers needed",fmt(p.tank),`one every ${p.R.cad} days`)+(p.bad?stat("x","Lost to boil-off","more than you bring",`over ${fmt(p.days/365,0)} years of launches`):stat("x","Lost to boil-off",fmt(p.loss)+" t",`over ${fmt(p.days)} days of waiting`))}</div>`;
+ const left=Math.max(0,p.tank-S.dock);
+ $("#dockbtn").disabled=left===0;$("#autobtn").disabled=left===0;
+ let v;if(left===0)v=`<div class="verdict good"><b>Tanks full.</b> ${fmt(S.dock)} tanker flights, ${p.days>730?"about "+fmt(p.days/365,0)+" years":fmt(p.days)+" days"} of launches. ${p.bad?"In real life this would not work: so much fuel boils away while you wait that it is hopeless without cooled tanks. In the game we let you go on.":"Ready for the next step."}</div>`;
+ else v=`<div class="verdict ${p.bad?"bad":"warn"}">Docked <b>${fmt(S.dock)}</b> of <b>${fmt(p.tank)}</b> tankers. ${p.bad?`With one launch every ${p.R.cad} days, ${fmt(p.tank)} tankers take about ${fmt(p.days/365,0)} years, and the fuel would boil away faster than it arrives. Small rockets cannot refuel a big ship before the fuel boils away. Press Auto-fill to see it through, but this is why reusable heavy tankers matter.`:`${fmt(left)} to go.`}</div>`;
+ $("#s1out").innerHTML=v;drawDock(S.dock/p.tank,null);nextBtn(1)}
+$("#dockbtn").onclick=()=>{const p=plan();if(!p||S.dock>=p.tank||anim)return;const a=S.dock;S.dock++;save();animDock(a,S.dock,r1)};
+$("#autobtn").onclick=()=>{const p=plan();if(!p||S.dock>=p.tank)return;const a=S.dock;S.dock=p.tank;save();animDock(a,S.dock,r1)};
+
+/* ---------- Stage 3 ---------- */
+function r2(){const L=locked(2),m=S.moon,mp=moonProp(),p=plan();
+ $("#s2math").innerHTML=`<div class="maths">Δv to land on the Moon from low Earth orbit = 4.04 + 1.87 = 5.91 km/s → fuel = (100 t ship + 20 t base) × (e<sup>5.91 ÷ ${fmt(VE,2)}</sup> − 1) = <b>${fmt(mp)} t</b>, about ${Math.ceil(mp/p.load)} more tanker flights. Water in Cabeus soil: 5.6% → each tonne of soil holds about 56 kg of water → split by electricity into about 50 kg of oxygen and 6 kg of hydrogen.</div>`;
+ segButtons($("#md"),[[30,"30 days","a quick check"],[90,"90 days","a season of tests"],[180,"180 days","as long as a Mars cruise"]],m.days,d=>{if(m.ran)return;m.days=d;save();r2()},L||m.ran);
+ $("#moonrun").disabled=!m.days||m.ran;
+ if(m.ran){const ok=m.score>0.6;
+  $("#s2out").innerHTML=`<div class="verdict ${ok?"good":"warn"}"><b>${m.days} days on the Moon.</b> The ice plant dug ${fmt(m.days*2)} t of soil and made about ${fmt(m.days*100)} kg of oxygen; the 4-person test crew breathed ${fmt(m.days*4*O2PP)} kg of it. <b>${m.fails} breakdown${m.fails===1?"":"s"}</b> found and fixed${m.far?`, ${m.far} of them needing a part sent from Earth, which arrived in about 3 days`:""}. Lessons learned make your Mars machines break <b>${fmt(m.score*60)}% less often</b>.</div>
+  <ul class="log">${m.log.map(l=>`<li><b>Day ${l[0]}</b>${l[1]}. <span class="note">${l[2]}.</span></li>`).join("")||'<li>Nothing broke. Lucky, or the test was too short to find the weak parts.</li>'}</ul>`}
+ else $("#s2out").innerHTML="";
+ segButtons($("#mf"),[["moon","Make fuel from Moon ice","adds a margin of fuel for later"],["earth","Bring all fuel from Earth","simpler: no Moon fuel plant"]],m.fuel,k=>{m.fuel=k;save();r2()},L);
+ const em=Math.exp(DV.LEO/(350*G0/1000)),lm=Math.exp((DV.MOONLAND)/(450*G0/1000));
+ $("#s2fuel").innerHTML=`<div class="maths">Lifting 1 kg of fuel from Earth's surface to low orbit: Δv 9.4 km/s → about ${fmt(em,1)} kg at lift-off for each kg in orbit.<br>Lifting 1 kg of fuel made from Moon ice to low lunar orbit: Δv 1.87 km/s with hydrogen-oxygen engines (Isp about 450 s) → about ${fmt(lm,2)} kg.<br>From low lunar orbit, about 1.4 km/s more reaches the edge of Earth's pull, where a Mars ship could fill up.</div>${m.fuel?`<div class="verdict">${m.fuel==="moon"?"The Moon's shallow gravity makes its fuel cheap to move, once a mine and a factory are built there. Your Mars ships leave with <b>10% extra fuel</b> as a safety margin.":"No Moon factory to build or look after. Your ships leave with exactly the fuel they need and no spare."}</div>`:""}`;
+ nextBtn(2)}
+$("#moonrun").onclick=()=>{const m=S.moon;if(!m.days||m.ran)return;let fails=0,far=0;m.log=[];
+ for(let d=1;d<=m.days;d++)if(Math.random()<0.025){const f=FAILS[Math.floor(Math.random()*FAILS.length)];fails++;const fr=Math.random()<0.25;if(fr)far++;
+  m.log.push([d,f[0]+(fr?", and needed a part from Earth":", fixed by the crew"),"Real-life link: "+f[1]])}
+ m.ran=true;m.fails=fails;m.far=far;m.score=Math.min(1,m.days/180)*(fails?1:0.8);save();r2()};
+
+/* ---------- Stage 4 ---------- */
+const oc=$("#orb"),og=oc.getContext("2d");
+function trip(){if(!S.win.dep)return null;const T=S.win.fast?180:S.win.T;return {dep:S.win.dep,T,arr:S.win.dep+T*DAY}}
+function drawOrb(dep,T){const dpr=window.devicePixelRatio||1,W=oc.clientWidth||400,H=oc.clientHeight||400;oc.width=W*dpr;oc.height=H*dpr;og.setTransform(dpr,0,0,dpr,0,0);og.clearRect(0,0,W,H);
+ const cx=W/2,cy=H/2,s=Math.min(W,H)/2/1.75,P=([x,y])=>[cx+x*s,cy-y*s];
+ [["E",365.25,"#2b5d86"],["M",687,"#7a3f22"]].forEach(([k,per,c])=>{og.strokeStyle=c;og.lineWidth=1.2;og.beginPath();for(let i=0;i<=120;i++){const [x,y]=P(pos(k,(dep||TODAY)+i/120*per*DAY));i?og.lineTo(x,y):og.moveTo(x,y)}og.stroke()});
+ og.fillStyle="#ffd36b";og.beginPath();og.arc(cx,cy,8,0,7);og.fill();
+ og.font="12.5px IBM Plex Sans, sans-serif";
+ if(dep){const e=pos("E",dep),re=rad(e),le=lon(e),ma=pos("M",dep+T*DAY),rm=rad(ma);
+  const a=(re+rm)/2,ec=(rm-re)/(rm+re),span=S.win.fast?(lon(ma)-le+720)%360:180;
+  og.strokeStyle="#e8c46a";og.setLineDash([5,4]);og.lineWidth=1.6;og.beginPath();
+  for(let i=0;i<=90;i++){const th=i/90*span,r=S.win.fast?re+(rm-re)*Math.sin(i/90*Math.PI/2):a*(1-ec*ec)/(1+ec*Math.cos(th*D)),ang=(le+th)*D;const [x,y]=P([r*Math.cos(ang),r*Math.sin(ang)]);i?og.lineTo(x,y):og.moveTo(x,y)}
+  og.stroke();og.setLineDash([]);
+  const md=pos("M",dep),[mx0,my0]=P(md);og.fillStyle="rgba(226,104,60,.45)";og.beginPath();og.arc(mx0,my0,4.5,0,7);og.fill();
+  const [ex,ey]=P(e),[mx,my]=P(ma);og.fillStyle="#74c7ff";og.beginPath();og.arc(ex,ey,6,0,7);og.fill();og.fillStyle="#e2683c";og.beginPath();og.arc(mx,my,5.5,0,7);og.fill();
+  const lab=(x,y,t,c)=>{og.fillStyle=c;const w=og.measureText(t).width;og.fillText(t,Math.max(4,Math.min(x+9,W-w-4)),Math.max(14,Math.min(y-8,H-22)))};
+  lab(ex,ey,"Earth at launch","#9fd3ff");lab(mx,my,"Mars at arrival","#ffb38f");lab(mx0,my0+18,"Mars at launch","#a3634a")}
+ og.fillStyle="#8a97a8";og.fillText("Seen from above; dashed line = your path",8,H-8)}
+function r3(){const L=locked(3),p=plan();
+ segButtons($("#wn"),WIN.map(([t,T],i)=>[t,"Leave about "+fmtD(t),(t<TODAY?"closing now · ":"")+"cruise "+Math.round(T)+" days"]),S.win.dep,t=>{const w=WIN.find(x=>x[0]===t);S.win.dep=t;S.win.T=Math.round(w[1]);save();r3()},L);
+ segButtons($("#sp"),[[false,"Slow and cheap","Hohmann path · 3.6 km/s"],[true,"Fast, 180 days","about 4.3 km/s · less radiation"]],S.win.fast,f=>{S.win.fast=f;save();r3()},L);
+ const tr=trip();drawOrb(tr&&tr.dep,tr?tr.T:0);
+ if(!tr){$("#s3out").innerHTML=`<p class="note">Pick a window to see your path, the radiation dose and the supplies you use on the way.</p>`;nextBtn(3);return}
+ const n=p.n,dose=tr.T*DOSE_CRUISE,d=dist(tr.arr);
+ $("#s3out").innerHTML=`<div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:0">${stat("b","Leave Earth",fmtD(tr.dep),"")+stat("r","Arrive at Mars",fmtD(tr.arr),tr.T+" days in space")+stat("x","Radiation dose",fmt(dose)+" mSv",`${fmt(dose/DOSE_LIMIT*100)}% of NASA's 600 mSv career limit`)+stat("a","Message delay at arrival",delay(d),"one way, at the speed of light")+stat("o","Oxygen breathed",fmt(n*tr.T*O2PP/1000,1)+" t",`${n} people × ${O2PP} kg a day`)+stat("g","Food eaten",fmt(n*tr.T*FOODPP/1000,1)+" t",`and ${fmt(n*tr.T*WATERPP*(1-RECYCLE))} kg of water lost, with 98% recycled`)}</div>
+ <div class="verdict">${S.win.fast?`Going fast needs more fuel: ${fmt(p.propFast)} t instead of ${fmt(p.prop)} t, so your team flies <b>${fmt(Math.max(0,p.tankFast-p.tank))} extra tankers</b>. In return the crew spends ${Math.round(S.win.T-180)} fewer days in deep space.`:`The slow path: the least fuel, the most time in space.`} For comparison, Mangalyaan cruised for <b>298 days</b>. In deep space Curiosity's radiation detector measured about <b>1.8 mSv a day</b>, roughly what a hospital CT scan gives every few days.</div>`;
+ nextBtn(3)}
+
+/* ---------- Stage 5 ---------- */
+function odds(){const m=S.moon;let pr=0.86+(m.fuel==="moon"?0.04:0)+0.06*m.score+(S.land.e?ENTRY[S.land.e].p:0)-(S.win.fast?0.03:0);return Math.min(0.97,Math.max(0.6,pr))}
+function r4(){const L=locked(4)||!!S.land.res,p=plan();
+ segButtons($("#en"),Object.entries(ENTRY).map(([k,e])=>[k,e.n,e.sub]),S.land.e,k=>{S.land.e=k;save();r4()},L);
+ segButtons($("#si"),Object.entries(SITES).map(([k,s])=>[k,s.n,s.sub]),S.land.site,k=>{S.land.site=k;save();r4()},L);
+ const ready=S.land.e&&S.land.site;$("#landbtn").disabled=!ready||!!S.land.res;
+ $("#s4odds").innerHTML=ready?`<div class="verdict">Chance each ship lands safely: <b>${fmt(odds()*100)}%</b>. It goes up with spare fuel (Moon fuel ${S.moon.fuel==="moon"?"yes":"no"}), with a longer Moon test (${S.moon.days} days) and by braking into orbit first; it goes down a little after the fast path, which hits the air harder. ${p.ships>1?`Your ${p.ships} ships land one by one.`:"You have one ship to land."} The site you pick decides your sunlight (${fmt(SITES[S.land.site].sun*100)}% of the equator's), your water (ice is ${S.land.site==="arc"?"right under your feet":S.land.site==="jez"?"deeper and patchier":"hard to find"}) and how much power heating takes.</div>`:"";
+ const r=S.land.res;
+ $("#s4out").innerHTML=r?`<div class="verdict ${r.lost?"warn":"good"}">${r.msg}</div>`:"";nextBtn(4)}
+$("#landbtn").onclick=()=>{if(S.land.res||!S.land.e||!S.land.site)return;const p=plan(),pr=odds();let lost=0,abort=false,lines=[];
+ for(let i=0;i<p.ships;i++){const ok=Math.random()<pr;if(i===0){if(!ok)abort=true}else if(!ok)lost++}
+ const share=p.ships>1?lost/p.ships:0;
+ let msg=abort?"The crew ship's radar glitched during descent, so it aborted back to orbit and landed safely the next sol. ":"<b>The crew ship touched down.</b> ";
+ msg+=p.ships>1?(lost?`<b>${lost} of ${p.ships-1} cargo ship${p.ships>2?"s":""} crashed.</b> You lose ${fmt(share*100)}% of your building parts and food. `:p.ships>2?`All ${p.ships-1} cargo ships landed nearby. `:"The cargo ship landed nearby. "):"";
+ msg+=`Welcome to Mars. A message home takes ${delay(dist(trip().arr))}.`;
+ S.land.res={lost,share,abort,msg};save();r4()};
+
+/* ---------- Stage 6: the colony ---------- */
+function newColony(){const p=plan(),st=SITES[S.land.site],n=p.n,keep=1-((S.land.res&&S.land.res.share)||0),tr=trip();
+ const b={solar:Math.max(1,Math.ceil(n*st.heat*1.15/(SOLAR_KW*st.sun))),fission:0,oxy:0,drill:0,green:0,brick:0,hab:0,sab:0};
+ const sup=[];WINS_AFTER(tr.dep).forEach(([t,T])=>{const s=Math.round((t+T*DAY-tr.arr)/SOL);if(s>0)sup.push(s)});
+ return {sol:0,land:tr.arr,crew:n,beds:n,o2:n*O2PP*40,water:n*WATERPP*60,food:n*FOODPP*400*keep,prop:0,imp:+(n*PER.build*keep).toFixed(1),health:85,
+  dose:Math.round(tr.T*DOSE_CRUISE),shield:0,tau:0.5,storm:0,stormBig:false,b,broken:{},q:[],log:[[0,"Landed. "+n+" crew, beds for "+n+", oxygen for 40 sols.","good"]],goals:{},
+  made:{o2:0,food:0,prop:0,water:0},peak:n,sup:sup.slice(0,4),supI:0,newcomers:0,last:{},over:false,fails:0,storms:0,maxTau:0.5}}
+function WINS_AFTER(dep){return windows(dep+500*DAY,Math.min(Date.UTC(2049,0,1),dep+3300*DAY)).slice(0,4)}
+const C=()=>S.col;
+const work=(c,k)=>Math.max(0,c.b[k]-(c.broken[k]||0));
+const dustF=t=>Math.min(1,Math.exp(-0.33*(t-0.5)));
+function logc(c,txt,cls){c.log.unshift([c.sol,txt,cls||""]);if(c.log.length>40)c.log.length=40}
+function tick(c){if(c.over)return;const st=site(),t=c.land+c.sol*SOL,ls=Ls(t),dusty=ls>=180;const L={};
+ // weather
+ if(c.storm>0){c.storm--;if(c.storm===0){c.tau=0.5;logc(c,"The dust storm has cleared. Full sunlight again.","good")}}
+ else if(Math.random()<(dusty?0.006:0.0015)){const big=Math.random()<0.15;c.storm=big?40+Math.floor(Math.random()*50):10+Math.floor(Math.random()*20);c.tau=big?6+Math.random()*4.8:1.5+Math.random()*1.5;c.stormBig=big;c.storms++;c.maxTau=Math.max(c.maxTau,c.tau);
+  logc(c,(big?"A planet-wide dust storm":"A regional dust storm")+" has arrived. Sunlight is down to about "+fmt(dustF(c.tau)*100)+"% for "+c.storm+" sols.","bad")}
+ // power
+ const solar=work(c,"solar")*SOLAR_KW*st.sun*dustF(c.tau),nuke=work(c,"fission")*10,P=solar+nuke;
+ const habLoad=c.beds*st.heat;let avail=P-habLoad;const cold=avail<0;const r={};let need=0,give=0;
+ for(const k of PRIO){const nk=work(c,k)*BLD[k].kw;need+=nk;const g=nk>0?Math.max(0,Math.min(1,avail/nk)):1;r[k]=g;avail-=g*nk;give+=g*nk}
+ // crew time
+ let hrs=c.crew*6*(c.health<40?0.5:1);const up=ORDER.reduce((s,k)=>s+work(c,k)*BLD[k].up,0);const eff=up>0?Math.min(1,hrs/up):1;let spare=Math.max(0,hrs-up);
+ while(spare>0&&c.q.length){const j=c.q[0],u=Math.min(spare,j.left);j.left-=u;spare-=u;if(j.left<=0.001){c.q.shift();
+   if(j.fix){c.broken[j.k]=Math.max(0,(c.broken[j.k]||0)-1);logc(c,BLD[j.k].n+" repaired.","good")}
+   else{c.b[j.k]++;if(j.k==="hab")c.beds+=4;logc(c,BLD[j.k].n+" finished.","good")}}}
+ // production
+ const o2m=work(c,"oxy")*3*24.66*MOXIE_G_PER_KWH/1000*r.oxy*eff, gr=work(c,"green")*r.green*eff, o2g=gr*2*O2PP, foodg=gr*FOODPP;
+ const h2o=work(c,"drill")*150*st.ice*r.drill*eff;
+ let sabR=work(c,"sab")*r.sab*eff;const wNeed=sabR*35;
+ c.water+=h2o;if(wNeed>0&&c.water<wNeed+c.crew*WATERPP*5){sabR*=Math.max(0,(c.water-c.crew*WATERPP*5)/wNeed)}
+ const pm=sabR*77;c.water-=sabR*35;c.prop+=pm/1000;
+ c.shield=Math.min(c.beds,c.shield+work(c,"brick")*0.1*r.brick*eff);
+ // use
+ const o2use=c.crew*O2PP,foodUse=c.crew*FOODPP,wUse=c.crew*WATERPP*(1-RECYCLE)+work(c,"green")*2;
+ c.o2+=o2m+o2g-o2use;c.food+=foodg-foodUse;c.water-=wUse;
+ c.made.o2+=o2m+o2g;c.made.food+=foodg;c.made.prop+=pm/1000;c.made.water+=h2o;
+ const short={o2:c.o2<=0,food:c.food<=0,water:c.water<=0};c.o2=Math.max(0,c.o2);c.food=Math.max(0,c.food);c.water=Math.max(0,c.water);
+ // breakdowns (Moon test lessons cut the rate)
+ const rate=0.003*(1-0.6*S.moon.score);
+ for(const k of ["oxy","drill","green","brick","sab","solar"])for(let i=0;i<work(c,k);i++)if(Math.random()<rate){c.broken[k]=(c.broken[k]||0)+1;c.fails++;
+  if(c.imp>=0.05){c.imp=+(c.imp-0.05).toFixed(2);c.q.unshift({k,left:10,fix:true});logc(c,BREAK[k]+". Repair queued first (10 crew-hours, 50 kg of spares).","bad")}
+  else logc(c,BREAK[k]+". No spare parts left: it waits for the next supply ship.","bad")}
+ // health and radiation
+ const cov=c.beds?c.shield/c.beds:0;c.dose+=DOSE_SURF*(1-0.5*cov);
+ let target=85-(c.crew>c.beds?15:0)+(foodg>=0.25*foodUse?5:0)-(c.dose>DOSE_LIMIT?10:0);
+ c.health+=(target-c.health)*0.03;if(short.o2)c.health-=15;if(short.water)c.health-=8;if(short.food)c.health-=3;if(cold)c.health-=4;
+ c.health=Math.max(0,Math.min(100,c.health));
+ // supply ships
+ if(c.supI<c.sup.length&&c.sol>=c.sup[c.supI]){const p=plan(),cargo=p.ships*SHIP_CARGO,foodT=c.crew*FOODPP*800/1000;c.food+=foodT*1000;c.imp=+(c.imp+Math.max(10,cargo-foodT)).toFixed(1);c.supI++;
+  let msg=`Supply ship ${c.supI} landed: ${fmt(Math.max(10,cargo-foodT))} t of parts and food for 800 sols.`;
+  if(c.beds>=c.crew+p.n){c.crew+=p.n;c.newcomers+=p.n;c.peak=Math.max(c.peak,c.crew);msg+=` ${p.n} new crew walked in!`}else msg+=` ${p.n} new crew had to stay on Earth: not enough beds (${c.beds} beds for ${c.crew+p.n} people). Build habitat modules before the next ship.`;
+  logc(c,msg,"good")}
+ // remember this sol
+ Object.assign(L,{P,solar,nuke,habLoad,need,give,cold,o2net:o2m+o2g-o2use,foodnet:foodg-foodUse,wnet:h2o-wUse-sabR*35,o2m:o2m+o2g,o2use,foodg,foodUse,eff,cov,dusty,ls});c.last=L;
+ // goals
+ const G=c.goals,mark=(k,txt)=>{if(!G[k]){G[k]=c.sol+1;logc(c,"Goal reached: "+txt+"!","good")}};
+ if(c.sol+1>=100)mark("g1","survive 100 sols");
+ if(o2m+o2g>=o2use)mark("g2","the colony makes all its own oxygen");
+ if(foodg>=0.5*foodUse)mark("g3","greenhouses grow half the food");
+ if(c.prop>=RETURN_T)mark("g4","a ship is full for the trip home");
+ if(c.newcomers>0)mark("g5","the next crew has arrived");
+ c.sol++;
+ if(c.health<=0){c.over=true;logc(c,"The crew is too weak to carry on. The mission is called off and everyone is evacuated.","bad")}
+}
+const GOALS=[["g1","Survive 100 sols"],["g2","Make your own oxygen"],["g3","Grow half your food"],["g4",()=>`Refill a ship for the trip home (${fmt(RETURN_T)} t of fuel)`],["g5","Welcome the next crew"]];
+function advice(c){const L=c.last;if(c.over)return ["bad","The mission has ended. Press Finish mission to see your summary, or Restart to try again."];
+ if(!L.P&&L.P!==0)return ["","Press Play, or Step one sol. Your first job: oxygen. You landed with enough for 40 sols."];
+ const left=(store,net)=>net<0?Math.floor(store/-net):Infinity;
+ const lo=left(c.o2,L.o2net),lw=left(c.water,L.wnet),lf=left(c.food,L.foodnet);
+ const queued=k=>c.q.some(j=>j.k===k);
+ if(L.cold)return ["bad",`Not enough power to heat the habitat (${fmt(L.P,1)} kW made, ${fmt(L.habLoad,1)} kW needed). Build a fission reactor or another solar farm.`];
+ if(lo<60)return [lo<15?"bad":"",`Oxygen will run out in ${lo} sol${lo===1?"":"s"}${queued("oxy")?" — an oxygen plant is being built":(L.need>L.give+0.1?" — your oxygen plants are short of power: build more power":" — build another oxygen plant")}.`];
+ if(lw<60)return [lw<15?"bad":"",`Water will run out in ${lw} sols — ${work(c,"drill")?"build another ice drill":"build an ice drill"}${S.land.site!=="arc"?" (ice is scarce here, so expect a small yield)":""}.`];
+ if(lf<120)return [lf<30?"bad":"",`Food will run out in ${lf} sols — build a greenhouse${c.supI<c.sup.length?` (next supply ship in ${c.sup[c.supI]-c.sol} sols)`:""}.`];
+ if(L.need>L.give+0.1)return ["",`Machines are running at ${fmt(L.give/L.need*100)}% for lack of power${c.storm?" (dust storm)":""}. Build a fission reactor or a solar farm.`];
+ if(L.eff<1)return ["",`The crew cannot keep up with all the machines (${fmt(L.eff*100)}% looked after). More people arrive with the supply ships, if you have beds.`];
+ if(c.crew>c.beds)return ["",`Too crowded: ${c.crew} people, ${c.beds} beds. Build a habitat module.`];
+ const nx=c.supI<c.sup.length?` Next supply ship in ${c.sup[c.supI]-c.sol} sols.`:"";
+ if(!c.goals.g4&&c.b.sab===0&&c.goals.g2)return ["ok","Air is steady. To fly home one day you need fuel: build a Sabatier fuel plant (it needs a lot of power and water)."+nx];
+ const cov=c.beds?c.shield/c.beds:0;
+ if(c.dose>DOSE_LIMIT&&cov<1)return ["",`The first crew has passed NASA's 600 mSv career limit (${fmt(c.dose)} mSv). In real life they would rotate home soon. Brick printers shield the beds and slow the dose.`+nx];
+ if(c.dose>DOSE_LIMIT*0.8&&cov<1)return ["",`The first crew's radiation dose is ${fmt(c.dose)} mSv, close to NASA's 600 mSv career limit. Brick printers shield the beds and slow it down.`+nx];
+ return ["ok","All systems steady."+nx]}
+const meter=(label,val,frac,sub,state)=>`<div class="mt ${state||""}"><span>${label}</span><b>${val}</b><div class="m"><u style="width:${Math.max(0,Math.min(100,frac*100))}%"></u></div><i>${sub}</i></div>`;
+let blEls=null;
+function buildMenu(){const el=$("#blds");el.innerHTML="";blEls={};
+ ORDER.forEach(k=>{const B=BLD[k],d=document.createElement("div");d.className="bld";d.style.borderTopColor=B.c;
+  d.innerHTML=`<b>${B.n}</b><span class="o"></span><span class="c">${B.imp} t parts · ${B.hrs} crew-hours · ${B.kw?B.kw+" kW":"no power use"} · ${B.up} h/sol care</span><span class="n"></span>`;
+  const bt=document.createElement("button");bt.type="button";bt.className="btn";bt.textContent="Build";bt.onclick=()=>{const c=C();if(!c||c.over||c.imp<B.imp)return;c.imp=+(c.imp-B.imp).toFixed(2);c.q.push({k,left:B.hrs});logc(c,B.n+" ordered.","");save();r5()};
+  d.appendChild(bt);el.appendChild(d);blEls[k]={o:d.querySelector(".o"),n:d.querySelector(".n"),bt}})}
+function r5(){const c=C();if(!c)return;if(!blEls)buildMenu();const L=c.last,st=site();
+ $("#solno").textContent="Sol "+fmt(c.sol);
+ const t=c.land+c.sol*SOL;$("#soldate").textContent=fmtD(t)+" on Earth · Mars season Ls "+fmt(Ls(t))+"°"+(Ls(t)>=180?" (dust-storm season)":"")+(c.storm?" · storm: "+c.storm+" sols left":"");
+ const lo=L.o2net<0?c.o2/-L.o2net:Infinity,lw=L.wnet<0?c.water/-L.wnet:Infinity,lf=L.foodnet<0?c.food/-L.foodnet:Infinity;
+ const sl=x=>x===Infinity?"steady or rising":fmt(x)+" sols left";const cls=x=>x<15?"crit":x<60?"lo":"";
+ const P=L.P!=null?L.P:work(c,"solar")*SOLAR_KW*st.sun,dem=c.beds*st.heat+ORDER.reduce((s,k)=>s+work(c,k)*BLD[k].kw,0);
+ $("#meters").innerHTML=
+  meter("Oxygen",fmt(c.o2)+" kg",Math.min(1,lo/120),sl(lo)+(L.o2m!=null?` · made ${fmt(L.o2m,1)}, used ${fmt(L.o2use,1)} kg/sol`:""),cls(lo))+
+  meter("Water",fmt(c.water)+" kg",Math.min(1,lw/120),sl(lw),cls(lw))+
+  meter("Food",fmt(c.food/1000,1)+" t",Math.min(1,lf/400),sl(lf)+(L.foodg?` · grown ${fmt(L.foodg/L.foodUse*100)}%`:""),cls(lf))+
+  meter("Power",fmt(P,1)+" kW",dem?Math.min(1,P/dem):1,`needs ${fmt(dem,1)} kW${c.storm?" · storm":""}`,P<dem?"lo":"")+
+  meter("Fuel for home",fmt(c.prop,1)+" t",c.prop/RETURN_T,`target ${fmt(RETURN_T)} t`,"")+
+  meter("Beds",c.crew+" / "+c.beds,c.beds?Math.min(1,c.crew/c.beds):1,c.crew>c.beds?"too crowded":"people / beds",c.crew>c.beds?"lo":"")+
+  meter("Health",fmt(c.health),c.health/100,c.health>70?"good":c.health>40?"tired":"in danger",c.health<40?"crit":c.health<70?"lo":"")+
+  meter("Radiation",fmt(c.dose)+" mSv",c.dose/DOSE_LIMIT,`first crew · limit 600 · shielded ${fmt((c.beds?c.shield/c.beds:0)*100)}%`,c.dose>DOSE_LIMIT?"crit":c.dose>DOSE_LIMIT*0.8?"lo":"")+
+  `<div class="mt" style="grid-column:1/-1"><span>Imported parts in store</span><b>${fmt(c.imp,1)} t</b><i>${c.supI<c.sup.length?`next supply ship in ${c.sup[c.supI]-c.sol} sols`:"no more supply ships scheduled in this game"}</i></div>`;
+ const [k,txt]=advice(c);const a=$("#advice");a.className="advice "+k;a.textContent=txt;
+ ORDER.forEach(k=>{const e=blEls[k],B=BLD[k];e.o.textContent=B.o();const br=c.broken[k]||0,q=c.q.filter(j=>j.k===k&&!j.fix).length;
+  e.n.textContent=`Built: ${c.b[k]}${br?` (${br} broken)`:""}${q?` · ${q} being built`:""}`;e.bt.disabled=c.over||S.fin||c.imp<B.imp;e.bt.textContent=c.imp<B.imp?"Not enough parts":"Build"});
+ $("#queue").innerHTML=c.q.length?"<b>Work queue:</b> "+c.q.slice(0,5).map(j=>(j.fix?"repair ":"")+BLD[j.k].n+" ("+fmt(j.left)+" h left)").join(" → ")+(c.q.length>5?" …":""):"<b>Work queue:</b> empty";
+ $("#goals").innerHTML=GOALS.map(([g,n])=>`<li class="${c.goals[g]?"y":""}">${typeof n==="function"?n():n}${c.goals[g]?` <span class="note">· sol ${c.goals[g]}</span>`:""}</li>`).join("");
+ $("#log").innerHTML=c.log.slice(0,25).map(([s,t,cl])=>`<li class="${cl}"><b>Sol ${s}</b>${t}</li>`).join("");
+ $("#play").disabled=$("#step").disabled=c.over||S.fin;$("#finish").disabled=S.fin;
+ document.querySelectorAll("#spd button").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.v===speed)));
+ if(S.fin)finale()}
+let timer=null,speed=5,acc=0;
+[[1,"1 sol/s"],[5,"5 sols/s"],[20,"20 sols/s"]].forEach(([v,t])=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.dataset.v=v;b.onclick=()=>{speed=v;r5()};$("#spd").appendChild(b)});
+function stop(){if(timer){clearInterval(timer);timer=null}$("#play").textContent="Play";save()}
+$("#play").onclick=()=>{if(timer)return stop();const c=C();if(!c||c.over)return;$("#play").textContent="Pause";
+ timer=setInterval(()=>{const c=C();if(!c||c.over||S.fin){stop();r5();return}acc+=speed/10;let n=Math.floor(acc);acc-=n;while(n-->0&&!c.over)tick(c);if(c.sol%10===0)save();r5()},100)};
+$("#step").onclick=()=>{const c=C();if(!c||c.over)return;stop();tick(c);save();r5()};
+$("#finish").onclick=()=>{stop();S.fin=true;save();renderProg();r5();try{$("#fin").scrollIntoView({behavior:"smooth"})}catch(e){}};
+function finale(){const c=C(),p=plan(),g=GOALS.filter(([k])=>c.goals[k]).length,R=ROCK[S.r];
+ const grown=c.last.foodUse?c.last.foodg/c.last.foodUse*100:0;
+ $("#fin").hidden=false;
+ $("#finbody").innerHTML=`<div class="stats">${stat("o","Goals reached",g+" of 5","")+stat("b","Sols on Mars",fmt(c.sol),c.over?"mission called off":"and counting")+stat("g","Oxygen made",fmt(c.made.o2/1000,1)+" t","from Mars air and plants")+stat("a","Fuel made",fmt(c.made.prop,1)+" t",`of ${fmt(RETURN_T)} t for the trip home`)+stat("r","Water mined",fmt(c.made.water/1000,1)+" t","from buried ice")+stat("o","Food grown now",fmt(grown)+"%","of what the crew eats")+stat("b","People",c.crew,`peak ${c.peak}, ${c.newcomers} newcomers`)+stat("x","Breakdowns · storms",c.fails+" · "+c.storms,"")}</div>`;
+ const lines=[`Mars Colony Simulator (Golapada)`,`Rocket: ${R.n}, ${p.hw} launch${p.hw>1?"es":""} and ${S.dock} tanker flights.`,`Moon test: ${S.moon.days} days, ${S.moon.fails} breakdowns fixed; fuel from ${S.moon.fuel==="moon"?"Moon ice":"Earth"}.`,
+  `Left Earth ${fmtD(S.win.dep)}, ${trip().T} days to Mars, landed at ${SITES[S.land.site].n}.`,
+  `Colony: ${fmt(c.sol)} sols, ${c.crew} people (${c.newcomers} newcomers). Made ${fmt(c.made.o2/1000,1)} t of oxygen, mined ${fmt(c.made.water/1000,1)} t of water, made ${fmt(c.made.prop,1)} t of fuel; greenhouses grow ${fmt(grown)}% of our food.`,
+  `Goals: ${GOALS.map(([k,n])=>(c.goals[k]?"[x] ":"[ ] ")+(typeof n==="function"?n():n)).join("; ")}.`,c.over?"The mission was called off and the crew evacuated.":"The colony is still going."];
+ $("#share").value=lines.join("\n")}
+$("#copy").onclick=async()=>{const t=$("#share");try{await navigator.clipboard.writeText(t.value);$("#copied").textContent="Copied."}catch(e){try{t.select();document.execCommand("copy");$("#copied").textContent="Copied."}catch(e2){$("#copied").textContent="Select the text and copy it yourself."}}};
+
+/* ---------- restart ---------- */
+let armed=false;$("#restart").onclick=()=>{const b=$("#restart");if(!armed){armed=true;b.textContent="Sure? Press again";setTimeout(()=>{armed=false;b.textContent="Restart"},3000);return}
+ armed=false;b.textContent="Restart";stop();S=fresh();blEls=null;$("#fin").hidden=true;try{localStorage.removeItem(KEY)}catch(e){}save();show()};
+
+/* ---------- trust tables ---------- */
+function trust(){const rows=[
+ ["Sunlight at Mars","43% of Earth's","586.2 W/m² vs 1,361 W/m² (0.431)","NASA NSSDC Mars Fact Sheet"],
+ ["Δv, ground to low orbit","9.4 km/s","about 9.4 km/s to 300 km","Delta-v budget tables (Wikipedia)"],
+ ["LVM3 to low orbit","10 t (8 t today)","8 t; 10 t with C32 stage","ISRO via Business Today, The Week"],
+ ["Falcon Heavy to low orbit","63.8 t","63,800 kg, fully expended","SpaceX"],
+ ["Starship-class to low orbit","100 t","100–150 t reusable (target)","SpaceX"],
+ ["Mars ship: empty mass, tanks","100 t, carries 100 t","about 100 t dry, 1,200 t of propellant","Wikipedia, SpaceX Starship"],
+ ["Engine efficiency (Isp)","380 s","Raptor Vacuum 380 s","Wikipedia, SpaceX Starship"],
+ ["LEO to Mars, Hohmann","3.6 km/s","3.6 km/s (typical 4.3)","Delta-v budget tables"],
+ ["Fast path","4.3 km/s, 180 days","4.34 km/s, 176 days","Mars Society Canada"],
+ ["Tanker flights per Mars ship","about 3 for a 55 t kit (crew of 4)","8 to 12 to fill a ship's 1,200 t tanks","Aerospace America (Rapp); The Space Review"],
+ ["LEO to low lunar orbit · landing","4.04 · 1.87 km/s","4.04 · 1.87 km/s","Delta-v budget tables"],
+ ["Water in Moon crater soil","5.6%","5.6 ± 2.9% (LCROSS, Cabeus)","Colaprete et al. 2010, Science"],
+ ["Surface ice at the Moon's poles","seen by Chandrayaan-1","M3 near-infrared ice signatures","Li et al. 2018, PNAS"],
+ ["Moon trip","about 3 days","Apollo 11: 16 to 19 July 1969","NASA"],
+ ["Window spacing","about 26 months","synodic period 779.94 days","NSSDC; Planetary Society"],
+ ["Hohmann cruise","236–282 days","about 8.5 months","Computed here; Delta-v tables"],
+ ["Mangalyaan's cruise","298 days","298 days (TMI to Mars orbit)","ISRO; Wikipedia"],
+ ["Cruise radiation","1.8 mSv/day","1.8 mSv/day (Curiosity RAD)","Zeitlin et al. 2013, Science"],
+ ["Surface radiation","0.67 mSv/day","0.67 mSv/day (RAD)","Hassler et al. 2014, Science"],
+ ["Career radiation limit","600 mSv","600 mSv, all ages and sexes","NASA OCHMO, 2022"],
+ ["Oxygen per person","0.84 kg/day","0.84 kg/day","NASA BVAD"],
+ ["Food per person","1.8 kg/day","1.7–2.4 kg/day with water","NASA ASCEND 2023 slides"],
+ ["Water recycled","98%","98% (ISS, 2023)","NASA"],
+ ["MOXIE","40 g per kWh","12 g/h at 300 W; 122 g in total","NASA/JPL 2023"],
+ ["Fission reactor","10 kW, 1.5 t","10 kWe about 1,500 kg; KRUSTY 2018","NASA Kilopower"],
+ ["Greenhouse per person","50 m² food, 25 m² air","about 50 m² food, 20–25 m² oxygen; analogues 70–165 m²","R. Wheeler, NASA; Mars On Earth"],
+ ["Dust storm thickness","up to 10.8","10.8 at Opportunity, 2018","NASA/JPL"],
+ ["Fuel from Mars air","CO₂ + 2H₂O → CH₄ + 2O₂","Sabatier + electrolysis","Chemistry"],
+ ["Fuel to fly home",fmt(RETURN_T)+" t","(110 t) × (e^(6.1/3.73) − 1)","Δv: 4.1 from tables + about 2 (rough)"],
+ ["Kit per person","11.7 t","game guess",""],
+ ["Boil-off","0.1% a day","game guess",""],
+ ["Landing odds, breakdowns, storms","see text","game guesses",""],
+ ["Solar farm","17.6 kW per 500 m² at the equator","game guess built on 586 W/m²",""],
+ ["Ice drill, brick printer, fuel plant","150 kg, 1 bed/10 sols, 8 kWh/kg","game guesses",""]];
+ $("#trust").innerHTML=`<tr><th>Number</th><th>In the simulator</th><th>Published</th><th>Source</th></tr>`+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td${r[2].startsWith("game")?' class="bad"':""}>${r[2]}</td><td>${r[3]}</td></tr>`).join("");
+ const past=[["Curiosity",Date.UTC(2011,10,26)],["Mangalyaan (left Earth orbit about 1 Dec)",Date.UTC(2013,11,1)],["MAVEN",Date.UTC(2013,10,18)],["InSight",Date.UTC(2018,4,5)],["Perseverance",Date.UTC(2020,6,30)]];
+ const ws=windows(Date.UTC(2011,0,1),Date.UTC(2021,0,1));
+ $("#wincheck").innerHTML=`<tr><th>Mission</th><th>Real departure</th><th>This page's Hohmann date</th><th>Gap</th></tr>`+past.map(([n,t])=>{const w=ws.reduce((a,b)=>Math.abs(b[0]-t)<Math.abs(a[0]-t)?b:a);const g=Math.round((w[0]-t)/DAY);
+  return `<tr><td>${n}</td><td>${fmtD(t)}</td><td>${fmtD(w[0])} (${Math.round(w[1])}-day cruise)</td><td class="${Math.abs(g)<=40?"ok":"bad"}">${g>0?"+":""}${g} days</td></tr>`}).join("")}
+
+trust();show();
+addEventListener("resize",()=>{if(S.st===1)r1();if(S.st===3)r3()});
+})();
+</script>
+<p class="gt" style="max-width:1200px;margin:6px auto 0;padding:10px max(16px,env(safe-area-inset-left,0px)) 28px;border-top:1px solid #1f2a38;font:400 13px/1.6 'IBM Plex Sans',system-ui,sans-serif;color:#8a97a8"><a href="about.html" style="color:#74c7ff">About Golapada</a> · <a href="about.html#privacy" style="color:#74c7ff">Privacy</a> · <a href="https://github.com/jarvisss007/SPACE-PRODUCT/issues/new?template=mistake.yml&amp;page=mars-colony.html&amp;title=Mistake%20on%20mars-colony.html" rel="noopener" style="color:#74c7ff">Report a mistake on this page</a></p>
+<script>try{const k='golapada-seen',f=(location.pathname.split('/').pop()||'index.html').replace('.hi.html','.html'),a=JSON.parse(localStorage.getItem(k)||'[]');if(!a.includes(f)){a.push(f);localStorage.setItem(k,JSON.stringify(a.slice(-300)))}}catch(e){}</script>

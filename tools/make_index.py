@@ -47,6 +47,7 @@ LABS = [
     ("kundli.html","Kundli Lab","A precise janma kundli in North and South Indian styles, checked against NASA: lagna, rashis, nakshatras, panchang, dashas and the real sky at birth, with honest border warnings and no predictions.","india ancient learn","night maths",'#ff9933'),
     ("know-yourself.html","Know Yourself","The Big Five personality questionnaire psychologists use: fifty public-domain statements, scored privately in your browser.","learn","",'#5fd6c4'),
     ("reading-test.html","The Reading Test","Take Forer's famous 1948 experiment yourself: a personal reading that feels uncannily right, and why it does.","learn","",'#b6a4ff'),
+    ("mars-colony.html","Mars Colony Simulator","Run a mission from lift-off, orbital refuelling and a Moon test to a Mars colony that makes its own air, water, food and fuel, using real published numbers.","mission learn india","orbits energy",'#e2683c'),
     ("mars-now.html","Mars Now","The time, season and sol at the Perseverance and Curiosity rover sites right now, plus how far away Mars is and how long a radio signal takes to get there.","explore learn","orbits",'#e2683c'),
     ("iss-life.html","Life on the ISS","Live through one day on the space station: 16 sunrises, 2½ hours of exercise, 98% recycled water, and the physics that keeps it up.","mission learn india","orbits",'#74c7ff'),
     ("eht-lab.html","Photographing a Black Hole","How eight radio dishes became one Earth-sized telescope to image M87* and Sgr A*: work out the sharpness, check the ring size with Einstein's formula, and see why the data flew on hard drives.","explore learn","light",'#ff9933'),
@@ -87,6 +88,7 @@ PATHS = [
    ("chandrayaan-3.html","Fly Chandrayaan-3's 40-day trip and land it yourself."),
    ("moon-sites.html","See where Vikram landed among every Moon landing."),
    ("gaganyaan-lab.html","What comes next: Indian astronauts on an Indian rocket."),
+   ("mars-colony.html","Now run your own mission: from lift-off to a colony on Mars."),
  ]),
  ("gravity","Gravity and orbits, step by step","For Class 9 and Class 11 physics: from falling to orbiting.",'#74c7ff',[
    ("iss-life.html","Why the space station goes round Earth every 92 minutes."),

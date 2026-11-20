@@ -1,0 +1,9 @@
+{
+ "lead": "Run a whole mission yourself: launch a crew and their kit from Earth, refuel in orbit, test everything on the Moon, fly to Mars when the planets line up, land, and then keep a small colony alive day by day by making air, water, food and fuel from Mars itself. The numbers come from real missions.",
+ "try": "In <b>Stage 1</b>, pick <b>Starship-class</b> and <b>Crew of 4</b>, then press <b>Next stage</b>. In Stage 2 press <b>Dock the next tanker</b> until the tanks are full (or press <b>Auto-fill</b>). Play on to <b>Stage 6</b>, press <b>Play</b>, and build an <b>Oxygen plant</b> first.",
+ "points": [
+  "Rockets are mostly fuel: only a few tonnes in every hundred reach orbit. So Mars ships go up with empty tanks and are filled by tanker flights.",
+  "Earth and Mars line up for the cheap trip only about every 26 months, and the journey takes about 8 to 9 months. India's Mangalyaan cruised for 298 days.",
+  "Each person breathes about 0.84 kg of oxygen a day. On Mars you must make it from the carbon dioxide air, as NASA's MOXIE machine proved, a little at a time."
+ ]
+}
