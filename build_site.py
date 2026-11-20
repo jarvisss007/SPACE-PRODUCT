@@ -298,7 +298,12 @@ def today_data() -> str:
     mon3 = {m[:3]: i for m, i in MONTHS.items()}
     eclipses = sorted({(f"{y}-{mon3[mo]:02d}-{d}", label) for y, mo, d, label in
                        re.findall(r"'(\d{4})([A-Z][a-z]{2})(\d{2})T':'(\d{1,2} [A-Za-z]+ \d{4} · total · [^']+)'", ecl)})
-    return json.dumps({"onthis": onthis, "neo": neo, "quiz": quiz, "showers": showers, "eclipses": [list(e) for e in eclipses]},
+    # the space station's orbit (two-line elements), refreshed daily inside Tonight's Sky by tools/refresh_tle.py
+    iss = None
+    m = re.search(r'\["ISS \(ZARYA\)",\s*"(1 25544[^"]+)",\s*"(2 25544[^"]+)"', (HERE / "tonight.html").read_text(encoding="utf-8"))
+    if m:
+        iss = [m.group(1), m.group(2)]
+    return json.dumps({"onthis": onthis, "neo": neo, "quiz": quiz, "showers": showers, "eclipses": [list(e) for e in eclipses], "iss": iss},
                       ensure_ascii=False, separators=(",", ":"))
 
 

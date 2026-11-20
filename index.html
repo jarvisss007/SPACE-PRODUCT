@@ -65,7 +65,7 @@ h2{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);m
 .bd-b,.bd-x{font:600 14px var(--display);letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:8px 12px;cursor:pointer;align-self:flex-start}
 .bd-b{background:var(--violet);color:#120a24;border:0}.bd-x{background:none;color:var(--dim);border:1px solid var(--line);margin-top:6px}
 .bd-b:focus-visible,.bd-x:focus-visible,.bd-l input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
-#tdBday span{margin-top:4px}#tdBday a{display:inline;color:var(--violet);text-decoration:underline}
+#tdBday span{margin-top:4px}#tdIss span{margin-top:4px}.bd-l select{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;max-width:240px;color-scheme:dark}#tdBday a{display:inline;color:var(--violet);text-decoration:underline}
 .td .tq b,.td details b,.td .tq i{display:inline;font-family:inherit;font-size:inherit;text-transform:none;line-height:inherit;margin:0;color:var(--ink)}
 footer{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}
 @media (max-width:560px){.hero{min-height:72vh;padding-top:36px}}
@@ -92,6 +92,7 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}
       <div class="td" style="--acc:var(--mars)"><div class="k">Asteroid this week</div><div id="tdRock"></div><a class="more" href="asteroid-watch.html">Every close pass →</a></div>
       <div class="td" style="--acc:var(--lox)"><div class="k">Question of the day</div><div id="tdQuiz"></div></div>
       <div class="td" style="--acc:var(--saffron)"><div class="k">Coming up in the sky</div><div id="tdSky"></div></div>
+      <div class="td" style="--acc:var(--lox)"><div class="k">Space station over you</div><div id="tdIss" aria-live="polite"></div><a class="more" href="satellite-watch.html">Every satellite, live →</a></div>
       <div class="td bd" style="--acc:var(--violet)"><div class="k">Your birthday in space</div><div id="tdBday"></div></div>
     </div>
     <p class="note" id="tdChal" style="font-size:14px;margin:12px 0 0"></p>
@@ -351,6 +352,34 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
   const d=new Date(),t=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()),dow=(new Date(t).getUTCDay()+6)%7,th=t+(3-dow)*864e5,y=new Date(th).getUTCFullYear(),w=1+Math.floor((th-Date.UTC(y,0,1))/(7*864e5)),key=y+"-W"+String(w).padStart(2,"0");
   let done=false;try{done=!!JSON.parse(localStorage.getItem("golapada-mc-done")||"{}")[key]}catch(e){}
   el.innerHTML=`🚀 This week's Mars challenge: <a href="mars-colony.html">${T[(y*53+w)%T.length]}</a>${done?' <span style="color:#5fd6a0">✓ done</span>':''}`})();
+// the space station over you: the next pass you can see in the next 3 days (station in sunlight, your sky dark, 10°+ up)
+(()=>{const box=$('tdIss');if(!box)return;if(!TODAY||!TODAY.iss){box.closest('.td').hidden=true;return}
+  const IN='Asia/Kolkata',CITY=[['Delhi',28.61,77.21,IN],['Mumbai',19.08,72.88,IN],['Bengaluru',12.97,77.59,IN],['Chennai',13.08,80.27,IN],['Kolkata',22.57,88.36,IN],['Hyderabad',17.39,78.49,IN],['Ahmedabad',23.02,72.57,IN],['Pune',18.52,73.86,IN],['Jaipur',26.91,75.79,IN],['Lucknow',26.85,80.95,IN],['Guwahati',26.14,91.74,IN],['Thiruvananthapuram',8.52,76.94,IN],['Hubballi',15.36,75.12,IN],['Mysuru',12.30,76.64,IN]];
+  const K='golapada-place';let place=null;try{place=JSON.parse(localStorage.getItem(K)||'null')}catch(e){}
+  const D=Math.PI/180,dirs=['north','north-east','east','south-east','south','south-west','west','north-west'],dir=a=>dirs[Math.round(((a%360)+360)%360/45)%8];
+  const sunEq=t=>{const n=t/864e5+2440587.5-2451545,L=(280.460+0.9856474*n)*D,g=(357.528+0.9856003*n)*D,lam=L+(1.915*Math.sin(g)+0.020*Math.sin(2*g))*D,eps=23.4393*D;return [Math.cos(lam),Math.cos(eps)*Math.sin(lam),Math.sin(eps)*Math.sin(lam)]};
+  const sunAlt=(t,lat,lon)=>{const v=sunEq(t),ra=Math.atan2(v[1],v[0]),dec=Math.asin(v[2]),gm=((280.46061837+360.98564736629*(t/864e5+2440587.5-2451545))%360)*D,H=gm+lon*D-ra;return Math.asin(Math.sin(lat*D)*Math.sin(dec)+Math.cos(lat*D)*Math.cos(dec)*Math.cos(H))/D};
+  let lib=null;const load=()=>lib||(lib=new Promise((ok,no)=>{if(window.satellite)return ok();const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)}));
+  const pick=()=>{box.innerHTML=`<span>Find out when you can see the space station from where you are: a bright, steady light crossing the sky in a few minutes.</span>
+    <label class="bd-l">Your city <select id="issCity"><option value="">Choose…</option>${CITY.map((c,i)=>`<option value="${i}">${c[0]}</option>`).join('')}</select></label>
+    <button type="button" id="issGeo" class="bd-b">Use my location</button><span class="note" id="issNote">Your place stays on this phone.</span>`;
+    $('issCity').onchange=e=>{const c=CITY[+e.target.value];if(c)go({n:c[0],lat:c[1],lon:c[2],tz:c[3]})};
+    $('issGeo').onclick=()=>{if(!navigator.geolocation){$('issNote').textContent='Location is not available here; pick a city.';return}
+      navigator.geolocation.getCurrentPosition(p=>go({n:'your location',lat:+p.coords.latitude.toFixed(2),lon:+p.coords.longitude.toFixed(2),tz:''}),()=>{$('issNote').textContent='Location not shared; pick a city instead.'},{timeout:8000})}};
+  async function go(pl){place=pl;try{localStorage.setItem(K,JSON.stringify(pl))}catch(e){}box.innerHTML='<span>Working out the passes…</span>';
+    try{await load()}catch(e){box.innerHTML='<span>Could not load the orbit calculator just now.</span>';return}
+    const rec=satellite.twoline2satrec(TODAY.iss[0],TODAY.iss[1]),o={latitude:pl.lat*D,longitude:pl.lon*D,height:0},now=Date.now();let up=null,found=null;
+    for(let t=now;t<now+3*864e5&&!found;t+=20000){const dt=new Date(t),pv=satellite.propagate(rec,dt);if(!pv||!pv.position||typeof pv.position!=='object')continue;
+      const la=satellite.ecfToLookAngles(o,satellite.eciToEcf(pv.position,satellite.gstime(dt))),el=la.elevation/D;
+      if(el>10){const sv=sunEq(t),p=pv.position,dd=p.x*sv[0]+p.y*sv[1]+p.z*sv[2],lit=dd>0||Math.hypot(p.x-dd*sv[0],p.y-dd*sv[1],p.z-dd*sv[2])>6378,dark=sunAlt(t,pl.lat,pl.lon)<-6;
+        if(!up)up={t0:t,az0:la.azimuth/D,max:el,vis:false};up.max=Math.max(up.max,el);if(lit&&dark){if(!up.vis){up.v0=t;up.vaz0=la.azimuth/D}up.vis=true;up.v1=t;up.vaz1=la.azimuth/D}}
+      else if(up){if(up.vis)found=up;up=null}}
+    const fmt=t=>new Intl.DateTimeFormat(undefined,{weekday:'short',hour:'numeric',minute:'2-digit',...(pl.tz?{timeZone:pl.tz}:{})}).format(t);
+    const where=pl.n==='your location'?'your location':pl.n;
+    box.innerHTML=found?`<b>${fmt(found.v0)}</b><span>From ${where}: look ${dir(found.vaz0)}. The space station climbs ${found.max>60?'almost overhead':found.max>30?'high':'low'} (up to ${Math.round(found.max)}°) and moves towards the ${dir(found.vaz1)}, visible for about ${Math.max(1,Math.round((found.v1-found.v0)/60000))} min.</span><span class="note">A steady white light, not blinking. It fades out when it enters Earth's shadow.</span>`
+      :`<b>No visible pass in the next 3 days</b><span>From ${where}, the station only shows up when it is sunlit and your sky is dark, which happens in runs a few weeks apart. Check again in a few days.</span>`;
+    box.insertAdjacentHTML('beforeend','<button type="button" id="issChange" class="bd-x">Change place</button>');$('issChange').onclick=pick}
+  place?go(place):pick()})();
 })();
 </script>
 
