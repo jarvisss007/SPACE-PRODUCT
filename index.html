@@ -55,6 +55,10 @@ h2{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);m
 .td .tin{font-size:13px;color:var(--saffron);margin-top:4px}.td a{color:var(--ink);text-decoration:none;font-size:14px;display:block;padding:3px 0}.td a:hover{color:var(--acc)}
 .td .ty{display:inline;font-family:var(--display);font-weight:700;color:var(--acc);margin-right:4px;font-size:15px}.td .more{margin-top:auto;font-size:13px;color:var(--acc)}
 .td[hidden]{display:none}
+.tdmore{margin-top:12px}.tdmore>summary,.tfold>summary{cursor:pointer;list-style:none;color:var(--lox);font-weight:600;font-size:15px;padding:8px 0}
+.tdmore>summary::-webkit-details-marker,.tfold>summary::-webkit-details-marker{display:none}.tdmore>summary::before,.tfold>summary::before{content:"▸ ";color:var(--gold)}
+.tdmore[open]>summary::before,.tfold[open]>summary::before{content:"▾ "}.tdmore>summary:focus-visible,.tfold>summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.tdmore .today{margin-top:6px}.tfold>summary{color:var(--ink)}
 .td .tq{font-size:15px;color:var(--ink);margin-bottom:6px}.td details{margin:2px 0 6px}.td details summary{cursor:pointer;color:var(--acc);font-size:13.5px;font-weight:600}
 .td details summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}.td details span{margin-top:6px;background:var(--panel2);border-radius:6px;padding:8px 10px}
 .td #tdSky a b,.td a b{display:inline;font-size:16px;margin-right:4px}.td a em{display:block;font-style:normal;font-size:12.5px;color:var(--dim)}
@@ -86,16 +90,20 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}
     <p class="sub">Changes every day, from the same live data the labs use. <a href="aaj.html" lang="hi">हिन्दी में पढ़ें: आज अंतरिक्ष में</a></p>
     <p class="shr"><button type="button" id="tdShare" class="shb">Share today’s sky</button> <span class="note" id="tdShareNote">Makes a picture on your phone for WhatsApp or any app. Nothing is uploaded.</span></p>
     <div class="today">
-      <div class="td" style="--acc:var(--flame)"><div class="k">Next launch</div><div id="tdLaunch" aria-live="polite"><b>Rocket launches</b><span>Loading the launch list…</span></div><a class="more" href="launch-watch.html">All launches →</a></div>
       <div class="td" style="--acc:var(--gold)"><div class="k">Tonight's Moon</div><div id="tdMoon"></div><a class="more" href="tonight.html">What else is up tonight →</a></div>
+      <div class="td" style="--acc:var(--gold)"><div class="k">Planets tonight</div><div id="tdPlan"></div><a class="more" href="tonight.html">Full sky map →</a></div>
+      <div class="td" style="--acc:var(--flame)"><div class="k">Next launch</div><div id="tdLaunch" aria-live="polite"><b>Rocket launches</b><span>Loading the launch list…</span></div><a class="more" href="launch-watch.html">All launches →</a></div>
+      <div class="td" style="--acc:var(--lox)"><div class="k">Space station over you</div><div id="tdIss" aria-live="polite"></div><a class="more" href="satellite-watch.html">Every satellite, live →</a></div>
+    </div>
+    <details class="tdmore"><summary>More for today: on this day, asteroids, a question, what’s coming, your birthday</summary>
+    <div class="today">
       <div class="td" style="--acc:var(--violet)"><div class="k">From history</div><div id="tdHist"></div></div>
       <div class="td" style="--acc:var(--mars)"><div class="k">Asteroid this week</div><div id="tdRock"></div><a class="more" href="asteroid-watch.html">Every close pass →</a></div>
       <div class="td" style="--acc:var(--lox)"><div class="k">Question of the day</div><div id="tdQuiz"></div></div>
       <div class="td" style="--acc:var(--saffron)"><div class="k">Coming up in the sky</div><div id="tdSky"></div></div>
-      <div class="td" style="--acc:var(--gold)"><div class="k">Planets tonight</div><div id="tdPlan"></div><a class="more" href="tonight.html">Full sky map →</a></div>
-      <div class="td" style="--acc:var(--lox)"><div class="k">Space station over you</div><div id="tdIss" aria-live="polite"></div><a class="more" href="satellite-watch.html">Every satellite, live →</a></div>
       <div class="td bd" style="--acc:var(--violet)"><div class="k">Your birthday in space</div><div id="tdBday"></div></div>
     </div>
+    </details>
     <p class="note" id="tdChal" style="font-size:14px;margin:12px 0 0"></p>
     <p class="note" style="font-size:14px;margin:6px 0 0">🖨️ For teachers: <a href="weekly.html">this week on one printable page</a>, fresh every day.</p>
     <p class="note" id="tdStreak" hidden></p>
@@ -174,7 +182,7 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}
   </section>
 
   <section>
-    <h2>Learn by topic</h2>
+    <details class="tfold"><summary><h2 style="display:inline">Learn by topic</h2> <span class="note">for students and teachers</span></summary>
     <p class="sub">For students and teachers: the same labs grouped by the science they teach. Each one turns a textbook idea into something you can change and watch.</p>
     <div class="topics">
       <div class="topic"><h3>Gravitation</h3><p>Why things fall, why the Moon stays up, and how far a planet&#x27;s pull reaches. A core topic in Class 11 physics (the new Class 9 book, Exploration, leaves it out).</p><div class="tl"><a href="gaganyaan-lab.html">Gaganyaan Lab</a><a href="chandrayaan-3.html">Chandrayaan-3 Moon Lab</a><a href="lagrange-lab.html">Lagrange Point Lab</a><a href="touch-the-sun.html">Touch the Sun</a><a href="solar-system-lab.html">Solar System Lab</a><a href="black-hole-lab.html">Black Hole and Wormhole Lab</a><a class="ws" href="worksheets.html?topic=gravity">Printable worksheet</a></div></div>
@@ -185,6 +193,7 @@ footer{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}
       <div class="topic"><h3>The night sky and the solar system</h3><p>The planets, the Moon&#x27;s phases and finding your way around the sky.</p><div class="tl"><a href="tonight.html">Tonight&#x27;s Sky</a><a href="meteor-showers.html">Meteor Showers</a><a href="eclipse-lab.html">Eclipse Lab</a><a href="solar-system-lab.html">Solar System Lab</a><a href="milky-way-atlas.html">Milky Way Atlas</a><a href="kundli.html">Kundli Lab</a><a href="aryabhata-lab.html">Aryabhata Lab</a><a href="indian-astronomy.html">Indian Astronomy Through Time</a><a href="clues-in-old-books.html">Clues in Old Books</a><a class="ws" href="worksheets.html?topic=sky">Printable worksheet</a></div></div>
       <div class="topic"><h3>Mathematics from history</h3><p>π, the sine and big numbers from Aryabhata&#x27;s and Nalanda&#x27;s India.</p><div class="tl"><a href="kundli.html">Kundli Lab</a><a href="moon-sites.html">Moon Landing Sites</a><a href="aryabhata-lab.html">Aryabhata Lab</a><a href="indian-astronomy.html">Indian Astronomy Through Time</a><a href="nalanda.html">Nalanda</a></div></div>
     </div>
+    </details>
   </section>
 
   <section>
@@ -281,8 +290,7 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
     box.innerHTML=`<b>${nm(L)}</b><span>${L.rocket}, from ${L.site.split(',')[0]}. ${s>0?`Lifts off in <strong>${dd?dd+'d ':''}${h}h ${pad(mi)}m</strong>`:'Launching about now'}${L.prec&&L.prec!=='SEC'&&L.prec!=='MIN'?' (time not fixed yet)':''}.</span>${india&&india!==L?`<span class="tin">Next from India: ${nm(india)}, ${new Date(india.net).toLocaleDateString(undefined,{day:'numeric',month:'short'})}</span>`:''}`};
   tick();setInterval(tick,30000)})();
 // question of the day: the same question for everyone today, a new one tomorrow, from the labs' quizzes
-(()=>{const box=$('tdQuiz');const Q=(TODAY&&TODAY.quiz)||[];if(!Q.length){box.closest('.td').hidden=true;return}
-  const now=new Date(),day=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))/864e5),q=Q[(day*7919)%Q.length];
+(()=>{const box=$('tdQuiz');const now=new Date(),day=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))/864e5),q=TODAY&&TODAY.qod&&TODAY.qod[day];if(!q){box.closest('.td').hidden=true;return}
   box.innerHTML=`<span class="tq">${q[0]}</span><details><summary>Show the answer</summary><span>${q[1]}</span></details><a class="more" href="${q[2]}">Work it out in the lab →</a>`})();
 // coming up in the sky: next full and new Moon, next meteor shower peak, next total solar eclipse
 (()=>{const box=$('tdSky');const now=Date.now(),out=[];

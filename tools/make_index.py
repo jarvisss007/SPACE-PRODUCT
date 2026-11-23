@@ -208,6 +208,10 @@ h2{{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);
 .td .tin{{font-size:13px;color:var(--saffron);margin-top:4px}}.td a{{color:var(--ink);text-decoration:none;font-size:14px;display:block;padding:3px 0}}.td a:hover{{color:var(--acc)}}
 .td .ty{{display:inline;font-family:var(--display);font-weight:700;color:var(--acc);margin-right:4px;font-size:15px}}.td .more{{margin-top:auto;font-size:13px;color:var(--acc)}}
 .td[hidden]{{display:none}}
+.tdmore{{margin-top:12px}}.tdmore>summary,.tfold>summary{{cursor:pointer;list-style:none;color:var(--lox);font-weight:600;font-size:15px;padding:8px 0}}
+.tdmore>summary::-webkit-details-marker,.tfold>summary::-webkit-details-marker{{display:none}}.tdmore>summary::before,.tfold>summary::before{{content:"▸ ";color:var(--gold)}}
+.tdmore[open]>summary::before,.tfold[open]>summary::before{{content:"▾ "}}.tdmore>summary:focus-visible,.tfold>summary:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}
+.tdmore .today{{margin-top:6px}}.tfold>summary{{color:var(--ink)}}
 .td .tq{{font-size:15px;color:var(--ink);margin-bottom:6px}}.td details{{margin:2px 0 6px}}.td details summary{{cursor:pointer;color:var(--acc);font-size:13.5px;font-weight:600}}
 .td details summary:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}.td details span{{margin-top:6px;background:var(--panel2);border-radius:6px;padding:8px 10px}}
 .td #tdSky a b,.td a b{{display:inline;font-size:16px;margin-right:4px}}.td a em{{display:block;font-style:normal;font-size:12.5px;color:var(--dim)}}
@@ -239,16 +243,20 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
     <p class="sub">Changes every day, from the same live data the labs use. <a href="aaj.html" lang="hi">हिन्दी में पढ़ें: आज अंतरिक्ष में</a></p>
     <p class="shr"><button type="button" id="tdShare" class="shb">Share today’s sky</button> <span class="note" id="tdShareNote">Makes a picture on your phone for WhatsApp or any app. Nothing is uploaded.</span></p>
     <div class="today">
-      <div class="td" style="--acc:var(--flame)"><div class="k">Next launch</div><div id="tdLaunch" aria-live="polite"><b>Rocket launches</b><span>Loading the launch list…</span></div><a class="more" href="launch-watch.html">All launches →</a></div>
       <div class="td" style="--acc:var(--gold)"><div class="k">Tonight's Moon</div><div id="tdMoon"></div><a class="more" href="tonight.html">What else is up tonight →</a></div>
+      <div class="td" style="--acc:var(--gold)"><div class="k">Planets tonight</div><div id="tdPlan"></div><a class="more" href="tonight.html">Full sky map →</a></div>
+      <div class="td" style="--acc:var(--flame)"><div class="k">Next launch</div><div id="tdLaunch" aria-live="polite"><b>Rocket launches</b><span>Loading the launch list…</span></div><a class="more" href="launch-watch.html">All launches →</a></div>
+      <div class="td" style="--acc:var(--lox)"><div class="k">Space station over you</div><div id="tdIss" aria-live="polite"></div><a class="more" href="satellite-watch.html">Every satellite, live →</a></div>
+    </div>
+    <details class="tdmore"><summary>More for today: on this day, asteroids, a question, what’s coming, your birthday</summary>
+    <div class="today">
       <div class="td" style="--acc:var(--violet)"><div class="k">From history</div><div id="tdHist"></div></div>
       <div class="td" style="--acc:var(--mars)"><div class="k">Asteroid this week</div><div id="tdRock"></div><a class="more" href="asteroid-watch.html">Every close pass →</a></div>
       <div class="td" style="--acc:var(--lox)"><div class="k">Question of the day</div><div id="tdQuiz"></div></div>
       <div class="td" style="--acc:var(--saffron)"><div class="k">Coming up in the sky</div><div id="tdSky"></div></div>
-      <div class="td" style="--acc:var(--gold)"><div class="k">Planets tonight</div><div id="tdPlan"></div><a class="more" href="tonight.html">Full sky map →</a></div>
-      <div class="td" style="--acc:var(--lox)"><div class="k">Space station over you</div><div id="tdIss" aria-live="polite"></div><a class="more" href="satellite-watch.html">Every satellite, live →</a></div>
       <div class="td bd" style="--acc:var(--violet)"><div class="k">Your birthday in space</div><div id="tdBday"></div></div>
     </div>
+    </details>
     <p class="note" id="tdChal" style="font-size:14px;margin:12px 0 0"></p>
     <p class="note" style="font-size:14px;margin:6px 0 0">🖨️ For teachers: <a href="weekly.html">this week on one printable page</a>, fresh every day.</p>
     <p class="note" id="tdStreak" hidden></p>
@@ -273,11 +281,12 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
   </section>
 
   <section>
-    <h2>Learn by topic</h2>
+    <details class="tfold"><summary><h2 style="display:inline">Learn by topic</h2> <span class="note">for students and teachers</span></summary>
     <p class="sub">For students and teachers: the same labs grouped by the science they teach. Each one turns a textbook idea into something you can change and watch.</p>
     <div class="topics">
 {topics}
     </div>
+    </details>
   </section>
 
   <section>

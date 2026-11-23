@@ -263,7 +263,7 @@ function drawSys(){const w=sys.clientWidth,h=sys.clientHeight,cx=w/2,cy=h/2,S=Ma
   else{let M=Math.PI+2*Math.PI*(tA-hitAt)/TX;M%=2*Math.PI;let E=M;for(let i=0;i<20;i++)E-=(E-eX*Math.sin(E)-M)/(1-eX*Math.cos(E));const nu=2*Math.atan2(Math.sqrt(1+eX)*Math.sin(E/2),Math.sqrt(1-eX)*Math.cos(E/2));pos=at(nu);
     const ga=ang0(tA),gx=cx+A0*S*Math.cos(ga),gy=cy-A0*S*Math.sin(ga);g.fillStyle='rgba(201,162,126,.35)';g.beginPath();g.arc(gx,gy,4,0,7);g.fill();g.fillStyle='#8a97a8';g.fillText('WITHOUT DART',gx+7,gy-6)}
   g.fillStyle='#e7d9c6';g.beginPath();g.arc(pos[0],pos[1],Math.max(4,75*S),0,7);g.fill();g.fillStyle='#e7edf3';g.fillText('DIMORPHOS',pos[0]+9,pos[1]-8);
-  if(hitAt!==null&&tA-hitAt<1800){const k=(tA-hitAt)/1800;g.fillStyle=`rgba(255,200,140,${1-k})`;g.beginPath();g.arc(pos[0],pos[1],8+k*60,0,7);g.fill()}
+  if(hitAt!==null&&tA>=hitAt&&tA-hitAt<1800){const k=(tA-hitAt)/1800;g.fillStyle=`rgba(255,200,140,${1-k})`;g.beginPath();g.arc(pos[0],pos[1],8+k*60,0,7);g.fill()}
   if(hitAt!==null&&tA<hitAt){const k=1-(hitAt-tA)/3600;g.strokeStyle='#74c7ff';g.beginPath();g.moveTo(pos[0]+(1-k)*200,pos[1]-(1-k)*120);g.lineTo(pos[0]+(1-k)*200+12,pos[1]-(1-k)*120-7);g.stroke()}
   const laps=hitAt!==null&&tA>hitAt?(tA-hitAt)/T1:0;$('clock').textContent=hitAt===null?'Before the impact':tA<hitAt?'DART incoming':`${laps.toFixed(1)} laps after the impact · ${(laps*dT/60).toFixed(0)} min ahead of schedule`}
 function loop(ts){const dt=lastF?Math.min(.1,(ts-lastF)/1000):0;lastF=ts;tA+=dt*3600*1.5;drawSys();requestAnimationFrame(loop)}

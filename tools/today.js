@@ -34,8 +34,7 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
     box.innerHTML=`<b>${nm(L)}</b><span>${L.rocket}, from ${L.site.split(',')[0]}. ${s>0?`Lifts off in <strong>${dd?dd+'d ':''}${h}h ${pad(mi)}m</strong>`:'Launching about now'}${L.prec&&L.prec!=='SEC'&&L.prec!=='MIN'?' (time not fixed yet)':''}.</span>${india&&india!==L?`<span class="tin">Next from India: ${nm(india)}, ${new Date(india.net).toLocaleDateString(undefined,{day:'numeric',month:'short'})}</span>`:''}`};
   tick();setInterval(tick,30000)})();
 // question of the day: the same question for everyone today, a new one tomorrow, from the labs' quizzes
-(()=>{const box=$('tdQuiz');const Q=(TODAY&&TODAY.quiz)||[];if(!Q.length){box.closest('.td').hidden=true;return}
-  const now=new Date(),day=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))/864e5),q=Q[(day*7919)%Q.length];
+(()=>{const box=$('tdQuiz');const now=new Date(),day=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))/864e5),q=TODAY&&TODAY.qod&&TODAY.qod[day];if(!q){box.closest('.td').hidden=true;return}
   box.innerHTML=`<span class="tq">${q[0]}</span><details><summary>Show the answer</summary><span>${q[1]}</span></details><a class="more" href="${q[2]}">Work it out in the lab →</a>`})();
 // coming up in the sky: next full and new Moon, next meteor shower peak, next total solar eclipse
 (()=>{const box=$('tdSky');const now=Date.now(),out=[];

@@ -378,7 +378,13 @@ def build() -> None:
             raise SystemExit(f"{fname}: no {marker} to place the navigation before")
         src = src.replace(marker, NAV_CSS + nav_html(fname) + marker, 1)
         if fname == "index.html":
-            src = src.replace("/*golapada-today*/null", today, 1)
+            # the home page needs only the coming days' question of the day, not all of them (keeps the page light)
+            import time as _time
+            _d0 = int(_time.time() // 86400)
+            _qz = tdata.get("quiz") or []
+            _home = {k: v for k, v in tdata.items() if k != "quiz"}
+            _home["qod"] = {str(d): _qz[(d * 7919) % len(_qz)] for d in range(_d0 - 2, _d0 + 9)} if _qz else {}
+            src = src.replace("/*golapada-today*/null", json.dumps(_home, ensure_ascii=False, separators=(",", ":")), 1)
         elif fname == "weekly.html":  # the printable weekly sheet: same daily data, plus the Moon code
             src = src.replace("/*golapada-today*/null", today, 1).replace("/*golapada-moon*/", moon_js, 1)
         elif fname == "aaj.html":  # the Hindi daily page: same data, Moon and planet maths, and the Hindi lab quizzes
