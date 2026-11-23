@@ -127,7 +127,13 @@ _k = (Path(__file__).resolve().parent.parent / "kundli.html").read_text(encoding
 _a = _k.index("const D2R=Math.PI/180,nrm=")
 _e = "return {lon:nrm(Lp+sl/1e6+dpsi),lat,meanNode,trueNode,dpsi}}"
 _b = _k.index(_e, _a) + len(_e)
-TODAY_JS = (Path(__file__).resolve().parent / "today.js").read_text(encoding="utf-8").replace("@@MOON@@", _k[_a:_b])
+_t = (Path(__file__).resolve().parent.parent / "tonight.html").read_text(encoding="utf-8")  # planet maths shared with Tonight's Sky
+_p0 = _t.index("const EL={mercury:")
+_p1 = _t.index("// ---- Sun and Moon ----", _p0)
+_g0 = _t.index("function gmst(jd)")
+_g1 = _t.index("\n", _t.index("function altaz(", _g0))
+PLANETS_JS = _t[_p0:_p1] + _t[_g0:_g1]
+TODAY_JS = (Path(__file__).resolve().parent / "today.js").read_text(encoding="utf-8").replace("@@MOON@@", _k[_a:_b]).replace("@@PLANETS@@", PLANETS_JS)
 e = html.escape
 cards = "\n".join(
   f'      <a class="lab" href="{f}" data-use="{u}" data-topic="{tp}" data-text="{e((t+" "+d).lower())}" style="--acc:{c}"><b>{e(t)}</b><span>{e(d)}</span><em>{" · ".join(dict(USES)[x] for x in u.split())}</em></a>'
@@ -212,7 +218,7 @@ h2{{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);
 .bd-b,.bd-x{{font:600 14px var(--display);letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:8px 12px;cursor:pointer;align-self:flex-start}}
 .bd-b{{background:var(--violet);color:#120a24;border:0}}.bd-x{{background:none;color:var(--dim);border:1px solid var(--line);margin-top:6px}}
 .bd-b:focus-visible,.bd-x:focus-visible,.bd-l input:focus-visible{{outline:2px solid var(--lox);outline-offset:2px}}
-#tdBday span{{margin-top:4px}}#tdIss span{{margin-top:4px}}.bd-l select{{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;max-width:240px;color-scheme:dark}}#tdBday a{{display:inline;color:var(--violet);text-decoration:underline}}
+#tdBday span{{margin-top:4px}}#tdIss span{{margin-top:4px}}#tdPlan span{{margin-top:4px}}.bd-l select{{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;max-width:240px;color-scheme:dark}}#tdBday a{{display:inline;color:var(--violet);text-decoration:underline}}
 .td .tq b,.td details b,.td .tq i{{display:inline;font-family:inherit;font-size:inherit;text-transform:none;line-height:inherit;margin:0;color:var(--ink)}}
 footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
 @media (max-width:560px){{.hero{{min-height:72vh;padding-top:36px}}}}
@@ -239,6 +245,7 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
       <div class="td" style="--acc:var(--mars)"><div class="k">Asteroid this week</div><div id="tdRock"></div><a class="more" href="asteroid-watch.html">Every close pass →</a></div>
       <div class="td" style="--acc:var(--lox)"><div class="k">Question of the day</div><div id="tdQuiz"></div></div>
       <div class="td" style="--acc:var(--saffron)"><div class="k">Coming up in the sky</div><div id="tdSky"></div></div>
+      <div class="td" style="--acc:var(--gold)"><div class="k">Planets tonight</div><div id="tdPlan"></div><a class="more" href="tonight.html">Full sky map →</a></div>
       <div class="td" style="--acc:var(--lox)"><div class="k">Space station over you</div><div id="tdIss" aria-live="polite"></div><a class="more" href="satellite-watch.html">Every satellite, live →</a></div>
       <div class="td bd" style="--acc:var(--violet)"><div class="k">Your birthday in space</div><div id="tdBday"></div></div>
     </div>

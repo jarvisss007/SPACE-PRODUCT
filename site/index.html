@@ -65,7 +65,7 @@ h2{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,34px);m
 .bd-b,.bd-x{font:600 14px var(--display);letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:8px 12px;cursor:pointer;align-self:flex-start}
 .bd-b{background:var(--violet);color:#120a24;border:0}.bd-x{background:none;color:var(--dim);border:1px solid var(--line);margin-top:6px}
 .bd-b:focus-visible,.bd-x:focus-visible,.bd-l input:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
-#tdBday span{margin-top:4px}#tdIss span{margin-top:4px}.bd-l select{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;max-width:240px;color-scheme:dark}#tdBday a{display:inline;color:var(--violet);text-decoration:underline}
+#tdBday span{margin-top:4px}#tdIss span{margin-top:4px}#tdPlan span{margin-top:4px}.bd-l select{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;max-width:240px;color-scheme:dark}#tdBday a{display:inline;color:var(--violet);text-decoration:underline}
 .td .tq b,.td details b,.td .tq i{display:inline;font-family:inherit;font-size:inherit;text-transform:none;line-height:inherit;margin:0;color:var(--ink)}
 footer{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}
 @media (max-width:560px){.hero{min-height:72vh;padding-top:36px}}
@@ -126,6 +126,7 @@ addEventListener('click',e=>{if(!p.hidden&&!n.contains(e.target))close()})})();
       <div class="td" style="--acc:var(--mars)"><div class="k">Asteroid this week</div><div id="tdRock"></div><a class="more" href="asteroid-watch.html">Every close pass →</a></div>
       <div class="td" style="--acc:var(--lox)"><div class="k">Question of the day</div><div id="tdQuiz"></div></div>
       <div class="td" style="--acc:var(--saffron)"><div class="k">Coming up in the sky</div><div id="tdSky"></div></div>
+      <div class="td" style="--acc:var(--gold)"><div class="k">Planets tonight</div><div id="tdPlan"></div><a class="more" href="tonight.html">Full sky map →</a></div>
       <div class="td" style="--acc:var(--lox)"><div class="k">Space station over you</div><div id="tdIss" aria-live="polite"></div><a class="more" href="satellite-watch.html">Every satellite, live →</a></div>
       <div class="td bd" style="--acc:var(--violet)"><div class="k">Your birthday in space</div><div id="tdBday"></div></div>
     </div>
@@ -415,6 +416,32 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
       :`<b>No visible pass in the next 3 days</b><span>From ${where}, the station only shows up when it is sunlit and your sky is dark, which happens in runs a few weeks apart. Check again in a few days.</span>`;
     box.insertAdjacentHTML('beforeend','<button type="button" id="issChange" class="bd-x">Change place</button>');$('issChange').onclick=pick}
   place?go(place):pick()})();
+// planets tonight: which bright planets are up this evening and before dawn, from your saved city (or Delhi)
+(()=>{const box=$('tdPlan');if(!box)return;const D=Math.PI/180,EPS=23.4393*D,norm=a=>((a%360)+360)%360;
+const EL={mercury:[[0.38709843,0.20563661,7.00559432,252.25166724,77.45771895,48.33961819],[0,0.00002123,-0.00590158,149472.67486623,0.15940013,-0.12214182]],
+ venus:[[0.72332102,0.00676399,3.39777545,181.97970850,131.76755713,76.67261496],[-0.00000026,-0.00005107,0.00043494,58517.81560260,0.05679648,-0.27274174]],
+ earth:[[1.00000018,0.01673163,-0.00054346,100.46691572,102.93005885,-5.11260389],[-0.00000003,-0.00003661,-0.01337178,35999.37306329,0.31795260,-0.24123856]],
+ mars:[[1.52371243,0.09336511,1.85181869,-4.56813164,-23.91744784,49.71320984],[0.00000097,0.00009149,-0.00724757,19140.29934243,0.45223625,-0.26852431]],
+ jupiter:[[5.20248019,0.04853590,1.29861416,34.33479152,14.27495244,100.29282654],[-0.00002864,0.00018026,-0.00322699,3034.90371757,0.18199196,0.13024619],[-0.00012452,0.06064060,-0.35635438,38.35125000]],
+ saturn:[[9.54149883,0.05550825,2.49424102,50.07571329,92.86136063,113.63998702],[-0.00003065,-0.00032044,0.00451969,1222.11494724,0.54179478,-0.25015002],[0.00025899,-0.13434469,0.87320147,38.35125000]]};
+function helio(name,jd){const [b,r,x]=EL[name],T=(jd-2451545)/36525,[a,e,I,L,wb,O]=b.map((v,i)=>v+r[i]*T);let M=L-wb;if(x)M+=x[0]*T*T+x[1]*Math.cos(x[3]*T*D)+x[2]*Math.sin(x[3]*T*D);M=norm(M+180)-180;
+  const es=e/D;let E=M+es*Math.sin(M*D);for(let k=0;k<20;k++)E+=(M-(E-es*Math.sin(E*D)))/(1-e*Math.cos(E*D));const w=wb-O,xp=a*(Math.cos(E*D)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E*D),cw=Math.cos(w*D),sw=Math.sin(w*D),cO=Math.cos(O*D),sO=Math.sin(O*D),cI=Math.cos(I*D),sI=Math.sin(I*D);
+  return [(cw*cO-sw*sO*cI)*xp+(-sw*cO-cw*sO*cI)*yp,(cw*sO+sw*cO*cI)*xp+(-sw*sO+cw*cO*cI)*yp,(sw*sI*xp+cw*sI*yp)]}
+const eclToEq=([x,y,z])=>[x,y*Math.cos(EPS)-z*Math.sin(EPS),y*Math.sin(EPS)+z*Math.cos(EPS)];
+const radec=v=>{const r=Math.hypot(...v);return {ra:Math.atan2(v[1],v[0]),dec:Math.asin(v[2]/r),r}};
+const MAGF={mercury:(r,d,a)=>-0.6+5*Math.log10(r*d)+0.0498*a-0.000488*a*a+0.000003*a*a*a,venus:(r,d,a)=>-4.47+5*Math.log10(r*d)+0.0103*a+0.000057*a*a,mars:(r,d,a)=>-1.6+5*Math.log10(r*d)+0.016*a,jupiter:(r,d,a)=>-9.4+5*Math.log10(r*d)+0.005*a,saturn:(r,d,a)=>-8.9+5*Math.log10(r*d)};
+function planet(name,jd){const p=helio(name,jd),e=helio('earth',jd),g=[p[0]-e[0],p[1]-e[1],p[2]-e[2]],r=Math.hypot(...p),d=Math.hypot(...g),re=Math.hypot(...e),pa=Math.acos(Math.max(-1,Math.min(1,(r*r+d*d-re*re)/(2*r*d))))/D;return {...radec(eclToEq(g)),mag:MAGF[name](r,d,pa)}}
+function gmst(jd){return norm(280.46061837+360.98564736629*(jd-2451545))*D}
+function altaz(o,jd,lat,lon){const H=gmst(jd)+lon*D-o.ra,la=lat*D,sa=Math.sin(la)*Math.sin(o.dec)+Math.cos(la)*Math.cos(o.dec)*Math.cos(H),alt=Math.asin(sa);const az=Math.atan2(-Math.sin(H)*Math.cos(o.dec),Math.cos(la)*Math.sin(o.dec)-Math.sin(la)*Math.cos(o.dec)*Math.cos(H));return {alt:alt/D,az:norm(az/D)}}
+  let pl=null;try{pl=JSON.parse(localStorage.getItem('golapada-place')||'null')}catch(e){}if(!pl)pl={n:'Delhi',lat:28.61,lon:77.21};
+  const NM={mercury:'Mercury',venus:'Venus',mars:'Mars',jupiter:'Jupiter',saturn:'Saturn'},dirs=['north','north-east','east','south-east','south','south-west','west','north-west'],dirn=a=>dirs[Math.round(norm(a)/45)%8];
+  const hgt=h=>h<20?'low in the':h<50?'halfway up in the':'high in the';
+  const d=new Date(),eve=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),20)-pl.lon/15*36e5,dawn=eve+9*36e5;
+  const look=t=>{const jd=t/864e5+2440587.5;return Object.keys(NM).map(k=>{const o=planet(k,jd),h=altaz(o,jd,pl.lat,pl.lon);return {k,alt:h.alt,az:h.az,mag:o.mag}}).filter(p=>p.alt>10).sort((a,b)=>a.mag-b.mag)};
+  const fmt=a=>a.map(p=>`<strong>${NM[p.k]}</strong> ${hgt(p.alt)} ${dirn(p.az)}`).join(', ');
+  const ev=look(eve),dw=look(dawn).filter(p=>!ev.some(e=>e.k===p.k));
+  box.innerHTML=(ev.length?`<b>${ev.map(p=>NM[p.k]).join(', ').replace(/, ([^,]*)$/,' and $1')} this evening</b><span>Around 8 pm from ${pl.n}: ${fmt(ev)}.</span>`:`<b>No bright planets this evening</b><span>From ${pl.n} none is well up around 8 pm.</span>`)
+    +(dw.length?`<span>Before dawn (about 5 am): ${fmt(dw)}.</span>`:'')+`<span class="note">Planets shine steadily; stars twinkle. ${ev[0]&&ev[0].k==='venus'?'Venus is the brightest thing in the sky after the Moon.':''}</span>`})();
 })();
 </script>
 <p class="gt" style="max-width:1200px;margin:6px auto 0;padding:10px max(16px,env(safe-area-inset-left,0px)) 28px;border-top:1px solid #1f2a38;font:400 13px/1.6 'IBM Plex Sans',system-ui,sans-serif;color:#8a97a8"><a href="about.html" style="color:#74c7ff">About Golapada</a> · <a href="about.html#privacy" style="color:#74c7ff">Privacy</a> · <a href="https://github.com/jarvisss007/SPACE-PRODUCT/issues/new?template=mistake.yml&amp;page=index.html&amp;title=Mistake%20on%20index.html" rel="noopener" style="color:#74c7ff">Report a mistake on this page</a></p>

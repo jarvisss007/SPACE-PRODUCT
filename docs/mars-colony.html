@@ -246,7 +246,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
       <div id="finbody"></div>
       <label class="lab" for="share" style="display:block">Share it as text</label>
       <textarea id="share" readonly></textarea>
-      <div class="row"><button type="button" class="btn go" id="copy">Copy summary</button><span class="note" id="copied"></span></div>
+      <div class="row"><button type="button" class="btn go" id="copy">Copy summary</button><button type="button" class="btn" id="sharePic">Share as a picture</button><span class="note" id="copied"></span></div>
     </div>
   </section>
 
@@ -695,6 +695,24 @@ function drawChal(){const el=$("#chal");if(!el)return;const c=C(),done=chDone();
  el.innerHTML=`<b>This week's challenge (${WEEK}): ${CH.t}</b><p>${CH.d}</p>${st}${c&&c.chal===CH.id&&!c.over&&!CH.ok(c)?"":`<button type="button" id="chGo">${c&&c.chal===CH.id?"Try again":"Play this week's challenge"}</button><p class="note">Starts the colony again from landing day, with this week's twist.</p>`}${n?`<p class="note">Challenges you have completed: ${n}.</p>`:""}`;
  const b=$("#chGo");if(b)b.onclick=()=>{S.chal=CH.id;S.col=newColony();S.fin=false;save();r5()}}
 const _r5=r5;r5=function(){_r5();drawChal()};
+
+// share the colony as a picture: drawn on the phone, handed to WhatsApp or any app (or saved); nothing uploaded
+$("#sharePic").onclick=async()=>{const c=C();if(!c)return;const W=1080,H=1350,cv=document.createElement("canvas");cv.width=W;cv.height=H;const g=cv.getContext("2d");
+ const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#3a1608");bg.addColorStop(.55,"#1a0b06");bg.addColorStop(1,"#04060b");g.fillStyle=bg;g.fillRect(0,0,W,H);
+ g.fillStyle="#c1440e";g.beginPath();g.ellipse(W/2,H*1.18,W*.95,H*.62,0,0,7);g.fill();
+ g.fillStyle="#e2683c";g.font='600 34px "Saira Condensed","Arial Narrow",sans-serif';g.fillText("GOLAPADA · MARS COLONY SIMULATOR",70,110);
+ g.fillStyle="#fff";g.font='700 70px "Saira Condensed","Arial Narrow",sans-serif';g.fillText(c.over?"OUR MARS COLONY":"OUR MARS COLONY IS ALIVE",70,190);
+ const grown=c.last.foodUse?c.last.foodg/c.last.foodUse*100:0,gl=GOALS.filter(([k])=>c.goals[k]).length;
+ const rows=[["Sols on Mars",fmt(c.sol)],["People",String(c.crew)],["Oxygen made",fmt(c.made.o2/1000,1)+" t"],["Water mined",fmt(c.made.water/1000,1)+" t"],["Food grown",fmt(grown)+"%"],["Fuel for home",fmt(c.made.prop,1)+" t"],["Goals reached",gl+" of 5"]];
+ if(c.chal)rows.push(["Weekly challenge",(CHAL.find(x=>x.id===c.chal)||{}).t||""]);
+ let y=290;for(const [k,v] of rows){g.fillStyle="rgba(12,8,6,.72)";g.fillRect(70,y-48,W-140,82);g.fillStyle="#d9c2b5";g.font='400 36px "IBM Plex Sans",system-ui,sans-serif';g.fillText(k,100,y+6);
+  g.fillStyle="#fff";g.font='700 52px "Saira Condensed","Arial Narrow",sans-serif';const tw=g.measureText(v).width;g.fillText(v,W-100-tw,y+10);y+=98}
+ g.fillStyle="#ffd9c7";g.font='400 32px "IBM Plex Sans",system-ui,sans-serif';g.fillText("Can you beat it? Build your own colony:",70,H-110);
+ g.fillStyle="#74c7ff";g.font='600 34px "IBM Plex Sans",system-ui,sans-serif';g.fillText((location.host||"jarvisss007.github.io")+location.pathname,70,H-60);
+ try{const blob=await new Promise(r=>cv.toBlob(r,"image/png")),file=new File([blob],"my-mars-colony.png",{type:"image/png"});
+  if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],text:"My Mars colony, from Golapada: "+location.href.split("#")[0]});
+  else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="my-mars-colony.png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);$("#copied").textContent="Saved as a picture."}}
+ catch(e){if(e&&e.name!=="AbortError")$("#copied").textContent="Sharing did not work on this device."}};
 function finale(){const c=C(),p=plan(),g=GOALS.filter(([k])=>c.goals[k]).length,R=ROCK[S.r];
  const grown=c.last.foodUse?c.last.foodg/c.last.foodUse*100:0;
  $("#fin").hidden=false;

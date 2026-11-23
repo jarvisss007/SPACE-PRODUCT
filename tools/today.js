@@ -135,5 +135,17 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
       :`<b>No visible pass in the next 3 days</b><span>From ${where}, the station only shows up when it is sunlit and your sky is dark, which happens in runs a few weeks apart. Check again in a few days.</span>`;
     box.insertAdjacentHTML('beforeend','<button type="button" id="issChange" class="bd-x">Change place</button>');$('issChange').onclick=pick}
   place?go(place):pick()})();
+// planets tonight: which bright planets are up this evening and before dawn, from your saved city (or Delhi)
+(()=>{const box=$('tdPlan');if(!box)return;const D=Math.PI/180,EPS=23.4393*D,norm=a=>((a%360)+360)%360;
+@@PLANETS@@
+  let pl=null;try{pl=JSON.parse(localStorage.getItem('golapada-place')||'null')}catch(e){}if(!pl)pl={n:'Delhi',lat:28.61,lon:77.21};
+  const NM={mercury:'Mercury',venus:'Venus',mars:'Mars',jupiter:'Jupiter',saturn:'Saturn'},dirs=['north','north-east','east','south-east','south','south-west','west','north-west'],dirn=a=>dirs[Math.round(norm(a)/45)%8];
+  const hgt=h=>h<20?'low in the':h<50?'halfway up in the':'high in the';
+  const d=new Date(),eve=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),20)-pl.lon/15*36e5,dawn=eve+9*36e5;
+  const look=t=>{const jd=t/864e5+2440587.5;return Object.keys(NM).map(k=>{const o=planet(k,jd),h=altaz(o,jd,pl.lat,pl.lon);return {k,alt:h.alt,az:h.az,mag:o.mag}}).filter(p=>p.alt>10).sort((a,b)=>a.mag-b.mag)};
+  const fmt=a=>a.map(p=>`<strong>${NM[p.k]}</strong> ${hgt(p.alt)} ${dirn(p.az)}`).join(', ');
+  const ev=look(eve),dw=look(dawn).filter(p=>!ev.some(e=>e.k===p.k));
+  box.innerHTML=(ev.length?`<b>${ev.map(p=>NM[p.k]).join(', ').replace(/, ([^,]*)$/,' and $1')} this evening</b><span>Around 8 pm from ${pl.n}: ${fmt(ev)}.</span>`:`<b>No bright planets this evening</b><span>From ${pl.n} none is well up around 8 pm.</span>`)
+    +(dw.length?`<span>Before dawn (about 5 am): ${fmt(dw)}.</span>`:'')+`<span class="note">Planets shine steadily; stars twinkle. ${ev[0]&&ev[0].k==='venus'?'Venus is the brightest thing in the sky after the Moon.':''}</span>`})();
 })();
 </script>
