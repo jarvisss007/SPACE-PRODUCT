@@ -382,7 +382,7 @@ function loadLayer(k){if(!k||omap[k]||!INFO)return Promise.resolve();const i=new
   return new Promise(ok=>{i.onload=()=>{omap[k]=tex(4,i,true,true);st.dirty=true;ok()};i.onerror=()=>{$('gLegNote').textContent='NASA’s map for this did not load just now. Try again in a moment.';ok()};
     i.src=`${GIBS.replace('image/jpeg','image/png')}&TRANSPARENT=TRUE&LAYERS=${LAYERS[k].l}&BBOX=-90,-180,90,180&WIDTH=2048&HEIGHT=1024&TIME=${INFO.date}`})}
 $('gLayer').onchange=e=>{st.layer=e.target.value;const y=LAYERS[st.layer];$('gLegBox').hidden=!y;if(y){$('gLegImg').hidden=!y.leg;if(y.leg){$('gLeg').src=`https://gibs.earthdata.nasa.gov/legends/${y.leg}.png`;$('gLeg').alt=`NASA’s colour scale for ${y.name}`}
-    $('gLegNote').textContent=y.note+' Data for '+new Date(INFO.date+'T12:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})+', the same day as the photographs.'}
+    $('gLegNote').textContent=y.note+(INFO?' Data for '+new Date(INFO.date+'T12:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})+', the same day as the photographs.':' Loading today’s date…')}
   loadLayer(st.layer).then(()=>{st.dirty=true;wantDetail()});st.dirty=true};
 $('gSats').onchange=e=>{st.sats=e.target.checked;if(!st.sats&&st.ride){st.ride=false;rideUI()}st.dirty=true};
 $('gRide').onclick=()=>{if(st.ride){st.ride=false;rideUI();wantDetail();return}if(!SAT||!SAT.iss){setDet('The orbit calculator has not loaded yet. Try again in a moment.');return}
@@ -395,7 +395,7 @@ let started=false;
 const start=async()=>{if(started)return;started=true;
   {const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js';sc.onload=initSats;document.head.appendChild(sc)}
   try{const r=await fetch('earth-globe.json',{cache:'no-cache'});if(!r.ok)throw new Error(r.status);INFO=await r.json();
-    const img=new Image();img.decoding='async';img.src='earth-globe.jpg?d='+INFO.date;await img.decode();base=tex(0,img,true);$('gmsg').style.display='none';st.dirty=true;gchecks();loadNight(st.night).then(()=>{st.dirty=true;wantDetail()})}
+    const img=new Image();img.decoding='async';img.src='earth-globe.jpg?d='+INFO.date;await img.decode();base=tex(0,img,true);$('gmsg').style.display='none';st.dirty=true;gchecks();loadNight(st.night).then(()=>{st.dirty=true;wantDetail()});if(st.layer&&LAYERS[st.layer])$('gLayer').dispatchEvent(new Event('change'))}
   catch(err){$('gmsg').innerHTML='The stitched globe is made once a day on the Golapada website. Open this page at <a href="https://jarvisss007.github.io/SPACE-PRODUCT/earth-from-above.html">jarvisss007.github.io</a> to turn it.'}};
 if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();start()}},{rootMargin:'400px'});io.observe(cv)}else start();
 requestAnimationFrame(loop);
