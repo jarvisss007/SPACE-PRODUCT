@@ -1,0 +1,131 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>आज अंतरिक्ष में</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: the home page's daily strip in Hindi, as its own page. Machine-assisted Hindi, awaiting a native speaker's review. Single dark look. */
+:root{color-scheme:dark;--void:#04060b;--panel:#0b1017;--panel2:#121a25;--line:#1f2a38;--ink:#e7edf3;--dim:#8a97a8;--gold:#e8c46a;--lox:#74c7ff;--flame:#ffa24a;--violet:#b6a4ff;--mars:#e0774a;--saffron:#ff9933;--ok:#5fd6a0;
+  --display:"Noto Sans Devanagari","Saira Condensed","Arial Narrow",sans-serif;--body:"Noto Sans Devanagari","IBM Plex Sans",system-ui,sans-serif}
+html,body{background:var(--void)}body{color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;margin:0}*{box-sizing:border-box}
+.wrap{max-width:1100px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-weight:600;font-size:14px;color:var(--gold)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,6vw,52px);line-height:1.15;margin:4px 0 8px}
+p{margin:0 0 8px;max-width:72ch;color:#c3ccd6}a{color:var(--lox)}
+.today{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.td{display:flex;flex-direction:column;gap:6px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--acc);border-radius:10px;padding:14px 16px;min-width:0}
+.td .k{font-weight:700;font-size:14px;color:var(--acc)}
+.td b{display:block;font-size:21px;line-height:1.3;font-weight:700}.td span{display:block;font-size:15px;color:#c3ccd6}.td strong{color:var(--ink)}
+.td .more{margin-top:auto;font-size:14px;color:var(--acc);text-decoration:none}.td[hidden]{display:none}
+.td details summary{cursor:pointer;color:var(--acc);font-size:14.5px;font-weight:600}.td details span{margin-top:6px;background:var(--panel2);border-radius:6px;padding:8px 10px}
+.td .tq b,.td details b{display:inline;font-size:inherit;font-weight:700}
+.td a.it{display:block;color:var(--ink);text-decoration:none;padding:2px 0;font-size:15px}.td a.it em{display:block;font-style:normal;font-size:13px;color:var(--dim)}
+.bd-l{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--dim);margin:8px 0}
+.bd-l select{font:inherit;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;max-width:240px;color-scheme:dark}
+.btn{font:700 15px var(--body);background:var(--lox);color:#04121c;border:0;border-radius:6px;padding:8px 14px;cursor:pointer;align-self:flex-start}
+.btn.x{background:none;color:var(--dim);border:1px solid var(--line);font-weight:600}.btn.wa{background:#25d366;color:#04160d;border-radius:999px}
+.btn:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--lox);outline-offset:2px}
+.note{font-size:13.5px;color:var(--dim)}
+.review{background:#1a1408;border:1px solid #4a3a14;border-radius:8px;padding:10px 14px;font-size:14px;color:#e8d9b0}
+footer{color:var(--dim);font-size:13px;max-width:100ch}
+</style>
+
+<div class="wrap">
+  <header lang="hi">
+    <div class="eyebrow">गोलपाद · रोज़ बदलता है</div>
+    <h1>आज अंतरिक्ष में</h1>
+    <p>आज रात का चंद्रमा और नक्षत्र, आकाश में दिखने वाले ग्रह, अगला रॉकेट प्रक्षेपण, आपके शहर के ऊपर से अंतरिक्ष स्टेशन, और इस हफ़्ते पृथ्वी के पास से गुज़रने वाला क्षुद्रग्रह। सब कुछ वही असली आँकड़े हैं जो गोलपाद की प्रयोगशालाओं में इस्तेमाल होते हैं।</p>
+    <p class="review">यह हिन्दी मशीन की मदद से लिखी गई है और अभी किसी हिन्दी भाषी ने इसकी जाँच नहीं की है। <a href="index.html" lang="en">English</a></p>
+    <p style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:10px"><button type="button" class="btn wa" id="share">आज का आकाश शेयर करें</button><span class="note" id="shareNote">आपके फ़ोन पर एक तस्वीर बनती है, WhatsApp या किसी भी ऐप के लिए। कुछ भी अपलोड नहीं होता।</span></p>
+  </header>
+
+  <div class="today" lang="hi">
+    <div class="td" style="--acc:var(--gold)"><div class="k">आज रात का चंद्रमा</div><div id="moon"></div><a class="more" href="tonight.hi.html">आज रात का पूरा आकाश →</a></div>
+    <div class="td" style="--acc:var(--gold)"><div class="k">आज रात के ग्रह</div><div id="plan"></div></div>
+    <div class="td" style="--acc:var(--flame)"><div class="k">अगला प्रक्षेपण</div><div id="launch"><span>प्रक्षेपणों की सूची आ रही है…</span></div><a class="more" href="launch-watch.hi.html">सभी प्रक्षेपण →</a></div>
+    <div class="td" style="--acc:var(--lox)"><div class="k">आपके ऊपर अंतरिक्ष स्टेशन</div><div id="iss"></div></div>
+    <div class="td" style="--acc:var(--mars)"><div class="k">इस हफ़्ते का क्षुद्रग्रह</div><div id="rock"></div></div>
+    <div class="td" style="--acc:var(--saffron)"><div class="k">आकाश में आगे क्या</div><div id="sky"></div></div>
+    <div class="td" style="--acc:var(--violet)"><div class="k">आज का प्रश्न</div><div id="quiz"></div></div>
+  </div>
+
+  <footer lang="hi">चंद्रमा: Meeus, <i>Astronomical Algorithms</i> अध्याय 47 (कुंडली लैब वाला ही कोड), लाहिड़ी अयनांश। ग्रह: JPL के अनुमानित कक्षीय तत्व (आज रात का आकाश वाला ही कोड)। अंतरिक्ष स्टेशन की कक्षा: CelesTrak, रोज़ ताज़ा। क्षुद्रग्रह: NASA/JPL, रोज़ ताज़ा। प्रक्षेपण: The Space Devs का Launch Library, पेज खोलने पर। आपका शहर सिर्फ़ इसी फ़ोन में रहता है।</footer>
+</div>
+
+<script>
+(()=>{'use strict';
+const TODAY=/*golapada-today*/null,QHI=/*golapada-quizhi*/null;
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0');
+/*golapada-moon*/
+if(!TODAY){$('moon').textContent='यह पेज साइट बनते समय भरता है।';return}
+const NAKH=['अश्विनी','भरणी','कृत्तिका','रोहिणी','मृगशिरा','आर्द्रा','पुनर्वसु','पुष्य','आश्लेषा','मघा','पूर्वा फाल्गुनी','उत्तरा फाल्गुनी','हस्त','चित्रा','स्वाति','विशाखा','अनुराधा','ज्येष्ठा','मूल','पूर्वाषाढ़ा','उत्तराषाढ़ा','श्रवण','धनिष्ठा','शतभिषा','पूर्वभाद्रपदा','उत्तरभाद्रपदा','रेवती'];
+const TIH=['प्रतिपदा','द्वितीया','तृतीया','चतुर्थी','पंचमी','षष्ठी','सप्तमी','अष्टमी','नवमी','दशमी','एकादशी','द्वादशी','त्रयोदशी','चतुर्दशी'];
+const DIRH=['उत्तर','उत्तर-पूर्व','पूर्व','दक्षिण-पूर्व','दक्षिण','दक्षिण-पश्चिम','पश्चिम','उत्तर-पश्चिम'],dirH=a=>DIRH[Math.round((((a%360)+360)%360)/45)%8];
+const hi=(d,o)=>d.toLocaleDateString('hi-IN',o),hiT=(t,o)=>new Intl.DateTimeFormat('hi-IN',o).format(t);
+const sunL=jd=>{const T=(jd-2451545)/36525,L=nrm(280.46646+36000.76983*T),M=nrm(357.52911+35999.05029*T)*D2R;return nrm(L+(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M))};
+// moon
+(()=>{const ev=new Date();ev.setHours(21,0,0,0);const jd=ev.getTime()/864e5+2440587.5,m=moonApparent(jd).lon,el=nrm(m-sunL(jd)),lit=Math.round((1-Math.cos(el*D2R))/2*100),k=Math.floor(nrm(m-(23.853+(jd-2451545)/365.25*50.29/3600))/(360/27)),t=Math.floor(el/12);
+  const ph=el<12||el>348?'अमावस्या के पास':el<168?'शुक्ल पक्ष, बढ़ता चंद्रमा':el<192?'पूर्णिमा के पास':'कृष्ण पक्ष, घटता चंद्रमा';
+  const tn=t===14?'पूर्णिमा':t===29?'अमावस्या':(t<15?'शुक्ल ':'कृष्ण ')+TIH[t%15];
+  $('moon').innerHTML=`<b>${lit}% प्रकाशित</b><span>${ph}। रात 9 बजे चंद्रमा <strong>${NAKH[k]}</strong> नक्षत्र में है, तिथि ${tn}।</span>`})();
+// planets
+let place=null;try{place=JSON.parse(localStorage.getItem('golapada-place')||'null')}catch(e){}
+(()=>{const D=Math.PI/180,EPS=23.4393*D,norm=a=>((a%360)+360)%360;
+/*golapada-planets*/
+  const pl=place||{n:'दिल्ली',lat:28.61,lon:77.21},NM={mercury:'बुध',venus:'शुक्र',mars:'मंगल',jupiter:'बृहस्पति',saturn:'शनि'};
+  const hg=h=>h<20?'नीचे':h<50?'आधी ऊँचाई पर':'ऊँचे';
+  const d=new Date(),eve=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),20)-pl.lon/15*36e5,dawn=eve+9*36e5;
+  const look=t=>{const jd=t/864e5+2440587.5;return Object.keys(NM).map(k=>{const o=planet(k,jd),h=altaz(o,jd,pl.lat,pl.lon);return {k,alt:h.alt,az:h.az,mag:o.mag}}).filter(p=>p.alt>10).sort((a,b)=>a.mag-b.mag)};
+  const f=a=>a.map(p=>`<strong>${NM[p.k]}</strong> ${dirH(p.az)} में ${hg(p.alt)}`).join(', ');
+  const ev=look(eve),dw=look(dawn).filter(p=>!ev.some(e=>e.k===p.k));
+  $('plan').innerHTML=(ev.length?`<b>शाम को: ${ev.map(p=>NM[p.k]).join(', ')}</b><span>रात लगभग 8 बजे (${pl.n==='your location'?'आपकी जगह':pl.n}): ${f(ev)}।</span>`:`<b>शाम को कोई चमकीला ग्रह नहीं</b>`)+(dw.length?`<span>भोर से पहले (लगभग 5 बजे): ${f(dw)}।</span>`:'')+'<span class="note">ग्रह टिमटिमाते नहीं, तारे टिमटिमाते हैं।</span>'})();
+// asteroid
+(()=>{const now=Date.now(),r=((TODAY.neo)||[]).filter(r=>Date.parse(r[1])>now-864e5).sort((a,b)=>a[2]-b[2])[0];if(!r){$('rock').closest('.td').hidden=true;return}
+  $('rock').innerHTML=`<b>${r[0]}</b><span>${hi(new Date(r[1]),{weekday:'long',day:'numeric',month:'long'})} को पृथ्वी के पास से गुज़रेगा, ${r[2]<1?'<strong>चंद्रमा से भी पास</strong>':`चंद्रमा की दूरी के ${r[2].toFixed(1)} गुना पर`}${r[3]?`, लगभग ${r[3]<1?Math.round(r[3]*1000)+' मीटर':r[3].toFixed(1)+' किमी'} बड़ा`:''}। यह टकराएगा नहीं।</span>`})();
+// coming up in the sky
+(()=>{const now=Date.now(),out=[],el=t=>{const jd=t/864e5+2440587.5;return nrm(moonApparent(jd).lon-sunL(jd))};
+  const find=tg=>{let pv=((el(now)-tg+540)%360)-180;for(let t=now+36e5;t<now+32*864e5;t+=36e5){const v=((el(t)-tg+540)%360)-180;if(pv<0&&v>=0)return t;pv=v}return null};
+  const fm=find(180),nm=find(0);if(fm)out.push([fm,'पूर्णिमा']);if(nm)out.push([nm,'अमावस्या: तारों के लिए सबसे अँधेरी रातें']);
+  const SHH={'Quadrantids':'क्वाड्रान्टिड','Lyrids':'लिरिड','Eta Aquariids':'एटा एक्वेरिड','Perseids':'पर्सिड','Draconids':'ड्रेकोनिड','Orionids':'ओरायनिड','Southern Taurids':'दक्षिणी टॉरिड','Leonids':'लियोनिड','Geminids':'जेमिनिड','Ursids':'उर्सिड'};
+  const y=new Date().getFullYear();let sh=null;for(const [n,m,d,z] of (TODAY.showers||[]))for(const yy of [y,y+1]){const t=new Date(yy,m-1,d,23).getTime();if(t>now-864e5&&(!sh||t<sh[0]))sh=[t,n,z]}
+  if(sh)out.push([sh[0],`${SHH[sh[1]]||sh[1]} उल्का वर्षा का चरम${sh[2]?`, अँधेरी जगह से घंटे में लगभग ${sh[2]} उल्काएँ`:''}`]);
+  const ec=(TODAY.eclipses||[]).map(([iso])=>{const [a,b,c]=iso.split('-').map(Number);return new Date(a,b-1,c).getTime()}).find(t=>t>now);if(ec)out.push([ec,'अगला पूर्ण सूर्य ग्रहण']);
+  $('sky').innerHTML=out.sort((a,b)=>a[0]-b[0]).map(([t,x])=>`<a class="it"><strong>${hi(new Date(t),{day:'numeric',month:'short',...(t-now>200*864e5?{year:'numeric'}:{})})}</strong> ${x}</a>`).join('')})();
+// question of the day (from the Hindi lab quizzes)
+(()=>{const Q=QHI||[];if(!Q.length){$('quiz').closest('.td').hidden=true;return}const n=new Date(),day=Math.floor(Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())/864e5),q=Q[(day*7919)%Q.length];
+  $('quiz').innerHTML=`<span class="tq">${q[0]}</span><details><summary>उत्तर देखें</summary><span>${q[1]}</span></details><a class="more" href="${q[2]}">प्रयोगशाला में खुद देखें →</a>`})();
+// the space station over you
+(()=>{if(!TODAY.iss){$('iss').closest('.td').hidden=true;return}const IN='Asia/Kolkata',CITY=[['दिल्ली',28.61,77.21],['मुंबई',19.08,72.88],['बेंगलुरु',12.97,77.59],['चेन्नई',13.08,80.27],['कोलकाता',22.57,88.36],['हैदराबाद',17.39,78.49],['अहमदाबाद',23.02,72.57],['पुणे',18.52,73.86],['जयपुर',26.91,75.79],['लखनऊ',26.85,80.95],['पटना',25.59,85.14],['भोपाल',23.26,77.41],['गुवाहाटी',26.14,91.74],['हुबली',15.36,75.12]];
+  const D=Math.PI/180,sunEq=t=>{const n=t/864e5+2440587.5-2451545,L=(280.460+0.9856474*n)*D,g=(357.528+0.9856003*n)*D,lam=L+(1.915*Math.sin(g)+0.020*Math.sin(2*g))*D,eps=23.4393*D;return [Math.cos(lam),Math.cos(eps)*Math.sin(lam),Math.sin(eps)*Math.sin(lam)]};
+  const sunAlt=(t,lat,lon)=>{const v=sunEq(t),ra=Math.atan2(v[1],v[0]),dec=Math.asin(v[2]),gm=((280.46061837+360.98564736629*(t/864e5+2440587.5-2451545))%360)*D,H=gm+lon*D-ra;return Math.asin(Math.sin(lat*D)*Math.sin(dec)+Math.cos(lat*D)*Math.cos(dec)*Math.cos(H))/D};
+  let lib=null;const load=()=>lib||(lib=new Promise((ok,no)=>{if(window.satellite)return ok();const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)}));
+  const pick=()=>{$('iss').innerHTML=`<span>देखिए कि अंतरिक्ष स्टेशन आपके शहर से कब दिखेगा: एक चमकीली, स्थिर रोशनी जो कुछ मिनटों में आकाश पार करती है।</span><label class="bd-l">आपका शहर <select id="city"><option value="">चुनें…</option>${CITY.map((c,i)=>`<option value="${i}">${c[0]}</option>`).join('')}</select></label>`;
+    $('city').onchange=e=>{const c=CITY[+e.target.value];if(c)go({n:c[0],lat:c[1],lon:c[2],tz:IN})}};
+  async function go(pl){try{localStorage.setItem('golapada-place',JSON.stringify(pl))}catch(e){}$('iss').innerHTML='<span>गणना हो रही है…</span>';try{await load()}catch(e){$('iss').innerHTML='<span>अभी कक्षा का कैलकुलेटर नहीं खुल पाया।</span>';return}
+    const rec=satellite.twoline2satrec(TODAY.iss[0],TODAY.iss[1]),o={latitude:pl.lat*D,longitude:pl.lon*D,height:0},now=Date.now();let up=null,found=null;
+    for(let t=now;t<now+3*864e5&&!found;t+=20000){const dt=new Date(t),pv=satellite.propagate(rec,dt);if(!pv||!pv.position||typeof pv.position!=='object')continue;const la=satellite.ecfToLookAngles(o,satellite.eciToEcf(pv.position,satellite.gstime(dt))),e=la.elevation/D;
+      if(e>10){const sv=sunEq(t),p=pv.position,dd=p.x*sv[0]+p.y*sv[1]+p.z*sv[2],lit=dd>0||Math.hypot(p.x-dd*sv[0],p.y-dd*sv[1],p.z-dd*sv[2])>6378,dark=sunAlt(t,pl.lat,pl.lon)<-6;if(!up)up={max:e,vis:false};up.max=Math.max(up.max,e);if(lit&&dark){if(!up.vis){up.v0=t;up.a0=la.azimuth/D}up.vis=true;up.v1=t;up.a1=la.azimuth/D}}else if(up){if(up.vis)found=up;up=null}}
+    $('iss').innerHTML=(found?`<b>${hiT(found.v0,{weekday:'short',hour:'numeric',minute:'2-digit',...(pl.tz?{timeZone:pl.tz}:{})})}</b><span>${pl.n} से ${dirH(found.a0)} की ओर देखें। स्टेशन ${Math.round(found.max)}° तक ऊपर चढ़कर ${dirH(found.a1)} की ओर जाएगा, लगभग ${Math.max(1,Math.round((found.v1-found.v0)/60000))} मिनट दिखेगा।</span>`
+      :`<b>अगले 3 दिन नहीं दिखेगा</b><span>${pl.n} से स्टेशन तभी दिखता है जब उस पर धूप हो और आपका आकाश अँधेरा हो। कुछ दिन बाद फिर देखें।</span>`)+'<button type="button" class="btn x" id="chg">शहर बदलें</button>';$('chg').onclick=pick}
+  place&&CITY.some(c=>c[0]===place.n)?go(place):pick()})();
+// next launch
+(async()=>{let d=null;try{const c=JSON.parse(localStorage.getItem('gp-ll-upcoming')||'null');if(c&&Date.now()-c.t<30*60e3)d=c.d}catch(e){}
+  if(!d){try{const r=await fetch('https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=25&mode=normal&hide_recent_previous=true');if(!r.ok)throw 0;const j=await r.json();
+    d=j.results.map(L=>({name:L.name,net:Date.parse(L.net),prec:(L.net_precision||{}).abbrev||'',status:(L.status||{}).abbrev||'',rocket:((L.rocket||{}).configuration||{}).full_name||'',prov:(L.launch_service_provider||{}).name||'',pad:(L.pad||{}).name||'',site:((L.pad||{}).location||{}).name||'',lat:+(L.pad||{}).latitude,lon:+(L.pad||{}).longitude,cc:(((L.pad||{}).country)||{}).alpha_3_code||'',orbit:(((L.mission||{}).orbit)||{}).name||'',desc:((L.mission||{}).description||'').slice(0,240)}));
+    try{localStorage.setItem('gp-ll-upcoming',JSON.stringify({t:Date.now(),d}))}catch(e){}}catch(e){$('launch').innerHTML='<span>अभी प्रक्षेपणों की सूची नहीं मिल पाई।</span>';return}}
+  const L=d.find(x=>x.net>Date.now()-36e5),I=d.find(x=>x.cc==='IND'&&x.net>Date.now()),nm=x=>x.name.split(' | ')[1]||x.name;if(!L)return;
+  const tick=()=>{const s=Math.max(0,(L.net-Date.now())/1000),dd=Math.floor(s/86400),h=Math.floor(s%86400/3600),mi=Math.floor(s%3600/60);
+    $('launch').innerHTML=`<b>${nm(L)}</b><span>${L.rocket}, ${L.site.split(',')[0]} से। ${s>0?`<strong>${dd?dd+' दिन ':''}${h} घंटे ${mi} मिनट</strong> में`:'अभी'}।</span>${I&&I!==L?`<span style="color:var(--saffron)">भारत से अगला: ${nm(I)}, ${hi(new Date(I.net),{day:'numeric',month:'short'})}</span>`:''}`};tick();setInterval(tick,30000)})();
+// share picture in Hindi
+$('share').onclick=async()=>{const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0b1430');bg.addColorStop(1,'#04060b');g.fillStyle=bg;g.fillRect(0,0,W,H);
+  const F='"Noto Sans Devanagari",sans-serif';g.fillStyle='#e8c46a';g.font='600 34px '+F;g.fillText('गोलपाद · आज अंतरिक्ष में',70,110);g.fillStyle='#fff';g.font='700 58px '+F;g.fillText(hi(new Date(),{weekday:'long',day:'numeric',month:'long'}),70,190);
+  const wrap=(t,x,y,w,lh,max)=>{const ws=t.split(/\s+/);let line='',n=0;for(const v of ws){const tt=line?line+' '+v:v;if(g.measureText(tt).width>w&&line){g.fillText(line,x,y);y+=lh;if(++n>=max)return;line=v}else line=tt}line&&g.fillText(line,x,y)};
+  const tx=id=>{const e=$(id);return e&&!e.closest('.td').hidden?e.innerText.replace(/शहर बदलें|उत्तर देखें.*$/gs,'').replace(/\n+/g,' · ').trim():''};
+  const B=[['आज रात का चंद्रमा','#e8c46a',tx('moon')],['आज रात के ग्रह','#e8c46a',tx('plan')],['अगला प्रक्षेपण','#ffa24a',tx('launch')],['इस हफ़्ते का क्षुद्रग्रह','#e0774a',tx('rock')]].filter(b=>b[2]);
+  let y=270;for(const [k,col,t] of B){g.fillStyle='rgba(18,26,37,.85)';g.fillRect(60,y-10,W-120,212);g.fillStyle=col;g.fillRect(60,y-10,8,212);g.font='700 30px '+F;g.fillText(k,95,y+32);g.fillStyle='#e7edf3';g.font='400 32px '+F;wrap(t,95,y+82,W-200,44,3);y+=232}
+  g.fillStyle='#74c7ff';g.font='600 32px '+F;g.fillText((location.host||'jarvisss007.github.io')+location.pathname,70,H-60);
+  try{const blob=await new Promise(r=>c.toBlob(r,'image/png')),file=new File([blob],'aaj-antariksh.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],text:'आज अंतरिक्ष में, गोलपाद से: '+location.href.split('#')[0]});
+    else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aaj-antariksh.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);$('shareNote').textContent='तस्वीर सेव हो गई।'}}catch(e){if(e&&e.name!=='AbortError')$('shareNote').textContent='इस फ़ोन पर शेयर नहीं हो पाया।'}};
+})();
+</script>

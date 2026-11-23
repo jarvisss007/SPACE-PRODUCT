@@ -236,7 +236,7 @@ footer{{color:var(--dim);font-size:12.5px;max-width:100ch;line-height:1.6}}
 
   <section id="today">
     <h2>Today in space</h2>
-    <p class="sub">Changes every day, from the same live data the labs use.</p>
+    <p class="sub">Changes every day, from the same live data the labs use. <a href="aaj.html" lang="hi">हिन्दी में पढ़ें: आज अंतरिक्ष में</a></p>
     <p class="shr"><button type="button" id="tdShare" class="shb">Share today’s sky</button> <span class="note" id="tdShareNote">Makes a picture on your phone for WhatsApp or any app. Nothing is uploaded.</span></p>
     <div class="today">
       <div class="td" style="--acc:var(--flame)"><div class="k">Next launch</div><div id="tdLaunch" aria-live="polite"><b>Rocket launches</b><span>Loading the launch list…</span></div><a class="more" href="launch-watch.html">All launches →</a></div>

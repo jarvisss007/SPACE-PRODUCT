@@ -67,6 +67,7 @@ PAGES = [
     ("starship-through-time.html", "Through time", "4jbD63EEZBxcEbE7WXseMN"),
     ("clues-in-old-books.html", "Old books", "RHr7yep3A95fUrPY78nS57"),
     ("weekly.html", "This week", "9ac5wSwHMBS4HUMmdwtM4a"),
+    ("aaj.html", "आज (हिन्दी)", "LrvZuvG39fRqjNq3PPjPiw"),
     ("about.html", "About", "Sr4HjpkwPpx5d1mojsoH2v"),
 ]
 
@@ -380,6 +381,19 @@ def build() -> None:
             src = src.replace("/*golapada-today*/null", today, 1)
         elif fname == "weekly.html":  # the printable weekly sheet: same daily data, plus the Moon code
             src = src.replace("/*golapada-today*/null", today, 1).replace("/*golapada-moon*/", moon_js, 1)
+        elif fname == "aaj.html":  # the Hindi daily page: same data, Moon and planet maths, and the Hindi lab quizzes
+            quiz_hi = []
+            for f in sorted((HERE / "quizzes").glob("*.hi.json")):
+                for q in json.loads(f.read_text(encoding="utf-8")).get("questions", []):
+                    quiz_hi.append([q["q"], q["a"], f"{f.stem}.html"])
+            _t = (HERE / "tonight.html").read_text(encoding="utf-8")
+            _p0 = _t.index("const EL={mercury:")
+            planets_js = _t[_p0:_t.index("// ---- Sun and Moon ----", _p0)]
+            _g0 = _t.index("function gmst(jd)")
+            planets_js += _t[_g0:_t.index("\n", _t.index("function altaz(", _g0))]
+            src = (src.replace("/*golapada-today*/null", today, 1).replace("/*golapada-moon*/", moon_js, 1)
+                   .replace("/*golapada-quizhi*/null", json.dumps(quiz_hi, ensure_ascii=False, separators=(",", ":")), 1)
+                   .replace("/*golapada-planets*/", planets_js, 1))
         elif fname in RELATED:  # English labs: the Today line goes just under the simple-words card (or the header)
             block = day_block(fname, tdata, moon_js)
             end = "<!-- golapada-simple:end -->"
