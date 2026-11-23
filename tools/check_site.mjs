@@ -66,6 +66,19 @@ for (const page of pages) {
   const size = statSync(join(ROOT, page)).size;
   const [limit, why] = EXEMPT[page] || [BUDGET, ""];
   if (size > limit) fails.push(`${page}: ${Math.round(size / KB)} KB is over its ${Math.round(limit / KB)} KB budget${why ? ` (${why})` : ""}`);
+  // stale plans: a sentence that still calls something upcoming although its full date has passed (a note, not a failure)
+  {
+    const MON = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const txt = readFileSync(join(ROOT, page), "utf8").replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ");
+    const future = /\b(is due|are due|due to|is planned|are planned|planned for|is scheduled|scheduled for|is expected to|will launch|will arrive|set to launch|no earlier than)\b/i;
+    for (const sent of txt.split(/(?<=[.!?])\s+/)) {
+      if (!future.test(sent) || sent.length > 400 || /Sources|checked/i.test(sent)) continue;
+      for (const m of sent.matchAll(new RegExp(`\\b(\\d{1,2}) (${MON.join("|")}) (\\d{4})\\b`, "g"))) {
+        const when = Date.UTC(+m[3], MON.indexOf(m[2]), +m[1]);
+        if (when < Date.now() - 86400000) { warns.push(`${page}: may be out of date (${m[0]} has passed): "${sent.trim().slice(0, 160)}"`); break; }
+      }
+    }
+  }
 
   // 1) phone: slow 4G and a slower CPU, timed; then the checks
   const ctx = await browser.newContext({ viewport: { width: 375, height: 812 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
