@@ -92,7 +92,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 // "Today" line at the top of a lab: one or two things that change every day, from data the site already has.
 // build_site.py writes DAY (this lab's own data) and, for Moon labs, the Moon code shared with the Kundli Lab.
 (()=>{'use strict';
-const DAY={"hist":[["11-05","2018","2012, 2018 Into interstellar space"],["01-24","1986","Uranus"],["08-20","1977","Two launches"],["09-05","1977","Two launches"],["03-05","1979","Jupiter"],["07-09","1979","Jupiter"],["11-12","1980","Saturn"],["08-25","1989","Neptune"],["08-25","2012","2012, 2018 Into interstellar space"],["11-14","2023","The broken memory chip"],["04-20","2024","The broken memory chip"],["04-17","2026","Instruments switched off"],["11-18","2026","One light-day away"]]};if(!DAY)return;
+const DAY={"hist":[["11-14","2023","The broken memory chip"],["11-05","2018","2012, 2018 Into interstellar space"],["01-24","1986","Uranus"],["08-20","1977","Two launches"],["09-05","1977","Two launches"],["03-05","1979","Jupiter"],["07-09","1979","Jupiter"],["11-12","1980","Saturn"],["08-25","1989","Neptune"],["08-25","2012","2012, 2018 Into interstellar space"],["04-20","2024","The broken memory chip"],["04-17","2026","Instruments switched off"],["11-18","2026","One light-day away"]]};if(!DAY)return;
 const box=document.getElementById('gday');if(!box)return;
 const pad=n=>String(n).padStart(2,'0'),now=Date.now(),items=[];
 const dshort=t=>new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short'});

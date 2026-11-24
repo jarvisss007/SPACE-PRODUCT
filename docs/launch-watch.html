@@ -247,7 +247,7 @@ function checks(){const isro=Y.filter(L=>L.cc==='IND'&&/Indian Space Research/.t
   const rows=[['Typical transfer orbit (semi-major axis 24,582 km): speed at the high point','1.64 km/s',Math.sqrt(MU*(2/RA-1/24582)).toFixed(2)+' km/s','ok'],
    ['Same orbit: speed at the low point','9.88 km/s',Math.sqrt(MU*(2/(2*24582-RA)-1/24582)).toFixed(2)+' km/s','ok'],
    ['Earth’s spin speed at the equator','465 m/s (rounded, from radius and sidereal day)',(VEQ*1000).toFixed(1)+' m/s','ok'],
-   ['ISRO launches this year, cross-checked with the ISRO Launches page (Wikipedia lists)','12 Jan, 3 Sep, 30 Oct 2026',isro.length?isro.map(d=>new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'})).join(', '):'—',isro.join()==='2026-01-12,2026-09-03,2026-10-30'?'ok':'mid']];
+   ['ISRO launches this year, cross-checked with the ISRO Launches page (Wikipedia lists)','12 Jan, 4 Sep, 30 Oct 2026 (India time)',isro.length?isro.map(d=>new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'})).join(', '):'—',isro.join()==='2026-01-12,2026-09-03,2026-10-30'?'ok':'mid']];
   $('check').innerHTML='<tr><th>What</th><th class="n">Published or other source</th><th class="n">This page</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n ${r[3]}">${r[2]}</td></tr>`).join('')}
 let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{cty();mapDraw();eq()},150)});
 cty();mapDraw();eq();checks();past();
