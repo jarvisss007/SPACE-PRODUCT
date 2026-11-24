@@ -259,7 +259,7 @@ draw();
 'use strict';
 const $=id=>document.getElementById(id),nf=new Intl.NumberFormat('en-US');
 // ---- published numbers ----
-const T0=11.921473*3600,T1=11.3676*3600,A0=1206,MD=4.3e9,MDART=610,VDART=22530/3.6,VPUB=0.177,DVPUB=2.7e-3;
+const T0=11.921473*3600,T1=11.3676*3600,A0=1206,MD=4.3e9,MDART=579.4,VDART=6144.9,VPUB=0.177,DVPUB=2.7e-3;
 const V0=2*Math.PI*A0/T0,dT=T0-T1,DV=V0*dT/(3*T0),A1=A0*Math.pow(T1/T0,2/3),BETA=MD*DV/(MDART*VDART);
 $('mKv').innerHTML=`<span>Lap time before</span><b>11 h 55 min 17 s</b><span>Lap time after</span><b>11 h 22 min 3 s</b><span>Lap shortened by</span><b>${(dT/60).toFixed(1)} min</b><span>Dimorphos’s speed around Didymos</span><b>${(V0*100).toFixed(2)} cm/s</b><span>Slowdown the shorter lap requires</span><b>${(DV*1000).toFixed(2)} mm/s</b><span>Momentum DART brought</span><b>${nf.format(Math.round(MDART*VDART/1000))} kN·s</b><span>Momentum Dimorphos lost</span><b>${nf.format(Math.round(MD*DV/1000))} kN·s</b><span>Ratio, β</span><b>${BETA.toFixed(1)}</b>`;
 $('betaNote').innerHTML=`Dimorphos lost about ${BETA.toFixed(1)} times the momentum DART carried. The extra came from the recoil of the rock the impact blasted into space, like the kick of a gun. Published analyses put this factor between 2.2 and 4.9, depending on Dimorphos’s mass, which is still uncertain. It means a kinetic impactor works better than its own momentum alone suggests.`;

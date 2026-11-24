@@ -184,7 +184,7 @@ draw();
 
   <section class="card">
     <h2>Air, water and food</h2>
-    <p>Water is heavy and costs a lot to launch, so the ISS recycles it: sweat and breath moisture from the air, and urine. In 2023 a new machine, the <b>Brine Processor</b>, squeezed the last water out of the leftover salty urine and lifted recovery from about 93.5% to <b>98%</b>. Choose a crew and a mission length.</p>
+    <p>Water is heavy and costs a lot to launch, so the ISS recycles it: sweat and breath moisture from the air, and urine. A machine added in 2021, the <b>Brine Processor</b>, squeezes the last water out of the leftover salty urine. In June 2023 NASA reported it had lifted recovery from about 93.5% to <b>98%</b>. Choose a crew and a mission length.</p>
     <div class="seg" id="rec"></div>
     <label class="f">People on board <output id="crewO"></output><input type="range" id="crew" min="1" max="11" step="1" value="7"></label>
     <label class="f">Days <output id="daysO"></output><input type="range" id="days" min="10" max="365" step="1" value="180"></label>
@@ -384,7 +384,7 @@ function updWater(){rb.querySelectorAll("button").forEach((b,i)=>b.setAttribute(
   <div class="stat o"><span>Food to send up</span><b>${fmt(food)} kg</b></div>
   <div class="stat g"><span>Oxygen breathed</span><b>${fmt(o2)} kg</b></div>`;
  $("#wverd").innerHTML=r===0?`With no recycling, all ${fmt(used)} litres would have to be launched: about ${fmt(used/1000,1)} tonnes, the weight of ${Math.max(1,Math.round(used/1000/1.2))} small car${used>=1800?"s":""}.`
-  :`Recycling ${(r*100).toFixed(1)}% means only <b>${fmt(send)} litres</b> of new water is needed instead of ${fmt(used)}. That saves about <b>${fmt(saved/1000,1)} tonnes</b> of launch weight. ${recI===2?`Going from 93.5% to 98% may sound small, but it cuts the water you must send by about ${Math.round((1-0.02/0.065)*100)}%.`:"Press <b>Today: 98%</b> to see what the 2023 upgrade changed."} Food cannot be recycled yet: ${fmt(food)} kg of it must come up on cargo ships.`}
+  :`Recycling ${(r*100).toFixed(1)}% means only <b>${fmt(send)} litres</b> of new water is needed instead of ${fmt(used)}. That saves about <b>${fmt(saved/1000,1)} tonnes</b> of launch weight. ${recI===2?`Going from 93.5% to 98% may sound small, but it cuts the water you must send by about ${Math.round((1-0.02/0.065)*100)}%.`:"Press <b>Today: 98%</b> to see what the Brine Processor changed."} Food cannot be recycled yet: ${fmt(food)} kg of it must come up on cargo ships.`}
 crew.addEventListener("input",updWater);days.addEventListener("input",updWater);
 
 /* ---------- body ---------- */
@@ -410,7 +410,7 @@ const TL=[
  ["","2 Nov 2000","People move in for good","Expedition 1 arrives. There have been people in space every single day since then."],
  ["","2011","ISS mostly complete","About the size of a football field and about 420 tonnes, with as much living space as a six-bedroom house."],
  ["","29 Apr 2021","China's Tiangong begins","The Tianhe core module launches; with two lab modules the station is complete in November 2022. It is about one-fifth the mass of the ISS."],
- ["in","25 Jun 2025","Shubhanshu Shukla reaches the ISS","On Axiom-4, the ISRO astronaut becomes the first Indian aboard the ISS (docked 26 June), 41 years after Rakesh Sharma. About 18 days on the station, back on 15 July 2025."],
+ ["in","26 Jun 2025","Shubhanshu Shukla reaches the ISS","On Axiom-4, the ISRO astronaut becomes the first Indian aboard the ISS (launched 25 June, docked 26 June), 41 years after Rakesh Sharma. About 18 days on the station, back on 15 July 2025."],
  ["","2 Nov 2025","25 years of non-stop living in space","The ISS marks a quarter of a century with a crew always aboard."],
  ["","24 May 2026","A year-long stay on Tiangong","China's Shenzhou-23 crew arrives, with one member planned to stay about a year."],
  ["in","Late 2026 (target)","Gaganyaan G1","India's first uncrewed test of its crew capsule, carrying the robot Vyommitra. Still a target date when this page was checked."],

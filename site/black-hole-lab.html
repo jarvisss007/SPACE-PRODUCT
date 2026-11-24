@@ -133,6 +133,36 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     </div>
   </section>
 
+  <style>
+  .tr td.ok{color:var(--ok);font-weight:600}.tr td.mid{color:var(--hot);font-weight:600}.tr td.bad{color:var(--bad);font-weight:600}
+  .tr table{min-width:560px}.tr ul{margin:0;padding-left:20px}.tr li{color:#cdc8dc;margin:5px 0;max-width:76ch}
+  </style>
+  <details class="card tr gx"><summary>For experts: How far to trust it</summary>
+    <p>Each number below was read from this page’s own code (its constants G = 6.674×10⁻¹¹, c = 2.998×10⁸ m/s, M☉ = 1.989×10³⁰ kg and its catalogue), recomputed, and compared with the published value.</p>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table>
+      <tr><th>What</th><th>This page</th><th>Published</th><th>Source</th><th>Agrees?</th></tr>
+      <tr><td>Horizon radius of a 1 M☉ hole (the Sun), 2GM/c²</td><td>2.954 km</td><td>about 3 km (2.95 km)</td><td>NASA Imagine the Universe, “Black Holes”</td><td class="ok">Yes</td></tr>
+      <tr><td>Horizon radius of Sagittarius A*</td><td>12,692,673 km (0.085 AU)</td><td>2GM/c² with M = 4.297×10⁶ M☉: 1.27×10⁷ km</td><td>GRAVITY Collaboration 2022, A&amp;A 657, L12</td><td class="ok">Yes</td></tr>
+      <tr><td>Photon sphere</td><td>1.5 r<sub>s</sub></td><td>3GM/c² = 1.5 r<sub>s</sub></td><td>EHT Collaboration 2019, M87* Paper VI (ApJL 875, L6)</td><td class="ok">Yes</td></tr>
+      <tr><td>Shadow edge (capture impact parameter)</td><td>2.60 r<sub>s</sub></td><td>√27 GM/c² = 2.598 r<sub>s</sub></td><td>EHT Collaboration 2019, Paper VI</td><td class="ok">Yes</td></tr>
+      <tr><td>Innermost stable orbit, and its speed</td><td>3 r<sub>s</sub>; 50% of light</td><td>6GM/c² = 3 r<sub>s</sub>; c/2 for a local static observer</td><td>Bardeen, Press &amp; Teukolsky 1972, ApJ 178, 347</td><td class="ok">Yes</td></tr>
+      <tr><td>Sagittarius A*: mass and distance</td><td>4.297 million M☉; 27,000 ly</td><td>(4.297 ± 0.012)×10⁶ M☉; 8,277 ± 9 pc = 26,996 ly</td><td>GRAVITY Collaboration 2022, A&amp;A 657, L12</td><td class="ok">Yes</td></tr>
+      <tr><td>M87*: mass and distance</td><td>6.5 billion M☉; 55 million ly; horizon 128 AU</td><td>(6.5 ± 0.2 stat ± 0.7 sys)×10⁹ M☉; 16.8 Mpc = 54.8 million ly</td><td>EHT Collaboration 2019, Paper VI</td><td class="ok">Yes</td></tr>
+      <tr><td>Gaia BH1: mass and distance</td><td>9.62 M☉; 1,560 ly; horizon 28 km</td><td>9.62 ± 0.18 M☉; 480 pc = 1,566 ly</td><td>El-Badry et al. 2023, MNRAS 518, 1057</td><td class="ok">Yes</td></tr>
+      <tr><td>Spaghettification: head-to-foot stretch</td><td>2GML/r³; 10 g reached 3,605 km from Gaia BH1, 2.76×10⁵ km from Sgr A* (inside its horizon)</td><td>Radial tidal term 2GM/r³ per metre in a freely falling frame</td><td>Standard GR result (e.g. MTW, Gravitation §31.2)</td><td class="mid">Close: the 10 g and 1,000 g limits are rough choices</td></tr>
+      <tr><td>Longest time inside the horizon</td><td>πGM/c³: 66.5 s for Sgr A*, 27.9 hours for M87*</td><td>πM (G = c = 1) for a drop from rest at the horizon</td><td>Brauer, Camargo &amp; Socolovsky, arXiv:1406.2350</td><td class="ok">Yes</td></tr>
+    </table></div>
+  </details>
+  <details class="card tr gx"><summary>For experts: What the page leaves out</summary>
+    <ul>
+      <li><b>Spin.</b> Every hole here is non-spinning (Schwarzschild). Real ones spin: the EHT’s 2022 Sagittarius A* models disfavour a non-spinning hole, and spin moves the innermost stable orbit (down to 0.5 r<sub>s</sub> for a prograde disk at maximum spin) and flattens one side of the shadow.</li>
+      <li><b>A toy disk.</b> The disk is thin, from 3 to 15 r<sub>s</sub>, with a simplified brightness law. It is not a model of the hot, thick gas the EHT actually images, and it ignores the light that orbits more than about once.</li>
+      <li><b>Uncertainty.</b> Masses are shown as single numbers. M87*’s mass carries about ±11%, and other methods (gas dynamics) gave values near half of it.</li>
+      <li><b>Survival limits.</b> “Torn apart at 10 g” and “steel fails at 1,000 g” are round thresholds, not measured limits, and the tidal stretch uses a straight-line body, not a real one.</li>
+      <li><b>The trip.</b> The 1 g travel times assume a ship that never runs out of fuel; no known propulsion could do it. The wormhole energy figure is only an order of magnitude.</li>
+    </ul>
+  </details>
+
   <!-- golapada-quiz:start -->
 <style>
 .gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
@@ -156,7 +186,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 </script></section>
 <!-- golapada-quiz:end -->
   <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="eht-lab.html" style="--k:#ff9933"><b>Photographing a Black Hole</b><span>How eight radio dishes became one Earth-sized telescope to image M87* and Sgr A*: work out the sharpness, check the ring size with Einstein&#x27;s formula, and see why the data flew on hard drives.</span></a><a href="milky-way-atlas.html" style="--k:#b6a4ff"><b>Milky Way Atlas</b><span>One zoom from the planets through the nearest stars to the whole galaxy and Andromeda, with travel times.</span></a><a href="telescope-lab.html" style="--k:#d8b4ff"><b>Telescope Lab</b><span>How sharp Hubble, Webb, AstroSat and your eye can see, what each can make out on the Moon and Mars, and why Webb is kept so cold.</span></a></div></section>
-<footer>Black hole data: Gaia BH1 9.62 M☉ (El-Badry et al. 2023) about 1,560 ly; Gaia BH3 32.7 M☉ at 1,930 ly (Gaia Collaboration 2024); Cygnus X-1 21.2 M☉ at about 2.2 kpc (Miller-Jones et al. 2021); Sagittarius A* (4.297 ± 0.013)×10⁶ M☉ at 8,277 pc (GRAVITY); M87* (6.5 ± 0.7)×10⁹ M☉ at 55 million ly (Event Horizon Telescope 2019). See <a href="https://en.wikipedia.org/wiki/List_of_nearest_known_black_holes">List of nearest known black holes</a> and <a href="https://arxiv.org/pdf/2304.09368">Observations of stellar-mass black holes</a>. Physics: non-spinning (Schwarzschild) holes; real ones spin, which shifts the inner disk edge and flattens one side of the shadow. Wormhole view: inside the throat the far sky is mapped radially; outside, the weak-field deflection π a²/(4b²) of the Ellis wormhole. Travel times use a ship at a constant 1 g, flipping halfway to brake. Part of the <a href="index.html">Golapada</a>.</footer>
+<footer>Black hole data: Gaia BH1 9.62 M☉ (El-Badry et al. 2023) about 1,560 ly; Gaia BH3 32.7 M☉ at 1,930 ly (Gaia Collaboration 2024); Cygnus X-1 21.2 M☉ at about 2.2 kpc (Miller-Jones et al. 2021); Sagittarius A* (4.297 ± 0.012)×10⁶ M☉ at 8,277 pc (GRAVITY); M87* (6.5 ± 0.7)×10⁹ M☉ at 55 million ly (Event Horizon Telescope 2019). See <a href="https://en.wikipedia.org/wiki/List_of_nearest_known_black_holes">List of nearest known black holes</a> and <a href="https://arxiv.org/pdf/2304.09368">Observations of stellar-mass black holes</a>. Physics: non-spinning (Schwarzschild) holes; real ones spin, which shifts the inner disk edge and flattens one side of the shadow. Wormhole view: inside the throat the far sky is mapped radially; outside, the weak-field deflection π a²/(4b²) of the Ellis wormhole. Travel times use a ship at a constant 1 g, flipping halfway to brake. Checks: NASA Imagine the Universe (Sun’s Schwarzschild radius); GRAVITY Collaboration 2022, A&amp;A 657, L12; Event Horizon Telescope 2019 M87* Paper VI (ApJL 875, L6) and 2022 Sgr A* Paper I (ApJL 930, L12); Bardeen, Press &amp; Teukolsky 1972 (ApJ 178, 347); El-Badry et al. 2023 (MNRAS 518, 1057); Brauer, Camargo &amp; Socolovsky (arXiv:1406.2350). Part of the <a href="index.html">Golapada</a>.</footer>
 </div>
 
 <script>
@@ -218,7 +248,7 @@ $('iInc').addEventListener('input',()=>{inc=+$('iInc').value;render()});
 const BH=[
   {n:'Gaia BH1',m:9.62,d:1560,k:'Stellar: a dormant black hole orbiting a Sun-like star, the nearest known.'},
   {n:'Gaia BH3',m:32.7,d:1930,k:'Stellar: the heaviest stellar black hole known in our galaxy, found in Gaia data in 2024.'},
-  {n:'Cygnus X-1',m:21.2,d:7200,k:'Stellar: the first black hole ever identified (1971), feeding on a giant companion.'},
+  {n:'Cygnus X-1',m:21.2,d:7200,k:'Stellar: the first object widely accepted as a black hole (early 1970s), feeding on a giant companion.'},
   {n:'Sagittarius A*',m:4.297e6,d:27000,k:'Supermassive: the black hole at the centre of the Milky Way, imaged by the EHT in 2022.'},
   {n:'M87*',m:6.5e9,d:55e6,k:'Supermassive: the first black hole ever imaged (EHT, 2019), in the galaxy M87.'}];
 let pick=0;

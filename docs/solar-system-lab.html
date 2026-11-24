@@ -137,7 +137,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   <section class="card orrery">
     <canvas id="orr" aria-label="Orbits of the planets to scale on a log-distance view, with their positions on the chosen date"></canvas>
     <div class="ctl">
-      <label>Date <output id="oDate"></output><input id="iDate" type="range" min="-547000" max="36600" step="1" value="0"></label>
+      <label>Date <output id="oDate"></output><input id="iDate" type="range" min="-548300" max="36600" step="1" value="0"></label>
       <div class="seg"><button type="button" data-jump="today">Today</button><button type="button" data-jump="499">Aryabhata, 499 CE</button><button type="button" data-jump="1610">Galileo, 1610</button><button type="button" data-jump="1969">Apollo 11</button><button type="button" id="runT" aria-pressed="false">Run time</button></div>
       <label>Scale <span class="seg"><button type="button" data-sc="log" aria-pressed="true">Log distances</button><button type="button" data-sc="inner" aria-pressed="false">Inner planets, true scale</button></span></label>
       <div id="orrInfo" style="font-size:13.5px;color:#c3ccd6"></div>
@@ -174,6 +174,29 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     </div>
   </section>
 
+  <style>.trust td.ok{color:var(--ok)}.trust td.mid{color:var(--gold)}.trust td.bad{color:var(--bad)}.trust table{min-width:520px}</style>
+  <details class="card trust gx"><summary>For experts: How far to trust it</summary>
+    <p>We took the values written in this page’s own code and compared each one with NASA’s fact sheets, JPL’s orbital elements and the Huygens probe paper.</p>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table>
+      <tr><th>What</th><th>This page</th><th>Published</th><th>Source</th><th>Agrees?</th></tr>
+      <tr><td>Surface gravity, Mars</td><td>3.7 m/s²</td><td>3.73 m/s²</td><td>NASA NSSDC Mars fact sheet</td><td class="ok">Yes</td></tr>
+      <tr><td>Surface gravity, Moon</td><td>1.6 m/s²</td><td>1.6 m/s² (1.62)</td><td>NASA NSSDC Planetary Fact Sheet</td><td class="ok">Yes</td></tr>
+      <tr><td>Earth radius (equator)</td><td>6,378 km</td><td>6,378.137 km</td><td>NASA NSSDC Earth fact sheet</td><td class="ok">Yes</td></tr>
+      <tr><td>Jupiter radius (equator)</td><td>71,492 km</td><td>71,492 km (diameter 142,984 km)</td><td>NASA NSSDC Planetary Fact Sheet</td><td class="ok">Yes</td></tr>
+      <tr><td>Mars distance from the Sun</td><td>1.524 AU</td><td>1.5237 AU (227.96 million km)</td><td>NASA NSSDC Mars fact sheet</td><td class="ok">Yes</td></tr>
+      <tr><td>Mars year (from the JPL rate the orrery uses)</td><td>686.98 days</td><td>686.980 days</td><td>NASA NSSDC Mars fact sheet; JPL Table 2a</td><td class="ok">Yes</td></tr>
+      <tr><td>Venus air density at the surface</td><td>65 kg/m³, “about 50 times” Earth</td><td>~65 kg/m³; Earth 1.217 kg/m³ (53 times)</td><td>NASA NSSDC Venus and Earth fact sheets</td><td class="ok">Yes (rounded)</td></tr>
+      <tr><td>Venus surface pressure and heat</td><td>92 bar, 464 °C</td><td>92 bar, 464 °C</td><td>NASA NSSDC Venus fact sheet</td><td class="ok">Yes</td></tr>
+      <tr><td>Mars surface pressure</td><td>0.00636 bar</td><td>6.36 mbar (4.0 to 8.7 by season)</td><td>NASA NSSDC Mars fact sheet</td><td class="ok">Yes</td></tr>
+      <tr><td>Titan surface pressure and temperature</td><td>1.467 bar, −179.5 °C</td><td>1,467 hPa, 93.65 K (−179.5 °C)</td><td>Fulchignoni et al., Nature 438 (2005)</td><td class="ok">Yes</td></tr>
+    </table></div>
+  </details>
+  <details class="card gx"><summary>For experts: What the page leaves out</summary>
+    <p>Trip times and speed costs assume round orbits that all lie flat in one plane, a single Hohmann transfer and no flybys. Real launches come in windows on stretched, tilted orbits, and outer-planet missions use gravity assists, so they need much less.</p>
+    <p>The fact-sheet numbers are averages. Mars’s air pressure, for example, changes by about a factor of two over its year. The landing game is a straight-down fall with simple air drag, no wind, no heat and no tipping over.</p>
+    <p>JPL’s simple orbital elements are only rated for 3000 BC to 3000 AD and ignore the planets pulling on each other in detail, so old dates are good to a fraction of a degree, not exact. Pluto’s path is not drawn, and moon orbits are not shown in the orrery.</p>
+  </details>
+
   <!-- golapada-quiz:start -->
 <style>
 .gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
@@ -198,7 +221,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 <!-- golapada-quiz:end -->
   <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="gravity-assist-lab.html" style="--k:#e8c46a"><b>Gravity Assist Lab</b><span>How Voyager borrowed speed from Jupiter and Saturn, re-derived from planet positions, and when the next grand tour is possible.</span></a><a href="comets.html" style="--k:#5fd0e8"><b>Comets</b><span>Play seven famous comets along their real orbits, from Halley to the interstellar 3I/ATLAS, and see why the tail grows near the Sun.</span></a><a href="exoplanet-explorer.html" style="--k:#5fd6c4"><b>Exoplanet Explorer</b><span>All of the confirmed planets around other stars, a transit you can watch, and the rocky worlds with Earth-like light.</span></a></div></section>
 <footer>
-    Sources: physical data from NASA's <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/">Planetary Fact Sheet</a> and the per-planet, Jovian and Saturnian satellite sheets (NSSDC). Orbits from E. M. Standish and J. G. Williams, JPL approximate positions, Tables 2a and 2b, valid 3000 BC to 3000 AD (<a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html">ssd.jpl.nasa.gov</a>); JPL no longer lists Pluto, so its position is not drawn. Titan's surface (93.65 K, 1,467 hPa) from the Huygens probe (Fulchignoni et al., Nature 438, 2005); its surface density and scale height are derived from those with the ideal gas law. Mission figures are patched-conic estimates on circular, coplanar orbits from a 300 km Earth orbit, with no gravity assists; real missions to the outer planets use flybys and need far less. Ship: 125 t dry, 1,550 t of propellant, Isp 375 s. Landing propellant figures assume a 120 t lander. The orrery bends distances logarithmically so Mercury and Neptune fit on one screen.
+    Sources: physical data from NASA's <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/">Planetary Fact Sheet</a> and the per-planet, Jovian and Saturnian satellite sheets (NSSDC). Orbits from E. M. Standish and J. G. Williams, JPL approximate positions, Tables 2a and 2b, valid 3000 BC to 3000 AD (<a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html">ssd.jpl.nasa.gov</a>); JPL no longer lists Pluto, so its position is not drawn. Titan's surface (93.65 K, 1,467 hPa) from the Huygens probe (Fulchignoni et al., Nature 438, 2005); its surface density and scale height are derived from those with the ideal gas law. Mission figures are patched-conic estimates on circular, coplanar orbits from a 300 km Earth orbit, with no gravity assists; real missions to the outer planets use flybys and need far less. Ship: 125 t dry, 1,550 t of propellant, Isp 375 s. Landing propellant figures assume a 120 t lander. The orrery bends distances logarithmically so Mercury and Neptune fit on one screen. Checks: NASA NSSDC <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/">Planetary Fact Sheet</a> and its <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html">Mars</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html">Venus</a> and <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html">Earth</a> sheets; JPL approximate positions, Table 2a; Fulchignoni et al., Nature 438, 785–791 (2005).
   </footer>
 </div>
 
@@ -230,19 +253,19 @@ function orbitPath(name,jd){const {el}=elems(name,jd),[a,e,I,L,wb,O]=el,w=wb-O,c
 const AU=1.495978707e8,MUS=1.32712440018e11;
 const W=[
  {id:'mercury',name:'Mercury',col:'#b3a89a',g:3.7,ve:4.3,R:2439.5,day:4222.6,T:167,P:0,moons:0,rho:0,H:0,a:0.387,mu:22032,surf:true,note:'No air at all: every metre per second of a landing is paid in propellant.'},
- {id:'venus',name:'Venus',col:'#e8cf8f',g:8.9,ve:10.4,R:6052,day:2802,T:464,P:92,moons:0,rho:65,H:15.9,a:0.723,mu:324859,surf:true,note:'Air 65 times denser than Earth’s at the surface, 464 °C and 92 bar. The longest any lander has lasted there is Venera 13’s 127 minutes in 1982.'},
+ {id:'venus',name:'Venus',col:'#e8cf8f',g:8.9,ve:10.4,R:6052,day:2802,T:464,P:92,moons:0,rho:65,H:15.9,a:0.723,mu:324859,surf:true,note:'Air about 50 times denser than Earth’s at the surface, 464 °C and 92 bar. The longest any lander has lasted there is Venera 13’s 127 minutes in 1982.'},
  {id:'earth',name:'Earth',col:'#4aa3ff',g:9.8,ve:11.2,R:6378,day:24,T:15,P:1.014,moons:1,rho:1.217,H:8.5,a:1,mu:398600,surf:true,note:'The reference world: Starship’s own home field.'},
  {id:'moon',name:'Moon',col:'#c9c9cc',g:1.6,ve:2.4,R:1737.5,day:708.7,T:-20,P:0,moons:0,rho:0,H:0,parent:'earth',am:384400,mu:4902.8,surf:true,note:'No air; a lander must carry all its braking. Gravity is a sixth of Earth’s, so a single Raptor is far too strong to hover.'},
  {id:'mars',name:'Mars',col:'#e0774a',g:3.7,ve:5.0,R:3396,day:24.7,T:-65,P:0.00636,moons:2,rho:0.016,H:11.0,a:1.524,mu:42828,surf:true,note:'Air thin enough that it slows a ship only so far; the last few hundred metres per second must be burned off.'},
- {id:'jupiter',name:'Jupiter',col:'#d9b38c',g:23.1,ve:59.5,R:71492,day:9.9,T:-110,P:null,moons:95,rho:0,H:27,a:5.203,mu:126686534,surf:false,note:'No surface. Below the clouds pressure climbs past 1,000 bar; the Galileo probe was crushed within an hour in 1995.'},
+ {id:'jupiter',name:'Jupiter',col:'#d9b38c',g:23.1,ve:59.5,R:71492,day:9.9,T:-110,P:null,moons:101,rho:0,H:27,a:5.203,mu:126686534,surf:false,note:'No surface. Below the clouds pressure climbs past 1,000 bar; the Galileo probe was crushed within an hour in 1995.'},
  {id:'io',name:'Io',col:'#e8d36a',g:1.80,ve:2.56,R:1821.5,day:42.5,T:-143,P:0,moons:0,rho:0,H:0,parent:'jupiter',am:421800,mu:5959.9,surf:true,note:'The most volcanic body known, deep inside Jupiter’s radiation belts.'},
  {id:'europa',name:'Europa',col:'#d8cdb4',g:1.31,ve:2.03,R:1560.8,day:85.2,T:-160,P:0,moons:0,rho:0,H:0,parent:'jupiter',am:671100,mu:3202.7,surf:true,note:'An ice shell over a global ocean, the leading place to look for life beyond Earth.'},
  {id:'ganymede',name:'Ganymede',col:'#a99b86',g:1.43,ve:2.74,R:2631.2,day:171.7,T:-163,P:0,moons:0,rho:0,H:0,parent:'jupiter',am:1070400,mu:9887.8,surf:true,note:'The largest moon in the solar system, bigger than Mercury, with its own magnetic field.'},
  {id:'callisto',name:'Callisto',col:'#7d7266',g:1.24,ve:2.44,R:2410.3,day:400.5,T:-139,P:0,moons:0,rho:0,H:0,parent:'jupiter',am:1882700,mu:7179.3,surf:true,note:'Outside Jupiter’s worst radiation: the usual pick for a base in the Jupiter system.'},
- {id:'saturn',name:'Saturn',col:'#e3cf9e',g:9.0,ve:35.5,R:60268,day:10.7,T:-140,P:null,moons:274,rho:0,H:59.5,a:9.537,mu:37931187,surf:false,note:'No surface, and less dense than water overall.'},
+ {id:'saturn',name:'Saturn',col:'#e3cf9e',g:9.0,ve:35.5,R:60268,day:10.7,T:-140,P:null,moons:285,rho:0,H:59.5,a:9.537,mu:37931187,surf:false,note:'No surface, and less dense than water overall.'},
  {id:'titan',name:'Titan',col:'#d9a35c',g:1.35,ve:2.64,R:2575,day:382.7,T:-179.5,P:1.467,moons:0,rho:5.2,H:20.8,parent:'saturn',am:1221870,mu:8978.1,surf:true,note:'Thicker air than Earth’s and low gravity: you could fly here with wings. Huygens landed in 2005 under a parachute.'},
  {id:'enceladus',name:'Enceladus',col:'#f2f5f7',g:0.113,ve:0.239,R:252,day:32.9,T:-198,P:0,moons:0,rho:0,H:0,parent:'saturn',am:238020,mu:7.21,surf:true,note:'Geysers of ocean water spray from its south pole. Gravity is so weak a jump could almost leave it.'},
- {id:'uranus',name:'Uranus',col:'#9fd8e0',g:8.7,ve:21.3,R:25559,day:17.2,T:-195,P:null,moons:28,rho:0,H:27.7,a:19.19,mu:5793939,surf:false,note:'Spins on its side, axis tilted 97.8°.'},
+ {id:'uranus',name:'Uranus',col:'#9fd8e0',g:8.7,ve:21.3,R:25559,day:17.2,T:-195,P:null,moons:29,rho:0,H:27.7,a:19.19,mu:5793939,surf:false,note:'Spins on its side, axis tilted 97.8°.'},
  {id:'neptune',name:'Neptune',col:'#5b7fe0',g:11.0,ve:23.5,R:24764,day:16.1,T:-200,P:null,moons:16,rho:0,H:19.7,a:30.07,mu:6836529,surf:false,note:'The fastest winds measured in the solar system, up to 580 m/s.'},
  {id:'pluto',name:'Pluto',col:'#c9b29b',g:0.6,ve:1.2,R:1188,day:153.3,T:-225,P:0.00001,moons:5,rho:0,H:0,a:39.48,mu:869.6,surf:true,note:'A thin nitrogen haze, mountains of water ice and a heart-shaped nitrogen glacier seen by New Horizons in 2015.'},
 ];

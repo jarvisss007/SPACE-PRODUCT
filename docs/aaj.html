@@ -166,7 +166,7 @@ function altaz(o,jd,lat,lon){const H=gmst(jd)+lon*D-o.ra,la=lat*D,sa=Math.sin(la
   $('plan').innerHTML=(ev.length?`<b>शाम को: ${ev.map(p=>NM[p.k]).join(', ')}</b><span>रात लगभग 8 बजे (${pl.n==='your location'?'आपकी जगह':pl.n}): ${f(ev)}।</span>`:`<b>शाम को कोई चमकीला ग्रह नहीं</b>`)+(dw.length?`<span>भोर से पहले (लगभग 5 बजे): ${f(dw)}।</span>`:'')+'<span class="note">ग्रह टिमटिमाते नहीं, तारे टिमटिमाते हैं।</span>'})();
 // asteroid
 (()=>{const now=Date.now(),r=((TODAY.neo)||[]).filter(r=>Date.parse(r[1])>now-864e5).sort((a,b)=>a[2]-b[2])[0];if(!r){$('rock').closest('.td').hidden=true;return}
-  $('rock').innerHTML=`<b>${r[0]}</b><span>${hi(new Date(r[1]),{weekday:'long',day:'numeric',month:'long'})} को पृथ्वी के पास से गुज़रेगा, ${r[2]<1?'<strong>चंद्रमा से भी पास</strong>':`चंद्रमा की दूरी के ${r[2].toFixed(1)} गुना पर`}${r[3]?`, लगभग ${r[3]<1?Math.round(r[3]*1000)+' मीटर':r[3].toFixed(1)+' किमी'} बड़ा`:''}। यह टकराएगा नहीं।</span>`})();
+  $('rock').innerHTML=`<b>${r[0]}</b><span>${hi(new Date(r[1]),{weekday:'long',day:'numeric',month:'long'})} को पृथ्वी के पास से गुज़रेगा, ${r[2]<1?'<strong>चंद्रमा से भी पास</strong>':`चंद्रमा की दूरी के ${r[2].toFixed(1)} गुना पर`}${r[3]?`, लगभग ${r[3]<1?Math.round(r[3]*1000)+' मीटर':r[3].toFixed(1)+' किमी'} चौड़ा`:''}। यह टकराएगा नहीं।</span>`})();
 // coming up in the sky
 (()=>{const now=Date.now(),out=[],el=t=>{const jd=t/864e5+2440587.5;return nrm(moonApparent(jd).lon-sunL(jd))};
   const find=tg=>{let pv=((el(now)-tg+540)%360)-180;for(let t=now+36e5;t<now+32*864e5;t+=36e5){const v=((el(t)-tg+540)%360)-180;if(pv<0&&v>=0)return t;pv=v}return null};

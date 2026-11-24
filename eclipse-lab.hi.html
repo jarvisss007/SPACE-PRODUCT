@@ -85,7 +85,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 
   <section class="card" lang="hi">
     <h2>2027 का परिवार: सारोस 136</h2>
-    <p>हर 18 वर्ष, 11 दिन और 8 घंटे (एक सारोस, 223 चांद्र मास) बाद सूर्य, चंद्रमा और चंद्रमा की कक्षा की रेखा लगभग ठीक पहले जैसी स्थिति में आ जाते हैं, और ग्रहण दोहराया जाता है। अतिरिक्त 8 घंटों का अर्थ है कि पृथ्वी एक-तिहाई चक्कर घूम चुकी होती है, इसलिए हर दोहराव लगभग 120° और पश्चिम में पड़ता है। बेबीलोन के खगोलविद इस चक्र को सामान्य युग से सदियों पहले जानते थे। 2 अगस्त 2027 का ग्रहण सारोस श्रृंखला 136 का सदस्य है, और 1919 का वह ग्रहण भी, जिसने आइंस्टाइन को सही सिद्ध किया, तथा 2009 का वह ग्रहण भी, जिसने भारत पर अँधेरा कर दिया था।</p>
+    <p>हर 18 वर्ष, 11 दिन और 8 घंटे (एक सारोस, 223 चांद्र मास) बाद सूर्य, चंद्रमा और चंद्रमा की कक्षा की रेखा लगभग ठीक पहले जैसी स्थिति में आ जाते हैं, और ग्रहण दोहराया जाता है। अतिरिक्त 8 घंटों का अर्थ है कि पृथ्वी एक-तिहाई चक्कर घूम चुकी होती है, इसलिए हर दोहराव लगभग 120° और पश्चिम में पड़ता है। बेबीलोन के खगोलविद इस चक्र को ईसा पूर्व की सदियों में ही जानते थे। 2 अगस्त 2027 का ग्रहण सारोस श्रृंखला 136 का सदस्य है, और 1919 का वह ग्रहण भी, जिसने आइंस्टाइन को सही सिद्ध किया, तथा 2009 का वह ग्रहण भी, जिसने भारत पर अँधेरा कर दिया था।</p>
     <canvas id="saros" aria-label="सारोस 136 के सदस्य, उनकी पूर्णता की अवधि और यह कि सबसे लंबी पूर्णता कहाँ हुई"></canvas>
     <div class="scroll"><table id="sarosT" style="margin-top:8px"></table></div>
   </section>
@@ -170,7 +170,7 @@ $('city').innerHTML=CITIES.map((c,i)=>`<option value="${i}">${c[0]}</option>`).j
 let custom=null,R=null,E=null,C=null;
 const fmtT=(ms,tz)=>ms==null?'—':new Date(ms).toLocaleTimeString('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit'});
 const fmtD=s=>Math.floor(s/60)+' मिनट '+String(Math.round(s%60)).padStart(2,'0')+' सेकंड';
-function count(){const t=Date.UTC(2027,7,2,10,6),d=(t-Date.now())/864e5;$('count').innerHTML=d>0?`<b>${Math.floor(d)}</b><span>दिन बाकी हैं 2 अगस्त 2027 के पूर्ण सूर्य ग्रहण में: मिस्र के लक्सर के ऊपर 6 मिनट 23 सेकंड तक का अँधेरा, जो इस पृष्ठ की सूची में ज़मीन के ऊपर सबसे लंबी पूर्णता है। भारत में इसका कुछ भाग दोपहर बाद दिखेगा।</span>`:'<b>2 अगस्त 2027</b><span>बीत चुका है।</span>'}
+function count(){const t=Date.UTC(2027,7,2,10,6),d=(t-Date.now())/864e5;$('count').innerHTML=d>0?`<b>${Math.floor(d)}</b><span>दिन बाकी हैं 2 अगस्त 2027 के पूर्ण सूर्य ग्रहण में: मिस्र के लक्सर के ऊपर 6 मिनट 23 सेकंड तक का अँधेरा, जो 2009 के बाद की सबसे लंबी पूर्णता है   (English page: replace "the longest totality over land in this page’s list" with "the longest totality since 2009")। भारत में इसका कुछ भाग दोपहर बाद दिखेगा।</span>`:'<b>2 अगस्त 2027</b><span>बीत चुका है।</span>'}
 function you(){E=EL[$('ecl').value];const cv=$('city').value;C=cv==='custom'&&custom?['आपका टैप किया गया स्थान',custom[0],custom[1],'UTC']:CITIES[+cv]||CITIES[0];R=local(E,C[1],C[2]);const tz=C[3];
   const seen=R.c1!=null||R.mag>0;const above=R.alt>0;
   const cells=[['आरंभ',fmtT(R.c1,tz),''],['अधिकतम',fmtT(R.max,tz),'cor'],['समाप्ति',fmtT(R.c4,tz),''],['सूर्य ढका',seen&&above?(R.obs*100).toFixed(1)+'%':'—',R.obs>0.999?'ok':R.obs>0.5?'warn':'']];

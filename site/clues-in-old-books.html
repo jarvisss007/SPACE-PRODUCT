@@ -32,6 +32,13 @@ button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);colo
 .lead{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;min-width:0}.lead b{font-family:var(--display);font-size:18px;text-transform:uppercase;display:block;margin-bottom:4px}.lead p{font-size:13.5px;margin:0}
 .note{font-size:12.5px;color:var(--dim)}
 footer{color:var(--dim);font-size:12.5px;max-width:100ch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px;min-width:0}
+.card .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px 0}
+.card table{border-collapse:collapse;width:100%;min-width:560px;font-size:13px;font-variant-numeric:tabular-nums}
+.card th,.card td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.card th{font-family:var(--display);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-size:12px}
+.card td.ok{color:var(--ok);font-weight:600}.card td.mid{color:var(--mid);font-weight:600}.card td.bad{color:var(--bad);font-weight:600}
+.card ul{margin:0;padding-left:18px;max-width:70ch;color:#d8d0c6}.card li{margin-bottom:6px}
 </style>
 
 <style>
@@ -103,7 +110,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
       <div class="verdict" id="kV"></div>
     </div>
     <div><canvas id="kali" style="aspect-ratio:1" aria-label="Dial of the zodiac with the Sun and planets on the chosen date, Indian zero point at the top"></canvas>
-      <p class="note" style="margin-top:6px">True geocentric longitudes from JPL Tables 2a and 2b (Standish and Williams). The text speaks of <i>mean</i> positions; the real sky shows true ones, which differ by a few degrees for most planets. The Moon is left out: 3102 BC is so long ago that the uncertainty in Earth’s rotation (about 21 hours) blurs the Moon by over 10°.</p></div>
+      <p class="note" style="margin-top:6px">True geocentric longitudes from JPL Tables 2a and 2b (Standish and Williams). The text speaks of <i>mean</i> positions; the real sky shows true ones, which differ by a few degrees for most planets. The Moon is left out: the JPL tables used here do not include it, and by 3102 BC the uncertainty in Earth’s slowing spin (about 2½ hours, by NASA’s estimate) would still blur its place by more than a degree.</p></div>
   </section>
 
   <section class="case">
@@ -156,6 +163,34 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
     </div>
   </section>
 
+  <details class="card gx"><summary>For experts: How far to trust it</summary>
+    <p>We read each number straight from this page’s own code and text, then looked it up in the published source it should match.</p>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table (scrolls sideways on small screens)"><table>
+      <thead><tr><th>What</th><th>This page</th><th>Published</th><th>Source</th><th>Agrees?</th></tr></thead>
+      <tbody>
+        <tr><td>ΔT for the Babylon eclipse of 136 BC (year −135)</td><td>12,029 s (3.34 hours)</td><td>12,790 ± 330 s at −200 and 11,640 ± 290 s at −100, so about 12,040 s at −135; the 2016 parabola gives about 12,170 s</td><td>NASA ΔT table (Morrison and Stephenson 2004); Stephenson, Morrison and Hohenkerk 2016, eq. 4.1</td><td class="ok">Yes</td></tr>
+        <tr><td>Date of the guest star</td><td>1054 CE</td><td>First seen about 4 July 1054 (Julian)</td><td>Song dynasty records, as used by Collins et al. 1999</td><td class="ok">Yes</td></tr>
+        <tr><td>When the Crab’s filaments, run backwards, meet</td><td>about 1091 CE</td><td>CE 1091 ± 34 (optical filaments)</td><td>Bietenholz and Nugent 2015, MNRAS 454, 2416</td><td class="ok">Yes</td></tr>
+        <tr><td>Gap between the record and the rewind</td><td>about 40 years</td><td>1091 − 1054 = 37 years, with ± 34 years of uncertainty</td><td>Bietenholz and Nugent 2015</td><td class="mid">Close</td></tr>
+        <tr><td>Distance to the Crab</td><td>2.0 ± 0.5 kpc (about 6,500 ly)</td><td>About 2.0 kpc (Trimble 1968); about 1.93 kpc, methods spanning 1.4 to 2.7 kpc (Trimble 1973)</td><td>Trimble 1973, PASP 85, 579</td><td class="ok">Yes</td></tr>
+        <tr><td>Expansion speed of the nebula</td><td>about 1,500 km/s</td><td>roughly 1,500 km/s</td><td>Bietenholz et al. 1991, ApJ 373, L59</td><td class="ok">Yes</td></tr>
+        <tr><td>Pulsar spin</td><td>about 30 times a second</td><td>29.533 turns a second (period 33.86 ms) on 15 Oct 2026, slowing about 15 µs per year</td><td>Jodrell Bank Crab pulsar monthly ephemeris; NASA Chandra</td><td class="ok">Yes</td></tr>
+        <tr><td>Precession rate</td><td>50.29″ per year (1° every 72 years)</td><td>5028.796″ per century, which is 50.288″ per year</td><td>IAU 2006 precession (Capitaine et al. 2003, A&amp;A)</td><td class="ok">Yes</td></tr>
+        <tr><td>Time range of the planet tables</td><td>“rated from 3000 BC”</td><td>Table 2a: 3000 BC to 3000 AD</td><td>JPL Solar System Dynamics, approximate positions of the planets</td><td class="ok">Yes</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+
+  <details class="card gx"><summary>For experts: What the page leaves out</summary>
+    <ul>
+      <li>ΔT comes from the NASA polynomials of 2004. The newer 2016 curve by Stephenson, Morrison and Hohenkerk can differ from it by a hundred seconds or more in ancient times (about 140 s at 136 BC).</li>
+      <li>The eclipse map moves the shadow only east or west at Babylon’s latitude. It does not draw a real eclipse path.</li>
+      <li>Case 1 shows true positions, while the text speaks of mean ones. It leaves out the Moon, and for 3102 BC it uses JPL tables a century before their stated range.</li>
+      <li>The Crab’s explosion year is simply 1054 minus the light travel time, so it carries the full ± 1,600 years of the distance error.</li>
+      <li>Case 4 holds the precession rate fixed. Over 3,400 years the real rate drifts slightly, which moves the dates by a few decades, far less than the uncertainty over where in Dhanishtha the author meant.</li>
+    </ul>
+  </details>
+
   <!-- golapada-quiz:start -->
 <style>
 .gq{background:#0b1017;border:1px solid #1f2a38;border-radius:6px;padding:16px;min-width:0}
@@ -179,7 +214,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 </script></section>
 <!-- golapada-quiz:end -->
   <style>.gk{min-width:0;margin-top:8px}.gk h2{font:700 clamp(20px,3vw,26px) 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3;margin:0 0 10px}.gk .gk-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.gk a{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:#0b1017;border:1px solid #1f2a38;border-left:4px solid var(--k,#74c7ff);border-radius:6px;padding:12px 14px;min-width:0}.gk a:hover,.gk a:focus-visible{border-color:var(--k,#74c7ff);outline:none}.gk b{font:700 20px 'Saira Condensed','Arial Narrow',sans-serif;text-transform:uppercase;color:#e7edf3}.gk span{font:400 13.5px/1.45 'IBM Plex Sans',system-ui,sans-serif;color:#aeb9c6}@media print{.gk{display:none}}</style><section class="gk" aria-label="Keep exploring"><h2>Keep exploring</h2><div class="gk-g"><a href="indian-astronomy.html" style="--k:#e8c46a"><b>Indian Astronomy Through Time</b><span>3,000 years on one map: Lagadha&#x27;s calendar, Aryabhata, Brahmagupta&#x27;s zero, the Kerala school, Jai Singh&#x27;s stone sundials, Kodaikanal and today&#x27;s missions, with how close the old numbers came.</span></a><a href="eclipse-lab.html" style="--k:#ffe3a3"><b>Eclipse Lab</b><span>Solar eclipses from your city to the second, from NASA&#x27;s own numbers: the 2027 total eclipse, the 18-year Saros family, and the story from Rahu and Aryabhata to Aditya-L1.</span></a><a href="comets.html" style="--k:#5fd0e8"><b>Comets</b><span>Play seven famous comets along their real orbits, from Halley to the interstellar 3I/ATLAS, and see why the tail grows near the Sun.</span></a></div></section>
-<footer>Case 1: JPL approximate planetary positions, Tables 2a/2b (Standish and Williams), with J2000 star positions for ζ Piscium (Revati) and Spica; the Surya Siddhanta claim from Burgess 1860; this test is our own calculation, not a published result. Case 2: ΔT from the Espenak and Meeus polynomials (NASA, based on Morrison and Stephenson 2004); the eclipse map shows only the longitude shift, at Babylon’s latitude. Case 3: distance 2.0 ± 0.5 kpc; expansion convergence about 1091 CE from Bietenholz and Nugent (2015), as discussed in <a href="https://arxiv.org/html/2502.19632v1">arXiv:2502.19632</a>. Case 4: α Delphini J2000 position, precession 50.29″ per year; dates from Sastry, Kochhar, Pingree and Witzel as summarised in <a href="https://en.wikipedia.org/wiki/Vedanga_Jyotisha">Vedanga Jyotisha</a>. Part of the <a href="index.html">Golapada</a>; see also the <a href="aryabhata-lab.html">Aryabhata Lab</a>.</footer>
+<footer>Case 1: JPL approximate planetary positions, Tables 2a/2b (Standish and Williams), with J2000 star positions for ζ Piscium (Revati) and Spica; the Surya Siddhanta claim from Burgess 1860; this test is our own calculation, not a published result. Case 2: ΔT from the Espenak and Meeus polynomials (NASA, based on Morrison and Stephenson 2004); the eclipse map shows only the longitude shift, at Babylon’s latitude. Case 3: distance 2.0 ± 0.5 kpc; expansion convergence about 1091 CE from Bietenholz and Nugent (2015), as discussed in <a href="https://arxiv.org/html/2502.19632v1">arXiv:2502.19632</a>. Case 4: α Delphini J2000 position, precession 50.29″ per year; dates from Sastry, Kochhar, Pingree and Witzel as summarised in <a href="https://en.wikipedia.org/wiki/Vedanga_Jyotisha">Vedanga Jyotisha</a>. Checks: NASA ΔT table (eclipse.gsfc.nasa.gov, Morrison and Stephenson 2004); Stephenson, Morrison and Hohenkerk 2016 (Proc. R. Soc. A); Collins et al. 1999 on the 1054 records; Bietenholz and Nugent 2015 (MNRAS 454, 2416); Trimble 1973 (PASP 85, 579); Bietenholz et al. 1991 (ApJ 373, L59); Jodrell Bank Crab pulsar ephemeris; NASA Chandra; IAU 2006 precession (Capitaine et al. 2003); JPL approximate planetary positions. Part of the <a href="index.html">Golapada</a>; see also the <a href="aryabhata-lab.html">Aryabhata Lab</a>.</footer>
 </div>
 
 <script>
@@ -261,7 +296,7 @@ const LAM_ALDEL=ecl(20+39/60+38.3/3600,15+54/60+43/3600),PREC=50.29/3600;
 const yearFor=off=>2000+(270-(LAM_ALDEL+off))/PREC;
 function vedic(){const o=+$('iVo').value,y=Math.round(yearFor(o));
   $('oVo').textContent=o===0?'exactly at the star':`${o>0?'+':''}${o.toFixed(1)}°`;
-  $('vKv').innerHTML=`<span>Winter solstice at that point in</span><b>${yrs(y)}</b><span>Rate of drift</span><b>1° every ${Math.round(1/PREC)} years</b><span>Full range across one nakshatra (±13°20′)</span><b>${yrs(Math.round(yearFor(13.33)))} to ${yrs(Math.round(yearFor(-13.33)))}</b>`;
+  $('vKv').innerHTML=`<span>Winter solstice at that point in</span><b>${yrs(y)}</b><span>Rate of drift</span><b>1° every ${Math.round(1/PREC)} years</b><span>Full range, up to one nakshatra width (13°20′) either side of the star</span><b>${yrs(Math.round(yearFor(13.33)))} to ${yrs(Math.round(yearFor(-13.33)))}</b>`;
   $('vV').innerHTML=`<b class="mid">Unsettled, and now you can see why.</b> Read literally at the star α Delphini, the solstice sat there around 1390 BCE, the basis of early datings (1400–1150 BCE). But move the intended point by 10°, well within one nakshatra, and the date slides by about 720 years. Pingree argued this makes the clue nearly useless for dating; others reply that the uncertainty cuts both ways. The language of the surviving text points much later, and an old observation can survive in a younger text.`;
   const [g,w,h]=fit($('ved'));g.fillStyle='#07060b';g.fillRect(0,0,w,h);const l=50,r=14,t=16,b=30,X=v=>l+(v+13.33)/26.66*(w-l-r),ymin=-2500,ymax=-300,Y=yy=>t+(yy-ymin)/(ymax-ymin)*(h-t-b);
   g.strokeStyle='#2a2532';g.fillStyle='#a0978c';g.font='11px "IBM Plex Sans",sans-serif';g.textAlign='right';g.textBaseline='middle';for(const yy of [-2400,-2000,-1600,-1200,-800,-400]){g.beginPath();g.moveTo(l,Y(yy));g.lineTo(w-r,Y(yy));g.stroke();g.fillText(yrs(yy),l-6,Y(yy))}

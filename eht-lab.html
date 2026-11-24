@@ -85,7 +85,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 
   <section class="card">
     <h2>How big is the shadow?</h2>
-    <p>Einstein's gravity predicts how big the dark middle should look. Light that passes too close is swallowed; light that just misses is bent around. Seen from far away, the edge of the dark patch (the "shadow") has a diameter of <b>2√27 × GM/c²</b>, about 10.4 times a length called the gravitational radius, GM/c². Divide by the distance and you get the angle. Nobody tuned this to fit the picture: the mass came from stars and gas moving around each black hole.</p>
+    <p>Einstein's gravity predicts how big the dark middle should look. Light that passes too close is swallowed; light that just misses is bent around. Seen from far away, the edge of the dark patch (the "shadow") has a diameter of <b>2√27 × GM/c²</b>, about 10.4 times a length called the gravitational radius, GM/c². Divide by the distance and you get the angle. For Sgr A*, nobody tuned this to fit the picture: the mass came from stars seen orbiting it. For M87*, the 6.5 billion Suns figure was itself worked out by the EHT from the ring, so it is bound to fit. The older estimate from stars moving in M87 (about 6.2 billion Suns) gives about 38 µas, still close to the 42 µas ring.</p>
     <p class="formula">angle = 2√27 × G × M ÷ c² ÷ distance</p>
     <div class="seg" id="bhs" role="group" aria-label="Choose a black hole"></div>
     <label class="f">Mass, in millions of Suns <output id="mO"></output><input type="range" id="m" min="0" max="1000" step="1" value="500" aria-label="Black hole mass"></label>
@@ -372,7 +372,7 @@ const sh=(m,p)=>K*m*1e6*GMC/(p*PC)*UAS;
 const eht=1.22*1.3e-3/10.7e6*UAS,ehtLD=1.3e-3/10.7e6*UAS;
 const sm=sh(6500,16.8e6),ss=sh(4.3,8.3e3),ss2=sh(4.0,8.15e3);
 const rows=[
- ["M87* shadow (6.5 billion Suns, 16.8 Mpc)",sm.toFixed(1)+" µas","ring 42 ± 3 µas",Math.abs(sm-42)<=3],
+ ["M87* shadow (6.5 billion Suns, the EHT's own mass from this ring, so not an independent test; 16.8 Mpc)",sm.toFixed(1)+" µas","ring 42 ± 3 µas",Math.abs(sm-42)<=3],
  ["Sgr A* shadow (4.3 million Suns, 8.3 kpc)",ss.toFixed(1)+" µas","ring 51.8 ± 2.3 µas",Math.abs(ss-51.8)<=2.3],
  ["Sgr A* shadow (EHT's own 4.0 million Suns, 8.15 kpc)",ss2.toFixed(1)+" µas","ring 51.8 ± 2.3 µas",Math.abs(ss2-51.8)<=2.3],
  ["EHT sharpness, 1.22λ/D at 1.3 mm, 10,700 km",eht.toFixed(1)+" µas","about 25 µas (λ/D); \"under 20 µas\" with imaging",null],

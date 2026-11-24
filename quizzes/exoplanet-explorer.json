@@ -27,7 +27,7 @@
     {
       "q": "Look up 51 Peg b. How and when was it found, and how does the discoveries chart show that history?",
       "do": "Search <b>51 Peg</b> and click <b>51 Peg b</b>. Read <b>Found by</b>. Then look at the <b>Discoveries by year</b> chart and its label.",
-      "a": "51 Peg b was found by <b>Radial Velocity</b> in <b>1995</b>. The discoveries chart starts in 1992 with only a few planets a year. Its tallest bar is labelled <b>2016 (Kepler)</b>: the peak year, credited to the Kepler telescope.",
+      "a": "51 Peg b was found by <b>Radial Velocity</b> in <b>1995</b>. The discoveries chart starts in 1992 with only a few planets a year. Its label reads <b>PEAK: 2016</b>, credited to <b>Kepler</b>: the peak year, credited to the Kepler telescope.",
       "history": true
     }
   ]

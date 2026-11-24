@@ -183,7 +183,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
 
   <section class="card">
     <h2>India’s eye on the Sun: Aditya-L1</h2>
-    <p>Aditya-L1, launched on 2 September 2023, reached its orbit around the L1 balance point on 6 January 2024. It circles that empty point once every 177.86 days, about 1.5 million km from Earth, with an unbroken view of the Sun. Two of its seven instruments, ASPEX and PAPA, sample the solar wind itself, the same wind charted above, before it reaches Earth. VELC and SUIT photograph the Sun’s outer atmosphere, where these storm clouds are born. The live readings on this page come from NOAA’s spacecraft at L1. Aditya-L1’s data is released through ISRO’s own archive, not as a live feed. See its orbit in the <a href="lagrange-lab.html">Lagrange Point Lab</a>.</p>
+    <p>Aditya-L1, launched on 2 September 2023, reached its orbit around the L1 balance point on 6 January 2024. It circles that empty point once every 177.86 days, about 1.5 million km from Earth, with an unbroken view of the Sun. Three of its seven instruments, ASPEX, PAPA and MAG, measure the solar wind itself, the same wind charted above, before it reaches Earth. VELC photographs the Sun’s outer atmosphere, the corona, where these storm clouds are born, and SUIT photographs the layers just below it. The live readings on this page come from NOAA’s spacecraft at L1. Aditya-L1’s data is released through ISRO’s own archive, not as a live feed. See its orbit in the <a href="lagrange-lab.html">Lagrange Point Lab</a>.</p>
   </section>
 
   <details class="card gx"><summary>For experts: How far to trust it</summary>
@@ -191,7 +191,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   </details>
 
   <details class="card gx"><summary>For experts: What this page leaves out</summary>
-    <p class="note">All the readings are NOAA’s and NASA’s, shown as they arrive. This page does not forecast anything itself; the Kp forecast is NOAA’s. The storm launcher is the drag-based model of Vršnak and others (2013), with typical drag values of 0.1 and 0.2 × 10⁻⁷ per km. It is aimed straight at Earth and starts at 20 solar radii, where coronagraphs first measure a cloud’s speed. Real clouds expand, twist, hit slower clouds and arrive off-centre, so forecasts made this way are typically off by about half a day. The warning time at L1 assumes the cloud keeps its arrival speed over the last 1.5 million km.</p>
+    <p class="note">All the readings are NOAA’s and NASA’s, shown as they arrive. This page does not forecast anything itself; the Kp forecast is NOAA’s. The storm launcher is the drag-based model of Vršnak and others (2013), with typical drag values of 0.1 and 0.2 × 10⁻⁷ per km. It is aimed straight at Earth and starts at 20 solar radii, far enough out that the solar wind's drag, not the Sun's pull, controls the cloud. Real clouds expand, twist, hit slower clouds and arrive off-centre, so forecasts made this way are typically off by about half a day. The warning time at L1 assumes the cloud keeps its arrival speed over the last 1.5 million km.</p>
   </details>
 
   <!-- golapada-quiz:start -->
@@ -309,7 +309,7 @@ document.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>
 $('useLive').addEventListener('click',()=>{if(D.w){$('iW').value=Math.round(D.w.at(-1)[1]/5)*5;runC();play()}});
 // ---- checks ----
 function renderChecks(){const rows=[];const avg=dbm(489,400,0.1),fast=dbm(3200,400,0.1);
-  rows.push(['Average cloud (489 km/s) to Earth','“several days”',(avg.tE/86400).toFixed(1)+' days','model']);
+  rows.push(['Average cloud (489 km/s) to Earth','typically 1–5 days',(avg.tE/86400).toFixed(1)+' days','model']);
   rows.push(['Fastest cloud ever measured (3,200 km/s)','—',(fast.tE/3600).toFixed(1)+' h','model']);
   let lo=500,hi=20000;for(let i=0;i<50;i++){const m=(lo+hi)/2;dbm(m,400,0.1).tE/3600>17.6?lo=m:hi=m}
   rows.push(['Carrington 1859: speed needed for 17.6 h in normal wind',`17.6 h, path “cleared” by an earlier cloud`,nf.format(Math.round(lo/10)*10)+' km/s, above any measured','explains why a cleared path was needed']);
