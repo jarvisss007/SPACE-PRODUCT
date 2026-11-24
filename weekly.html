@@ -107,7 +107,7 @@ const draw=()=>{$('watch').innerHTML=watch.length?watch.sort((a,b)=>a[0]-b[0]).m
   if(wk.length)watch.push([new Date(wk[0].net),`<b>Launches</b>: ${wk.length} rocket${wk.length>1?'s':''} planned this week, starting with ${nm(wk[0])} on ${wk[0].rocket} (${fmtD(new Date(wk[0].net),{weekday:'short'})}).`]);
   if(india[0])soon.push([new Date(india[0].net),`${fmtD(new Date(india[0].net),{day:'numeric',month:'short'})}: next launch from India, ${nm(india[0])} on ${india[0].rocket}.`]);draw()})();
 // two questions for the week, the same for every class that week
-const Q=TODAY.quiz||[];if(Q.length){const wkN=Math.floor(+mon/(7*864e5)),q1=Q[(wkN*31)%Q.length],q2=Q[(wkN*31+97)%Q.length];
+const QW=TODAY.qweek||{},wkN=Math.floor(+mon/(7*864e5)),pair=QW[wkN]||QW[wkN+1]||QW[wkN-1];if(pair){const [q1,q2]=pair;
   $('quiz').innerHTML=[q1,q2].map((q,i)=>`<p class="q"><b>${i+1}.</b> ${q[0]} <span class="note">(${q[2].replace('.html','').replace(/-/g,' ')})</span></p>`).join('');
   $('ans').innerHTML=[q1,q2].map((q,i)=>`<p><b>${i+1}.</b> ${q[1]}</p>`).join('')}
 })();

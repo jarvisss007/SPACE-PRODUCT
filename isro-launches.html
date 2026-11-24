@@ -59,6 +59,7 @@ details.gx>summary:focus-visible{outline:2px solid #74c7ff;outline-offset:2px}
   <section class="card">
     <h2>Flying next</h2>
     <div class="live" id="live" aria-live="polite"><p class="note">Loading the live launch list…</p></div>
+    <p class="note" id="llAge" style="margin:4px 0 0"></p>
     <p class="note" style="margin:4px 0 12px">Live from The Space Devs' Launch Library: every Indian launch with a date, ISRO and private. Dates slip often; "Add to calendar" saves a reminder on your phone, and you can check back here for changes. Below: ISRO's own published plan.</p>
     <div class="next" id="next"></div>
     <p class="note" style="margin-top:8px" id="nextT"></p>
@@ -239,4 +240,13 @@ window.__isro={L,flown,planned};
     show(d)})();
 })();
 </script>
+<script>
+// how old the shared launch list is (Launch Library 2, kept 30 minutes in this browser), and the year's log snapshot
+(()=>{const el=document.getElementById('llAge');if(!el)return;const y=typeof YEAR!=='undefined'&&YEAR&&YEAR.at;
+  const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':Math.round(m/60)+' h ago'};
+  const draw=()=>{let t=null;try{const c=JSON.parse(localStorage.getItem('gp-ll-upcoming')||'null');t=c&&c.t}catch(e){}
+    el.textContent=(t?'Live launch list fetched '+ago(t)+' from The Space Devs (refreshed at most every 30 minutes).':'Live launch list from The Space Devs.')+(y?' This year\u2019s log: snapshot of '+new Date(y.replace('Z',':00Z')).toLocaleString(undefined,{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})+', refreshed daily.':'')};
+  draw();setInterval(draw,60000)})();
+</script>
+
 

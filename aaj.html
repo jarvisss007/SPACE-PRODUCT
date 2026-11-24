@@ -42,7 +42,7 @@ footer{color:var(--dim);font-size:13px;max-width:100ch}
   <div class="today" lang="hi">
     <div class="td" style="--acc:var(--gold)"><div class="k">आज रात का चंद्रमा</div><div id="moon"></div><a class="more" href="tonight.hi.html">आज रात का पूरा आकाश →</a></div>
     <div class="td" style="--acc:var(--gold)"><div class="k">आज रात के ग्रह</div><div id="plan"></div></div>
-    <div class="td" style="--acc:var(--flame)"><div class="k">अगला प्रक्षेपण</div><div id="launch"><span>प्रक्षेपणों की सूची आ रही है…</span></div><a class="more" href="launch-watch.hi.html">सभी प्रक्षेपण →</a></div>
+    <div class="td" style="--acc:var(--flame)"><div class="k">अगला प्रक्षेपण</div><div id="launch"><span>प्रक्षेपणों की सूची आ रही है…</span></div><span class="note" id="llAgeHi"></span><a class="more" href="launch-watch.hi.html">सभी प्रक्षेपण →</a></div>
     <div class="td" style="--acc:var(--lox)"><div class="k">आपके ऊपर अंतरिक्ष स्टेशन</div><div id="iss"></div></div>
     <div class="td" style="--acc:var(--mars)"><div class="k">इस हफ़्ते का क्षुद्रग्रह</div><div id="rock"></div></div>
     <div class="td" style="--acc:var(--saffron)"><div class="k">आकाश में आगे क्या</div><div id="sky"></div></div>
@@ -114,6 +114,7 @@ let place=null;try{place=JSON.parse(localStorage.getItem('golapada-place')||'nul
     d=j.results.map(L=>({name:L.name,net:Date.parse(L.net),prec:(L.net_precision||{}).abbrev||'',status:(L.status||{}).abbrev||'',rocket:((L.rocket||{}).configuration||{}).full_name||'',prov:(L.launch_service_provider||{}).name||'',pad:(L.pad||{}).name||'',site:((L.pad||{}).location||{}).name||'',lat:+(L.pad||{}).latitude,lon:+(L.pad||{}).longitude,cc:(((L.pad||{}).country)||{}).alpha_3_code||'',orbit:(((L.mission||{}).orbit)||{}).name||'',desc:((L.mission||{}).description||'').slice(0,240)}));
     try{localStorage.setItem('gp-ll-upcoming',JSON.stringify({t:Date.now(),d}))}catch(e){}}catch(e){$('launch').innerHTML='<span>अभी प्रक्षेपणों की सूची नहीं मिल पाई।</span>';return}}
   const L=d.find(x=>x.net>Date.now()-36e5),I=d.find(x=>x.cc==='IND'&&x.net>Date.now()),nm=x=>x.name.split(' | ')[1]||x.name;if(!L)return;
+  try{const c=JSON.parse(localStorage.getItem('gp-ll-upcoming')||'null');if(c&&c.t){const m=Math.round((Date.now()-c.t)/60000);$('llAgeHi').textContent='सूची '+(m<1?'अभी':m+' मिनट पहले')+' ली गई (The Space Devs)।'}}catch(e){}
   const tick=()=>{const s=Math.max(0,(L.net-Date.now())/1000),dd=Math.floor(s/86400),h=Math.floor(s%86400/3600),mi=Math.floor(s%3600/60);
     $('launch').innerHTML=`<b>${nm(L)}</b><span>${L.rocket}, ${L.site.split(',')[0]} से। ${s>0?`<strong>${dd?dd+' दिन ':''}${h} घंटे ${mi} मिनट</strong> में`:'अभी'}।</span>${I&&I!==L?`<span style="color:var(--saffron)">भारत से अगला: ${nm(I)}, ${hi(new Date(I.net),{day:'numeric',month:'short'})}</span>`:''}`};tick();setInterval(tick,30000)})();
 // share picture in Hindi

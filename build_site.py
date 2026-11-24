@@ -71,6 +71,11 @@ PAGES = [
     ("about.html", "About", "Sr4HjpkwPpx5d1mojsoH2v"),
 ]
 
+# Bigger touch targets on every page (found by the 24 Nov 2026 audit: sliders 16 px, quiz taps 21 px, ticks 13 px)
+TOUCH_CSS = ("<style>input[type=range]{min-height:32px}"
+             "input[type=checkbox],input[type=radio]{min-width:22px;min-height:22px}"
+             ".gq details summary{padding:7px 0}details.gx>summary{padding:6px 0}"
+             "@media (pointer:coarse){summary{min-height:32px}}</style>")
 NAV_CSS = """<style>
 .sa-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(4,6,11,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #1f2a38}
 .sa-nav .sa-bar{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:4px;padding-block:6px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
@@ -376,7 +381,7 @@ def build() -> None:
         marker = '<div class="wrap">'
         if marker not in src:
             raise SystemExit(f"{fname}: no {marker} to place the navigation before")
-        src = src.replace(marker, NAV_CSS + nav_html(fname) + marker, 1)
+        src = src.replace(marker, NAV_CSS + TOUCH_CSS + nav_html(fname) + marker, 1)
         if fname == "index.html":
             # the home page needs only the coming days' question of the day, not all of them (keeps the page light)
             import time as _time
@@ -385,8 +390,13 @@ def build() -> None:
             _home = {k: v for k, v in tdata.items() if k != "quiz"}
             _home["qod"] = {str(d): _qz[(d * 7919) % len(_qz)] for d in range(_d0 - 2, _d0 + 9)} if _qz else {}
             src = src.replace("/*golapada-today*/null", json.dumps(_home, ensure_ascii=False, separators=(",", ":")), 1)
-        elif fname == "weekly.html":  # the printable weekly sheet: same daily data, plus the Moon code
-            src = src.replace("/*golapada-today*/null", today, 1).replace("/*golapada-moon*/", moon_js, 1)
+        elif fname == "weekly.html":  # the printable weekly sheet: same data, but only the two questions for this and nearby weeks
+            import time as _time
+            _qz = tdata.get("quiz") or []
+            _w0 = int(_time.time() // (7 * 86400))
+            _wk = {k: v for k, v in tdata.items() if k not in ("quiz", "iss")}
+            _wk["qweek"] = {str(w): [_qz[(w * 31) % len(_qz)], _qz[(w * 31 + 97) % len(_qz)]] for w in range(_w0 - 2, _w0 + 3)} if _qz else {}
+            src = src.replace("/*golapada-today*/null", json.dumps(_wk, ensure_ascii=False, separators=(",", ":")), 1).replace("/*golapada-moon*/", moon_js, 1)
         elif fname == "aaj.html":  # the Hindi daily page: same data, Moon and planet maths, and the Hindi lab quizzes
             quiz_hi = []
             for f in sorted((HERE / "quizzes").glob("*.hi.json")):
@@ -397,7 +407,8 @@ def build() -> None:
             planets_js = _t[_p0:_t.index("// ---- Sun and Moon ----", _p0)]
             _g0 = _t.index("function gmst(jd)")
             planets_js += _t[_g0:_t.index("\n", _t.index("function altaz(", _g0))]
-            src = (src.replace("/*golapada-today*/null", today, 1).replace("/*golapada-moon*/", moon_js, 1)
+            _aj = json.dumps({k: v for k, v in tdata.items() if k not in ("quiz", "onthis")}, ensure_ascii=False, separators=(",", ":"))
+            src = (src.replace("/*golapada-today*/null", _aj, 1).replace("/*golapada-moon*/", moon_js, 1)
                    .replace("/*golapada-quizhi*/null", json.dumps(quiz_hi, ensure_ascii=False, separators=(",", ":")), 1)
                    .replace("/*golapada-planets*/", planets_js, 1))
         elif fname in RELATED:  # English labs: the Today line goes just under the simple-words card (or the header)
