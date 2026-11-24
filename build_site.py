@@ -287,7 +287,7 @@ def today_data() -> str:
         now = datetime.now(timezone.utc)
         for des, cd, dist, _v, hmag, diam in json.loads(m.group(1)).get("close", []):
             t = datetime.strptime(cd, "%Y-%b-%d %H:%M").replace(tzinfo=timezone.utc)
-            if now - timedelta(days=1) <= t <= now + timedelta(days=8):
+            if (now - timedelta(days=1) <= t <= now + timedelta(days=8)) or (now - timedelta(days=30) <= t < now and dist / 0.00256956 < 5):  # past close passes feed "since your last visit"
                 size = diam if diam else (1329 / math.sqrt(0.14) * 10 ** (-hmag / 5) if hmag else None)
                 neo.append([des, t.strftime("%Y-%m-%dT%H:%MZ"), round(dist / 0.00256956, 2), round(size, 3) if size else None])
     # question of the day: every English lab quiz question, with its answer and lab
@@ -311,7 +311,32 @@ def today_data() -> str:
     m = re.search(r'\["ISS \(ZARYA\)",\s*"(1 25544[^"]+)",\s*"(2 25544[^"]+)"', (HERE / "tonight.html").read_text(encoding="utf-8"))
     if m:
         iss = [m.group(1), m.group(2)]
-    return json.dumps({"onthis": onthis, "neo": neo, "quiz": quiz, "showers": showers, "eclipses": [list(e) for e in eclipses], "iss": iss},
+    # launches of the past 30 days, from Launch Watch's daily year log: [time, country, rocket, name, status]
+    recent = []
+    lw = (HERE / "launch-watch.html").read_text(encoding="utf-8")
+    m = re.search(r"^const YEAR=(\{.*?\});$", lw, re.M)
+    if m:
+        now = datetime.now(timezone.utc)
+        for r in json.loads(m.group(1)).get("launches", []):
+            try:
+                t = datetime.strptime(r[0][:16], "%Y-%m-%dT%H:%M").replace(tzinfo=timezone.utc)
+            except ValueError:
+                continue
+            if now - timedelta(days=30) <= t <= now:
+                recent.append([t.strftime("%Y-%m-%dT%H:%MZ"), r[1], r[3], r[8], r[4]])
+    # labs added in the past 60 days (date of the commit that first added the file)
+    import subprocess
+    newlabs = []
+    for fname, label, _ in PAGES:
+        try:
+            d = subprocess.run(["git", "log", "--diff-filter=A", "--format=%cs", "--", fname], cwd=HERE, capture_output=True, text=True).stdout.split()
+        except Exception:
+            d = []
+        if d and d[-1] >= (datetime.now(timezone.utc) - timedelta(days=30)).strftime("%Y-%m-%d") and fname not in ("index.html", "about.html", "weekly.html", "aaj.html"):
+            newlabs.append([d[-1], fname, label])
+    newlabs.sort(reverse=True)
+    return json.dumps({"onthis": onthis, "neo": neo, "quiz": quiz, "showers": showers, "eclipses": [list(e) for e in eclipses], "iss": iss,
+                       "recent": recent, "newlabs": newlabs},
                       ensure_ascii=False, separators=(",", ":"))
 
 

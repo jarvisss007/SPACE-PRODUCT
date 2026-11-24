@@ -35,7 +35,13 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
   tick();setInterval(tick,30000)})();
 // question of the day: the same question for everyone today, a new one tomorrow, from the labs' quizzes
 (()=>{const box=$('tdQuiz');const now=new Date(),day=Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))/864e5),q=TODAY&&TODAY.qod&&TODAY.qod[day];if(!q){box.closest('.td').hidden=true;return}
-  box.innerHTML=`<span class="tq">${q[0]}</span><details><summary>Show the answer</summary><span>${q[1]}</span></details><a class="more" href="${q[2]}">Work it out in the lab →</a>`})();
+  box.innerHTML=`<span class="tq">${q[0]}</span><details><summary>Show the answer</summary><span>${q[1]}</span></details><a class="more" href="${q[2]}">Work it out in the lab →</a>`+`<div class="qs" id="qScore"></div>`;
+  const K='golapada-qod',wk=()=>{const d=new Date(),m=new Date(d.getFullYear(),d.getMonth(),d.getDate()-((d.getDay()+6)%7));return Math.floor(Date.UTC(m.getFullYear(),m.getMonth(),m.getDate())/864e5)};
+  const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'{}')}catch(e){return {}}},put=o=>{try{localStorage.setItem(K,JSON.stringify(o))}catch(e){}};
+  const draw=()=>{const o=get(),w=wk(),mine=Object.entries(o).filter(([k])=>+k>=w&&+k<w+7),right=mine.filter(([,v])=>v===1).length,el=$('qScore');
+    el.innerHTML=(o[day]===undefined?`<span>Did you get it right?</span><button type="button" data-v="1">Yes</button><button type="button" data-v="0">Not this time</button>`:`<span>${o[day]?'Nice one!':'Tomorrow brings a new one.'}</span>`)+(mine.length?`<span class="note">This week: <b>${right} of ${mine.length}</b> right · kept only in this browser</span>`:'');
+    el.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=get();o[day]=+b.dataset.v;Object.keys(o).forEach(k=>{if(+k<day-60)delete o[k]});put(o);draw()})};
+  box.querySelector('details').addEventListener('toggle',draw,{once:true})})();
 // coming up in the sky: next full and new Moon, next meteor shower peak, next total solar eclipse
 (()=>{const box=$('tdSky');const now=Date.now(),out=[];
   const sunL=jd=>{const T=(jd-2451545)/36525,L=nrm(280.46646+36000.76983*T),M=nrm(357.52911+35999.05029*T)*D2R;return nrm(L+(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M))};
@@ -145,6 +151,27 @@ const TI=['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Sap
   const fmt=a=>a.map(p=>`<strong>${NM[p.k]}</strong> ${hgt(p.alt)} ${dirn(p.az)}`).join(', ');
   const ev=look(eve),dw=look(dawn).filter(p=>!ev.some(e=>e.k===p.k));
   box.innerHTML=(ev.length?`<b>${ev.map(p=>NM[p.k]).join(', ').replace(/, ([^,]*)$/,' and $1')} this evening</b><span>Around 8 pm from ${pl.n}: ${fmt(ev)}.</span>`:`<b>No bright planets this evening</b><span>From ${pl.n} none is well up around 8 pm.</span>`)
-    +(dw.length?`<span>Before dawn (about 5 am): ${fmt(dw)}.</span>`:'')+`<span class="note">Planets shine steadily; stars twinkle. ${ev[0]&&ev[0].k==='venus'?'Venus is the brightest thing in the sky after the Moon.':''}</span>`})();
+    +(dw.length?`<span>Before dawn (about 5 am): ${fmt(dw)}.</span>`:'')+`<span class="note">Planets shine steadily; stars twinkle. ${ev[0]&&ev[0].k==='venus'?'Venus is the brightest thing in the sky after the Moon.':''}</span>`;
+  // tonight's sky challenge: the brightest planet up this evening, or the Moon; tick it off when you have seen it
+  const target=ev[0]?`${NM[ev[0].k]}, ${hgt(ev[0].alt)} ${dirn(ev[0].az)} around 8 pm`:'the Moon tonight';const K='golapada-sky',key=new Date().toISOString().slice(0,10);
+  const get=()=>{try{return JSON.parse(localStorage.getItem(K)||'[]')}catch(e){return []}};
+  const ch=document.createElement('div');ch.className='skych';box.appendChild(ch);
+  const draw=()=>{const done=get();let n=0;for(let d=new Date();done.includes(d.toISOString().slice(0,10));d.setDate(d.getDate()-1))n++;
+    ch.innerHTML=`<b>Tonight's sky challenge</b><span>Go outside and find ${target}.</span>`+(done.includes(key)?`<span class="ok">✓ Seen tonight${n>1?` · ${n} nights in a row`:''}</span>`:`<button type="button">I saw it!</button>`)+(done.length?`<span class="note">${done.length} challenge${done.length>1?'s':''} done · kept only in this browser</span>`:'');
+    const b=ch.querySelector('button');if(b)b.onclick=()=>{const d=get();if(!d.includes(key))d.push(key);try{localStorage.setItem(K,JSON.stringify(d.slice(-400)))}catch(e){}draw()}};draw()})();
+// since your last visit: launches, close asteroid passes, full Moons and new labs since then (the time is kept only in this browser)
+(()=>{const el=$('tdSince');if(!el||!TODAY)return;const K='golapada-last',now=Date.now();let last=null;try{last=+localStorage.getItem(K)||null}catch(e){}
+  try{if(!last||now-last>36e5)localStorage.setItem(K,String(now))}catch(e){}
+  if(!last||now-last<6*36e5)return;const from=Math.max(last,now-30*864e5),out=[];
+  const L=(TODAY.recent||[]).filter(r=>{const t=Date.parse(r[0]);return t>from&&t<=now}),IN=L.filter(r=>r[1]==='IND');
+  if(L.length)out.push(`<b>${L.length}</b> rocket${L.length>1?'s':''} launched${IN.length?` (${IN.length} from India: ${IN.map(r=>r[3]).join(', ')})`:''}`);
+  const N=(TODAY.neo||[]).filter(r=>{const t=Date.parse(r[1]);return t>from&&t<=now}).sort((a,b)=>a[2]-b[2]);
+  if(N.length)out.push(`<b>${N.length}</b> asteroid${N.length>1?'s':''} passed within 5 Moon distances, closest ${N[0][0]} at ${N[0][2].toFixed(1)} Moon distances`);
+  const el2=t=>{const jd=t/864e5+2440587.5,T=(jd-2451545)/36525,Ls=nrm(280.46646+36000.76983*T),M=nrm(357.52911+35999.05029*T)*D2R;return nrm(moonApparent(jd).lon-nrm(Ls+(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M)))};
+  let fm=0,pv=el2(from);for(let t=from+6*36e5;t<=now;t+=6*36e5){const v=el2(t);if(pv<180&&v>=180)fm++;pv=v}if(fm)out.push(`<b>${fm}</b> full Moon${fm>1?'s':''}`);
+  const lastDay=new Date(last).toISOString().slice(0,10),NL=(TODAY.newlabs||[]).filter(r=>r[0]>lastDay);
+  if(NL.length)out.push(`new lab${NL.length>1?'s':''}: ${NL.slice(0,4).map(r=>`<a href="${r[1]}">${r[2]}</a>`).join(', ')}`);
+  if(!out.length)return;const ago=Math.round((now-last)/864e5);
+  el.innerHTML=`<b>Welcome back!</b> Since you were last here ${ago<1?'earlier today':ago===1?'yesterday':ago+' days ago'}${now-last>30*864e5?' (we keep the last 30 days)':''}: `+out.join(' · ')+'.';el.hidden=false})();
 })();
 </script>
