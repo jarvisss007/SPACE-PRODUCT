@@ -445,6 +445,7 @@ def build() -> None:
     copy_data()
     write_offline_zip()
     write_app()
+    write_seo()
 
 
 # ---- big catalogues live in data/ and load after the page appears ----
@@ -518,21 +519,119 @@ ICON = ("data:image/svg+xml," "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox
         "%3Ccircle cx='32' cy='32' r='9' fill='%23ffa24a'/%3E%3Ccircle cx='54' cy='22' r='4' fill='%23e7edf3'/%3E%3C/svg%3E")
 
 
+SITE_URL = "https://jarvisss007.github.io/SPACE-PRODUCT/"
+_DESC_CACHE = {}
+
+
+def page_desc(fname: str, body: str) -> str:
+    """A short, unique description for search results and link previews: the home-page card, else the
+    simple-words summary, else the first paragraph."""
+    import html as h, json
+    if not _DESC_CACHE:
+        _DESC_CACHE.update({k: v[1] for k, v in lab_cards().items()})
+    d = _DESC_CACHE.get(fname)
+    if not d:
+        sj = HERE / "simple" / (fname[:-5] + ".json")
+        if sj.exists():
+            d = json.loads(sj.read_text(encoding="utf-8")).get("lead", "")
+    if not d:
+        m = re.search(r"<header[^>]*>.*?<p[^>]*>(.*?)</p>", body, re.S)
+        d = m.group(1) if m else ""
+    d = re.sub(r"\s+", " ", h.unescape(re.sub(r"<[^>]+>", "", d))).strip()
+    if len(d) > 200:
+        d = d[:197].rsplit(" ", 1)[0] + "…"
+    return d or ("Interactive space-science labs built on real mission data, each checked against what really happened.")
+
+
 def web_page(src: str, fname: str) -> str:
-    """A full standalone HTML document: doctype, language, icon and a description for search and link previews."""
+    """A full standalone HTML document: doctype, language, icon, a unique description, link-preview tags
+    and structured data for search engines."""
+    import html as h, json
     body = re.sub(r"^\s*<!doctype html>\s*", "", src, flags=re.I)
     body = body.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', "")
     body = body.replace('<meta charset="utf-8">\n', "", 1)
     title = re.search(r"<title>(.*?)</title>", body, re.S)
     t = title.group(1).strip() if title else "Golapada"
-    desc = ("Interactive space-science labs built on real mission data: rockets, satellites, the Moon, Mars, "
-            "the Sun and the stars, each checked against what really happened.")
+    full = t if fname == "index.html" else t + " · Golapada"
+    desc = page_desc(fname, body)
+    hi = fname.endswith(".hi.html") or fname == "aaj.html"
+    url = SITE_URL + ("" if fname == "index.html" else fname)
+    e = lambda x: h.escape(x, quote=True)
+    ld = ({"@context": "https://schema.org", "@type": "WebSite", "name": "Golapada", "url": SITE_URL,
+           "description": desc, "inLanguage": "en-IN"} if fname == "index.html" else
+          {"@context": "https://schema.org", "@type": "LearningResource", "name": t, "url": url, "description": desc,
+           "inLanguage": "hi" if hi else "en-IN", "isAccessibleForFree": True, "learningResourceType": "Interactive simulation",
+           "educationalLevel": "Middle school, high school", "isPartOf": {"@type": "WebSite", "name": "Golapada", "url": SITE_URL}})
     head = (f'<link rel="icon" href="{ICON}">\n<link rel="manifest" href="manifest.webmanifest">\n'
-            f'<link rel="apple-touch-icon" href="icon-192.png">\n<meta name="description" content="{desc}">\n'
-            f'<meta property="og:title" content="{t if fname == "index.html" else t + " · Golapada"}">\n'
-            f'<meta property="og:description" content="{desc}">\n<meta name="theme-color" content="#04060b">\n')
-    # charset first: browsers only look for it in the first 1,024 bytes
-    return '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n' + head + body + APP_JS + "\n</html>\n"
+            f'<link rel="apple-touch-icon" href="icon-192.png">\n<link rel="canonical" href="{url}">\n'
+            f'<meta name="description" content="{e(desc)}">\n'
+            f'<meta property="og:type" content="website">\n<meta property="og:site_name" content="Golapada">\n'
+            f'<meta property="og:title" content="{e(full)}">\n<meta property="og:description" content="{e(desc)}">\n'
+            f'<meta property="og:url" content="{url}">\n<meta property="og:image" content="{SITE_URL}og-image.png">\n'
+            f'<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n'
+            f'<meta name="twitter:card" content="summary_large_image">\n<meta name="theme-color" content="#04060b">\n'
+            f'<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n')
+    return f'<!doctype html>\n<html lang="{"hi" if hi else "en"}">\n<meta charset="utf-8">\n' + head + body + APP_JS + "\n</html>\n"
+
+
+def write_seo() -> None:
+    """sitemap.xml (each page with the date its source last changed in git), robots.txt, and the shared
+    link-preview picture og-image.png (drawn once with Pillow; kept as committed when Pillow is missing)."""
+    import subprocess
+    pages = sorted(p.name for p in WEB.glob("*.html") if p.name != "404.html")
+    rows = []
+    for name in pages:
+        try:
+            d = subprocess.run(["git", "log", "-1", "--format=%cs", "--", name], cwd=HERE, capture_output=True, text=True).stdout.strip()
+        except Exception:
+            d = ""
+        loc = SITE_URL + ("" if name == "index.html" else name)
+        rows.append(f"  <url><loc>{loc}</loc>{f'<lastmod>{d}</lastmod>' if d else ''}</url>")
+    (WEB / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                                     + "\n".join(rows) + "\n</urlset>\n", encoding="utf-8")
+    (WEB / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n", encoding="utf-8")
+    og = WEB / "og-image.png"
+    if og.exists():
+        return
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        print("Pillow not installed: no og-image.png drawn")
+        return
+    W, H = 1200, 630
+    im = Image.new("RGB", (W, H), (4, 6, 11))
+    d = ImageDraw.Draw(im)
+    for y in range(H):  # deep-blue sky fading to black
+        k = y / H
+        d.line([(0, y), (W, y)], fill=(int(16 - 12 * k), int(26 - 20 * k), int(53 - 42 * k)))
+    import random
+    rnd = random.Random(7)
+    for _ in range(260):
+        x, y, r = rnd.random() * W, rnd.random() * H, rnd.random() * 1.6 + 0.3
+        c = int(140 + rnd.random() * 115)
+        d.ellipse([x - r, y - r, x + r, y + r], fill=(c, c, min(255, c + 20)))
+    icon = draw_icon(250)  # the logo without its dark square: background pixels made see-through
+    px = icon.load()
+    for yy in range(icon.height):
+        for xx in range(icon.width):
+            r, g, b_, a_ = px[xx, yy]
+            if r < 12 and g < 14 and b_ < 20:
+                px[xx, yy] = (0, 0, 0, 0)
+    im.paste(icon, (W - 310, (H - 250) // 2), icon)
+    def font(names, size):
+        for n in names:
+            try:
+                return ImageFont.truetype(n, size)
+            except OSError:
+                continue
+        return ImageFont.load_default()
+    big = font(["arialbd.ttf", "DejaVuSans-Bold.ttf"], 112)
+    mid = font(["arial.ttf", "DejaVuSans.ttf"], 40)
+    d.text((80, 190), "GOLAPADA", font=big, fill=(232, 196, 106))
+    d.text((84, 330), "Space science you can play with", font=mid, fill=(231, 237, 243))
+    d.text((84, 390), "Free labs, checked against real missions", font=mid, fill=(138, 151, 168))
+    im.save(og, optimize=True)
+    print("drew og-image.png")
 
 
 # ---- installable app: manifest, icons, offline service worker ----
